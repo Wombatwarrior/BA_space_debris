@@ -11,7 +11,7 @@ namespace Debris {
     }
 
     void DebrisContainer::addDebris(Debris &debris) {
-
+        debris_vector.push_back(debris);
     }
 
     void DebrisContainer::cleanDebrisVector() {

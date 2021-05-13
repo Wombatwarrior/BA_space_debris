@@ -13,9 +13,9 @@ public:
     virtual ~Integrator();
 
     void integrate();
-    void integrateLocation();
-    void integrateVelocity();
-    void integrateForce();
+    void calculatePosition();
+    void calculateVelocity();
+    void calculateAccelaration();
 private:
     double delta_t;
     Debris::DebrisContainer &debris;

@@ -5,15 +5,17 @@
 #pragma once
 #include "debris/DebrisContainer.h"
 #include <array>
+#include "Constants.h"
+#include <math.h>
 
-namespace Forces {
-    enum ForceComponent {KEP, J2, C22, S22, SOL, LUN, SRP, DRAG};
-    class ForceAccumulator {
+namespace Accelaration {
+    enum AccelarationComponent {KEP, J2, C22, S22, SOL, LUN, SRP, DRAG};
+    class AccelarationAccumulator {
     public:
-        ForceAccumulator(std::array<bool,8> &config_arg, Debris::DebrisContainer &debris_arg)
+        AccelarationAccumulator(std::array<bool,8> &config_arg, Debris::DebrisContainer &debris_arg)
         : config (config_arg), debris (debris_arg)
         {};
-        ~ForceAccumulator();
+        ~AccelarationAccumulator();
 
         void addForces();
     private:
