@@ -3,3 +3,22 @@
 //
 
 #include "DebrisContainer.h"
+namespace Debris {
+    DebrisContainer::DebrisContainer() {}
+
+    DebrisContainer::~DebrisContainer() {
+
+    }
+
+    void DebrisContainer::addDebris(Debris &debris) {
+
+    }
+
+    void DebrisContainer::cleanDebrisVector() {
+
+    }
+
+    std::vector<Debris> &DebrisContainer::getDebrisVector() {
+        return debris_vector;
+    }
+}
