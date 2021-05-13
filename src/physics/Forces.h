@@ -16,17 +16,14 @@ namespace Forces {
         ~ForceAccumulator();
 
         void addForces();
-
-        void setConfig(std::array<bool,8> &config);
-        std::array<bool,8> getConfig();
-
-        void setDebris(Debris::DebrisContainer &debris);
-        Debris::DebrisContainer &getDebris();
-
-
     private:
         std::array<bool,8> config;
         Debris::DebrisContainer &debris;
+    public:
+        void setConfig(std::array<bool,8> &config);
+        std::array<bool,8> getConfig();
+        void setDebris(Debris::DebrisContainer &debris);
+        Debris::DebrisContainer &getDebris();
     };
 
     namespace KepComponent {

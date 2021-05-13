@@ -9,7 +9,6 @@ namespace Debris {
     class DebrisContainer {
     public:
         DebrisContainer();
-
         virtual ~DebrisContainer();
 
         void addDebris(Debris &debris);
