@@ -31,8 +31,8 @@ void Integrator::calculateVelocity(){
     for (auto &d : debris.getDebrisVector()){
         new_velocity = d.getVelocity();
         new_velocity[0] = new_velocity[0] + factor * (d.getAccT0()[0] + d.getAccT1()[0]);
-        new_velocity[0] = new_velocity[0] + factor * (d.getAccT0()[0] + d.getAccT1()[0]);
-        new_velocity[0] = new_velocity[0] + factor * (d.getAccT0()[0] + d.getAccT1()[0]);
+        new_velocity[1] = new_velocity[1] + factor * (d.getAccT0()[1] + d.getAccT1()[1]);
+        new_velocity[2] = new_velocity[2] + factor * (d.getAccT0()[2] + d.getAccT1()[2]);
         d.setVelocity(new_velocity);
     }
 }
