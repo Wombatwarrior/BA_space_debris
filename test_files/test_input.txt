@@ -1,0 +1,12 @@
+# start time of the simulation
+start_t=1.0
+# time step
+delta_t=0.01
+# end time of the simulation
+end_t=54000
+# test debris
+# position|velocity|acceleration_t0|acceleration_t1
+# should be something similar to the ISS orbit in respect to orbit energy
+debris=6780,0,0|0,7.7,0|0,0,0|0,0,0
+# acceleration components to apply
+acc_config=1,0,0,0,0,0,0,0

@@ -5,18 +5,18 @@
 #pragma once
 #include <fstream>
 #include "../debris/DebrisContainer.h"
-class Output {
+class FileOutput {
 public:
     enum Type {TXT};
-    Output(Debris::DebrisContainer &debris_arg)
-    : debris (debris_arg)
+    FileOutput(Debris::DebrisContainer &debris_arg, std::string output_file_name_arg, Type output_file_type_arg)
+    : debris (debris_arg), output_file_name(output_file_name_arg), output_file_type(output_file_type)
     {}
-    virtual ~Output();
+    virtual ~FileOutput();
 
     void writeDebrisData();
 private:
     Debris::DebrisContainer &debris;
-    std::string file_name;
+    std::string output_file_name;
     Type output_file_type;
 
     void writeDebrisTXT();
@@ -24,8 +24,8 @@ private:
 public:
     Debris::DebrisContainer &getDebris() ;
     void setDebris(Debris::DebrisContainer &debris);
-    const std::string &getFileName() ;
-    void setFileName(const std::string &fileName);
+    std::string &getOutputFileName() ;
+    void setOutputFileName( std::string &outputFileName);
     Type getOutputFileType() ;
     void setOutputFileType(Type outputFileType);
 };

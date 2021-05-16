@@ -13,10 +13,13 @@ namespace Debris {
 
         void addDebris(Debris &debris);
         void cleanDebrisVector();
+        void shiftAcceleration();
     private:
         std::vector<Debris> debris_vector;
     public:
-        std::vector<Debris> &getDebrisVector();
+         std::vector<Debris> &getDebrisVector() ;
+
+        void setDebrisVector( std::vector<Debris> &debrisVector);
     };
 }
 

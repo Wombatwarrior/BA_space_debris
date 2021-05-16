@@ -22,11 +22,20 @@ namespace Debris {
     Debris::~Debris() {
 
     }
-    std::array<double, 3> &Debris::getPosition()  {
+    std::string Debris::toString() {
+        std::stringstream stream;
+        stream << "Debris: X:" << Output::array3DToString(position)
+            << " v: " << Output::array3DToString(velocity)
+            << " a0: " << Output::array3DToString(acc_t0)
+            << " a1: " << Output::array3DToString(acc_t1);
+        return stream.str();
+    }
+
+     std::array<double, 3> &Debris::getPosition()  {
         return position;
     }
 
-    void Debris::setPosition( const std::array<double, 3> &position) {
+    void Debris::setPosition( std::array<double, 3> &position) {
         Debris::position = position;
     }
 
@@ -34,7 +43,7 @@ namespace Debris {
         return velocity;
     }
 
-    void Debris::setVelocity( const std::array<double, 3> &velocity) {
+    void Debris::setVelocity( std::array<double, 3> &velocity) {
         Debris::velocity = velocity;
     }
 
@@ -42,15 +51,16 @@ namespace Debris {
         return acc_t0;
     }
 
-    void Debris::setAccT0(const std::array<double, 3> &accT0) {
+    void Debris::setAccT0( std::array<double, 3> &accT0) {
         acc_t0 = accT0;
     }
 
-     std::array<double, 3> &Debris::getAccT1() {
+    std::array<double, 3> &Debris::getAccT1()  {
         return acc_t1;
     }
 
-    void Debris::setAccT1( const std::array<double, 3> &AccT1) {
-        acc_t1 = AccT1;
+    void Debris::setAccT1( std::array<double, 3> &accT1) {
+        acc_t1 = accT1;
     }
+
 }

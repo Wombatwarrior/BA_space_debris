@@ -7,8 +7,8 @@
 
 class Integrator {
 public:
-    Integrator(Debris::DebrisContainer &debris_arg)
-    : debris (debris_arg)
+    Integrator(Debris::DebrisContainer &debris_arg, double delta_t_arg)
+    : debris (debris_arg), delta_t(delta_t_arg)
     {};
     virtual ~Integrator();
 

@@ -2,33 +2,41 @@
 // Created by Oliver on 12.05.21.
 //
 
-#include "debris/DebrisContainer.h"
-#include "physics/Acceleration.h"
-#include "physics/Integrator.h"
-#include "io/IOUtils.h"
+#include "debris/include.h"
+#include "physics/include.h"
+#include "io/include.h"
 
-int main(){
-    Debris::DebrisContainer c;
-    Debris::Debris d;
-    d.setPosition({1,2,3});
-    c.addDebris(d);
-    Debris::Debris &dr=c.getDebrisVector()[0];
-    std::array<bool,8> config{true,false,false,false,false,false,false,false};
+int main(int argc, char **argv){
     std::cout << "start" << std::endl;
-    std::cout << Output::array3DToString(dr.getPosition()) << std::endl;
-    std::cout << Output::array3DToString(dr.getVelocity()) << std::endl;
-    std::cout << Output::array3DToString(dr.getAccT0()) << std::endl;
-    Acceleration::AccelerationAccumulator ac(config, c);
-    ac.applyComponents();
-    std::cout << "acc" << std::endl;
-    std::cout << Output::array3DToString(dr.getPosition()) << std::endl;
-    std::cout << Output::array3DToString(dr.getVelocity()) << std::endl;
-    std::cout << Output::array3DToString(dr.getAccT0()) << std::endl;
-    Integrator i(c);
-    i.setDeltaT(0.5);
-    i.integrate();
+    std::cout << "debris..." << std::endl;
+    Debris::DebrisContainer debris;
+    std::cout << "command line..." << std::endl;
+    CommandLineInput command_line(argc,argv);
+    std::cout << "file input..." << std::endl;
+    FileInput file_input(debris, command_line.getInputFileName(), command_line.getInputFileType());
+    std::cout << "accumulator..." << std::endl;
+    Acceleration::AccelerationAccumulator accumulator(file_input.getAccConfig(), debris);
+    std::cout << "integrator..." << std::endl;
+    Integrator integrator(debris, file_input.getDeltaT());
+    double current_time=file_input.getStartT();
+    for (auto &d : debris.getDebrisVector()){
+        std::cout << d.toString() << std::endl;
+    }
+    int iteration = 0;
+    while (current_time <= file_input.getEndT()){
+        iteration++;
+        if (iteration % 3000 == 0){
+            for (auto &d : debris.getDebrisVector()){
+                std::cout << iteration << ": " << d.toString() << std::endl;
+            }
+        }
+        accumulator.applyComponents();
+        integrator.integrate();
+        current_time += file_input.getDeltaT();
+    }
+    for (auto &d : debris.getDebrisVector()){
+        std::cout << d.toString() << std::endl;
+    }
     std::cout << "end" << std::endl;
-    std::cout << Output::array3DToString(dr.getPosition()) << std::endl;
-    std::cout << Output::array3DToString(dr.getVelocity()) << std::endl;
-    std::cout << Output::array3DToString(dr.getAccT0()) << std::endl;
+    return 0;
 }
