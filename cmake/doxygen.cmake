@@ -1,10 +1,8 @@
-option(BUILD_DOC "Build documentation" OFF)
-
-if (BUILD_DOC)
+if (CMAKE_BUILD_TYPE STREQUAL "Release")
     find_package(Doxygen)
     if (DOXYGEN_FOUND)
         set(DOXYGEN_IN ${PROJECT_SOURCE_DIR}/Doxyfile)
-        message("Doxygen build started")
+        message("-- Doxygen build documentation")
         add_custom_target(
                 doc_doxygen ALL
                 COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_IN}
@@ -12,9 +10,9 @@ if (BUILD_DOC)
                 COMMENT "Generating documentation"
                 VERBATIM
         )
-    else (DOXYGEN_FOUND)
-        message("Doxygen not found... skipped generating documentation")
-    endif (DOXYGEN_FOUND)
-    else (BUILD_DOC)
-        message("Skipped generating documentation")
-endif (BUILD_DOC)
+    else ()
+        message("-- Doxygen not found... skipped generating documentation")
+    endif ()
+else ()
+    message("-- Skipped generating documentation")
+endif ()
