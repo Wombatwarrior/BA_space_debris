@@ -6,52 +6,238 @@
 #include <string>
 #include <fstream>
 #include "../debris/DebrisContainer.h"
+
+/**
+ * @class FileInput
+ *
+ * @brief Reads input data from a file
+ */
 class FileInput{
 public:
-    enum Type {TXT};
+    /**
+     * @brief Enumerates the possible file types used for input
+     */
+    enum Type {
+        TXT /**< File with .txt extension. Lines are in the format "<token>=<value>" and lines starting with "#" are ignored*/
+    };
+
+    /**
+     * @brief Creates new FileInput object and reads in data
+     *
+     * Constructor reads in the data from the given input file of the given FileInput::Type
+     * and safes the result in the private member variables.
+     *
+     * @param debris_arg
+     * @param input_file_name_arg
+     * @param input_file_type_arg
+     */
     FileInput(Debris::DebrisContainer &debris_arg, std::string input_file_name_arg, Type input_file_type_arg)
     : debris (debris_arg), input_file_name(input_file_name_arg), input_file_type(input_file_type_arg)
     {
         readDebrisData();
     }
+
+    /**
+     * @brief Default destructor
+     *
+     * Destroys the FileInput object
+     */
     virtual ~FileInput();
 
+    /**
+     * @brief Reads data from a file
+     *
+     * Reads the data from the file with the #input_file_name
+     * by calling a specialized function depending on the FileInput::Type #input_file_type
+     */
     void readDebrisData();
 private:
-    struct line_content {
-        std::string token;
-        std::string value;
+
+    /**
+     * @struct TxtLineContent
+     *
+     * @brief Represents the content of a line of a FileInput::Type::TXT file
+     *
+     * A line of a FileInput::Type::TXT file has the format "<token>=<value>".
+     * This struct is used to have simpler access to the two components separated by the "="
+     */
+    struct TxtLineContent {
+        std::string token;/**< represents the kind of data represented by the line*/
+        std::string value;/**< holds the actual value of the data*/
     };
 
-    struct line_content tokenize_line(const std::string &line);
+    /**
+     * @brief Splits up a given line of a FileInput::Type::TXT file
+     *
+     * Splits up a given line of a FileInput::Type::TXT file into the
+     * FileInput::TxtLineContent::token string and the
+     * FileInput::TxtLineContent::value string and returns
+     * FileInput::TxtLineContent struct holding the two strings
+     *
+     * @param line A string representing a line of a FileInput::Type::TXT file
+     * @return FileInput::TxtLineContent struct holding the result of splitting up the line
+     */
+    struct TxtLineContent tokenizeLine(const std::string &line);
 
+    /**
+     * @brief Sets the member variable of a given Debris::Debris object
+     *
+     * Sets the member variable of a given Debris::Debris object.
+     * The values are given in a string of the format
+     * "Debris::Debris::position|Debris::Debris::velocity|Debris::Debris::acc_t0|Debris::Debris::acc_t1"
+     * Splits up the string and extracts the four 3D vectors representing the state of a Debris::Debris object.
+     * Writes the extracted values into the member variables of the given Debris::Debris object referenced by d
+     *
+     * @param d Reference to the Debris::Debris object to write the read values to
+     * @param line A string representing the state of a Debris::Debris object in the format "position|velocity|acc_t0|acc_t1"
+     */
     void setDebrisValues(Debris::Debris &d, const std::string &line);
 
+    /**
+     * @brief Sets the configuration vector specifying the Acceleration::AccelerationComponent to apply
+     *
+     * Sets the configuration vector specifying the Acceleration::AccelerationComponent to apply
+     * based on a string representation of a 8D bool vector encoding the Acceleration::AccelerationComponent to apply in the simulation.
+     * The Order of flags is
+     * - Acceleration::AccelerationComponent::KEP
+     * - Acceleration::AccelerationComponent::J2
+     * - Acceleration::AccelerationComponent::C22
+     * - Acceleration::AccelerationComponent::S22
+     * - Acceleration::AccelerationComponent::SOL
+     * - Acceleration::AccelerationComponent::LUN
+     * - Acceleration::AccelerationComponent::SRP
+     * - Acceleration::AccelerationComponent::DRAG
+     * The vector entries are encoding is
+     * - 0 = false
+     * - 1 = true
+     *
+     *
+     * @param line String representation of a 8D bool vector encoding the Acceleration::AccelerationComponent to apply in the simulation.
+     * The Order of flags is [KEP, J2, C22, S22, SOL, LUN, SRP, DRAG]
+     */
     void setConfigValues(const std::string &line);
 
+    /**
+     * @brief Specialized function to read the data from a FileInput::Type::TXT file
+     */
     void readDebrisTXT();
 
-    Debris::DebrisContainer &debris;
-    std::string input_file_name;
-    Type input_file_type;
-    double delta_t;
-    double start_t;
-    double end_t;
+    Debris::DebrisContainer &debris;/**< Reference to a Debris::DebrisContainer object to add Debris::Debris objects read from the input file*/
+    std::string input_file_name;/**< Complete name of the input file containing the file extension*/
+    Type input_file_type;/**< InputFile::Type of the input file*/
+    double delta_t;/**< Time step to use in the simulation*/
+    double start_t;/**< Start time of the simulation*/
+    double end_t;/**< End time of the simulation*/
+    /**
+     *
+     * 8D bool vector encoding the Acceleration::AccelerationComponent to apply in the simulation.
+     * The Order of flags is
+     * - Acceleration::AccelerationComponent::KEP
+     * - Acceleration::AccelerationComponent::J2
+     * - Acceleration::AccelerationComponent::C22
+     * - Acceleration::AccelerationComponent::S22
+     * - Acceleration::AccelerationComponent::SOL
+     * - Acceleration::AccelerationComponent::LUN
+     * - Acceleration::AccelerationComponent::SRP
+     * - Acceleration::AccelerationComponent::DRAG
+     */
     std::array<bool,8> acc_config;
-
 public:
-    Debris::DebrisContainer &getDebris() ;
+    /**
+     * @brief Getter function for #debris
+     *
+     * @return Value of #debris
+     */
+    Debris::DebrisContainer &getDebris();
+
+    /**
+     * @brief Setter function for #debris
+     *
+     * @param debris New value of #debris
+     */
     void setDebris(Debris::DebrisContainer &debris);
-    std::string &getInputFileName() ;
-    void setInputFileName( std::string &inputFileName);
-    Type getInputFileType() ;
+
+    /**
+     * @brief Getter function for #input_file_name
+     *
+     * @return Value of #input_file_name
+     */
+    std::string &getInputFileName();
+
+    /**
+     * @brief Setter function for #input_file_name
+     *
+     * @param inputFileName New value of #input_file_name
+     */
+    void setInputFileName(std::string &inputFileName);
+
+    /**
+     * @brief Getter function for #input_file_type
+     *
+     * @return Value of #input_file_type
+     */
+    Type getInputFileType();
+
+    /**
+     * @brief Setter function for #input_file_type
+     *
+     * @param inputFileType New value of #input_file_type
+     */
     void setInputFileType(Type inputFileType);
-    double getDeltaT() ;
+
+    /**
+     * @brief Getter function for #delta_t
+     *
+     * @return Value of #delta_t
+     */
+    double getDeltaT();
+
+    /**
+     * @brief Setter function for #delta_t
+     *
+     * @param deltaT New value of #delta_t
+     */
     void setDeltaT(double deltaT);
-    double getStartT() ;
+
+    /**
+     * @brief Getter function for #start_t
+     *
+     * @return Value of #start_t
+     */
+    double getStartT();
+
+    /**
+     * @brief Setter function for #start_t
+     *
+     * @param startT New value of #start_t
+     */
     void setStartT(double startT);
-    double getEndT() ;
+
+    /**
+     * @brief Getter function for #end_t
+     *
+     * @return Value of #end_t
+     */
+    double getEndT();
+
+    /**
+     * @brief Setter function for #end_t
+     *
+     * @param endT New value of #end_t
+     */
     void setEndT(double endT);
-    std::array<bool, 8> &getAccConfig() ;
-    void setAccConfig( std::array<bool, 8> &accConfig);
+
+    /**
+     * @brief Getter function for #acc_config
+     *
+     * @return Value of #acc_config
+     */
+    std::array<bool, 8> &getAccConfig();
+
+    /**
+     * @brief Setter function for #acc_config
+     *
+     * @param accConfig New value of #acc_config
+     */
+    void setAccConfig(std::array<bool, 8> &accConfig);
 };

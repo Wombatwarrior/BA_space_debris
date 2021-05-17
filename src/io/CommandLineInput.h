@@ -33,6 +33,9 @@ private:
      * @brief The internal parsing function
      *
      * Parses the command line arguments ans sets the private member variables #input_file_name, #input_file_type, #output_file_name and #output_file_type
+     * The file types are determined by the file extensions.
+     * The tile name still contain the extension.
+     *
      *
      * @param argc Number of command line parameters
      * @param argv Pointer array holding the argument strings
@@ -48,56 +51,56 @@ public:
     /**
      * @brief Getter function for #input_file_name
      *
-     * @return The name of the input file in #input_file_name
+     * @return Value of #input_file_name
      */
     std::string &getInputFileName();
 
     /**
      * @brief Setter function for #input_file_name
      *
-     * @param inputFileName The new value of #input_file_name
+     * @param inputFileName New value of #input_file_name
      */
     void setInputFileName(std::string &inputFileName);
 
     /**
      * @brief Getter function for #input_file_type
      *
-     * @return The FileInput::Type value of #input_file_type
+     * @return Value of #input_file_type
      */
     FileInput::Type getInputFileType();
 
     /**
      * @brief Setter function for #input_file_type
      *
-     * @param inputFileType The new FileInput::Type value of #input_file_type
+     * @param inputFileType New value of #input_file_type
      */
     void setInputFileType(FileInput::Type inputFileType);
 
     /**
      * @brief Getter function for #output_file_name
      *
-     * @return The name of the output file in #output_file_name
+     * @return Value of #output_file_name
      */
     std::string &getOutputFileName();
 
     /**
      * @brief Setter function for #output_file_name
      *
-     * @param outputFileName The new value of #output_file_name
+     * @param outputFileName New value of #output_file_name
      */
     void setOutputFileName(std::string &outputFileName);
 
     /**
      * @brief Getter function for #output_file_type
      *
-     * @return The FileOutput::Type value of #output_file_type
+     * @return Value of #output_file_type
      */
     FileOutput::Type getOutputFileType();
 
     /**
      * @brief Setter function for #output_file_type
      *
-     * @param outputFileType The new FileOutput::Type value of #output_file_type
+     * @param outputFileType New value of #output_file_type
      */
     void setOutputFileType(FileOutput::Type outputFileType);
 };

@@ -57,14 +57,14 @@ namespace Debris {
         /**
          * @brief Getter function for #debris_vector vector
          *
-         * @return Reference to the #debris_vector
+         * @return Value of #debris_vector
          */
         std::vector<Debris> &getDebrisVector() ;
 
         /**
          * @brief Setter function for #debris_vector
          *
-         * @param debrisVector Reference to the new #debris_vector
+         * @param debrisVector New value of #debris_vector
          */
         void setDebrisVector( std::vector<Debris> &debrisVector);
     };

@@ -16,8 +16,8 @@ void FileInput::readDebrisData() {
     }
 }
 
-struct FileInput::line_content FileInput::tokenize_line(const std::string& line) {
-    line_content l;
+struct FileInput::TxtLineContent FileInput::tokenizeLine(const std::string& line) {
+    TxtLineContent l;
     auto split_pos = line.find('=');
     l.token = line.substr(0, split_pos);
     l.value = line.substr(split_pos + 1);
@@ -76,14 +76,14 @@ void FileInput::setConfigValues(const std::string &line) {
 void FileInput::readDebrisTXT() {
     std::ifstream input_file(input_file_name);
     std::string line;
-    struct line_content content;
+    struct TxtLineContent content;
     Debris::Debris d;
     if (input_file.is_open()) {
         while (std::getline(input_file, line)) {
             if (line.empty() or line[0] == '#') {
                 continue;
             }
-            content = tokenize_line(line);
+            content = tokenizeLine(line);
             if (content.value.empty()) {
                 // no value
                 continue;
