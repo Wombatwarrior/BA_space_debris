@@ -15,6 +15,8 @@
 class FileInput{
 public:
     /**
+     * @enum Type
+     *
      * @brief Enumerates the possible file types used for input
      */
     enum Type {
