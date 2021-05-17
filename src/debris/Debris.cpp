@@ -27,11 +27,21 @@ namespace Debris {
         stream << "Debris: X:" << IOUtils::array3DToString(position)
                << " v:" << IOUtils::array3DToString(velocity)
                << " a0:" << IOUtils::array3DToString(acc_t0)
-               << " a1:" << IOUtils::array3DToString(acc_t1);
+               << " a1:" << IOUtils::array3DToString(acc_t1)
+               << " ||X||: " << getHeight()
+               << " ||v||: " << getSpeed();
         return stream.str();
     }
 
-     std::array<double, 3> &Debris::getPosition()  {
+    double Debris::getHeight() {
+        return std::sqrt(position[0]*position[0]+position[1]*position[1]+position[2]*position[2]);
+    }
+
+    double Debris::getSpeed() {
+        return std::sqrt(velocity[0]*velocity[0]+velocity[1]*velocity[1]+velocity[2]*velocity[2]);
+    }
+
+    std::array<double, 3> &Debris::getPosition()  {
         return position;
     }
 

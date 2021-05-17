@@ -67,7 +67,7 @@ void FileInput::setConfigValues(const std::string &line) {
     std::stringstream ss(line);
     for (int i = 0; i < 8; ++i) {
         ss >> acc_config[i];
-        if(ss.peek() == 's'){
+        if(ss.peek() == ','){
             ss.ignore();
         }
     }

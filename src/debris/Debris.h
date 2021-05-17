@@ -5,6 +5,7 @@
 #pragma once
 #include <array>
 #include <sstream>
+#include <math.h>
 #include "../io/IOUtils.h"
 /**
  * @namespace Debris
@@ -48,6 +49,20 @@ namespace Debris {
          * @return The string "Debris: X:#position v:#velocity a0:#acc_t0 a1:#acc_t1"
          */
         std::string toString();
+
+        /**
+         * @brief Calculates distance from the origin of the coordinate frame
+         *
+         * @return Euclidean norm of the #position vector
+         */
+        double getHeight();
+
+        /**
+         * @brief Calculates speed of the debris
+         *
+         * @return Euclidean norm of the #velocity vector
+         */
+        double getSpeed();
     private:
         std::array<double,3> position;/**< 3D vector representation of the debris position*/
         std::array<double,3> velocity;/**< 3D vector representation of the debris velocity*/
