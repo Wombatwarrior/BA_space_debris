@@ -62,7 +62,7 @@ namespace Debris {
         std::array<double, 3> &getPosition() ;
 
         /**
-         * @brief Getter function for #position vector
+         * @brief Setter function for #position vector
          *
          * @param position 3D vector representation of the debris #position
          */
@@ -76,7 +76,7 @@ namespace Debris {
         std::array<double, 3> &getVelocity() ;
 
         /**
-         * @brief Getter function for #velocity vector
+         * @brief Setter function for #velocity vector
          *
          * @param velocity 3D vector representation of the debris #velocity
          */
@@ -90,7 +90,7 @@ namespace Debris {
         std::array<double, 3> &getAccT0() ;
 
         /**
-         * @brief Getter function for #acc_t0 vector
+         * @brief Setter function for #acc_t0 vector
          *
          * @param accT0 3D vector representation of the debris #acc_t0
          */
@@ -104,7 +104,7 @@ namespace Debris {
         std::array<double, 3> &getAccT1() ;
 
         /**
-         * @brief Getter function for #acc_t1 vector
+         * @brief Setter function for #acc_t1 vector
          *
          * @param accT1 3D vector representation of the debris #acc_t1
          */
