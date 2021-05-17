@@ -12,7 +12,7 @@
  */
 namespace Debris {
     /**
-     * @class Debris
+     * @class Debris::Debris
      * @brief Represents a single peace of debris
      */
     class Debris {

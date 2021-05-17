@@ -27,9 +27,9 @@ public:
      * Constructor reads in the data from the given input file of the given FileInput::Type
      * and safes the result in the private member variables.
      *
-     * @param debris_arg
-     * @param input_file_name_arg
-     * @param input_file_type_arg
+     * @param debris_arg Reference to the Debris:DebrisContainer object to add Debris::Debris objects to
+     * @param input_file_name_arg Complete name of the input file to read data from
+     * @param input_file_type_arg FileInput::Type of the input file
      */
     FileInput(Debris::DebrisContainer &debris_arg, std::string input_file_name_arg, Type input_file_type_arg)
     : debris (debris_arg), input_file_name(input_file_name_arg), input_file_type(input_file_type_arg)
@@ -56,9 +56,9 @@ private:
     /**
      * @struct TxtLineContent
      *
-     * @brief Represents the content of a line of a FileInput::Type::TXT file
+     * @brief Represents the content of a line of a #TXT file
      *
-     * A line of a FileInput::Type::TXT file has the format "<token>=<value>".
+     * A line of a #TXT file has the format "<token>=<value>".
      * This struct is used to have simpler access to the two components separated by the "="
      */
     struct TxtLineContent {
@@ -67,14 +67,14 @@ private:
     };
 
     /**
-     * @brief Splits up a given line of a FileInput::Type::TXT file
+     * @brief Splits up a given line of a #TXT file
      *
-     * Splits up a given line of a FileInput::Type::TXT file into the
+     * Splits up a given line of a #TXT file into the
      * FileInput::TxtLineContent::token string and the
      * FileInput::TxtLineContent::value string and returns
      * FileInput::TxtLineContent struct holding the two strings
      *
-     * @param line A string representing a line of a FileInput::Type::TXT file
+     * @param line A string representing a line of a #TXT file
      * @return FileInput::TxtLineContent struct holding the result of splitting up the line
      */
     struct TxtLineContent tokenizeLine(const std::string &line);
@@ -99,15 +99,16 @@ private:
      * Sets the configuration vector specifying the Acceleration::AccelerationComponent to apply
      * based on a string representation of a 8D bool vector encoding the Acceleration::AccelerationComponent to apply in the simulation.
      * The Order of flags is
-     * - Acceleration::AccelerationComponent::KEP
-     * - Acceleration::AccelerationComponent::J2
-     * - Acceleration::AccelerationComponent::C22
-     * - Acceleration::AccelerationComponent::S22
-     * - Acceleration::AccelerationComponent::SOL
-     * - Acceleration::AccelerationComponent::LUN
-     * - Acceleration::AccelerationComponent::SRP
-     * - Acceleration::AccelerationComponent::DRAG
-     * The vector entries are encoding is
+     * - #Acceleration::KEP
+     * - #Acceleration::J2
+     * - #Acceleration::C22
+     * - #Acceleration::S22
+     * - #Acceleration::SOL
+     * - #Acceleration::LUN
+     * - #Acceleration::SRP
+     * - #Acceleration::DRAG
+     *
+     * The vector entry encoding is
      * - 0 = false
      * - 1 = true
      *
@@ -118,7 +119,7 @@ private:
     void setConfigValues(const std::string &line);
 
     /**
-     * @brief Specialized function to read the data from a FileInput::Type::TXT file
+     * @brief Specialized function to read the data from a #TXT file
      */
     void readDebrisTXT();
 
@@ -129,17 +130,18 @@ private:
     double start_t;/**< Start time of the simulation*/
     double end_t;/**< End time of the simulation*/
     /**
+     * @brief 8D bool vector encoding the Acceleration::AccelerationComponent to apply in the simulation.
      *
      * 8D bool vector encoding the Acceleration::AccelerationComponent to apply in the simulation.
      * The Order of flags is
-     * - Acceleration::AccelerationComponent::KEP
-     * - Acceleration::AccelerationComponent::J2
-     * - Acceleration::AccelerationComponent::C22
-     * - Acceleration::AccelerationComponent::S22
-     * - Acceleration::AccelerationComponent::SOL
-     * - Acceleration::AccelerationComponent::LUN
-     * - Acceleration::AccelerationComponent::SRP
-     * - Acceleration::AccelerationComponent::DRAG
+     * - #Acceleration::KEP
+     * - #Acceleration::J2
+     * - #Acceleration::C22
+     * - #Acceleration::S22
+     * - #Acceleration::SOL
+     * - #Acceleration::LUN
+     * - #Acceleration::SRP
+     * - #Acceleration::DRAG
      */
     std::array<bool,8> acc_config;
 public:

@@ -61,7 +61,7 @@ namespace Acceleration{
     }
 
     namespace KepComponent {
-        void apply( Debris::Debris &d, std::array<double,3> &acc_kep, std::array<double,3> &acc) {
+        void apply( Debris::Debris &d, std::array<double,3> &acc_kep, std::array<double,3> &acc_total) {
             acc_kep = d.getPosition();
             double divisor = acc_kep[0] * acc_kep[0] + acc_kep[1] * acc_kep[1] + acc_kep[2] * acc_kep[2];
             divisor = divisor * divisor * divisor;
@@ -72,51 +72,51 @@ namespace Acceleration{
             acc_kep[0] = acc_kep[0] / divisor;
             acc_kep[1] = acc_kep[1] / divisor;
             acc_kep[2] = acc_kep[2] / divisor;
-            acc[0] = acc[0] - acc_kep[0];
-            acc[1] = acc[1] - acc_kep[1];
-            acc[2] = acc[2] - acc_kep[2];
+            acc_total[0] = acc_total[0] - acc_kep[0];
+            acc_total[1] = acc_total[1] - acc_kep[1];
+            acc_total[2] = acc_total[2] - acc_kep[2];
         }
     }
 
 
     namespace J2Component {
-        void apply( Debris::Debris &d, std::array<double,3> &acc_j2, std::array<double,3> &acc){
+        void apply( Debris::Debris &d, std::array<double,3> &acc_j2, std::array<double,3> &acc_total){
 
         }
     }
 
     namespace C22Component {
-        void apply( Debris::Debris &d, std::array<double,3> &acc_c22, std::array<double,3> &acc){
+        void apply( Debris::Debris &d, std::array<double,3> &acc_c22, std::array<double,3> &acc_total){
 
         }
     }
 
     namespace S22Component {
-        void apply( Debris::Debris &d, std::array<double,3> &acc_s22, std::array<double,3> &acc){
+        void apply( Debris::Debris &d, std::array<double,3> &acc_s22, std::array<double,3> &acc_total){
 
         }
     }
 
     namespace SolComponent {
-        void apply( Debris::Debris &d, std::array<double,3> &acc_sol, std::array<double,3> &acc){
+        void apply( Debris::Debris &d, std::array<double,3> &acc_sol, std::array<double,3> &acc_total){
 
         }
     }
 
     namespace LunComponent {
-        void apply( Debris::Debris &d, std::array<double,3> &acc_lun, std::array<double,3> &acc){
+        void apply( Debris::Debris &d, std::array<double,3> &acc_lun, std::array<double,3> &acc_total){
 
         }
     }
 
     namespace SRPComponent {
-        void apply( Debris::Debris &d, std::array<double,3> &acc_srp, std::array<double,3> &acc){
+        void apply( Debris::Debris &d, std::array<double,3> &acc_srp, std::array<double,3> &acc_total){
 
         }
     }
 
     namespace DragComponent  {
-        void apply( Debris::Debris &d, std::array<double,3> &acc_drag, std::array<double,3> &acc){
+        void apply( Debris::Debris &d, std::array<double,3> &acc_drag, std::array<double,3> &acc_total){
 
         }
     }
