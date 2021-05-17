@@ -143,6 +143,11 @@ namespace Acceleration {
      * @brief Encapsulates functionality to calculate acceleration for Acceleration::J2
      */
     namespace J2Component {
+        namespace {
+            inline double getFactor_fst(){
+                return 0.5*Physics::GM_EARTH*Physics::R_EARTH*Physics::R_EARTH*std::sqrt(5.0)*Physics::C_20;
+            }
+        }
         /**
          * @brief Calculates acceleration due to earth gravity. Taking in account the earth is neither a point mass nor  a homogenous spherical mass
          *
@@ -159,6 +164,9 @@ namespace Acceleration {
      * @brief Encapsulates functionality to calculate acceleration for Acceleration::C22
      */
     namespace C22Component {
+        namespace {
+
+        }
         /**
          * @brief Calculates acceleration due to earth gravity. Taking in account the earth is neither a point mass nor not a homogenous spherical mass
          *
@@ -175,6 +183,9 @@ namespace Acceleration {
      * @brief Encapsulates functionality to calculate acceleration for Acceleration::S22
      */
     namespace S22Component {
+        namespace {
+
+        }
         /**
          * @brief Calculates acceleration due to earth gravity. Taking in account the earth is neither a point mass nor not a homogenous spherical mass
          *
@@ -191,6 +202,9 @@ namespace Acceleration {
      * @brief Encapsulates functionality to calculate acceleration for Acceleration::SOL
      */
     namespace SolComponent {
+        namespace {
+
+        }
         /**
          * @brief Calculates acceleration due to tidal forces caused by the sun
          *
@@ -207,6 +221,9 @@ namespace Acceleration {
      * @brief Encapsulates functionality to calculate acceleration for Acceleration::LUN
      */
     namespace LunComponent {
+        namespace {
+
+        }
         /**
          * @brief Calculates acceleration due to tidal forces caused by the moon
          *
@@ -223,6 +240,9 @@ namespace Acceleration {
      * @brief Encapsulates functionality to calculate acceleration for Acceleration::SRP
      */
     namespace SRPComponent {
+        namespace {
+
+        }
         /**
          * @brief Calculates acceleration due to pressure of the suns radiation
          *
@@ -239,6 +259,9 @@ namespace Acceleration {
      * @brief Encapsulates functionality to calculate acceleration for Acceleration::DRAG
      */
     namespace DragComponent  {
+        namespace {
+
+        }
         /**
          * @brief Calculates acceleration due to the friction between the object and the earths atmosphere
          *
