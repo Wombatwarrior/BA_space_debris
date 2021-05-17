@@ -17,7 +17,7 @@ int main(int argc, char **argv){
     std::cout << "accumulator..." << std::endl;
     Acceleration::AccelerationAccumulator accumulator(file_input.getAccConfig(), debris);
     std::cout << "integrator..." << std::endl;
-    Integrator integrator(debris, file_input.getDeltaT());
+    Integrator integrator(debris, accumulator, file_input.getDeltaT());
     double current_time=file_input.getStartT();
     for (auto &d : debris.getDebrisVector()){
         std::cout << d.toString() << std::endl;
@@ -30,7 +30,6 @@ int main(int argc, char **argv){
                 std::cout << iteration << ": " << d.toString() << std::endl;
             }
         }
-        accumulator.applyComponents();
         integrator.integrate();
         current_time += file_input.getDeltaT();
     }

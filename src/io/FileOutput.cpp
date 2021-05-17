@@ -9,11 +9,11 @@ FileOutput::~FileOutput() {
 }
 
 Debris::DebrisContainer &FileOutput::getDebris()  {
-    return debris;
+    return *debris;
 }
 
 void FileOutput::setDebris(Debris::DebrisContainer &debris) {
-    FileOutput::debris = debris;
+    FileOutput::debris = &debris;
 }
 
  std::string &FileOutput::getOutputFileName()  {

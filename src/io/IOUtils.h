@@ -8,14 +8,21 @@
 #include <array>
 #include <sstream>
 
-namespace Output {
+/**
+ * @namespace IOUtils
+ *
+ * @brief Contains utility functions for general io operations
+ */
+namespace IOUtils {
+    /**
+     * @brief Converts a 3D vector of doubles into a readable string representation
+     *
+     * @param array Reference to the 3D vector to convert
+     * @return String representation of the given 3D vector
+     */
     inline std::string array3DToString(const std::array<double,3> &array) {
         std::ostringstream result;
         result << "[" << array[0] << ", " << array[1] << ", " << array[2] << "]";
         return result.str();
     }
-}
-
-namespace Input {
-
 }

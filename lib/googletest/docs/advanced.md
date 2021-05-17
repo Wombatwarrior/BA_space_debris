@@ -2254,9 +2254,9 @@ time.
 If you combine this with `--gtest_repeat=N`, googletest will pick a different
 random seed and re-shuffle the tests in each iteration.
 
-### Controlling Test Output
+### Controlling Test IOUtils
 
-#### Colored Terminal Output
+#### Colored Terminal IOUtils
 
 googletest can use colors in its terminal output to make it easier to spot the
 important information:
@@ -2299,7 +2299,7 @@ By default, googletest prints the time it takes to run each test. To disable
 that, run the test program with the `--gtest_print_time=0` command line flag, or
 set the GTEST_PRINT_TIME environment variable to `0`.
 
-#### Suppressing UTF-8 Text Output
+#### Suppressing UTF-8 Text IOUtils
 
 In case of assertion failures, googletest prints expected and actual values of
 type `string` both as hex-encoded strings as well as in readable UTF-8 text if

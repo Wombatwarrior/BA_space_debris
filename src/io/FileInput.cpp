@@ -98,7 +98,7 @@ void FileInput::readDebrisTXT() {
                 setConfigValues(content.value);
             }else if (content.token == "debris"){
                 setDebrisValues(d, content.value);
-                debris.addDebris(d);
+                debris->addDebris(d);
             }else {
                 // unknown token
             }
@@ -107,11 +107,11 @@ void FileInput::readDebrisTXT() {
 }
 
 Debris::DebrisContainer &FileInput::getDebris()  {
-    return debris;
+    return *debris;
 }
 
 void FileInput::setDebris(Debris::DebrisContainer &debris) {
-    FileInput::debris = debris;
+    FileInput::debris = &debris;
 }
 
  std::string &FileInput::getInputFileName()  {

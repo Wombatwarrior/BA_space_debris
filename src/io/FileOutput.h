@@ -31,7 +31,7 @@ public:
      * @param output_file_type_arg FileOutput::Type of the output file
      */
     FileOutput(Debris::DebrisContainer &debris_arg, std::string output_file_name_arg, Type output_file_type_arg)
-    : debris (debris_arg), output_file_name(output_file_name_arg), output_file_type(output_file_type)
+    : debris (&debris_arg), output_file_name(output_file_name_arg), output_file_type(output_file_type)
     {}
 
     /**
@@ -54,7 +54,7 @@ private:
      */
     void writeDebrisTXT();
 
-    Debris::DebrisContainer &debris;/**< Reference to a Debris::DebrisContainer object to add Debris::Debris objects read from the input file*/
+    Debris::DebrisContainer *debris;/**< Reference to a Debris::DebrisContainer object to add Debris::Debris objects read from the input file*/
     std::string output_file_name;/**< Complete name of the output file containing the file extension*/
     Type output_file_type;/**< FileOutput::Type of the output file*/
 public:

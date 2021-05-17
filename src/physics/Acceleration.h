@@ -44,7 +44,7 @@ namespace Acceleration {
          * @param debris_arg Reference to the Debris::DebrisContainer object holding the Debris::Debris objects to apply acceleration to
          */
         AccelerationAccumulator(const std::array<bool,8> &config_arg, Debris::DebrisContainer &debris_arg)
-        : config (config_arg), debris (debris_arg)
+        : config (config_arg), debris (&debris_arg)
         {};
 
         /**
@@ -90,7 +90,7 @@ namespace Acceleration {
          * - #Acceleration::DRAG
          */
         std::array<bool,8> config;
-        Debris::DebrisContainer &debris; /**< Reference to the Debris::DebrisContainer object holding the Debris::Debris objects to apply acceleration to*/
+        Debris::DebrisContainer *debris; /**< Reference to the Debris::DebrisContainer object holding the Debris::Debris objects to apply acceleration to*/
     public:
         /**
          * @brief Getter function for #config
@@ -128,7 +128,7 @@ namespace Acceleration {
      */
     namespace KepComponent {
         /**
-         * @brief Calculates acceleration due to earth gravity. Assuming the earth as a point mass*
+         * @brief Calculates acceleration due to earth gravity. Assuming the earth as a point mass
          *
          * @param d Reference to the Debris::Debris object to apply the acceleration to
          * @param acc_kep Reference to an 3D vector to write the result for this Acceleration::AccelerationComponent.

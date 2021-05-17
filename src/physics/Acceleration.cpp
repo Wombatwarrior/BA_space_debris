@@ -14,8 +14,8 @@ namespace Acceleration{
         std::array<double,3> new_acc_total{0,0,0};
         std::array<double,3> new_acc_component{0,0,0};
 
-        debris.shiftAcceleration();
-        for (auto &d : debris.getDebrisVector()) {
+        debris->shiftAcceleration();
+        for (auto &d : debris->getDebrisVector()) {
             if (config[KEP]) {
                 KepComponent::apply(d, new_acc_component, new_acc_total);
             }
@@ -53,11 +53,11 @@ namespace Acceleration{
     }
 
     Debris::DebrisContainer &AccelerationAccumulator::getDebris()  {
-        return debris;
+        return *debris;
     }
 
     void AccelerationAccumulator::setDebris(Debris::DebrisContainer &debris) {
-        AccelerationAccumulator::debris = debris;
+        AccelerationAccumulator::debris = &debris;
     }
 
     namespace KepComponent {

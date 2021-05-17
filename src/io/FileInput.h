@@ -34,7 +34,7 @@ public:
      * @param input_file_type_arg FileInput::Type of the input file
      */
     FileInput(Debris::DebrisContainer &debris_arg, std::string input_file_name_arg, Type input_file_type_arg)
-    : debris (debris_arg), input_file_name(input_file_name_arg), input_file_type(input_file_type_arg)
+    : debris (&debris_arg), input_file_name(input_file_name_arg), input_file_type(input_file_type_arg)
     {
         readDebrisData();
     }
@@ -125,7 +125,7 @@ private:
      */
     void readDebrisTXT();
 
-    Debris::DebrisContainer &debris;/**< Reference to a Debris::DebrisContainer object to add Debris::Debris objects read from the input file*/
+    Debris::DebrisContainer *debris;/**< Reference to a Debris::DebrisContainer object to add Debris::Debris objects read from the input file*/
     std::string input_file_name;/**< Complete name of the input file containing the file extension*/
     Type input_file_type;/**< InputFile::Type of the input file*/
     double delta_t;/**< Time step to use in the simulation*/
