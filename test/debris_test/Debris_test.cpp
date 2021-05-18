@@ -3,7 +3,3 @@
 //
 
 #include "Debris_test.h"
-
-TEST(DebrisTestSuite, test){
-
-}

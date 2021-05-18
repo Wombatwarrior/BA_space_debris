@@ -3,7 +3,3 @@
 //
 
 #include "DebrisContainer_test.h"
-
-TEST(DebrisContainerTestSuit, test){
-
-}

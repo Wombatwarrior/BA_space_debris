@@ -69,12 +69,12 @@ namespace Acceleration{
             acc_kep[0] = Physics::GM_EARTH * acc_kep[0];
             acc_kep[1] = Physics::GM_EARTH * acc_kep[1];
             acc_kep[2] = Physics::GM_EARTH * acc_kep[2];
-            acc_kep[0] = acc_kep[0] / divisor;
-            acc_kep[1] = acc_kep[1] / divisor;
-            acc_kep[2] = acc_kep[2] / divisor;
-            acc_total[0] = acc_total[0] - acc_kep[0];
-            acc_total[1] = acc_total[1] - acc_kep[1];
-            acc_total[2] = acc_total[2] - acc_kep[2];
+            acc_kep[0] = -acc_kep[0] / divisor;
+            acc_kep[1] = -acc_kep[1] / divisor;
+            acc_kep[2] = -acc_kep[2] / divisor;
+            acc_total[0] = acc_total[0] + acc_kep[0];
+            acc_total[1] = acc_total[1] + acc_kep[1];
+            acc_total[2] = acc_total[2] + acc_kep[2];
         }
     }
 
