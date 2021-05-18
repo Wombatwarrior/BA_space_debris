@@ -55,7 +55,7 @@ TEST_F(KepComponentTests, RadialSymmetryTest){
 
 
 TEST_F(KepComponentTests, CalculationEquivalenceTest){
-    const int num_debris = 6;
+    const int num_debris = 15;
     std::array<std::array<double,3>, num_debris> accelerations_1;
     std::array<std::array<double,3>, num_debris> accelerations_2;
     std::array<double,3> acc_total_dummy;
@@ -66,12 +66,31 @@ TEST_F(KepComponentTests, CalculationEquivalenceTest){
         calcKep(debris->getDebrisVector()[i],accelerations_2[i]);
     }
 
-    // 10e-20 fails, but e-19 seems close enough
+    // 10e-20 fails, but e-19 passes
     double abs_err = 10e-19;
     for (int i = 0; i < debris->getDebrisVector().size(); ++i){
         EXPECT_NEAR(accelerations_1[i][0], accelerations_2[i][0], abs_err);
         EXPECT_NEAR(accelerations_1[i][1], accelerations_2[i][1], abs_err);
         ASSERT_NEAR(accelerations_1[i][2], accelerations_2[i][2], abs_err);
+    }
+}
+
+TEST_F(KepComponentTests, EquilavelnceWIthPreCalculatedTest){
+    const int num_debris = 9;
+    std::array<std::array<double,3>, num_debris> accelerations;
+    std::array<double,3> acc_total_dummy;
+
+    // calculate the acceleration for all particles using two different functions
+    for(int i = 6; i < 6 + num_debris; ++i){
+        Acceleration::KepComponent::apply(debris->getDebrisVector()[i], accelerations[i-6], acc_total_dummy);
+    }
+
+    // 10e-17 fails, but e-16 passes
+    double abs_err = 10e-16;
+    for (int i = 0; i < num_debris; ++i){
+        EXPECT_NEAR(accelerations[i][0], pre_calculated[i][0], abs_err);
+        EXPECT_NEAR(accelerations[i][1], pre_calculated[i][1], abs_err);
+        ASSERT_NEAR(accelerations[i][2], pre_calculated[i][2], abs_err);
     }
 }
 
