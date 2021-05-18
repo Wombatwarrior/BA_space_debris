@@ -6,6 +6,7 @@
 #include <array>
 #include <sstream>
 #include <math.h>
+#include <memory>
 #include "../io/IOUtils.h"
 /**
  * @namespace Debris
