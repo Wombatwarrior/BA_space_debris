@@ -144,9 +144,7 @@ namespace Acceleration {
      */
     namespace J2Component {
         namespace {
-            constexpr double getFactor_fst(){
-                return 0.5*Physics::GM_EARTH*Physics::R_EARTH*Physics::R_EARTH*std::sqrt(5.0)*Physics::C_20;
-            }
+            inline constexpr double getFactor_fst();
         }
         /**
          * @brief Calculates acceleration due to earth gravity. Taking in account the earth is neither a point mass nor  a homogenous spherical mass
@@ -165,7 +163,11 @@ namespace Acceleration {
      */
     namespace C22Component {
         namespace {
-
+            inline double getFC22_x(double x, double y, double z);
+            inline double getFC22_y(double x, double y, double z);
+            inline double getFC22_z(double x, double y, double z);
+            inline constexpr double getFactor_fst();
+            inline constexpr double getFactor_snd();
         }
         /**
          * @brief Calculates acceleration due to earth gravity. Taking in account the earth is neither a point mass nor not a homogenous spherical mass
@@ -174,7 +176,7 @@ namespace Acceleration {
          * @param acc_c22 Reference to an 3D vector to write the result for this Acceleration::AccelerationComponent.
          * @param acc_total Reference to an 3D vector to accumulate the accelerations for all applied Acceleration::AccelerationComponent.
          */
-        void apply( Debris::Debris &d, std::array<double,3> &acc_c22, std::array<double,3> &acc_total);
+        void apply( Debris::Debris &d, double t, std::array<double,3> &acc_c22, std::array<double,3> &acc_total);
     }
 
     /**
@@ -184,7 +186,11 @@ namespace Acceleration {
      */
     namespace S22Component {
         namespace {
-
+            inline double getFS22_x(double x, double y, double z);
+            inline double getFS22_y(double x, double y, double z);
+            inline double getFS22_z(double x, double y, double z);
+            inline constexpr double getFactor_fst();
+            inline constexpr double getFactor_snd();
         }
         /**
          * @brief Calculates acceleration due to earth gravity. Taking in account the earth is neither a point mass nor not a homogenous spherical mass
@@ -193,7 +199,7 @@ namespace Acceleration {
          * @param acc_s22 Reference to an 3D vector to write the result for this Acceleration::AccelerationComponent.
          * @param acc_total Reference to an 3D vector to accumulate the accelerations for all applied Acceleration::AccelerationComponent.
          */
-        void apply( Debris::Debris &d, std::array<double,3> &acc_s22, std::array<double,3> &acc_total);
+        void apply( Debris::Debris &d, double t, std::array<double,3> &acc_s22, std::array<double,3> &acc_total);
     }
 
     /**
