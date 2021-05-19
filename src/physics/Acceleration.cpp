@@ -16,6 +16,12 @@ namespace Acceleration{
 
         debris->shiftAcceleration();
         for (auto &d : debris->getDebrisVector()) {
+            new_acc_total[0] = 0;
+            new_acc_total[1] = 0;
+            new_acc_total[2] = 0;
+            new_acc_component[0] = 0;
+            new_acc_component[1] = 0;
+            new_acc_component[2] = 0;
             if (config[KEP]) {
                 KepComponent::apply(d, new_acc_component, new_acc_total);
             }

@@ -13,7 +13,7 @@ int main(int argc, char **argv){
 
 void initLoggeer(){
     log4cxx::helpers::Properties logging_properties;
-    logging_properties.setProperty("log4j.rootLogger", "DEBUG, A1");
+    logging_properties.setProperty("log4j.rootLogger", "INFO, A1");
     logging_properties.setProperty("log4j.appender.A1", "org.apache.log4j.ConsoleAppender");
     logging_properties.setProperty("log4j.appender.A1.layout.ConversionPattern", "%-5p %c - %m%n");
     logging_properties.setProperty("log4j.appender.A1.layout", "org.apache.log4j.PatternLayout");
@@ -48,5 +48,4 @@ void runSimulation(){
     for (auto &d : debris->getDebrisVector()){
         LOG4CXX_INFO(logger, d.toString());
     }
-    std::cout << "end" << std::endl;
 }

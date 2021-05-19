@@ -20,7 +20,7 @@ public:
      * @brief Enumerates the possible file types used for input
      */
     enum Type {
-        TXT /**< File with .txt extension. Lines are in the format "<token>=<value>" and lines starting with "#" are ignored*/
+        TXT, /**< File with .txt extension. Lines are in the format "<token>=<value>" and lines starting with "#" are ignored. Debris data is represented in TLE format as block at the end of the file after the line "TLE"*/
     };
 
     /**
@@ -80,6 +80,26 @@ private:
      * @return FileInput::TxtLineContent struct holding the result of splitting up the line
      */
     struct TxtLineContent tokenizeLine(const std::string &line);
+
+    struct TLEContent {
+        std::string name;
+        int catalog_nr;
+        int set_nr;
+        int epoch_year;
+        double epoch_day;
+        double fst_derivative;
+        double snd_derivative;
+        double drag_term;
+        double inclination;
+        double right_ascension;
+        double eccentricity;
+        double arg_of_perigee;
+        double mean_anomaly;
+    };
+
+    struct TLEContent parseTLE(const std::array<std::string,3> &lines);
+
+    void setDebrisValues(Debris::Debris &d, const struct TLEContent &tle);
 
     /**
      * @brief Sets the member variable of a given Debris::Debris object
