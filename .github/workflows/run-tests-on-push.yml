@@ -1,0 +1,13 @@
+name: run-tests-on-push
+on: [push]
+jobs:
+  run-gtest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+      - run: mkdir build
+      - run: cd build
+      - run: cmake .. .
+      - run: cmake --build . --target debris_sim_test
+      - run: ./debris_sim_test
