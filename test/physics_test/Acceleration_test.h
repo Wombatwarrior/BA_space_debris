@@ -51,15 +51,43 @@ protected:
             d.setPosition(pos);
             debris->addDebris(d);
         }
-        pre_calculated[0] = {-0.01*Physics::GM_EARTH,0,0};
-        pre_calculated[1] = {-0.0001*Physics::GM_EARTH,0,0};
-        pre_calculated[2] = {-0.000001*Physics::GM_EARTH,0,0};
-        pre_calculated[3] = {-0.00000001*Physics::GM_EARTH,0,0};
-        pre_calculated[4] = {-0.0000000001*Physics::GM_EARTH,0,0};
-        pre_calculated[5] = {-0.000000000001*Physics::GM_EARTH,0,0};
-        pre_calculated[6] = {-(1/(std::sqrt(3)*300))*Physics::GM_EARTH,-(1/(std::sqrt(3)*300))*Physics::GM_EARTH,-(1/(std::sqrt(3)*300))*Physics::GM_EARTH};
-        pre_calculated[7] = {-(1/(std::sqrt(3)*30000))*Physics::GM_EARTH,-(1/(std::sqrt(3)*30000))*Physics::GM_EARTH,-(1/(std::sqrt(3)*30000))*Physics::GM_EARTH};
-        pre_calculated[8] = {-(1/(std::sqrt(3)*3000000))*Physics::GM_EARTH,-(1/(std::sqrt(3)*3000000))*Physics::GM_EARTH,-(1/(std::sqrt(3)*3000000))*Physics::GM_EARTH};
+        pre_calculated[0] = {-0.01*Physics::GM_EARTH,
+                             0,
+                             0
+        };
+        pre_calculated[1] = {-0.0001*Physics::GM_EARTH,
+                             0,
+                             0
+        };
+        pre_calculated[2] = {-0.000001*Physics::GM_EARTH,
+                             0,
+                             0
+        };
+        pre_calculated[3] = {-0.00000001*Physics::GM_EARTH,
+                             0,
+                             0
+        };
+        pre_calculated[4] = {-0.0000000001*Physics::GM_EARTH,
+                             0,
+                             0
+        };
+        pre_calculated[5] = {-0.000000000001*Physics::GM_EARTH,
+                             0,
+                             0
+        };
+        pre_calculated[6] = {-(1/(std::sqrt(3)*300))*Physics::GM_EARTH,
+                             -(1/(std::sqrt(3)*300))*Physics::GM_EARTH,
+                             -(1/(std::sqrt(3)*300))*Physics::GM_EARTH
+        };
+        pre_calculated[7] = {-(1/(std::sqrt(3)*30000))*Physics::GM_EARTH,
+
+                             -(1/(std::sqrt(3)*30000))*Physics::GM_EARTH,
+                             -(1/(std::sqrt(3)*30000))*Physics::GM_EARTH
+        };
+        pre_calculated[8] = {-(1/(std::sqrt(3)*3000000))*Physics::GM_EARTH,
+                             -(1/(std::sqrt(3)*3000000))*Physics::GM_EARTH,
+                             -(1/(std::sqrt(3)*3000000))*Physics::GM_EARTH
+        };
     }
 
     void calcKep(Debris::Debris &d, std::array<double,3> &acc_kep){
@@ -149,3 +177,4 @@ protected:
         acc_j2[2] = ((n1*z)/d1)*((9/d2)-(n3/d3));
     }
 };
+

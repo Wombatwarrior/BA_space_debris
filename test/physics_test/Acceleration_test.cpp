@@ -4,7 +4,9 @@
 
 #include "Acceleration_test.h"
 
-
+/**
+ * Tests if the acceleration calculated using Acceleration::KepComponent::apply() is a function of ||#Debris::Debris::position||
+ */
 TEST_F(KepComponentTests, RadialSymmetryTest){
     std::array<std::array<double,3>,8> accelerations;
     for (auto &acc : accelerations){
@@ -53,7 +55,9 @@ TEST_F(KepComponentTests, RadialSymmetryTest){
     ASSERT_EQ(accelerations[7][1],accelerations[7][2]);
 }
 
-
+/**
+ * Tests if the acceleration calculated using Acceleration::KepComponent::apply() is the same as using a inefficient implementation
+ */
 TEST_F(KepComponentTests, CalculationEquivalenceTest){
     const int num_debris = 15;
     std::array<std::array<double,3>, num_debris> accelerations_1;
@@ -75,6 +79,9 @@ TEST_F(KepComponentTests, CalculationEquivalenceTest){
     }
 }
 
+/**
+ * Tests if the acceleration calculated using Acceleration::KepComponent::apply() is the same as some and calculated values
+ */
 TEST_F(KepComponentTests, EquilavelnceWIthPreCalculatedTest){
     const int num_debris = 9;
     std::array<std::array<double,3>, num_debris> accelerations;
@@ -94,6 +101,10 @@ TEST_F(KepComponentTests, EquilavelnceWIthPreCalculatedTest){
     }
 }
 
+
+/**
+ * Tests if the acceleration calculated using Acceleration::J2Component::apply() is the same as using a inefficient implementation
+ */
 TEST_F(J2ComponentTests, CalculationEquivalenceTest){
     const int num_debris = 9;
     std::array<std::array<double,3>, num_debris> accelerations_1;
@@ -115,6 +126,9 @@ TEST_F(J2ComponentTests, CalculationEquivalenceTest){
     }
 }
 
+/**
+ * Tests if the acceleration calculated using Acceleration::J2Component::apply() is the same as some and calculated values
+ */
 TEST_F(J2ComponentTests, EquilavelnceWIthPreCalculatedTest){
     const int num_debris = 9;
     std::array<std::array<double,3>, num_debris> accelerations;
