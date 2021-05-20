@@ -173,6 +173,8 @@ namespace Acceleration {
          * @brief Calculates acceleration due to earth gravity. Taking in account the earth is neither a point mass nor not a homogenous spherical mass
          *
          * @param d Reference to the Debris::Debris object to apply the acceleration to
+         * @param c_term Time dependent cos value
+         * @param s_term Time dependent sin value
          * @param acc_c22 Reference to an 3D vector to write the result for this Acceleration::AccelerationComponent.
          * @param acc_total Reference to an 3D vector to accumulate the accelerations for all applied Acceleration::AccelerationComponent.
          */
@@ -196,7 +198,8 @@ namespace Acceleration {
          * @brief Calculates acceleration due to earth gravity. Taking in account the earth is neither a point mass nor not a homogenous spherical mass
          *
          * @param d Reference to the Debris::Debris object to apply the acceleration to
-         * @param t Current time
+         * @param c_term Time dependent cos value
+         * @param s_term Time dependent sin value
          * @param acc_s22 Reference to an 3D vector to write the result for this Acceleration::AccelerationComponent.
          * @param acc_total Reference to an 3D vector to accumulate the accelerations for all applied Acceleration::AccelerationComponent.
          */
@@ -225,7 +228,8 @@ namespace Acceleration {
          * @brief Calculates acceleration due to earth gravity. Taking in account the earth is neither a point mass nor not a homogenous spherical mass
          *
          * @param d Reference to the Debris::Debris object to apply the acceleration to
-         * @param t Current time
+         * @param c_term Time dependent cos value
+         * @param s_term Time dependent sin value
          * @param acc_c22s22 Reference to an 3D vector to write the result for this Acceleration::AccelerationComponent.
          * @param acc_total Reference to an 3D vector to accumulate the accelerations for all applied Acceleration::AccelerationComponent.
          */
