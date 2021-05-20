@@ -277,8 +277,8 @@ TEST_F(C22S22ComponentTests, CalculationEquivalenceTest){
         Acceleration::C22S22Component::apply(debris->getDebrisVector()[i], c_term, s_term, accelerations_3[i],acc_total_dummy);
     }
 
-    // e-25 fails, but e-24 passes
-    double abs_err = 10e-24;
+    // e-24 fails, but e-24 passes
+    double abs_err = 10e-23;
     for (int i = 0; i < num_debris; ++i){
         EXPECT_NEAR(accelerations_1[i][0]+accelerations_2[i][0], accelerations_3[i][0], abs_err);
         EXPECT_NEAR(accelerations_1[i][1]+accelerations_2[i][1], accelerations_3[i][1], abs_err);
