@@ -117,7 +117,6 @@ namespace Acceleration{
                 double x2 = x*x;
                 double y2 = y*y;
                 double n = getFactor_fst()*x*(y2-x2);
-                std::cout << "a-n1=" << getFactor_fst()*(y2-x2) << std::endl;
                 // x2 = (x^2 + y^2 + z^2)
                 x2 = x2 + y2 + z*z;
                 double fst = x2;
@@ -128,10 +127,6 @@ namespace Acceleration{
                 // y2 = (x^2 + y^2 +z^2)^4
                 y2 = y2*y2;
                 double snd = (getFactor_snd()*x)/std::sqrt(y2*fst);
-                std::cout << "a-n2=" << getFactor_snd()*x << std::endl;
-                std::cout << "a-d1=" << std::sqrt(y2*fst) << std::endl;
-                std::cout << "a-d2=" << std::sqrt(y2*x2) << std::endl;
-
                 fst = n/std::sqrt(y2*x2);
                 return fst + snd;
             }
@@ -139,7 +134,6 @@ namespace Acceleration{
                 double x2 = x*x;
                 double y2 = y*y;
                 double n = getFactor_fst()*y*(y2-x2);
-                std::cout << "a-n1=" << getFactor_fst()*(y2-x2) << std::endl;
                 // x2 = (x^2 + y^2 + z^2)
                 x2 = x2 + y2 + z*z;
                 double fst = x2;
@@ -150,18 +144,13 @@ namespace Acceleration{
                 // y2 = (x^2 + y^2 +z^2)^4
                 y2 = y2*y2;
                 double snd = (getFactor_snd()*y)/std::sqrt(y2*fst);
-                std::cout << "a-n2=" << getFactor_snd()*x << std::endl;
-                std::cout << "a-d1=" << std::sqrt(y2*fst) << std::endl;
-                std::cout << "a-d2=" << std::sqrt(y2*x2) << std::endl;
                 fst = n/std::sqrt(y2*x2);
-
                 return fst - snd;
             }
             inline double getFC22_z(double x, double y, double z){
                 double x2 = x*x;
                 double y2 = y*y;
                 double n = getFactor_fst()*z*(y2-x2);
-                std::cout << "a-n1=" << getFactor_fst()*(y2-x2) << std::endl;
                 // x2 = x^2 + y^2 +z^2
                 x2 = x2 + y2 + z*z;
                 // y2 = (x^2 + y^2 +z^2)^2
@@ -172,9 +161,6 @@ namespace Acceleration{
                 y2 = y2*y2;
                 // y2 = (x^2 + y^2 +z^2)^(7/2)
                 y2 = std::sqrt(y2*x2);
-
-                std::cout << "a-d1=" << y2 << std::endl;
-
                 return n/y2;
             }
             inline constexpr double getFactor_fst(){
@@ -200,17 +186,6 @@ namespace Acceleration{
             acc_total[0] = acc_total[0] + acc_c22[0];
             acc_total[1] = acc_total[1] + acc_c22[1];
             acc_total[2] = acc_total[2] + acc_c22[2];
-
-            std::cout << "a-c_term=" << c_term << std::endl;
-            std::cout << "a-s_term=" << s_term << std::endl;
-            std::cout << "a-x=" << x << std::endl;
-            std::cout << "a-y=" << y << std::endl;
-            std::cout << "a-z=" << z << std::endl;
-            std::cout << "a-c22_x=" << f_x << std::endl;
-            std::cout << "a-c22_y=" << f_y << std::endl;
-            std::cout << "a-c22_z=" << getFC22_z(x,y,z) << std::endl;
-            std::cout << "a-acc_c22=" << IOUtils::array3DToString(acc_c22) << std::endl;
-
         }
     }
 

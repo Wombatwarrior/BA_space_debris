@@ -152,7 +152,7 @@ TEST_F(J2ComponentTests, EquilavelnceWIthPreCalculatedTest){
  * Tests if the acceleration calculated using Acceleration::J2Component::apply() is the same as using a inefficient implementation
  */
 TEST_F(C22ComponentTests, CalculationEquivalenceTest){
-    const int num_debris = 9;
+    const int num_debris = 12;
     std::array<std::array<double,3>, num_debris> accelerations_1;
     std::array<std::array<double,3>, num_debris> accelerations_2;
     std::array<double,3> acc_total_dummy;
@@ -165,7 +165,7 @@ TEST_F(C22ComponentTests, CalculationEquivalenceTest){
     }
 
     // 10e-20 fails, but e-19 passes
-    double abs_err = 10e-24;
+    double abs_err = 10e-23;
     for (int i = 0; i < num_debris; ++i){
         EXPECT_NEAR(accelerations_1[i][0], accelerations_2[i][0], abs_err);
         EXPECT_NEAR(accelerations_1[i][1], accelerations_2[i][1], abs_err);

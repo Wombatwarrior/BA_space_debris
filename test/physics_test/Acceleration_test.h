@@ -195,6 +195,15 @@ protected:
                 debris->addDebris(d);
             }
         }
+        for (int i = 0; i < 3; ++i){
+            std::array<double,3> pos{0,0,0};
+            pos[i] = 5000;
+            pos[(i+1)%3] = 4321;
+            pos[(i+2)%3] = 3210;
+            d.setPosition(pos);
+            debris->addDebris(d);
+        }
+
         // calculated with wolfram alpha
         pre_calculated[0] = {-0.000010967387600710096587782776206071373077501857198479655576780,
                              0,
@@ -258,22 +267,9 @@ protected:
         double c22_x =(n1*x)/d1 + (n2*x)/d2;
         double c22_y =(n1*y)/d1 - (n2*y)/d2;
         double c22_z =(n1*z)/d1;
-        std::cout << "t-c_term=" << c_term << std::endl;
-        std::cout << "t-s_term=" << s_term << std::endl;
-        std::cout << "t-x=" << x << std::endl;
-        std::cout << "t-y=" << y << std::endl;
-        std::cout << "t-z=" << z << std::endl;
-        std::cout << "t-n1=" << n1 << std::endl;
-        std::cout << "t-n2=" << n2 << std::endl;
-        std::cout << "t-d1=" << d1 << std::endl;
-        std::cout << "t-d2=" << d2 << std::endl;
-        std::cout << "t-c22_x=" << c22_x << std::endl;
-        std::cout << "t-c22_y=" << c22_y << std::endl;
-        std::cout << "t-c22_z=" << c22_z << std::endl;
         acc_c22[0] = c22_x * c_term - c22_y * s_term;
         acc_c22[1] = c22_x * s_term + c22_y * c_term;
         acc_c22[2] = c22_z;
-        std::cout << "t-acc_c22=" << IOUtils::array3DToString(acc_c22) << std::endl;
     }
 };
 
