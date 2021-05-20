@@ -28,14 +28,15 @@ namespace Acceleration{
             if (config[J2]) {
                 J2Component::apply(d, new_acc_component, new_acc_total);
             }
-            if (config[C22]) {
-                C22Component::apply(d, t, new_acc_component, new_acc_total);
-            }
-            if (config[S22]) {
-                S22Component::apply(d, t, new_acc_component, new_acc_total);
-            }
-            if (config[SOL]) {
-                SolComponent::apply(d, new_acc_component, new_acc_total);
+            if (config[C22] && config[S22]) {
+                C22S22Component::apply(d, t, new_acc_component, new_acc_total);
+            } else{
+                if (config[S22]) {
+                    S22Component::apply(d, t, new_acc_component, new_acc_total);
+                }
+                if (config[SOL]) {
+                    SolComponent::apply(d, new_acc_component, new_acc_total);
+                }
             }
             if (config[LUN]) {
                 LunComponent::apply(d, new_acc_component, new_acc_total);
@@ -294,6 +295,64 @@ namespace Acceleration{
             acc_total[0] = acc_total[0] + acc_s22[0];
             acc_total[1] = acc_total[1] + acc_s22[1];
             acc_total[2] = acc_total[2] + acc_s22[2];
+        }
+    }
+
+    namespace C22S22Component{
+        namespace {
+            inline constexpr double getFactor(){
+                return std::sqrt(15)*Physics::GM_EARTH*Physics::R_EARTH*Physics::R_EARTH;
+            }
+            inline constexpr double getFactorC22_snd(){
+                return getFactor()*Physics::C_22;
+            }
+            inline constexpr double getFactorC22_fst(){
+                return getFactorC22_snd()*2.5;
+            }
+            inline constexpr double getFactorS22_snd(){
+                return getFactor()*Physics::S_22;
+            }
+            inline constexpr double getFactorS22_fst(){
+                return getFactorS22_snd()*-5;
+            }
+        }
+        void apply( Debris::Debris &d, double t, std::array<double,3> &acc_c22s22, std::array<double,3> &acc_total){
+            acc_c22s22 = d.getPosition();
+            double s_term = Physics::THETA_G + Physics::NU_EARTH*t;
+            double c_term = std::cos(s_term);
+            s_term = std::sin(s_term);
+            double x = acc_c22s22[0]*c_term + acc_c22s22[1]*s_term;
+            double y = -acc_c22s22[0]*s_term + acc_c22s22[1]*c_term;
+            double z = acc_c22s22[2];
+            // c22
+            double n = getFactorC22_fst()*(y*y-x*x);
+            // pow_3 = (x^2 + y^2 + z^2)
+            double pow_3 = x*x + y*y + z*z;
+            // pow_1 = (x^2 + y^2 + z^2)
+            double pow_1 = pow_3;
+            // pow_4 = (x^2 + y^2 +z^2)^2
+            double pow_4 = pow_3 * pow_3;
+            // pow_3 = (x^2 + y^2 +z^2)^3
+            pow_3 = pow_3 * pow_4;
+            // pow_4 = (x^2 + y^2 +z^2)^4
+            pow_4 = pow_4 * pow_4;
+            double d2 = std::sqrt(pow_4 * pow_1);
+            double d1 = std::sqrt(pow_4 * pow_3);
+            double f_x = ((n*x) / d1) + ((getFactorC22_snd()*x)/d2);
+            double f_y = ((n*y) / d1) - ((getFactorC22_snd()*y)/d2);
+            acc_c22s22[0] = f_x*c_term - f_y*s_term;
+            acc_c22s22[1] = f_x*s_term + f_y*c_term;
+            acc_c22s22[2] = ((n*z) / d1);
+            // s22
+            n = getFactorS22_fst()*x*y;
+            f_x = ((n*x) / d1) + ((getFactorS22_snd()*y)/d2);
+            f_y = ((n*y) / d1) + ((getFactorS22_snd()*x)/d2);
+            acc_c22s22[0] = acc_c22s22[0] + f_x*c_term - f_y*s_term;
+            acc_c22s22[1] = acc_c22s22[1] + f_x*s_term + f_y*c_term;
+            acc_c22s22[2] = acc_c22s22[2] + ((n*z) / d1);
+            acc_total[0] = acc_total[0] + acc_c22s22[0];
+            acc_total[1] = acc_total[1] + acc_c22s22[1];
+            acc_total[2] = acc_total[2] + acc_c22s22[2];
         }
     }
 

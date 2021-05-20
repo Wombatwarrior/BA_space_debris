@@ -366,3 +366,32 @@ protected:
         acc_s22[2] = c22_z;
     }
 };
+
+
+class C22S22ComponentTests : public ::testing::Test {
+protected:
+    std::shared_ptr<Debris::DebrisContainer> debris;
+    std::array<std::array<double,3>,9> pre_calculated;
+
+    virtual void SetUp() {
+        debris = std::make_shared<Debris::DebrisContainer>();
+        Debris::Debris d;
+
+        for (int i = 0; i < 3; ++i) {
+            for (int j = 0; j < 3; ++j) {
+                std::array<double, 3> pos{0, 0, 0};
+                pos[j] = (i+2)*3.5e3;
+                d.setPosition(pos);
+                debris->addDebris(d);
+            }
+        }
+        for (int i = 0; i < 3; ++i){
+            std::array<double,3> pos{0,0,0};
+            pos[i] = 5000;
+            pos[(i+1)%3] = 4321;
+            pos[(i+2)%3] = 3210;
+            d.setPosition(pos);
+            debris->addDebris(d);
+        }
+    }
+};

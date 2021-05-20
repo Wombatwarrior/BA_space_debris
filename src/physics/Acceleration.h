@@ -196,10 +196,40 @@ namespace Acceleration {
          * @brief Calculates acceleration due to earth gravity. Taking in account the earth is neither a point mass nor not a homogenous spherical mass
          *
          * @param d Reference to the Debris::Debris object to apply the acceleration to
+         * @param t Current time
          * @param acc_s22 Reference to an 3D vector to write the result for this Acceleration::AccelerationComponent.
          * @param acc_total Reference to an 3D vector to accumulate the accelerations for all applied Acceleration::AccelerationComponent.
          */
         void apply( Debris::Debris &d, double t, std::array<double,3> &acc_s22, std::array<double,3> &acc_total);
+    }
+
+    /**
+     * @namespace Acceleration::C22S22Component
+     *
+     * @brief Encapsulates functionality to calculate acceleration for Acceleration::C22 and Acceleration::S22 at once
+     *
+     * Encapsulates functionality to calculate acceleration for Acceleration::C22 and Acceleration::S22 at once,
+     * because many terms are shared between the two calculations.
+     * If both Components are both set active use this.
+     *
+     */
+    namespace C22S22Component{
+        namespace {
+            inline constexpr double getFactor();
+            inline constexpr double getFactorC22_snd();
+            inline constexpr double getFactorC22_fst();
+            inline constexpr double getFactorS22_snd();
+            inline constexpr double getFactorS22_fst();
+        }
+        /**
+         * @brief Calculates acceleration due to earth gravity. Taking in account the earth is neither a point mass nor not a homogenous spherical mass
+         *
+         * @param d Reference to the Debris::Debris object to apply the acceleration to
+         * @param t Current time
+         * @param acc_c22s22 Reference to an 3D vector to write the result for this Acceleration::AccelerationComponent.
+         * @param acc_total Reference to an 3D vector to accumulate the accelerations for all applied Acceleration::AccelerationComponent.
+         */
+        void apply( Debris::Debris &d, double t, std::array<double,3> &acc_c22s22, std::array<double,3> &acc_total);
     }
 
     /**
