@@ -164,7 +164,7 @@ TEST_F(C22ComponentTests, CalculationEquivalenceTest){
         calcC22(debris->getDebrisVector()[i], t, accelerations_2[i]);
     }
 
-    // 10e-20 fails, but e-19 passes
+    // e-24 fails, but e-23 passes
     double abs_err = 10e-23;
     for (int i = 0; i < num_debris; ++i){
         EXPECT_NEAR(accelerations_1[i][0], accelerations_2[i][0], abs_err);
@@ -186,6 +186,55 @@ TEST_F(C22ComponentTests, EquilavelnceWIthPreCalculatedTest){
     // calculate the acceleration for all particles using two different functions
     for(int i = 0; i < num_debris; ++i){
         Acceleration::C22Component::apply(debris->getDebrisVector()[i], t, accelerations[i], acc_total_dummy);
+    }
+
+    // 10e-22 fails, but e-21 passes
+    double abs_err = 10e-0;
+    for (int i = 0; i < num_debris; ++i){
+        EXPECT_NEAR(accelerations[i][0], pre_calculated[i][0], abs_err);
+        EXPECT_NEAR(accelerations[i][1], pre_calculated[i][1], abs_err);
+        EXPECT_NEAR(accelerations[i][2], pre_calculated[i][2], abs_err);
+    }
+}
+
+/**
+ * Tests if the acceleration calculated using Acceleration::J2Component::apply() is the same as using a inefficient implementation
+ */
+TEST_F(S22ComponentTests, CalculationEquivalenceTest){
+    const int num_debris = 12;
+    std::array<std::array<double,3>, num_debris> accelerations_1;
+    std::array<std::array<double,3>, num_debris> accelerations_2;
+    std::array<double,3> acc_total_dummy;
+    double t = 0;
+
+    // calculate the acceleration for all particles using two different functions
+    for (int i = 0; i < num_debris; ++i){
+        Acceleration::S22Component::apply(debris->getDebrisVector()[i], t, accelerations_1[i],acc_total_dummy);
+        calcS22(debris->getDebrisVector()[i], t, accelerations_2[i]);
+    }
+
+    // 10e-24 fails, but e-23 passes
+    double abs_err = 10e-23;
+    for (int i = 0; i < num_debris; ++i){
+        EXPECT_NEAR(accelerations_1[i][0], accelerations_2[i][0], abs_err);
+        EXPECT_NEAR(accelerations_1[i][1], accelerations_2[i][1], abs_err);
+        EXPECT_NEAR(accelerations_1[i][2], accelerations_2[i][2], abs_err);
+    }
+
+}
+
+/**
+ * Tests if the acceleration calculated using Acceleration::J2Component::apply() is the same as some and calculated values
+ */
+TEST_F(S22ComponentTests, EquilavelnceWIthPreCalculatedTest){
+    const int num_debris = 9;
+    std::array<std::array<double,3>, num_debris> accelerations;
+    std::array<double,3> acc_total_dummy;
+    double t = 0;
+
+    // calculate the acceleration for all particles using two different functions
+    for(int i = 0; i < num_debris; ++i){
+        Acceleration::S22Component::apply(debris->getDebrisVector()[i], t, accelerations[i], acc_total_dummy);
     }
 
     // 10e-22 fails, but e-21 passes

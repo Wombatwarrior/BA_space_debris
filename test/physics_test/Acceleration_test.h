@@ -290,6 +290,14 @@ protected:
                 debris->addDebris(d);
             }
         }
+        for (int i = 0; i < 3; ++i){
+            std::array<double,3> pos{0,0,0};
+            pos[i] = 5000;
+            pos[(i+1)%3] = 4321;
+            pos[(i+2)%3] = 3210;
+            d.setPosition(pos);
+            debris->addDebris(d);
+        }
         // calculated with wolfram alpha
         pre_calculated[0] = {-0.000010967387600710096587782776206071373077501857198479655576780,
                              0,
@@ -330,21 +338,31 @@ protected:
 
     }
 
-    void calcS22(Debris::Debris &d, std::array<double,3> &acc_j2){
+    void calcS22(Debris::Debris &d, double t, std::array<double,3> &acc_s22){
         double gme = 3.986004407799724e+5;
         double re = 6378.1363;
-        double c20 = -4.84165371736e-4;
-
-        double x = d.getPosition()[0];
-        double y = d.getPosition()[1];
+        double s22 = -1.40016683654e-6;
+        double theta = 280.4606;
+        double nue = 4.178074622024230e-3;
+        ASSERT_EQ(gme, Physics::GM_EARTH);
+        ASSERT_EQ(re, Physics::R_EARTH);
+        ASSERT_EQ(s22, Physics::S_22);
+        ASSERT_EQ(theta, Physics::THETA_G);
+        ASSERT_EQ(nue, Physics::NU_EARTH);
+        double c_term=std::cos(theta+nue*t);
+        double s_term=std::sin(theta+nue*t);
+        double x = d.getPosition()[0]*c_term + d.getPosition()[1]*s_term;
+        double y = -d.getPosition()[0]*s_term + d.getPosition()[1]*c_term;
         double z = d.getPosition()[2];
-        double n1 = gme*re*re*std::sqrt(5)*c20;
-        double d1 = 2*std::sqrt(x*x+y*y+z*z);
-        double d2 = (x*x+y*y+z*z)*(x*x+y*y+z*z);
-        double n3 = 15*(z*z);
-        double d3 = (x*x+y*y+z*z)*(x*x+y*y+z*z)*(x*x+y*y+z*z);
-        acc_j2[0] = ((n1*x)/d1)*((3/d2)-(n3/d3));
-        acc_j2[1] = ((n1*y)/d1)*((3/d2)-(n3/d3));
-        acc_j2[2] = ((n1*z)/d1)*((9/d2)-(n3/d3));
+        double n1 = -5 * gme * re * re * std::sqrt(15) * s22;
+        double n2 = gme * re * re * std::sqrt(15) * s22;
+        double d1 =std::pow(x*x+y*y+z*z, 3.5);
+        double d2 =std::pow(x*x+y*y+z*z, 2.5);
+        double c22_x =(n1*x*x*y)/d1 + (n2*y)/d2;
+        double c22_y =(n1*x*y*y)/d1 + (n2*x)/d2;
+        double c22_z =(n1*x*z*y)/d1;
+        acc_s22[0] = c22_x * c_term - c22_y * s_term;
+        acc_s22[1] = c22_x * s_term + c22_y * c_term;
+        acc_s22[2] = c22_z;
     }
 };
