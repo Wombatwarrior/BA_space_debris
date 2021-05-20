@@ -176,7 +176,7 @@ namespace Acceleration {
          * @param acc_c22 Reference to an 3D vector to write the result for this Acceleration::AccelerationComponent.
          * @param acc_total Reference to an 3D vector to accumulate the accelerations for all applied Acceleration::AccelerationComponent.
          */
-        void apply( Debris::Debris &d, double t, std::array<double,3> &acc_c22, std::array<double,3> &acc_total);
+        void apply( Debris::Debris &d, double c_term, double s_term, std::array<double,3> &acc_c22, std::array<double,3> &acc_total);
     }
 
     /**
@@ -200,7 +200,7 @@ namespace Acceleration {
          * @param acc_s22 Reference to an 3D vector to write the result for this Acceleration::AccelerationComponent.
          * @param acc_total Reference to an 3D vector to accumulate the accelerations for all applied Acceleration::AccelerationComponent.
          */
-        void apply( Debris::Debris &d, double t, std::array<double,3> &acc_s22, std::array<double,3> &acc_total);
+        void apply( Debris::Debris &d, double c_term, double s_term, std::array<double,3> &acc_s22, std::array<double,3> &acc_total);
     }
 
     /**
@@ -229,7 +229,7 @@ namespace Acceleration {
          * @param acc_c22s22 Reference to an 3D vector to write the result for this Acceleration::AccelerationComponent.
          * @param acc_total Reference to an 3D vector to accumulate the accelerations for all applied Acceleration::AccelerationComponent.
          */
-        void apply( Debris::Debris &d, double t, std::array<double,3> &acc_c22s22, std::array<double,3> &acc_total);
+        void apply( Debris::Debris &d, double c_term, double s_term, std::array<double,3> &acc_c22s22, std::array<double,3> &acc_total);
     }
 
     /**

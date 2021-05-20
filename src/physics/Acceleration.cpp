@@ -13,7 +13,9 @@ namespace Acceleration{
     void AccelerationAccumulator::applyComponents(){
         std::array<double,3> new_acc_total{0,0,0};
         std::array<double,3> new_acc_component{0,0,0};
-        double t = 1;
+        double t = 0;
+        double c_term = std::cos(Physics::THETA_G+Physics::NU_EARTH*t);
+        double s_term = std::sin(Physics::THETA_G+Physics::NU_EARTH*t);
         debris->shiftAcceleration();
         for (auto &d : debris->getDebrisVector()) {
             new_acc_total[0] = 0;
@@ -29,14 +31,17 @@ namespace Acceleration{
                 J2Component::apply(d, new_acc_component, new_acc_total);
             }
             if (config[C22] && config[S22]) {
-                C22S22Component::apply(d, t, new_acc_component, new_acc_total);
-            } else{
+                C22S22Component::apply(d, c_term, s_term, new_acc_component, new_acc_total);
+            } else {
+                if (config[C22]) {
+                    C22Component::apply(d, c_term, s_term, new_acc_component, new_acc_total);
+                }
                 if (config[S22]) {
-                    S22Component::apply(d, t, new_acc_component, new_acc_total);
+                    S22Component::apply(d, c_term, s_term, new_acc_component, new_acc_total);
                 }
-                if (config[SOL]) {
-                    SolComponent::apply(d, new_acc_component, new_acc_total);
-                }
+            }
+            if (config[SOL]) {
+                SolComponent::apply(d, new_acc_component, new_acc_total);
             }
             if (config[LUN]) {
                 LunComponent::apply(d, new_acc_component, new_acc_total);
@@ -171,11 +176,8 @@ namespace Acceleration{
                 return std::sqrt(15)*Physics::GM_EARTH*Physics::R_EARTH*Physics::R_EARTH*Physics::C_22;
             }
         }
-        void apply(Debris::Debris &d, double t, std::array<double,3> &acc_c22, std::array<double,3> &acc_total){
+        void apply(Debris::Debris &d, double c_term, double s_term, std::array<double,3> &acc_c22, std::array<double,3> &acc_total){
             acc_c22 = d.getPosition();
-            double s_term = Physics::THETA_G + Physics::NU_EARTH*t;
-            double c_term = std::cos(s_term);
-            s_term = std::sin(s_term);
             double x = acc_c22[0]*c_term + acc_c22[1]*s_term;
             double y = -acc_c22[0]*s_term + acc_c22[1]*c_term;
             double z = acc_c22[2];
@@ -266,11 +268,8 @@ namespace Acceleration{
                 return std::sqrt(15)*Physics::GM_EARTH*Physics::R_EARTH*Physics::R_EARTH*Physics::S_22;
             }
         }
-        void apply( Debris::Debris &d, double t, std::array<double,3> &acc_s22, std::array<double,3> &acc_total){
+        void apply( Debris::Debris &d, double c_term, double s_term, std::array<double,3> &acc_s22, std::array<double,3> &acc_total){
             acc_s22 = d.getPosition();
-            double trig_arg = Physics::THETA_G + Physics::NU_EARTH*t;
-            double c_term = std::cos(trig_arg);
-            double s_term = std::sin(trig_arg);
             double x = acc_s22[0]*c_term + acc_s22[1]*s_term;
             double y = -acc_s22[0]*s_term + acc_s22[1]*c_term;
             double z = acc_s22[2];
@@ -316,11 +315,8 @@ namespace Acceleration{
                 return getFactorS22_snd()*-5;
             }
         }
-        void apply( Debris::Debris &d, double t, std::array<double,3> &acc_c22s22, std::array<double,3> &acc_total){
+        void apply( Debris::Debris &d, double c_term, double s_term, std::array<double,3> &acc_c22s22, std::array<double,3> &acc_total){
             acc_c22s22 = d.getPosition();
-            double s_term = Physics::THETA_G + Physics::NU_EARTH*t;
-            double c_term = std::cos(s_term);
-            s_term = std::sin(s_term);
             double x = acc_c22s22[0]*c_term + acc_c22s22[1]*s_term;
             double y = -acc_c22s22[0]*s_term + acc_c22s22[1]*c_term;
             double z = acc_c22s22[2];

@@ -157,10 +157,12 @@ TEST_F(C22ComponentTests, CalculationEquivalenceTest){
     std::array<std::array<double,3>, num_debris> accelerations_2;
     std::array<double,3> acc_total_dummy;
     double t = 0;
+    double c_term = std::cos(Physics::THETA_G+Physics::NU_EARTH*t);
+    double s_term = std::sin(Physics::THETA_G+Physics::NU_EARTH*t);
 
     // calculate the acceleration for all particles using two different functions
     for (int i = 0; i < num_debris; ++i){
-        Acceleration::C22Component::apply(debris->getDebrisVector()[i], t, accelerations_1[i],acc_total_dummy);
+        Acceleration::C22Component::apply(debris->getDebrisVector()[i], c_term, s_term, accelerations_1[i],acc_total_dummy);
         calcC22(debris->getDebrisVector()[i], t, accelerations_2[i]);
     }
 
@@ -182,10 +184,12 @@ TEST_F(C22ComponentTests, EquilavelnceWIthPreCalculatedTest){
     std::array<std::array<double,3>, num_debris> accelerations;
     std::array<double,3> acc_total_dummy;
     double t = 0;
+    double c_term = std::cos(Physics::THETA_G+Physics::NU_EARTH*t);
+    double s_term = std::sin(Physics::THETA_G+Physics::NU_EARTH*t);
 
     // calculate the acceleration for all particles using two different functions
     for(int i = 0; i < num_debris; ++i){
-        Acceleration::C22Component::apply(debris->getDebrisVector()[i], t, accelerations[i], acc_total_dummy);
+        Acceleration::C22Component::apply(debris->getDebrisVector()[i], c_term, s_term, accelerations[i], acc_total_dummy);
     }
 
     // 10e-22 fails, but e-21 passes
@@ -206,10 +210,12 @@ TEST_F(S22ComponentTests, CalculationEquivalenceTest){
     std::array<std::array<double,3>, num_debris> accelerations_2;
     std::array<double,3> acc_total_dummy;
     double t = 0;
+    double c_term = std::cos(Physics::THETA_G+Physics::NU_EARTH*t);
+    double s_term = std::sin(Physics::THETA_G+Physics::NU_EARTH*t);
 
     // calculate the acceleration for all particles using two different functions
     for (int i = 0; i < num_debris; ++i){
-        Acceleration::S22Component::apply(debris->getDebrisVector()[i], t, accelerations_1[i],acc_total_dummy);
+        Acceleration::S22Component::apply(debris->getDebrisVector()[i], c_term, s_term, accelerations_1[i],acc_total_dummy);
         calcS22(debris->getDebrisVector()[i], t, accelerations_2[i]);
     }
 
@@ -231,10 +237,12 @@ TEST_F(S22ComponentTests, EquilavelnceWIthPreCalculatedTest){
     std::array<std::array<double,3>, num_debris> accelerations;
     std::array<double,3> acc_total_dummy;
     double t = 0;
+    double c_term = std::cos(Physics::THETA_G+Physics::NU_EARTH*t);
+    double s_term = std::sin(Physics::THETA_G+Physics::NU_EARTH*t);
 
     // calculate the acceleration for all particles using two different functions
     for(int i = 0; i < num_debris; ++i){
-        Acceleration::S22Component::apply(debris->getDebrisVector()[i], t, accelerations[i], acc_total_dummy);
+        Acceleration::S22Component::apply(debris->getDebrisVector()[i], c_term, s_term, accelerations[i], acc_total_dummy);
     }
 
     // 10e-22 fails, but e-21 passes
@@ -259,12 +267,14 @@ TEST_F(C22S22ComponentTests, CalculationEquivalenceTest){
     std::array<std::array<double,3>, num_debris> accelerations_3;
     std::array<double,3> acc_total_dummy;
     double t = 0;
+    double c_term = std::cos(Physics::THETA_G+Physics::NU_EARTH*t);
+    double s_term = std::sin(Physics::THETA_G+Physics::NU_EARTH*t);
 
     // calculate the acceleration for all particles using two different functions
     for (int i = 0; i < num_debris; ++i){
-        Acceleration::C22Component::apply(debris->getDebrisVector()[i], t, accelerations_1[i],acc_total_dummy);
-        Acceleration::S22Component::apply(debris->getDebrisVector()[i], t, accelerations_2[i],acc_total_dummy);
-        Acceleration::C22S22Component::apply(debris->getDebrisVector()[i], t, accelerations_3[i],acc_total_dummy);
+        Acceleration::C22Component::apply(debris->getDebrisVector()[i], c_term, s_term, accelerations_1[i],acc_total_dummy);
+        Acceleration::S22Component::apply(debris->getDebrisVector()[i], c_term, s_term, accelerations_2[i],acc_total_dummy);
+        Acceleration::C22S22Component::apply(debris->getDebrisVector()[i], c_term, s_term, accelerations_3[i],acc_total_dummy);
     }
 
     // e-25 fails, but e-24 passes
