@@ -178,3 +178,177 @@ protected:
     }
 };
 
+class C22ComponentTests : public ::testing::Test {
+protected:
+    std::shared_ptr<Debris::DebrisContainer> debris;
+    std::array<std::array<double,3>,9> pre_calculated;
+
+    virtual void SetUp() {
+        debris = std::make_shared<Debris::DebrisContainer>();
+        Debris::Debris d;
+
+        for (int i = 0; i < 3; ++i) {
+            for (int j = 0; j < 3; ++j) {
+                std::array<double, 3> pos{0, 0, 0};
+                pos[j] = (i+2)*3.5e3;
+                d.setPosition(pos);
+                debris->addDebris(d);
+            }
+        }
+        // calculated with wolfram alpha
+        pre_calculated[0] = {-0.000010967387600710096587782776206071373077501857198479655576780,
+                             0,
+                             0
+        };
+        pre_calculated[1] = {0,
+                             -0.000010967387600710096587782776206071373077501857198479655576780,
+                             0
+        };
+        pre_calculated[2] = {0,
+                             0,
+                             0.0000219347752014201931755655524121427461550037143969593111535607
+        };
+        pre_calculated[3] = {-2.166397550757549943265733571569653941234934755255240607759e-6,
+                             0,
+                             0
+        };
+        pre_calculated[4] = {0,
+                             -2.166397550757549943265733571569653941234934755255240607759e-6,
+                             0
+        };
+        pre_calculated[5] = {0,
+                             0,
+                             4.3327951015150998865314671431393078824698695105104812155181e-6
+        };
+        pre_calculated[6] = {-6.854617250443810367364235128794608173438660749049784735487e-7,
+                             0,
+                             0
+        };
+        pre_calculated[7] = {0,
+                             -6.854617250443810367364235128794608173438660749049784735487e-7,
+                             0
+        };
+        pre_calculated[8] = {0,
+                             0,
+                             1.3709234500887620734728470257589216346877321498099569470975e-6
+        };
+
+    }
+
+    void calcC22(Debris::Debris &d, double t, std::array<double,3> &acc_c22){
+        double gme = 3.986004407799724e+5;
+        double re = 6378.1363;
+        double c22 = 2.43914352398e-6;
+        double theta = 280.4606;
+        double nue = 4.178074622024230e-3;
+        ASSERT_EQ(gme, Physics::GM_EARTH);
+        ASSERT_EQ(re, Physics::R_EARTH);
+        ASSERT_EQ(c22, Physics::C_22);
+        ASSERT_EQ(theta, Physics::THETA_G);
+        ASSERT_EQ(nue, Physics::NU_EARTH);
+        double c_term=std::cos(theta+nue*t);
+        double s_term=std::sin(theta+nue*t);
+        double x = d.getPosition()[0]*c_term + d.getPosition()[1]*s_term;
+        double y = -d.getPosition()[0]*s_term + d.getPosition()[1]*c_term;
+        double z = d.getPosition()[2];
+        double n1 =5*gme*re*re*std::sqrt(15)*c22*(y*y-x*x);
+        double n2 =gme*re*re*std::sqrt(15)*c22;
+        double d1 =2*std::pow(x*x+y*y+z*z, 3.5);
+        double d2 =std::pow(x*x+y*y+z*z, 2.5);
+        double c22_x =(n1*x)/d1 + (n2*x)/d2;
+        double c22_y =(n1*y)/d1 - (n2*y)/d2;
+        double c22_z =(n1*z)/d1;
+        std::cout << "t-c_term=" << c_term << std::endl;
+        std::cout << "t-s_term=" << s_term << std::endl;
+        std::cout << "t-x=" << x << std::endl;
+        std::cout << "t-y=" << y << std::endl;
+        std::cout << "t-z=" << z << std::endl;
+        std::cout << "t-n1=" << n1 << std::endl;
+        std::cout << "t-n2=" << n2 << std::endl;
+        std::cout << "t-d1=" << d1 << std::endl;
+        std::cout << "t-d2=" << d2 << std::endl;
+        std::cout << "t-c22_x=" << c22_x << std::endl;
+        std::cout << "t-c22_y=" << c22_y << std::endl;
+        std::cout << "t-c22_z=" << c22_z << std::endl;
+        acc_c22[0] = c22_x * c_term - c22_y * s_term;
+        acc_c22[1] = c22_x * s_term + c22_y * c_term;
+        acc_c22[2] = c22_z;
+        std::cout << "t-acc_c22=" << IOUtils::array3DToString(acc_c22) << std::endl;
+    }
+};
+
+class S22ComponentTests : public ::testing::Test {
+protected:
+    std::shared_ptr<Debris::DebrisContainer> debris;
+    std::array<std::array<double,3>,9> pre_calculated;
+
+    virtual void SetUp() {
+        debris = std::make_shared<Debris::DebrisContainer>();
+        Debris::Debris d;
+
+        for (int i = 0; i < 3; ++i) {
+            for (int j = 0; j < 3; ++j) {
+                std::array<double, 3> pos{0, 0, 0};
+                pos[j] = (i+2)*3.5e3;
+                d.setPosition(pos);
+                debris->addDebris(d);
+            }
+        }
+        // calculated with wolfram alpha
+        pre_calculated[0] = {-0.000010967387600710096587782776206071373077501857198479655576780,
+                             0,
+                             0
+        };
+        pre_calculated[1] = {0,
+                             -0.000010967387600710096587782776206071373077501857198479655576780,
+                             0
+        };
+        pre_calculated[2] = {0,
+                             0,
+                             0.0000219347752014201931755655524121427461550037143969593111535607
+        };
+        pre_calculated[3] = {-2.166397550757549943265733571569653941234934755255240607759e-6,
+                             0,
+                             0
+        };
+        pre_calculated[4] = {0,
+                             -2.166397550757549943265733571569653941234934755255240607759e-6,
+                             0
+        };
+        pre_calculated[5] = {0,
+                             0,
+                             4.3327951015150998865314671431393078824698695105104812155181e-6
+        };
+        pre_calculated[6] = {-6.854617250443810367364235128794608173438660749049784735487e-7,
+                             0,
+                             0
+        };
+        pre_calculated[7] = {0,
+                             -6.854617250443810367364235128794608173438660749049784735487e-7,
+                             0
+        };
+        pre_calculated[8] = {0,
+                             0,
+                             1.3709234500887620734728470257589216346877321498099569470975e-6
+        };
+
+    }
+
+    void calcS22(Debris::Debris &d, std::array<double,3> &acc_j2){
+        double gme = 3.986004407799724e+5;
+        double re = 6378.1363;
+        double c20 = -4.84165371736e-4;
+
+        double x = d.getPosition()[0];
+        double y = d.getPosition()[1];
+        double z = d.getPosition()[2];
+        double n1 = gme*re*re*std::sqrt(5)*c20;
+        double d1 = 2*std::sqrt(x*x+y*y+z*z);
+        double d2 = (x*x+y*y+z*z)*(x*x+y*y+z*z);
+        double n3 = 15*(z*z);
+        double d3 = (x*x+y*y+z*z)*(x*x+y*y+z*z)*(x*x+y*y+z*z);
+        acc_j2[0] = ((n1*x)/d1)*((3/d2)-(n3/d3));
+        acc_j2[1] = ((n1*y)/d1)*((3/d2)-(n3/d3));
+        acc_j2[2] = ((n1*z)/d1)*((9/d2)-(n3/d3));
+    }
+};
