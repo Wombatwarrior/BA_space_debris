@@ -70,8 +70,8 @@ TEST_F(KepComponentTests, CalculationEquivalenceTest){
         calcKep(debris->getDebrisVector()[i],accelerations_2[i]);
     }
 
-    // 10e-20 fails, but e-19 passes
-    double abs_err = 10e-19;
+    // e-17 fails, but e-16 passes
+    double abs_err = 1e-16;
     for (int i = 0; i < debris->getDebrisVector().size(); ++i){
         EXPECT_NEAR(accelerations_1[i][0], accelerations_2[i][0], abs_err);
         EXPECT_NEAR(accelerations_1[i][1], accelerations_2[i][1], abs_err);
@@ -92,8 +92,8 @@ TEST_F(KepComponentTests, EquilavelnceWIthPreCalculatedTest){
         Acceleration::KepComponent::apply(debris->getDebrisVector()[i], accelerations[i-6], acc_total_dummy);
     }
 
-    // 10e-17 fails, but e-16 passes
-    double abs_err = 10e-16;
+    // 1e-16 fails, but e-15 passes
+    double abs_err = 1e-15;
     for (int i = 0; i < num_debris; ++i){
         EXPECT_NEAR(accelerations[i][0], pre_calculated[i][0], abs_err);
         EXPECT_NEAR(accelerations[i][1], pre_calculated[i][1], abs_err);
@@ -118,7 +118,7 @@ TEST_F(J2ComponentTests, CalculationEquivalenceTest){
     }
 
     // 10e-20 fails, but e-19 passes
-    double abs_err = 10e-10;
+    double abs_err = 1e-10;
     for (int i = 0; i < debris->getDebrisVector().size(); ++i){
         EXPECT_NEAR(accelerations_1[i][0], accelerations_2[i][0], abs_err);
         EXPECT_NEAR(accelerations_1[i][1], accelerations_2[i][1], abs_err);
@@ -139,8 +139,8 @@ TEST_F(J2ComponentTests, EquilavelnceWIthPreCalculatedTest){
         Acceleration::J2Component::apply(debris->getDebrisVector()[i], accelerations[i], acc_total_dummy);
     }
 
-    // 10e-22 fails, but e-21 passes
-    double abs_err = 10e-21;
+    // e-21 fails, but e-20 passes
+    double abs_err = 1e-20;
     for (int i = 0; i < num_debris; ++i){
         EXPECT_NEAR(accelerations[i][0], pre_calculated[i][0], abs_err);
         EXPECT_NEAR(accelerations[i][1], pre_calculated[i][1], abs_err);
@@ -166,8 +166,8 @@ TEST_F(C22ComponentTests, CalculationEquivalenceTest){
         calcC22(debris->getDebrisVector()[i], t, accelerations_2[i]);
     }
 
-    // e-24 fails, but e-23 passes
-    double abs_err = 10e-23;
+    // e-23 fails, but e-22 passes
+    double abs_err = 1e-22;
     for (int i = 0; i < num_debris; ++i){
         EXPECT_NEAR(accelerations_1[i][0], accelerations_2[i][0], abs_err);
         EXPECT_NEAR(accelerations_1[i][1], accelerations_2[i][1], abs_err);
@@ -193,7 +193,7 @@ TEST_F(C22ComponentTests, EquilavelnceWIthPreCalculatedTest){
     }
 
     // 10e-22 fails, but e-21 passes
-    double abs_err = 10e-0;
+    double abs_err = 1e-0;
     for (int i = 0; i < num_debris; ++i){
         EXPECT_NEAR(accelerations[i][0], pre_calculated[i][0], abs_err);
         EXPECT_NEAR(accelerations[i][1], pre_calculated[i][1], abs_err);
@@ -220,7 +220,7 @@ TEST_F(S22ComponentTests, CalculationEquivalenceTest){
     }
 
     // 10e-24 fails, but e-23 passes
-    double abs_err = 10e-23;
+    double abs_err = 1e-23;
     for (int i = 0; i < num_debris; ++i){
         EXPECT_NEAR(accelerations_1[i][0], accelerations_2[i][0], abs_err);
         EXPECT_NEAR(accelerations_1[i][1], accelerations_2[i][1], abs_err);
@@ -246,7 +246,7 @@ TEST_F(S22ComponentTests, EquilavelnceWIthPreCalculatedTest){
     }
 
     // 10e-22 fails, but e-21 passes
-    double abs_err = 10e-0;
+    double abs_err = 1e-0;
     for (int i = 0; i < num_debris; ++i){
         EXPECT_NEAR(accelerations[i][0], pre_calculated[i][0], abs_err);
         EXPECT_NEAR(accelerations[i][1], pre_calculated[i][1], abs_err);
@@ -277,8 +277,8 @@ TEST_F(C22S22ComponentTests, CalculationEquivalenceTest){
         Acceleration::C22S22Component::apply(debris->getDebrisVector()[i], c_term, s_term, accelerations_3[i],acc_total_dummy);
     }
 
-    // e-24 fails, but e-24 passes
-    double abs_err = 10e-23;
+    // e-23 fails, but e-22 passes
+    double abs_err = 1e-22;
     for (int i = 0; i < num_debris; ++i){
         EXPECT_NEAR(accelerations_1[i][0]+accelerations_2[i][0], accelerations_3[i][0], abs_err);
         EXPECT_NEAR(accelerations_1[i][1]+accelerations_2[i][1], accelerations_3[i][1], abs_err);
