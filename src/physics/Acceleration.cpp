@@ -270,10 +270,10 @@ namespace Acceleration{
         std::array<double,6> setUp(double t){
             double l = Physics::PHI_SUN_0 + Physics::NU_SUN*t;
             double r = (149.619 - 2.499*std::cos(l) - 0.021*std::cos(2*l))*1e+6;
-            double lambda = (M_PI/180)*(Physics::OMEGA_SUN_1 + Physics::OMEGA_SUN_2 + (6892.0 / 3600) * std::sin(l) + (72.0 / 3600) * std::sin(2 * l));
-            std::array<double,6> sun_params = {r*std::cos(lambda),
-                                               r * std::sin(lambda) * std::cos(Physics::EPSILON),
-                                               r * std::sin(lambda) * std::sin(Physics::EPSILON),
+            double lambda = Physics::OMEGA_SUN_1 + Physics::OMEGA_SUN_2 + (6892.0 / 3600) * std::sin(l*M_PIf64/180) + (72.0 / 3600) * std::sin((2 * l)*M_PIf64/180);
+            std::array<double,6> sun_params = {r*std::cos(lambda*M_PIf64/180),
+                                               r * std::sin(lambda*M_PIf64/180) * std::cos(Physics::EPSILON*M_PIf64/180),
+                                               r * std::sin(lambda*M_PIf64/180) * std::sin(Physics::EPSILON*M_PIf64/180),
                                                0,
                                                0,
                                                0
