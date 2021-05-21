@@ -209,6 +209,15 @@ namespace Acceleration {
      */
     namespace SolComponent {
         /**
+         * @brief Precalculates values needed for Acceleration::SolComponent::apply()
+         *
+         * Calculates time dependent position of the sun and terms only depending on those position values
+         * i.e. constant for the whole time step.
+         *
+         * @return 6D vector [X_sun,Y_sun,Z_sun,X_sun/||POS_sunY||,Y_sun/||POS_sun||,Z_sun/||POS_sun||]
+         */
+        std::array<double,6> setUp(double t);
+        /**
          * @brief Calculates acceleration due to tidal forces caused by the sun
          *
          * @param d Reference to the Debris::Debris object to apply the acceleration to

@@ -140,4 +140,20 @@ namespace Physics {
      * - Acceleration::SRPComponent
      */
     inline constexpr double P_SRP = 4.56e-6;
+    /**
+     * @brief Omega_1 of sun
+     *
+     * Used in:
+     * - Acceleration::SolComponent
+     */
+    //TODO concrete value
+    inline constexpr double OMEGA_SUN_1 = 1;
+    /**
+     * @brief Omega_2 of sun
+     *
+     * Used in:
+     * - Acceleration::SolComponent
+     */
+    //TODO concrete value
+    inline constexpr double OMEGA_SUN_2 = 1;
 }
