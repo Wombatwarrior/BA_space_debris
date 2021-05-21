@@ -173,7 +173,7 @@ namespace Acceleration{
         }
         void apply(Debris::Debris &d, double t, std::array<double,3> &acc_c22, std::array<double,3> &acc_total){
             acc_c22 = d.getPosition();
-            double trig_arg = Physics::THETA_G + Physics::NU_EARTH*t;
+            double trig_arg = (Physics::THETA_G + Physics::NU_EARTH*t)*M_PIf64/180;
             double c_term = std::cos(trig_arg);
             double s_term = std::sin(trig_arg);
             double x = acc_c22[0]*c_term + acc_c22[1]*s_term;
@@ -249,7 +249,7 @@ namespace Acceleration{
         }
         void apply( Debris::Debris &d, double t, std::array<double,3> &acc_s22, std::array<double,3> &acc_total){
             acc_s22 = d.getPosition();
-            double trig_arg = Physics::THETA_G + Physics::NU_EARTH*t;
+            double trig_arg = (Physics::THETA_G + Physics::NU_EARTH*t)*M_PIf64/180;
             double c_term = std::cos(trig_arg);
             double s_term = std::sin(trig_arg);
             double x = acc_s22[0]*c_term + acc_s22[1]*s_term;
@@ -327,8 +327,8 @@ namespace Acceleration{
             moon_pos[0] = moon_pos[0]*c_term;
             moon_pos[1] = moon_pos[1]*c_term;
             moon_pos[2] = moon_pos[2]*s_term;
-            c_term = std::cos(Physics::EPSILON);
-            s_term = std::sin(Physics::EPSILON);
+            c_term = std::cos(Physics::EPSILON*M_PIf64/180);
+            s_term = std::sin(Physics::EPSILON*M_PIf64/180);
 
             std::array<double,6> moon_params = {moon_pos[0],
                                                 c_term*moon_pos[1] - s_term*moon_pos[2],
