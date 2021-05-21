@@ -35,7 +35,24 @@ namespace Acceleration{
                 S22Component::apply(d, t, new_acc_component, new_acc_total);
             }
             if (config[SOL]) {
-                SolComponent::apply(d, new_acc_component, new_acc_total);
+                double O_sun = 100;
+                double w_sun = 10;
+                double l = Physics::PHI_SUN_0 + Physics::NU_SUN*t;
+                double r = 149.619 - 2.499*std::cos(l) - 0.021*std::cos(2*l);
+                double lambda = O_sun + w_sun + (6892.0 / 3600) * std::sin(l) + (72.0 / 3600) * std::sin(2 * l);
+                std::array<double,6> sun_params = {r*std::cos(lambda),
+                                                   r * std::sin(lambda) * std::cos(Physics::EPSILON),
+                                                   r * std::sin(lambda) * std::sin(Physics::EPSILON),
+                                                   0,
+                                                   0,
+                                                   0
+                };
+                double d2 = sun_params[0]*sun_params[0]+sun_params[1]*sun_params[1]+sun_params[2]*sun_params[2];
+                d2 = std::sqrt(d2*d2*d2);
+                sun_params[3] = sun_params[0]/d2;
+                sun_params[4] = sun_params[1]/d2;
+                sun_params[5] = sun_params[2]/d2;
+                SolComponent::apply(d, sun_params, new_acc_component, new_acc_total);
             }
             if (config[LUN]) {
                 LunComponent::apply(d, new_acc_component, new_acc_total);
@@ -266,11 +283,19 @@ namespace Acceleration{
     }
 
     namespace SolComponent {
-        namespace {
-
-        }
-        void apply( Debris::Debris &d, std::array<double,3> &acc_sol, std::array<double,3> &acc_total){
-
+        void apply( Debris::Debris &d, std::array<double,6> &sun_params, std::array<double,3> &acc_sol, std::array<double,3> &acc_total){
+            acc_sol = d.getPosition();
+            acc_sol[0] = acc_sol[0] - sun_params[0];
+            acc_sol[1] = acc_sol[1] - sun_params[1];
+            acc_sol[2] = acc_sol[2] - sun_params[2];
+            double d1 = acc_sol[0]*acc_sol[0]+acc_sol[1]*acc_sol[1]+acc_sol[2]*acc_sol[2];
+            d1 = std::sqrt(d1*d1*d1);
+            acc_sol[0] = -Physics::GM_SUN * (acc_sol[0]/d1 + sun_params[3]);
+            acc_sol[1] = -Physics::GM_SUN * (acc_sol[1]/d1 + sun_params[4]);
+            acc_sol[2] = -Physics::GM_SUN * (acc_sol[2]/d1 + sun_params[5]);
+            acc_total[0] = acc_total[0] + acc_sol[0];
+            acc_total[1] = acc_total[1] + acc_sol[1];
+            acc_total[2] = acc_total[2] + acc_sol[2];
         }
     }
 
