@@ -14,8 +14,8 @@ namespace Acceleration{
         std::array<double,3> new_acc_total{0,0,0};
         std::array<double,3> new_acc_component{0,0,0};
         double t = 0;
-        double c_term = std::cos(Physics::THETA_G+Physics::NU_EARTH*t);
-        double s_term = std::sin(Physics::THETA_G+Physics::NU_EARTH*t);
+        double c_term = std::cos((Physics::THETA_G+Physics::NU_EARTH*t)*M_PIf64);
+        double s_term = std::sin((Physics::THETA_G+Physics::NU_EARTH*t)*M_PIf64);
         debris->shiftAcceleration();
         for (auto &d : debris->getDebrisVector()) {
             new_acc_total[0] = 0;

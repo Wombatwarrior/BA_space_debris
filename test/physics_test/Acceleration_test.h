@@ -245,12 +245,11 @@ protected:
     }
 
     void calcC22(Debris::Debris &d, double t, std::array<double,3> &acc_c22){
-        double pi = std::acos(-1);
         double gme = 3.986004407799724e+5;
         double re = 6378.1363;
         double c22 = 2.43914352398e-6;
-        double theta = (pi/180) * 280.4606;
-        double nue = (pi/180) * 4.178074622024230e-3;
+        double theta = 280.4606;
+        double nue = 4.178074622024230e-3;
         ASSERT_EQ(gme, Physics::GM_EARTH);
         ASSERT_EQ(re, Physics::R_EARTH);
         ASSERT_EQ(c22, Physics::C_22);
@@ -344,8 +343,8 @@ protected:
         double gme = 3.986004407799724e+5;
         double re = 6378.1363;
         double s22 = -1.40016683654e-6;
-        double theta = (pi/180) * 280.4606;
-        double nue = (pi/180) * 4.178074622024230e-3;
+        double theta = 280.4606;
+        double nue = 4.178074622024230e-3;
         ASSERT_EQ(gme, Physics::GM_EARTH);
         ASSERT_EQ(re, Physics::R_EARTH);
         ASSERT_EQ(s22, Physics::S_22);
