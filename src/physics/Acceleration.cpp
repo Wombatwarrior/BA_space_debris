@@ -38,7 +38,8 @@ namespace Acceleration{
                 SolComponent::apply(d, new_acc_component, new_acc_total);
             }
             if (config[LUN]) {
-                LunComponent::apply(d, new_acc_component, new_acc_total);
+                std::array<double,6> moon_params=LunComponent::setUp(t);
+                LunComponent::apply(d, moon_params, new_acc_component, new_acc_total);
             }
             if (config[SRP]) {
                 SRPComponent::apply(d, new_acc_component, new_acc_total);
@@ -274,11 +275,89 @@ namespace Acceleration{
         }
     }
 
-    namespace LunComponent {
-        namespace {
+    namespace LunComponent{
+        std::array<double,6> setUp(double t) {
+            double phi_m = Physics::NU_SUN*t;
+            double phi_m_a = Physics::NU_MOON_A*t;
+            double phi_m_p = Physics::NU_MOON_P*t;
+            double phi_m_s = Physics::NU_MOON_S*t;
+            double l_0 = phi_m_p*phi_m_a + 218.31617;
+            double l_m = phi_m_a + 134.96292;
+            double l1_m = phi_m_s + 357.52543;
+            double f_m = phi_m_p + phi_m_a + phi_m_s + 93.27283;
+            double d_m = phi_m_p + phi_m_a - phi_m + 297.85027;
 
+            double lambda_m = l_0 + (22640.0/3600)*std::sin(l_m*M_PIf64/180);
+            lambda_m = lambda_m + (22640.0/3600)*std::sin(l_m*M_PIf64/180);
+            lambda_m = lambda_m + (769.0/3600)*std::sin(2*l_m*M_PIf64/180);
+            lambda_m = lambda_m - (4856.0/3600)*std::sin((l_m-2*d_m)*M_PIf64/180);
+            lambda_m = lambda_m + (2370.0/3600)*std::sin((2*d_m)*M_PIf64/180);
+            lambda_m = lambda_m - (668.0/3600)*std::sin((l1_m)*M_PIf64/180);
+            lambda_m = lambda_m - (412.0/3600)*std::sin((2*f_m)*M_PIf64/180);
+            lambda_m = lambda_m - (212.0/3600)*std::sin((2*l_m-2*d_m)*M_PIf64/180);
+            lambda_m = lambda_m - (206.0/3600)*std::sin((l_m+l1_m-2*d_m)*M_PIf64/180);
+            lambda_m = lambda_m + (192.0/3600)*std::sin((l_m+2*d_m)*M_PIf64/180);
+            lambda_m = lambda_m - (165.0/3600)*std::sin((l1_m-2*d_m)*M_PIf64/180);
+            lambda_m = lambda_m + (148.0/3600)*std::sin((l_m+l1_m)*M_PIf64/180);
+            lambda_m = lambda_m - (125.0/3600)*std::sin((d_m)*M_PIf64/180);
+            lambda_m = lambda_m - (110.0/3600)*std::sin((l_m+l1_m)*M_PIf64/180);
+            lambda_m = lambda_m - (55.0/3600)*std::sin((2*f_m-2*d_m)*M_PIf64/180);
+
+            double beta_m = (18520.0/3600)*std::sin((f_m+lambda_m-l_0+(412.0/3600)*std::sin((2*f_m)*M_PIf64/180)+(541.0/3600)*std::sin(l1_m*M_PIf64/180))*M_PIf64/180);
+            beta_m = beta_m - (526.0/3600)*std::sin((f_m-2*d_m)*M_PIf64/180);
+            beta_m = beta_m + (44.0/3600)*std::sin((l_m+f_m-2*d_m)*M_PIf64/180);
+            beta_m = beta_m - (31/3600)*std::sin((-l_m+f_m-2*d_m)*M_PIf64/180);
+            beta_m = beta_m - (25.0/3600)*std::sin((-2*l_m +f_m)*M_PIf64/180);
+            beta_m = beta_m - (23.0/3600)*std::sin((l1_m+f_m-2*d_m)*M_PIf64/180);
+            beta_m = beta_m + (21.0/3600)*std::sin((-l_m+f_m)*M_PIf64/180);
+            beta_m = beta_m + (11.0/3600)*std::sin((-l1_m+f_m-2*d_m)*M_PIf64/180);
+
+            double r_m = 38500- 20905*std::cos(l_m*M_PIf64/180) - 3699*std::cos((2*d_m-l_m)*M_PIf64/180);
+            r_m = r_m - 2956*std::cos(2*d_m*M_PIf64/180) - 570*std::cos(2*l_m*M_PIf64/180);
+            r_m = r_m + 246*std::cos((2*l_m-2*d_m)*M_PIf64/180) - 205*std::cos((l1_m-2*d_m)*M_PIf64/180);
+            r_m = r_m - 171*std::cos((l_m+2*d_m)*M_PIf64/180) - 152*std::cos((l_m+l1_m-2*d_m)*M_PIf64/180);
+
+            std::array<double,3> moon_pos{r_m,r_m,r_m};
+            double c_term = std::cos(lambda_m*M_PIf64/180);
+            double s_term = std::sin(lambda_m*M_PIf64/180);
+            moon_pos[0] = moon_pos[0]*c_term;
+            moon_pos[1] = moon_pos[1]*s_term;
+            c_term = std::cos(beta_m*M_PIf64/180);
+            s_term = std::sin(beta_m*M_PIf64/180);
+            moon_pos[0] = moon_pos[0]*c_term;
+            moon_pos[1] = moon_pos[1]*c_term;
+            moon_pos[2] = moon_pos[2]*s_term;
+            c_term = std::cos(Physics::EPSILON);
+            s_term = std::sin(Physics::EPSILON);
+
+            std::array<double,6> moon_params = {moon_pos[0],
+                                                c_term*moon_pos[1] - s_term*moon_pos[2],
+                                                s_term*moon_pos[1] + c_term*moon_pos[2],
+                                                0,
+                                                0,
+                                                0
+            };
+            double d2 = moon_params[0] * moon_params[0] + moon_params[1] * moon_params[1] + moon_params[2] * moon_params[2];
+            d2 = 1/std::sqrt(d2*d2*d2);
+            moon_params[3] = moon_params[0] * d2;
+            moon_params[4] = moon_params[1] * d2;
+            moon_params[5] = moon_params[2] * d2;
+            return moon_params;
         }
-        void apply( Debris::Debris &d, std::array<double,3> &acc_lun, std::array<double,3> &acc_total){
+        void apply( Debris::Debris &d, std::array<double,6> &moon_params, std::array<double,3> &acc_lun, std::array<double,3> &acc_total){
+            acc_lun = d.getPosition();
+            acc_lun[0] = acc_lun[0] - moon_params[0];
+            acc_lun[1] = acc_lun[1] - moon_params[1];
+            acc_lun[2] = acc_lun[2] - moon_params[2];
+            double d1 = acc_lun[0]*acc_lun[0]+acc_lun[1]*acc_lun[1]+acc_lun[2]*acc_lun[2];
+            d1 = 1/std::sqrt(d1*d1*d1);
+            acc_lun[0] = -Physics::GM_SUN * (acc_lun[0]*d1 + moon_params[3]);
+            acc_lun[1] = -Physics::GM_SUN * (acc_lun[1]*d1 + moon_params[4]);
+            acc_lun[2] = -Physics::GM_SUN * (acc_lun[2]*d1 + moon_params[5]);
+            acc_lun[2] = -Physics::GM_SUN * (acc_lun[2]*d1 + moon_params[5]);
+            acc_total[0] = acc_total[0] + acc_lun[0];
+            acc_total[1] = acc_total[1] + acc_lun[1];
+            acc_total[2] = acc_total[2] + acc_lun[2];
 
         }
     }
