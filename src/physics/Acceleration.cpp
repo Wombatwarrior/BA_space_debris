@@ -173,7 +173,7 @@ namespace Acceleration{
         }
         void apply(Debris::Debris &d, double t, std::array<double,3> &acc_c22, std::array<double,3> &acc_total){
             acc_c22 = d.getPosition();
-            double trig_arg = Physics::THETA_G + Physics::NU_EARTH*t;
+            double trig_arg = (Physics::THETA_G + Physics::NU_EARTH*t)*M_PIf64/180;
             double c_term = std::cos(trig_arg);
             double s_term = std::sin(trig_arg);
             double x = acc_c22[0]*c_term + acc_c22[1]*s_term;
@@ -249,7 +249,7 @@ namespace Acceleration{
         }
         void apply( Debris::Debris &d, double t, std::array<double,3> &acc_s22, std::array<double,3> &acc_total){
             acc_s22 = d.getPosition();
-            double trig_arg = Physics::THETA_G + Physics::NU_EARTH*t;
+            double trig_arg = (Physics::THETA_G + Physics::NU_EARTH*t)*M_PIf64/180;
             double c_term = std::cos(trig_arg);
             double s_term = std::sin(trig_arg);
             double x = acc_s22[0]*c_term + acc_s22[1]*s_term;
@@ -269,7 +269,7 @@ namespace Acceleration{
     namespace SolComponent {
         std::array<double,6> setUp(double t){
             double l = Physics::PHI_SUN_0 + Physics::NU_SUN*t;
-            double r = (149.619 - 2.499*std::cos(l) - 0.021*std::cos(2*l))*1e+6;
+            double r = (149.619 - 2.499*std::cos(l*M_PIf64/180) - 0.021*std::cos(2*l*M_PIf64/180))*1e+6;
             double lambda = Physics::OMEGA_SUN_1 + Physics::OMEGA_SUN_2 + (6892.0 / 3600) * std::sin(l*M_PIf64/180) + (72.0 / 3600) * std::sin((2 * l)*M_PIf64/180);
             std::array<double,6> sun_params = {r*std::cos(lambda*M_PIf64/180),
                                                r * std::sin(lambda*M_PIf64/180) * std::cos(Physics::EPSILON*M_PIf64/180),
