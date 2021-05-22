@@ -25,4 +25,13 @@ namespace IOUtils {
         result << "[" << array[0] << ", " << array[1] << ", " << array[2] << "]";
         return result.str();
     }
+    /**
+      * @brief write a 3D vector of doubles into a csv format to output file stream
+      *
+      * @param array Reference to the 3D vector to convert
+      * @param out Output file stream to write to
+      */
+    inline void array3DToCSV(std::ostream &out, const std::array<double,3> &array) {
+        out << array[0] << "," << array[1] << "," << array[2];
+    }
 }

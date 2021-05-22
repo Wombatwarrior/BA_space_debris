@@ -32,13 +32,16 @@ void CommandLineInput::parseCommandLine(int argc, char **argv){
                 // Make sure we aren't at the end of argv
                 if (i + 1 < argc) {
                     if (option == "-output_file_name" || option == "-o") {
+                        output_file_name = std::string(argv[i+1]);
                         if (output_file_name.size() < 5){
                             // too short to contain filename plus ".xyz" file extension
                         } else{
                             // check for output file extension
                             std::string type_str=output_file_name.substr(output_file_name.size()-4, 4);
-                            if(type_str.compare(".txt")){
+                            if(type_str == ".txt"){
                                 output_file_type=FileOutput::TXT;
+                            }else if (type_str == ".csv"){
+                                output_file_type=FileOutput::CSV;
                             }else{
                                 // not supported file format
                             }

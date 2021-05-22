@@ -41,6 +41,14 @@ namespace Debris {
         return std::sqrt(velocity[0]*velocity[0]+velocity[1]*velocity[1]+velocity[2]*velocity[2]);
     }
 
+    double Debris::getAccT0Norm() {
+        return std::sqrt(acc_t0[0]*acc_t0[0]+acc_t0[1]*acc_t0[1]+acc_t0[2]*acc_t0[2]);
+    }
+
+    double Debris::getAccT1Norm() {
+        return std::sqrt(acc_t1[0]*acc_t1[0]+acc_t1[1]*acc_t1[1]+acc_t1[2]*acc_t1[2]);
+    }
+
     std::array<double, 3> &Debris::getPosition()  {
         return position;
     }

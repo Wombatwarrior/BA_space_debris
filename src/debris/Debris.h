@@ -64,6 +64,21 @@ namespace Debris {
          * @return Euclidean norm of the #velocity vector
          */
         double getSpeed();
+
+        /**
+         * @brief Calculates the euclidean norm of the #acc_t0
+         *
+         * @return Calculates the euclidean norm of the #acc_t0
+         */
+        double getAccT0Norm();
+
+
+        /**
+         * @brief Calculates the euclidean norm of the #acc_t1
+         *
+         * @return Calculates the euclidean norm of the #acc_t1
+         */
+        double getAccT1Norm();
     private:
         std::array<double,3> position;/**< 3D vector representation of the debris position*/
         std::array<double,3> velocity;/**< 3D vector representation of the debris velocity*/

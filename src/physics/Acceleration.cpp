@@ -66,6 +66,14 @@ namespace Acceleration{
         AccelerationAccumulator::debris = &debris;
     }
 
+    double AccelerationAccumulator::getT() {
+        return t;
+    }
+
+    void AccelerationAccumulator::setT(double t) {
+        AccelerationAccumulator::t = t;
+    }
+
     namespace KepComponent {
         void apply( Debris::Debris &d, std::array<double,3> &acc_kep, std::array<double,3> &acc_total) {
             acc_kep = d.getPosition();

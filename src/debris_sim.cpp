@@ -25,7 +25,8 @@ void initSimulation(int argc, char **argv){
     command_line = std::make_shared<CommandLineInput>(argc,argv);
     debris = std::make_shared<Debris::DebrisContainer>();
     file_input = std::make_shared<FileInput>(*debris, command_line->getInputFileName(), command_line->getInputFileType());
-    accumulator = std::make_shared<Acceleration::AccelerationAccumulator>(file_input->getAccConfig(), *debris);
+    file_output = std::make_shared<FileOutput>(*debris, command_line->getOutputFileName(), command_line->getOutputFileType());
+    accumulator = std::make_shared<Acceleration::AccelerationAccumulator>(file_input->getAccConfig(), *debris, file_input->getStartT());
     integrator = std::make_shared<Integrator>(*debris, *accumulator, file_input->getDeltaT());
 }
 
@@ -35,6 +36,9 @@ void runSimulation(){
         LOG4CXX_INFO(logger, d.toString());
     }
     int iteration = 0;
+    double time_till_write = file_input->getWriteDeltaT();
+    // write starting conditions
+    file_output->writeDebrisData(file_input->getStartT());
     while (current_time <= file_input->getEndT()){
         iteration++;
         if (iteration % 3000 == 0){
@@ -43,8 +47,15 @@ void runSimulation(){
             }
         }
         integrator->integrate();
+        time_till_write -= file_input->getDeltaT();
+        if (time_till_write <= 0){
+            file_output->writeDebrisData(current_time);
+            time_till_write = file_input->getWriteDeltaT();
+        }
         current_time += file_input->getDeltaT();
     }
+    // save end configuration
+    file_output->writeDebrisData(file_input->getEndT());
     for (auto &d : debris->getDebrisVector()){
         LOG4CXX_INFO(logger, d.toString());
     }
