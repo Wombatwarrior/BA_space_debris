@@ -88,7 +88,7 @@ namespace Physics {
      * - Acceleration::SolComponent
      * - Acceleration::LunComponent
      */
-    inline constexpr double NU_SUN = 1.146046798147175e-5;
+    inline constexpr double NU_SUN = 1.1407410259335311e-5;
     /**
      * @brief Angular velocity of moon at point a
      *
