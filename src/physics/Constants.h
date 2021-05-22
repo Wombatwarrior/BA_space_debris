@@ -141,13 +141,12 @@ namespace Physics {
      */
     inline constexpr double P_SRP = 4.56e-6;
     /**
-     * @brief Omega_1 of sun
+     * @brief Longitude of the ascending node
      *
      * Used in:
      * - Acceleration::SolComponent
      */
-    //TODO concrete value
-    inline constexpr double OMEGA_SUN_1 = 1;
+    inline constexpr double LONG_ASC = -11.26064;
     /**
      * @brief Omega_2 of sun
      *
@@ -155,5 +154,5 @@ namespace Physics {
      * - Acceleration::SolComponent
      */
     //TODO concrete value
-    inline constexpr double OMEGA_SUN_2 = 1;
+    inline constexpr double ARG_PERIAPSIS = 102.94719;
 }
