@@ -267,10 +267,10 @@ namespace Acceleration{
     }
 
     namespace SolComponent {
-        std::array<double,6> setUp(double t){
-            double l = Physics::PHI_SUN_0 + Physics::NU_SUN*t;
-            double r = (149.619 - 2.499*std::cos(l*M_PIf64/180) - 0.021*std::cos(2*l*M_PIf64/180))*1e+6;
-            double lambda = Physics::LONG_ASC + Physics::ARG_PERIAPSIS + (6892.0 / 3600) * std::sin(l * M_PIf64 / 180) + (72.0 / 3600) * std::sin((2 * l) * M_PIf64 / 180);
+        const std::array<double,6> setUp(double t){
+            const double l = Physics::PHI_SUN_0 + Physics::NU_SUN*t;
+            const double r = (149.619 - 2.499*std::cos(l*M_PIf64/180) - 0.021*std::cos(2*l*M_PIf64/180))*1e+6;
+            const double lambda = Physics::LONG_ASC + Physics::ARG_PERIAPSIS + (6892.0 / 3600) * std::sin(l * M_PIf64 / 180) + (72.0 / 3600) * std::sin((2 * l) * M_PIf64 / 180);
             std::array<double,6> sun_params = {r*std::cos(lambda*M_PIf64/180),
                                                r * std::sin(lambda*M_PIf64/180) * std::cos(Physics::EPSILON*M_PIf64/180),
                                                r * std::sin(lambda*M_PIf64/180) * std::sin(Physics::EPSILON*M_PIf64/180),
@@ -286,7 +286,7 @@ namespace Acceleration{
             return sun_params;
         }
 
-        void apply( Debris::Debris &d, std::array<double,6> &sun_params, std::array<double,3> &acc_sol, std::array<double,3> &acc_total){
+        void apply( Debris::Debris &d, const std::array<double,6> &sun_params, std::array<double,3> &acc_sol, std::array<double,3> &acc_total){
             acc_sol = d.getPosition();
             acc_sol[0] = acc_sol[0] - sun_params[0];
             acc_sol[1] = acc_sol[1] - sun_params[1];
