@@ -38,7 +38,7 @@ namespace Acceleration{
                 SolComponent::apply(d, new_acc_component, new_acc_total);
             }
             if (config[LUN]) {
-                std::array<double,6> moon_params=LunComponent::setUp(t);
+                const std::array<double,6> moon_params=LunComponent::setUp(t);
                 LunComponent::apply(d, moon_params, new_acc_component, new_acc_total);
             }
             if (config[SRP]) {
@@ -276,16 +276,16 @@ namespace Acceleration{
     }
 
     namespace LunComponent{
-        std::array<double,6> setUp(double t) {
-            double phi_m = Physics::NU_SUN*t;
-            double phi_m_a = Physics::NU_MOON_A*t;
-            double phi_m_p = Physics::NU_MOON_P*t;
-            double phi_m_s = Physics::NU_MOON_S*t;
-            double l_0 = phi_m_p + phi_m_a + 218.31617;
-            double l_m = phi_m_a + 134.96292;
-            double l1_m = phi_m + 357.52543;
-            double f_m = phi_m_p + phi_m_a + phi_m_s + 93.27283;
-            double d_m = phi_m_p + phi_m_a - phi_m + 297.85027;
+        const std::array<double,6> setUp(double t) {
+            const double phi_m = Physics::NU_SUN*t;
+            const double phi_m_a = Physics::NU_MOON_A*t;
+            const double phi_m_p = Physics::NU_MOON_P*t;
+            const double phi_m_s = Physics::NU_MOON_S*t;
+            const double l_0 = phi_m_p + phi_m_a + 218.31617;
+            const double l_m = phi_m_a + 134.96292;
+            const double l1_m = phi_m + 357.52543;
+            const double f_m = phi_m_p + phi_m_a + phi_m_s + 93.27283;
+            const double d_m = phi_m_p + phi_m_a - phi_m + 297.85027;
 
             double lambda_m = l_0;
             lambda_m = lambda_m + (22640.0/3600)*std::sin(l_m*M_PIf64/180);
@@ -344,7 +344,7 @@ namespace Acceleration{
             moon_params[5] = moon_params[2] * d2;
             return moon_params;
         }
-        void apply( Debris::Debris &d, std::array<double,6> &moon_params, std::array<double,3> &acc_lun, std::array<double,3> &acc_total){
+        void apply( Debris::Debris &d, const std::array<double,6> &moon_params, std::array<double,3> &acc_lun, std::array<double,3> &acc_total){
             acc_lun = d.getPosition();
             acc_lun[0] = acc_lun[0] - moon_params[0];
             acc_lun[1] = acc_lun[1] - moon_params[1];
