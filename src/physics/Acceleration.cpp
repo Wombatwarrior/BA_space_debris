@@ -281,13 +281,13 @@ namespace Acceleration{
             double phi_m_a = Physics::NU_MOON_A*t;
             double phi_m_p = Physics::NU_MOON_P*t;
             double phi_m_s = Physics::NU_MOON_S*t;
-            double l_0 = phi_m_p*phi_m_a + 218.31617;
+            double l_0 = phi_m_p + phi_m_a + 218.31617;
             double l_m = phi_m_a + 134.96292;
-            double l1_m = phi_m_s + 357.52543;
+            double l1_m = phi_m + 357.52543;
             double f_m = phi_m_p + phi_m_a + phi_m_s + 93.27283;
             double d_m = phi_m_p + phi_m_a - phi_m + 297.85027;
 
-            double lambda_m = l_0 + (22640.0/3600)*std::sin(l_m*M_PIf64/180);
+            double lambda_m = l_0;
             lambda_m = lambda_m + (22640.0/3600)*std::sin(l_m*M_PIf64/180);
             lambda_m = lambda_m + (769.0/3600)*std::sin(2*l_m*M_PIf64/180);
             lambda_m = lambda_m - (4856.0/3600)*std::sin((l_m-2*d_m)*M_PIf64/180);
@@ -298,7 +298,7 @@ namespace Acceleration{
             lambda_m = lambda_m - (206.0/3600)*std::sin((l_m+l1_m-2*d_m)*M_PIf64/180);
             lambda_m = lambda_m + (192.0/3600)*std::sin((l_m+2*d_m)*M_PIf64/180);
             lambda_m = lambda_m - (165.0/3600)*std::sin((l1_m-2*d_m)*M_PIf64/180);
-            lambda_m = lambda_m + (148.0/3600)*std::sin((l_m+l1_m)*M_PIf64/180);
+            lambda_m = lambda_m + (148.0/3600)*std::sin((l_m-l1_m)*M_PIf64/180);
             lambda_m = lambda_m - (125.0/3600)*std::sin((d_m)*M_PIf64/180);
             lambda_m = lambda_m - (110.0/3600)*std::sin((l_m+l1_m)*M_PIf64/180);
             lambda_m = lambda_m - (55.0/3600)*std::sin((2*f_m-2*d_m)*M_PIf64/180);
@@ -312,7 +312,7 @@ namespace Acceleration{
             beta_m = beta_m + (21.0/3600)*std::sin((-l_m+f_m)*M_PIf64/180);
             beta_m = beta_m + (11.0/3600)*std::sin((-l1_m+f_m-2*d_m)*M_PIf64/180);
 
-            double r_m = 38500- 20905*std::cos(l_m*M_PIf64/180) - 3699*std::cos((2*d_m-l_m)*M_PIf64/180);
+            double r_m = 385000 - 20905*std::cos(l_m*M_PIf64/180) - 3699*std::cos((2*d_m-l_m)*M_PIf64/180);
             r_m = r_m - 2956*std::cos(2*d_m*M_PIf64/180) - 570*std::cos(2*l_m*M_PIf64/180);
             r_m = r_m + 246*std::cos((2*l_m-2*d_m)*M_PIf64/180) - 205*std::cos((l1_m-2*d_m)*M_PIf64/180);
             r_m = r_m - 171*std::cos((l_m+2*d_m)*M_PIf64/180) - 152*std::cos((l_m+l1_m-2*d_m)*M_PIf64/180);
@@ -351,10 +351,9 @@ namespace Acceleration{
             acc_lun[2] = acc_lun[2] - moon_params[2];
             double d1 = acc_lun[0]*acc_lun[0]+acc_lun[1]*acc_lun[1]+acc_lun[2]*acc_lun[2];
             d1 = 1/std::sqrt(d1*d1*d1);
-            acc_lun[0] = -Physics::GM_SUN * (acc_lun[0]*d1 + moon_params[3]);
-            acc_lun[1] = -Physics::GM_SUN * (acc_lun[1]*d1 + moon_params[4]);
-            acc_lun[2] = -Physics::GM_SUN * (acc_lun[2]*d1 + moon_params[5]);
-            acc_lun[2] = -Physics::GM_SUN * (acc_lun[2]*d1 + moon_params[5]);
+            acc_lun[0] = -Physics::GM_MOON * (acc_lun[0]*d1 + moon_params[3]);
+            acc_lun[1] = -Physics::GM_MOON * (acc_lun[1]*d1 + moon_params[4]);
+            acc_lun[2] = -Physics::GM_MOON * (acc_lun[2]*d1 + moon_params[5]);
             acc_total[0] = acc_total[0] + acc_lun[0];
             acc_total[1] = acc_total[1] + acc_lun[1];
             acc_total[2] = acc_total[2] + acc_lun[2];

@@ -147,3 +147,55 @@ TEST_F(J2ComponentTests, EquilavelnceWIthPreCalculatedTest){
         EXPECT_NEAR(accelerations[i][2], pre_calculated[i][2], abs_err);
     }
 }
+
+
+
+/**
+ * Tests if the acceleration calculated using Acceleration::J2Component::apply() is the same as using a inefficient implementation
+ */
+TEST_F(LunComponentTests, CalculationEquivalenceTest){
+    const int num_debris = 9;
+    std::array<std::array<double,3>, num_debris> accelerations_1;
+    std::array<std::array<double,3>, num_debris> accelerations_2;
+    std::array<double,3> acc_total_dummy;
+    double t = 0;
+    std::array<double,6> moon_params=Acceleration::LunComponent::setUp(t);
+
+    // calculate the acceleration for all particles using two different functions
+    for(int i = 0; i < debris->getDebrisVector().size(); ++i){
+        Acceleration::LunComponent::apply(debris->getDebrisVector()[i], moon_params, accelerations_1[i],acc_total_dummy);
+        calcLun(debris->getDebrisVector()[i],t,accelerations_2[i]);
+    }
+
+    // 10e-20 fails, but e-19 passes
+    double abs_err = 1e-12;
+    for (int i = 0; i < debris->getDebrisVector().size(); ++i){
+        EXPECT_NEAR(accelerations_1[i][0], accelerations_2[i][0], abs_err);
+        EXPECT_NEAR(accelerations_1[i][1], accelerations_2[i][1], abs_err);
+        EXPECT_NEAR(accelerations_1[i][2], accelerations_2[i][2], abs_err);
+    }
+}
+
+/**
+ * Tests if the acceleration calculated using Acceleration::J2Component::apply() is the same as some and calculated values
+ */
+TEST_F(LunComponentTests, EquilavelnceWIthPreCalculatedTest){
+    const int num_debris = 9;
+    std::array<std::array<double,3>, num_debris> accelerations;
+    std::array<double,3> acc_total_dummy;
+    double t = 0;
+    std::array<double,6> moon_params=Acceleration::LunComponent::setUp(t);
+
+    // calculate the acceleration for all particles using two different functions
+    for(int i = 0; i < debris->getDebrisVector().size(); ++i){
+        Acceleration::LunComponent::apply(debris->getDebrisVector()[i], moon_params, accelerations[i], acc_total_dummy);
+    }
+
+    // 10e-22 fails, but e-21 passes
+    double abs_err = 1e+0;
+    for (int i = 0; i < num_debris; ++i){
+        EXPECT_NEAR(accelerations[i][0], pre_calculated[i][0], abs_err);
+        EXPECT_NEAR(accelerations[i][1], pre_calculated[i][1], abs_err);
+        EXPECT_NEAR(accelerations[i][2], pre_calculated[i][2], abs_err);
+    }
+}
