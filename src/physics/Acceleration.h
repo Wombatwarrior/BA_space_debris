@@ -144,6 +144,12 @@ namespace Acceleration {
      */
     namespace J2Component {
         namespace {
+
+            /**
+             * @brief Constant factor for the first J2 term
+             *
+             * @return (std::sqrt(5)*Physics::GM_EARTH*Physics::R_EARTH*Physics::R_EARTH*Physics::C20)/2
+             */
             inline constexpr double getFactor_fst();
         }
         /**
@@ -163,10 +169,48 @@ namespace Acceleration {
      */
     namespace C22Component {
         namespace {
+            /**
+             * @brief Calculate terms for the x component of C22
+             * @deprecated
+             * @param x
+             * @param y
+             * @param z
+             * @return
+             */
             inline double getFC22_x(double x, double y, double z);
+
+            /**
+             * @brief Calculate terms for the y component of C22
+             * @deprecated
+             * @param x
+             * @param y
+             * @param z
+             * @return
+             */
             inline double getFC22_y(double x, double y, double z);
+
+            /**
+             * @brief Calculate terms for the z component of C22
+             * @deprecated
+             * @param x
+             * @param y
+             * @param z
+             * @return
+             */
             inline double getFC22_z(double x, double y, double z);
+
+            /**
+             * @brief Constant factor for the first C22 term
+             *
+             * @return (5*std::sqrt(15)*Physics::GM_EARTH*Physics::R_EARTH*Physics::R_EARTH*Physics::C22)/2
+             */
             inline constexpr double getFactor_fst();
+
+            /**
+             * @brief Constant factor for the second C22 term
+             *
+             * @return std::sqrt(15)*Physics::GM_EARTH*Physics::R_EARTH*Physics::R_EARTH*Physics::C22
+             */
             inline constexpr double getFactor_snd();
         }
         /**
@@ -188,10 +232,46 @@ namespace Acceleration {
      */
     namespace S22Component {
         namespace {
+            /**
+             * @brief Calculate terms for the x component of S22
+             * @deprecated
+             * @param x
+             * @param y
+             * @param z
+             * @return
+             */
             inline double getFS22_x(double x, double y, double z);
+            /**
+             * @brief Calculate terms for the y component of S22
+             * @deprecated
+             * @param x
+             * @param y
+             * @param z
+             * @return
+             */
             inline double getFS22_y(double x, double y, double z);
+            /**
+             * @brief Calculate terms for the z component of S22
+             * @deprecated
+             * @param x
+             * @param y
+             * @param z
+             * @return
+             */
             inline double getFS22_z(double x, double y, double z);
+
+            /**
+             * @brief Constant factor for the first S22 term
+             *
+             * @return -5*std::sqrt(15)*Physics::GM_EARTH*Physics::R_EARTH*Physics::R_EARTH*Physics::S22
+             */
             inline constexpr double getFactor_fst();
+
+            /**
+             * @brief Constant factor for the second S22 term
+             *
+             * @return std::sqrt(15)*Physics::GM_EARTH*Physics::R_EARTH*Physics::R_EARTH*Physics::S22
+             */
             inline constexpr double getFactor_snd();
         }
         /**
@@ -218,10 +298,41 @@ namespace Acceleration {
      */
     namespace C22S22Component{
         namespace {
+            /**
+             * @brief  Calculates factor of the calculations consisting only on constants
+             *
+             * This term is part of all nominator terms for the C22 and S22 calculations
+             *
+             * @return std::sqrt(15)*Physics::GM_EARTH*Physics::R_EARTH*Physics::R_EARTH
+             */
             inline constexpr double getFactor();
+
+            /**
+             * @brief Constant factor for the second C22 term
+             *
+             * @return std::sqrt(15)*Physics::GM_EARTH*Physics::R_EARTH*Physics::R_EARTH*Physics::C22
+             */
             inline constexpr double getFactorC22_snd();
+
+            /**
+             * @brief Constant factor for the first C22 term
+             *
+             * @return (5*std::sqrt(15)*Physics::GM_EARTH*Physics::R_EARTH*Physics::R_EARTH*Physics::C22)/2
+             */
             inline constexpr double getFactorC22_fst();
+
+            /**
+             * @brief Constant factor for the second S22 term
+             *
+             * @return std::sqrt(15)*Physics::GM_EARTH*Physics::R_EARTH*Physics::R_EARTH*Physics::S22
+             */
             inline constexpr double getFactorS22_snd();
+
+            /**
+             * @brief Constant factor for the first S22 term
+             *
+             * @return -5*std::sqrt(15)*Physics::GM_EARTH*Physics::R_EARTH*Physics::R_EARTH*Physics::S22
+             */
             inline constexpr double getFactorS22_fst();
         }
         /**

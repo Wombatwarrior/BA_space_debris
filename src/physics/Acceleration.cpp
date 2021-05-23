@@ -14,8 +14,8 @@ namespace Acceleration{
         std::array<double,3> new_acc_total{0,0,0};
         std::array<double,3> new_acc_component{0,0,0};
         double t = 0;
-        double c_term = std::cos((Physics::THETA_G+Physics::NU_EARTH*t)*M_PIf64);
-        double s_term = std::sin((Physics::THETA_G+Physics::NU_EARTH*t)*M_PIf64);
+        const double c_term = std::cos((Physics::THETA_G+Physics::NU_EARTH*t)*M_PIf64);
+        const double s_term = std::sin((Physics::THETA_G+Physics::NU_EARTH*t)*M_PIf64);
         debris->shiftAcceleration();
         for (auto &d : debris->getDebrisVector()) {
             new_acc_total[0] = 0;
@@ -30,9 +30,11 @@ namespace Acceleration{
             if (config[J2]) {
                 J2Component::apply(d, new_acc_component, new_acc_total);
             }
+            // if we want to calculate both C22 and S22 we can share many of the calculation steps
             if (config[C22] && config[S22]) {
                 C22S22Component::apply(d, c_term, s_term, new_acc_component, new_acc_total);
-            } else {
+            } // if only one of the two should be calculated we only calculate the needed one
+            else {
                 if (config[C22]) {
                     C22Component::apply(d, c_term, s_term, new_acc_component, new_acc_total);
                 }
@@ -99,10 +101,10 @@ namespace Acceleration{
         }
         void apply( Debris::Debris &d, std::array<double,3> &acc_j2, std::array<double,3> &acc_total){
             acc_j2 = d.getPosition();
-            double x2y2z2 = acc_j2[0] * acc_j2[0] + acc_j2[1] * acc_j2[1] + acc_j2[2] * acc_j2[2];
-            double divisor_1 = 1/std::sqrt(x2y2z2);
-            double divisor_2 = 1/(x2y2z2*x2y2z2);
-            double z2_15 = (15*(acc_j2[2]*acc_j2[2]))*divisor_2/x2y2z2;
+            const double x2y2z2 = acc_j2[0] * acc_j2[0] + acc_j2[1] * acc_j2[1] + acc_j2[2] * acc_j2[2];
+            const double divisor_1 = 1/std::sqrt(x2y2z2);
+            const double divisor_2 = 1/(x2y2z2*x2y2z2);
+            const double z2_15 = (15*(acc_j2[2]*acc_j2[2]))*divisor_2/x2y2z2;
             double factor_snd = 3*divisor_2 - z2_15;
             acc_j2[0] = (acc_j2[0]*divisor_1)*getFactor_fst();
             acc_j2[1] = (acc_j2[1]*divisor_1)*getFactor_fst();
@@ -122,7 +124,7 @@ namespace Acceleration{
             inline double getFC22_x(double x, double y, double z){
                 double x2 = x*x;
                 double y2 = y*y;
-                double n = getFactor_fst()*x*(y2-x2);
+                const double n = getFactor_fst()*x*(y2-x2);
                 // x2 = (x^2 + y^2 + z^2)
                 x2 = x2 + y2 + z*z;
                 double fst = x2;
@@ -132,14 +134,14 @@ namespace Acceleration{
                 x2 = x2*y2;
                 // y2 = (x^2 + y^2 +z^2)^4
                 y2 = y2*y2;
-                double snd = (getFactor_snd()*x)/std::sqrt(y2*fst);
+                const double snd = (getFactor_snd()*x)/std::sqrt(y2*fst);
                 fst = n/std::sqrt(y2*x2);
                 return fst + snd;
             }
             inline double getFC22_y(double x, double y, double z){
                 double x2 = x*x;
                 double y2 = y*y;
-                double n = getFactor_fst()*y*(y2-x2);
+                const double n = getFactor_fst()*y*(y2-x2);
                 // x2 = (x^2 + y^2 + z^2)
                 x2 = x2 + y2 + z*z;
                 double fst = x2;
@@ -149,14 +151,14 @@ namespace Acceleration{
                 x2 = x2*y2;
                 // y2 = (x^2 + y^2 +z^2)^4
                 y2 = y2*y2;
-                double snd = (getFactor_snd()*y)/std::sqrt(y2*fst);
+                const double snd = (getFactor_snd()*y)/std::sqrt(y2*fst);
                 fst = n/std::sqrt(y2*x2);
                 return fst - snd;
             }
             inline double getFC22_z(double x, double y, double z){
                 double x2 = x*x;
                 double y2 = y*y;
-                double n = getFactor_fst()*z*(y2-x2);
+                const double n = getFactor_fst()*z*(y2-x2);
                 // x2 = x^2 + y^2 +z^2
                 x2 = x2 + y2 + z*z;
                 // y2 = (x^2 + y^2 +z^2)^2
@@ -178,16 +180,16 @@ namespace Acceleration{
         }
         void apply(Debris::Debris &d, double c_term, double s_term, std::array<double,3> &acc_c22, std::array<double,3> &acc_total){
             acc_c22 = d.getPosition();
-            double x = acc_c22[0]*c_term + acc_c22[1]*s_term;
-            double y = -acc_c22[0]*s_term + acc_c22[1]*c_term;
-            double z = acc_c22[2];
+            const double x = acc_c22[0]*c_term + acc_c22[1]*s_term;
+            const double y = -acc_c22[0]*s_term + acc_c22[1]*c_term;
+            const double z = acc_c22[2];
             double x2 = x*x;
             double y2 = y*y;
-            double n = getFactor_fst()*(y2-x2);
+            const double n = getFactor_fst()*(y2-x2);
             // x2 = (x^2 + y^2 + z^2)
             x2 = x2 + y2 + z*z;
             // x2y2z2 = (x^2 + y^2 + z^2)
-            double x2y2z2 = x2;
+            const double x2y2z2 = x2;
             // y2 = (x^2 + y^2 +z^2)^2
             y2 = x2*x2;
             // x2 = (x^2 + y^2 +z^2)^3
@@ -195,9 +197,9 @@ namespace Acceleration{
             // y2 = (x^2 + y^2 +z^2)^4
             y2 = y2*y2;
             // d1 = (x^2 + y^2 +z^2)^(7/2)
-            double d1 = 1/std::sqrt(y2*x2);
+            const double d1 = 1/std::sqrt(y2*x2);
             // d2 = (x^2 + y^2 +z^2)^(5/2)
-            double d2 = 1/std::sqrt(y2 * x2y2z2);
+            const double d2 = 1/std::sqrt(y2 * x2y2z2);
             // x2 = f_c22_x(x,y,z)
             x2 = (n*x)*d1 + (getFactor_snd()*x)*d2;
             // y2 = f_c22_y(x,y,z)
@@ -216,7 +218,7 @@ namespace Acceleration{
             inline double getFS22_x(double x, double y, double z){
                 double x2 = x*x;
                 double y2 = y*y;
-                double n = getFactor_fst()*x2*y;
+                const double n = getFactor_fst()*x2*y;
                 // x2 = (x^2 + y^2 + z^2)
                 x2 = x2 + y2 + z*z;
                 double fst = x2;
@@ -226,14 +228,14 @@ namespace Acceleration{
                 x2 = x2*y2;
                 // y2 = (x^2 + y^2 +z^2)^4
                 y2 = y2*y2;
-                double snd = (getFactor_snd()*y)/std::sqrt(y2*fst);
+                const double snd = (getFactor_snd()*y)/std::sqrt(y2*fst);
                 fst = n/std::sqrt(y2*x2);
                 return fst + snd;
             }
             inline double getFS22_y(double x, double y, double z){
                 double x2 = x*x;
                 double y2 = y*y;
-                double n = getFactor_fst()*x*y2;
+                const double n = getFactor_fst()*x*y2;
                 // x2 = (x^2 + y^2 + z^2)
                 x2 = x2 + y2 + z*z;
                 double fst = x2;
@@ -243,12 +245,12 @@ namespace Acceleration{
                 x2 = x2*y2;
                 // y2 = (x^2 + y^2 +z^2)^4
                 y2 = y2*y2;
-                double snd = (getFactor_snd()*x)/std::sqrt(y2*fst);
+                const double snd = (getFactor_snd()*x)/std::sqrt(y2*fst);
                 fst = n/std::sqrt(y2*x2);
                 return fst + snd;
             }
             inline double getFS22_z(double x, double y, double z){
-                double n = getFactor_fst()*x*y*z;
+                const double n = getFactor_fst()*x*y*z;
                 // x2 = x^2 + y^2 +z^2
                 double x2 = x*x + y*y + z*z;
                 // y2 = (x^2 + y^2 +z^2)^2
@@ -270,10 +272,10 @@ namespace Acceleration{
         }
         void apply( Debris::Debris &d, double c_term, double s_term, std::array<double,3> &acc_s22, std::array<double,3> &acc_total){
             acc_s22 = d.getPosition();
-            double x = acc_s22[0]*c_term + acc_s22[1]*s_term;
-            double y = -acc_s22[0]*s_term + acc_s22[1]*c_term;
-            double z = acc_s22[2];
-            double n = getFactor_fst()*x*y;
+            const double x = acc_s22[0]*c_term + acc_s22[1]*s_term;
+            const double y = -acc_s22[0]*s_term + acc_s22[1]*c_term;
+            const double z = acc_s22[2];
+            const double n = getFactor_fst()*x*y;
             // pow_3 = (x^2 + y^2 + z^2)
             double pow_3 = x*x + y*y + z*z;
             // pow_1 = (x^2 + y^2 + z^2)
@@ -284,8 +286,8 @@ namespace Acceleration{
             pow_3 = pow_3 * pow_4;
             // pow_4 = (x^2 + y^2 +z^2)^4
             pow_4 = pow_4 * pow_4;
-            double d2 = 1/std::sqrt(pow_4 * pow_1);
-            double d1 = 1/std::sqrt(pow_4 * pow_3);
+            const double d2 = 1/std::sqrt(pow_4 * pow_1);
+            const double d1 = 1/std::sqrt(pow_4 * pow_3);
             pow_1 = ((n*x) * d1) + ((getFactor_snd()*y)*d2);
             pow_3 = ((n*y) * d1) + ((getFactor_snd()*x)*d2);
             acc_s22[0] = pow_1*c_term - pow_3*s_term;
@@ -317,23 +319,23 @@ namespace Acceleration{
         }
         void apply( Debris::Debris &d, double c_term, double s_term, std::array<double,3> &acc_c22s22, std::array<double,3> &acc_total){
             acc_c22s22 = d.getPosition();
-            double x = acc_c22s22[0]*c_term + acc_c22s22[1]*s_term;
-            double y = -acc_c22s22[0]*s_term + acc_c22s22[1]*c_term;
-            double z = acc_c22s22[2];
+            const double x = acc_c22s22[0]*c_term + acc_c22s22[1]*s_term;
+            const double y = -acc_c22s22[0]*s_term + acc_c22s22[1]*c_term;
+            const double z = acc_c22s22[2];
             // c22
             double n = getFactorC22_fst()*(y*y-x*x);
             // pow_3 = (x^2 + y^2 + z^2)
             double pow_3 = x*x + y*y + z*z;
             // pow_1 = (x^2 + y^2 + z^2)
-            double pow_1 = pow_3;
+            const double pow_1 = pow_3;
             // pow_4 = (x^2 + y^2 +z^2)^2
             double pow_4 = pow_3 * pow_3;
             // pow_3 = (x^2 + y^2 +z^2)^3
             pow_3 = pow_3 * pow_4;
             // pow_4 = (x^2 + y^2 +z^2)^4
             pow_4 = pow_4 * pow_4;
-            double d2 = 1/std::sqrt(pow_4 * pow_1);
-            double d1 = 1/std::sqrt(pow_4 * pow_3);
+            const double d2 = 1/std::sqrt(pow_4 * pow_1);
+            const double d1 = 1/std::sqrt(pow_4 * pow_3);
             double f_x = ((n*x) * d1) + ((getFactorC22_snd()*x)*d2);
             double f_y = ((n*y) * d1) - ((getFactorC22_snd()*y)*d2);
             acc_c22s22[0] = f_x*c_term - f_y*s_term;
