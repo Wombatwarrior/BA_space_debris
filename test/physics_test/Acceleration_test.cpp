@@ -168,7 +168,7 @@ TEST_F(SolComponentTests, CalculationEquivalenceTest) {
         }
 
         // 10e-20 fails, but e-19 passes
-        double abs_err = 1e-10;
+        double abs_err = 1e-20;
         for (int i = 0; i < debris->getDebrisVector().size(); ++i) {
             EXPECT_NEAR(accelerations_1[i][0], accelerations_2[i][0], abs_err);
             EXPECT_NEAR(accelerations_1[i][1], accelerations_2[i][1], abs_err);
