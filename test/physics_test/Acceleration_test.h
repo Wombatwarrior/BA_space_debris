@@ -252,11 +252,14 @@ protected:
         ASSERT_EQ(e, Physics::EPSILON);
 
         double l = phis0 + nus*t;
-        double r = (149.619-2.499*std::cos(l*M_PIf64/180)-0.021*std::cos(2*l*M_PIf64/180))*1e+6;
+        double r = 149.619-2.499*std::cos(l*M_PIf64/180)-0.021*std::cos(2*l*M_PIf64/180);
         double lambda = ap + lan + l + (6892.0/3600)*std::sin(l*M_PIf64/180) + (72.0/3600)*std::sin(2*l*M_PIf64/180);
         double xs = r*std::cos(lambda*M_PIf64/180);
         double ys = r*std::sin(lambda*M_PIf64/180)*std::cos(e*M_PIf64/180);
         double zs = r*std::sin(lambda*M_PIf64/180)*std::sin(e*M_PIf64/180);
+        xs *= 1e+6;
+        ys *= 1e+6;
+        zs *= 1e+6;
 
         double x = d.getPosition()[0];
         double y = d.getPosition()[1];
@@ -266,6 +269,30 @@ protected:
         acc_sol[0] = -gms*((x-xs)/d1 + xs/d2);
         acc_sol[1] = -gms*((y-ys)/d1 + ys/d2);
         acc_sol[2] = -gms*((z-zs)/d1 + zs/d2);
+    }
+
+    const std::array<double,6> calcSolParams(double t){
+        std::array<double,6> sol_params;
+        double phis0 = 357.5256;
+        double nus = 1.1407410259335311e-5;
+        double lan = -11.26064;
+        double ap = 102.94719;
+        double e = 23.4392911;
+
+        double l = phis0 + nus*t;
+        double r = 149.619-2.499*std::cos(l*M_PIf64/180)-0.021*std::cos(2*l*M_PIf64/180);
+        double lambda = ap + lan + l + (6892.0/3600)*std::sin(l*M_PIf64/180) + (72.0/3600)*std::sin(2*l*M_PIf64/180);
+        sol_params[0] = r*std::cos(lambda*M_PIf64/180);
+        sol_params[1] = r*std::sin(lambda*M_PIf64/180)*std::cos(e*M_PIf64/180);
+        sol_params[2] = r*std::sin(lambda*M_PIf64/180)*std::sin(e*M_PIf64/180);
+        sol_params[0] *= 1e+6;
+        sol_params[1] *= 1e+6;
+        sol_params[2] *= 1e+6;
+        double d2 = std::pow( sol_params[0]*sol_params[0]+sol_params[1]*sol_params[1]+sol_params[2]*sol_params[2], 1.5);
+        sol_params[3] = sol_params[0]/d2;
+        sol_params[4] = sol_params[1]/d2;
+        sol_params[5] = sol_params[2]/d2;
+        return sol_params;
     }
 };
 
