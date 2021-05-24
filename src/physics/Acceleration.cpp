@@ -287,6 +287,7 @@ namespace Acceleration{
             const double f_m = phi_m_p + phi_m_a + phi_m_s + 93.27283;
             const double d_m = phi_m_p + phi_m_a - phi_m + 297.85027;
 
+            // add up small terms first, to avoid floating point errors when adding small to big values
             double r_m = -152*std::cos((l_m+l1_m-2*d_m)*M_PIf64/180);
             r_m -= 171*std::cos((l_m+2*d_m)*M_PIf64/180);
             r_m -= 205*std::cos((l1_m-2*d_m)*M_PIf64/180);
@@ -297,6 +298,7 @@ namespace Acceleration{
             r_m -= 20905*std::cos(l_m*M_PIf64/180);
             r_m += 385000;
 
+            // add up small terms first, to avoid floating point errors when adding small to big values
             double lambda_m = -(55.0/3600)*std::sin((2*f_m-2*d_m)*M_PIf64/180);
             lambda_m -= (110.0/3600)*std::sin((l_m+l1_m)*M_PIf64/180);
             lambda_m -= (125.0/3600)*std::sin((d_m)*M_PIf64/180);
@@ -313,6 +315,7 @@ namespace Acceleration{
             lambda_m += (22640.0/3600)*std::sin((l_m)*M_PIf64/180);
             lambda_m += l_0;
 
+            // add up small terms first, to avoid floating point errors when adding small to big values
             double beta_m = (11.0/3600)*std::sin((-l1_m+f_m-2*d_m)*M_PIf64/180);
             beta_m += (21.0/3600)*std::sin((-l_m+f_m)*M_PIf64/180);
             beta_m -= (23.0/3600)*std::sin((l1_m+f_m-2*d_m)*M_PIf64/180);
@@ -322,6 +325,7 @@ namespace Acceleration{
             beta_m -= (526.0/3600)*std::sin((f_m-2*d_m)*M_PIf64/180);
             beta_m += (18520.0/3600)*std::sin((f_m+lambda_m-l_0+(412.0/3600)*std::sin((2*f_m)*M_PIf64/180)+(541.0/3600)*std::sin((l1_m)*M_PIf64/180))*M_PIf64/180);
 
+            // all the sin and cos terms have similar in [-1,1], so multiply them before multiplying BIG r_m value of ~380000
             std::array<double,3> moon_pos;
             double c_term = std::cos(lambda_m*M_PIf64/180);
             double s_term = std::sin(lambda_m*M_PIf64/180);
@@ -342,6 +346,7 @@ namespace Acceleration{
                                                 0,
                                                 0
             };
+            // multiplied small terms first, to avoid floating point errors when multiplying small with big values
             moon_params[0] = r_m*moon_params[0];
             moon_params[1] = r_m*moon_params[1];
             moon_params[2] = r_m*moon_params[2];

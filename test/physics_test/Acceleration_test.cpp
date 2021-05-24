@@ -151,7 +151,7 @@ TEST_F(J2ComponentTests, EquilavelnceWIthPreCalculatedTest){
 
 
 /**
- * Tests if the acceleration calculated using Acceleration::J2Component::apply() is the same as using a inefficient implementation
+ * Tests if the acceleration calculated using Acceleration::LunComponent::apply() is the same as using a inefficient implementation
  */
 TEST_F(LunComponentTests, CalculationEquivalenceTest){
     const int num_debris = 9;
@@ -181,7 +181,7 @@ TEST_F(LunComponentTests, CalculationEquivalenceTest){
 }
 
 /**
- * Tests if the acceleration calculated using Acceleration::J2Component::apply() is the same as some and calculated values
+ * Tests if the acceleration calculated using Acceleration::LunComponent::apply() is the same as some and calculated values
  */
 TEST_F(LunComponentTests, EquilavelnceWIthPreCalculatedTest){
     const int num_debris = 9;
@@ -205,7 +205,7 @@ TEST_F(LunComponentTests, EquilavelnceWIthPreCalculatedTest){
 }
 
 /**
- * compares two setup functions, one using less trigonometry function calls
+ * compares two setup functions calcMoonParams() (less trigonometry) and Acceleration::LunComponent::setUp()
  */
 TEST_F(LunComponentTests, CompareOptimizedSetupFunctionResult){
     double t = 0.1;
@@ -378,6 +378,9 @@ TEST_F(LunComponentTests, CompareTrigonometricTerms){
     ASSERT_NEAR(beta1,beta2,abs_err);
 }
 
+/**
+ * simply check if calcMoonParams() is faster than Acceleration::LunComponent::setUp()
+ */
 TEST_F(LunComponentTests, CompareLessTrigonometryRuntime){
     double t = 0.1;
     std::cout << "normal trigonometry" << std::endl;
