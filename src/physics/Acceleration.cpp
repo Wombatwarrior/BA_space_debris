@@ -287,46 +287,51 @@ namespace Acceleration{
             const double f_m = phi_m_p + phi_m_a + phi_m_s + 93.27283;
             const double d_m = phi_m_p + phi_m_a - phi_m + 297.85027;
 
-            double lambda_m = l_0;
-            lambda_m = lambda_m + (22640.0/3600)*std::sin(l_m*M_PIf64/180);
-            lambda_m = lambda_m + (769.0/3600)*std::sin(2*l_m*M_PIf64/180);
-            lambda_m = lambda_m - (4856.0/3600)*std::sin((l_m-2*d_m)*M_PIf64/180);
-            lambda_m = lambda_m + (2370.0/3600)*std::sin((2*d_m)*M_PIf64/180);
-            lambda_m = lambda_m - (668.0/3600)*std::sin((l1_m)*M_PIf64/180);
-            lambda_m = lambda_m - (412.0/3600)*std::sin((2*f_m)*M_PIf64/180);
-            lambda_m = lambda_m - (212.0/3600)*std::sin((2*l_m-2*d_m)*M_PIf64/180);
-            lambda_m = lambda_m - (206.0/3600)*std::sin((l_m+l1_m-2*d_m)*M_PIf64/180);
-            lambda_m = lambda_m + (192.0/3600)*std::sin((l_m+2*d_m)*M_PIf64/180);
-            lambda_m = lambda_m - (165.0/3600)*std::sin((l1_m-2*d_m)*M_PIf64/180);
-            lambda_m = lambda_m + (148.0/3600)*std::sin((l_m-l1_m)*M_PIf64/180);
-            lambda_m = lambda_m - (125.0/3600)*std::sin((d_m)*M_PIf64/180);
-            lambda_m = lambda_m - (110.0/3600)*std::sin((l_m+l1_m)*M_PIf64/180);
-            lambda_m = lambda_m - (55.0/3600)*std::sin((2*f_m-2*d_m)*M_PIf64/180);
+            double r_m = -152*std::cos((l_m+l1_m-2*d_m)*M_PIf64/180);
+            r_m -= 171*std::cos((l_m+2*d_m)*M_PIf64/180);
+            r_m -= 205*std::cos((l1_m-2*d_m)*M_PIf64/180);
+            r_m += 246*std::cos((2*l_m-2*d_m)*M_PIf64/180);
+            r_m -= 570*std::cos((2*l_m)*M_PIf64/180);
+            r_m -= 2956*std::cos((2*d_m)*M_PIf64/180);
+            r_m -= 3699*std::cos((2*d_m-l_m)*M_PIf64/180);
+            r_m -= 20905*std::cos(l_m*M_PIf64/180);
+            r_m += 385000;
 
-            double beta_m = (18520.0/3600)*std::sin((f_m+lambda_m-l_0+(412.0/3600)*std::sin((2*f_m)*M_PIf64/180)+(541.0/3600)*std::sin(l1_m*M_PIf64/180))*M_PIf64/180);
-            beta_m = beta_m - (526.0/3600)*std::sin((f_m-2*d_m)*M_PIf64/180);
-            beta_m = beta_m + (44.0/3600)*std::sin((l_m+f_m-2*d_m)*M_PIf64/180);
-            beta_m = beta_m - (31/3600)*std::sin((-l_m+f_m-2*d_m)*M_PIf64/180);
-            beta_m = beta_m - (25.0/3600)*std::sin((-2*l_m +f_m)*M_PIf64/180);
-            beta_m = beta_m - (23.0/3600)*std::sin((l1_m+f_m-2*d_m)*M_PIf64/180);
-            beta_m = beta_m + (21.0/3600)*std::sin((-l_m+f_m)*M_PIf64/180);
-            beta_m = beta_m + (11.0/3600)*std::sin((-l1_m+f_m-2*d_m)*M_PIf64/180);
+            double lambda_m = -(55.0/3600)*std::sin((2*f_m-2*d_m)*M_PIf64/180);
+            lambda_m -= (110.0/3600)*std::sin((l_m+l1_m)*M_PIf64/180);
+            lambda_m -= (125.0/3600)*std::sin((d_m)*M_PIf64/180);
+            lambda_m += (148.0/3600)*std::sin((l_m-l1_m)*M_PIf64/180);
+            lambda_m -= (165.0/3600)*std::sin((l1_m-2*d_m)*M_PIf64/180);
+            lambda_m += (192.0/3600)*std::sin((l_m+2*d_m)*M_PIf64/180);
+            lambda_m -= (206.0/3600)*std::sin((l_m+l1_m-2*d_m)*M_PIf64/180);
+            lambda_m -= (212.0/3600)*std::sin((2*l_m-2*d_m)*M_PIf64/180);
+            lambda_m -= (412.0/3600)*std::sin((2*f_m)*M_PIf64/180);
+            lambda_m -= (668.0/3600)*std::sin((l1_m)*M_PIf64/180);
+            lambda_m += (769.0/3600)*std::sin((2*l_m)*M_PIf64/180);
+            lambda_m += (2370.0/3600)*std::sin((2*d_m)*M_PIf64/180);
+            lambda_m -= (4856.0/3600)*std::sin((l_m-2*d_m)*M_PIf64/180);
+            lambda_m += (22640.0/3600)*std::sin((l_m)*M_PIf64/180);
+            lambda_m += l_0;
 
-            double r_m = 385000 - 20905*std::cos(l_m*M_PIf64/180) - 3699*std::cos((2*d_m-l_m)*M_PIf64/180);
-            r_m = r_m - 2956*std::cos(2*d_m*M_PIf64/180) - 570*std::cos(2*l_m*M_PIf64/180);
-            r_m = r_m + 246*std::cos((2*l_m-2*d_m)*M_PIf64/180) - 205*std::cos((l1_m-2*d_m)*M_PIf64/180);
-            r_m = r_m - 171*std::cos((l_m+2*d_m)*M_PIf64/180) - 152*std::cos((l_m+l1_m-2*d_m)*M_PIf64/180);
+            double beta_m = (11.0/3600)*std::sin((-l1_m+f_m-2*d_m)*M_PIf64/180);
+            beta_m += (21.0/3600)*std::sin((-l_m+f_m)*M_PIf64/180);
+            beta_m -= (23.0/3600)*std::sin((l1_m+f_m-2*d_m)*M_PIf64/180);
+            beta_m -= (25.0/3600)*std::sin((-2*l_m+f_m)*M_PIf64/180);
+            beta_m -= (31.0/3600)*std::sin((-l_m+f_m-2*d_m)*M_PIf64/180);
+            beta_m += (44.0/3600)*std::sin((l_m+f_m-2*d_m)*M_PIf64/180);
+            beta_m -= (526.0/3600)*std::sin((f_m-2*d_m)*M_PIf64/180);
+            beta_m += (18520.0/3600)*std::sin((f_m+lambda_m-l_0+(412.0/3600)*std::sin((2*f_m)*M_PIf64/180)+(541.0/3600)*std::sin((l1_m)*M_PIf64/180))*M_PIf64/180);
 
-            std::array<double,3> moon_pos{r_m,r_m,r_m};
+            std::array<double,3> moon_pos;
             double c_term = std::cos(lambda_m*M_PIf64/180);
             double s_term = std::sin(lambda_m*M_PIf64/180);
-            moon_pos[0] = moon_pos[0]*c_term;
-            moon_pos[1] = moon_pos[1]*s_term;
+            moon_pos[0] = c_term;
+            moon_pos[1] = s_term;
             c_term = std::cos(beta_m*M_PIf64/180);
             s_term = std::sin(beta_m*M_PIf64/180);
             moon_pos[0] = moon_pos[0]*c_term;
             moon_pos[1] = moon_pos[1]*c_term;
-            moon_pos[2] = moon_pos[2]*s_term;
+            moon_pos[2] = s_term;
             c_term = std::cos(Physics::EPSILON*M_PIf64/180);
             s_term = std::sin(Physics::EPSILON*M_PIf64/180);
 
@@ -337,6 +342,9 @@ namespace Acceleration{
                                                 0,
                                                 0
             };
+            moon_params[0] = r_m*moon_params[0];
+            moon_params[1] = r_m*moon_params[1];
+            moon_params[2] = r_m*moon_params[2];
             double d2 = moon_params[0] * moon_params[0] + moon_params[1] * moon_params[1] + moon_params[2] * moon_params[2];
             d2 = 1/std::sqrt(d2*d2*d2);
             moon_params[3] = moon_params[0] * d2;
