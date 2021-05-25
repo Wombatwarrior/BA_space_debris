@@ -7,6 +7,7 @@
 #include <array>
 #include "Constants.h"
 #include <math.h>
+#include <numeric>
 
 /**
  * @namespace Acceleration
