@@ -24,10 +24,10 @@ namespace Debris {
     }
     std::string Debris::toString() {
         std::stringstream stream;
-        stream << "Debris: X:" << IOUtils::array3DToString(position)
-               << " v:" << IOUtils::array3DToString(velocity)
-               << " a0:" << IOUtils::array3DToString(acc_t0)
-               << " a1:" << IOUtils::array3DToString(acc_t1)
+        stream << "Debris: X:" << IOUtils::to_string(position)
+               << " v:" << IOUtils::to_string(velocity)
+               << " a0:" << IOUtils::to_string(acc_t0)
+               << " a1:" << IOUtils::to_string(acc_t1)
                << " ||X||: " << getHeight()
                << " ||v||: " << getSpeed();
         return stream.str();

@@ -49,13 +49,13 @@ void FileOutput::writeDebrisData(double t) {
 void FileOutput::writeDebrisCSV(double t) {
     for (auto d : debris->getDebrisVector()){
         out << t << ',';
-        IOUtils::array3DToCSV(out,d.getPosition());
+        IOUtils::to_ostream(d.getPosition(),out);
         out << ',' << d.getHeight() << ',';
-        IOUtils::array3DToCSV(out, d.getVelocity());
+        IOUtils::to_ostream(d.getVelocity(), out);
         out << ',' << d.getSpeed() << ',';
-        IOUtils::array3DToCSV(out, d.getAccT0());
+        IOUtils::to_ostream(d.getAccT0(), out);
         out << ',' << d.getAccT0Norm() << ',';
-        IOUtils::array3DToCSV(out, d.getAccT1());
+        IOUtils::to_ostream(d.getAccT1(), out);
         out << ',' << d.getAccT1Norm();
         out << '\n';
     }
