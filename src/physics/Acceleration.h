@@ -150,7 +150,7 @@ namespace Acceleration {
              *
              * @return (std::sqrt(5)*Physics::GM_EARTH*Physics::R_EARTH*Physics::R_EARTH*Physics::C20)/2
              */
-            inline constexpr double getFactor_fst();
+            inline const double getFactor_fst();
         }
         /**
          * @brief Calculates acceleration due to earth gravity. Taking in account the earth is neither a point mass nor  a homogenous spherical mass

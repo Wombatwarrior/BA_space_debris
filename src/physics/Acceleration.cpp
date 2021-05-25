@@ -95,7 +95,7 @@ namespace Acceleration{
 
     namespace J2Component {
         namespace {
-            inline constexpr double getFactor_fst(){
+            inline const double getFactor_fst(){
                 return 0.5*Physics::GM_EARTH*Physics::R_EARTH*Physics::R_EARTH*std::sqrt(5.0)*Physics::C_20;
             }
         }
@@ -207,9 +207,9 @@ namespace Acceleration{
             acc_c22[0] = x2*c_term - y2*s_term;
             acc_c22[1] = x2*s_term + y2*c_term;
             acc_c22[2] = (n*z)*d1;
-            acc_total[0] = acc_total[0] + acc_c22[0];
-            acc_total[1] = acc_total[1] + acc_c22[1];
-            acc_total[2] = acc_total[2] + acc_c22[2];
+            acc_total[0] += acc_c22[0];
+            acc_total[1] += acc_c22[1];
+            acc_total[2] += acc_c22[2];
         }
     }
 
@@ -293,9 +293,9 @@ namespace Acceleration{
             acc_s22[0] = pow_1*c_term - pow_3*s_term;
             acc_s22[1] = pow_1*s_term + pow_3*c_term;
             acc_s22[2] = ((n*z) * d1);
-            acc_total[0] = acc_total[0] + acc_s22[0];
-            acc_total[1] = acc_total[1] + acc_s22[1];
-            acc_total[2] = acc_total[2] + acc_s22[2];
+            acc_total[0] += acc_s22[0];
+            acc_total[1] += acc_s22[1];
+            acc_total[2] += acc_s22[2];
         }
     }
 
@@ -345,12 +345,12 @@ namespace Acceleration{
             n = getFactorS22_fst()*x*y;
             f_x = ((n*x) * d1) + ((getFactorS22_snd()*y)*d2);
             f_y = ((n*y) * d1) + ((getFactorS22_snd()*x)*d2);
-            acc_c22s22[0] = acc_c22s22[0] + f_x*c_term - f_y*s_term;
-            acc_c22s22[1] = acc_c22s22[1] + f_x*s_term + f_y*c_term;
-            acc_c22s22[2] = acc_c22s22[2] + ((n*z) * d1);
-            acc_total[0] = acc_total[0] + acc_c22s22[0];
-            acc_total[1] = acc_total[1] + acc_c22s22[1];
-            acc_total[2] = acc_total[2] + acc_c22s22[2];
+            acc_c22s22[0] += f_x*c_term - f_y*s_term;
+            acc_c22s22[1] += f_x*s_term + f_y*c_term;
+            acc_c22s22[2] += ((n*z) * d1);
+            acc_total[0] += acc_c22s22[0];
+            acc_total[1] += acc_c22s22[1];
+            acc_total[2] += acc_c22s22[2];
         }
     }
 
