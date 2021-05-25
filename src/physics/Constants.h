@@ -12,6 +12,10 @@
  */
 namespace Physics {
     /**
+     * @brief Constant factor to get from degrees too radians
+     */
+     inline constexpr double RAD_FACTOR = M_PIf64/180;
+    /**
      * @brief Gravitational constant * earth mass
      *
      * Used in:

@@ -7,6 +7,7 @@
 #include <array>
 #include "Constants.h"
 #include <math.h>
+#include <numeric>
 
 /**
  * @namespace Acceleration
@@ -144,7 +145,7 @@ namespace Acceleration {
      */
     namespace J2Component {
         namespace {
-            inline constexpr double getFactor_fst();
+            inline const double getFactor_fst();
         }
         /**
          * @brief Calculates acceleration due to earth gravity. Taking in account the earth is neither a point mass nor  a homogenous spherical mass
