@@ -5,26 +5,28 @@
 #include "FileOutput.h"
 
 FileOutput::FileOutput(Debris::DebrisContainer &debris_arg, std::string output_file_name_arg, FileOutput::Type output_file_type_arg)
-: debris (&debris_arg), output_file_name(output_file_name_arg), output_file_type(output_file_type_arg), out(output_file_name_arg){
+: debris (&debris_arg), output_file_name(output_file_name_arg), output_file_type(output_file_type_arg), out(output_file_name_arg) {
     out << std::setprecision(std::numeric_limits<double>::digits10 + 1);
-    // column names
-    out << "time,";
-    out << "position x,";
-    out << "position y,";
-    out << "position z,";
-    out << "position norm,";
-    out << "velocity x,";
-    out << "velocity y,";
-    out << "velocity z,";
-    out << "velocity norm,";
-    out << "acc_t0 x,";
-    out << "acc_t0 y,";
-    out << "acc_t0 z,";
-    out << "acc_t0 norm,";
-    out << "acc_t0 x,";
-    out << "acc_t0 y,";
-    out << "acc_t0 z,";
-    out << "acc_t0 norm\n";
+    if (output_file_type == CSV) {
+        // column names
+        out << "time,";
+        out << "position x,";
+        out << "position y,";
+        out << "position z,";
+        out << "position norm,";
+        out << "velocity x,";
+        out << "velocity y,";
+        out << "velocity z,";
+        out << "velocity norm,";
+        out << "acc_t0 x,";
+        out << "acc_t0 y,";
+        out << "acc_t0 z,";
+        out << "acc_t0 norm,";
+        out << "acc_t0 x,";
+        out << "acc_t0 y,";
+        out << "acc_t0 z,";
+        out << "acc_t0 norm\n";
+    }
 }
 
 
