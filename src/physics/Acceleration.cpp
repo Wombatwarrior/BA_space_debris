@@ -88,7 +88,7 @@ namespace Acceleration{
 
     namespace J2Component {
         namespace {
-            inline constexpr double getFactor_fst(){
+            inline const double getFactor_fst(){
                 return 0.5*Physics::GM_EARTH*Physics::R_EARTH*Physics::R_EARTH*std::sqrt(5.0)*Physics::C_20;
             }
         }
@@ -269,7 +269,7 @@ namespace Acceleration{
     namespace SolComponent {
         const std::array<double,6> setUp(double t){
             const double l = Physics::PHI_SUN_0 + Physics::NU_SUN*t;
-            const double r = 149.619 - 2.499*std::cos(l*M_PIf64/180) - 0.021*std::cos(2*l*M_PIf64/180);
+            const double r = Physics::AU_SCALED - 2.499*std::cos(l*M_PIf64/180) - 0.021*std::cos(2*l*M_PIf64/180);
             const double lambda = Physics::LONG_ASC + Physics::ARG_PERIAPSIS + l + (6892.0 / 3600) * std::sin(l * M_PIf64 / 180) + (72.0 / 3600) * std::sin((2 * l) * M_PIf64 / 180);
             std::array<double,6> sun_params = {std::cos(lambda*M_PIf64/180),
                                                std::sin(lambda*M_PIf64/180) * std::cos(Physics::EPSILON*M_PIf64/180),

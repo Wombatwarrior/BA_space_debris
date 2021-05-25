@@ -114,10 +114,16 @@ namespace Physics {
      * @brief Astronomical unit
      *
      * Used in:
-     * - Acceleration::SolComponent
      * - Acceleration::SRPComponent
      */
     inline constexpr double AU = 1.49619e+8;
+    /**
+     * @brief Astronomical unit in 1e+6 km
+     *
+     * Used in:
+     * - Acceleration::SolComponent
+     */
+    inline constexpr double AU_SCALED = 149.619;
     /**
      * @brief Constant angle
      *
@@ -153,6 +159,5 @@ namespace Physics {
      * Used in:
      * - Acceleration::SolComponent
      */
-    //TODO concrete value
     inline constexpr double ARG_PERIAPSIS = 102.94719;
 }
