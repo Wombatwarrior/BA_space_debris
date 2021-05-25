@@ -36,6 +36,7 @@ void initSimulation(int argc, char **argv){
     // if something went wrong with the command line parsing
     catch (std::invalid_argument &e) {
         LOG4CXX_FATAL(logger, e.what());
+        exit(1);
     }
 }
 
