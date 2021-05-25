@@ -22,12 +22,21 @@ void initLoggeer(){
 }
 
 void initSimulation(int argc, char **argv){
-    command_line = std::make_shared<CommandLineInput>(argc,argv);
-    debris = std::make_shared<Debris::DebrisContainer>();
-    file_input = std::make_shared<FileInput>(*debris, command_line->getInputFileName(), command_line->getInputFileType());
-    file_output = std::make_shared<FileOutput>(*debris, command_line->getOutputFileName(), command_line->getOutputFileType());
-    accumulator = std::make_shared<Acceleration::AccelerationAccumulator>(file_input->getAccConfig(), *debris, file_input->getStartT());
-    integrator = std::make_shared<Integrator>(*debris, *accumulator, file_input->getDeltaT());
+    try {
+        command_line = std::make_shared<CommandLineInput>(argc, argv);
+        debris = std::make_shared<Debris::DebrisContainer>();
+        file_input = std::make_shared<FileInput>(*debris, command_line->getInputFileName(),
+                                                 command_line->getInputFileType());
+        file_output = std::make_shared<FileOutput>(*debris, command_line->getOutputFileName(),
+                                                   command_line->getOutputFileType());
+        accumulator = std::make_shared<Acceleration::AccelerationAccumulator>(file_input->getAccConfig(), *debris,
+                                                                              file_input->getStartT());
+        integrator = std::make_shared<Integrator>(*debris, *accumulator, file_input->getDeltaT());
+    }
+    // if something went wrong with the command line parsing
+    catch (std::invalid_argument &e) {
+        LOG4CXX_FATAL(logger, e.what());
+    }
 }
 
 void runSimulation(){

@@ -8,6 +8,8 @@
 #include <math.h>
 #include <memory>
 #include "../io/IOUtils.h"
+#include <numeric>
+
 /**
  * @namespace Debris
  * @brief Namespace holding the DebrisContainer and Debris

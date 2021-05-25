@@ -40,6 +40,10 @@ void CommandLineInput::parseCommandLine(int argc, char **argv){
                             std::string type_str=output_file_name.substr(output_file_name.size()-4, 4);
                             if(type_str == ".txt"){
                                 output_file_type=FileOutput::TXT;
+                                // for now only csv files are supported
+                                std::string error_message =
+                                        std::string(".txt output is not yet implemented. use .csv\n");
+                                throw std::invalid_argument(error_message);
                             }else if (type_str == ".csv"){
                                 output_file_type=FileOutput::CSV;
                             }else{

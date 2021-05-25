@@ -34,19 +34,19 @@ namespace Debris {
     }
 
     double Debris::getHeight() {
-        return std::sqrt(position[0]*position[0]+position[1]*position[1]+position[2]*position[2]);
+        return std::sqrt(std::inner_product(position.begin(),position.end(),position.begin(),.0));
     }
 
     double Debris::getSpeed() {
-        return std::sqrt(velocity[0]*velocity[0]+velocity[1]*velocity[1]+velocity[2]*velocity[2]);
+        return std::sqrt(std::inner_product(velocity.begin(),velocity.end(),velocity.begin(),.0));
     }
 
     double Debris::getAccT0Norm() {
-        return std::sqrt(acc_t0[0]*acc_t0[0]+acc_t0[1]*acc_t0[1]+acc_t0[2]*acc_t0[2]);
+        return std::sqrt(std::inner_product(acc_t0.begin(),acc_t0.end(),acc_t0.begin(),.0));
     }
 
     double Debris::getAccT1Norm() {
-        return std::sqrt(acc_t1[0]*acc_t1[0]+acc_t1[1]*acc_t1[1]+acc_t1[2]*acc_t1[2]);
+        return std::sqrt(std::inner_product(acc_t1.begin(),acc_t1.end(),acc_t1.begin(),.0));
     }
 
     std::array<double, 3> &Debris::getPosition()  {
