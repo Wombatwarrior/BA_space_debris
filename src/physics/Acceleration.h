@@ -133,7 +133,7 @@ namespace Acceleration {
         /**
           * @brief Setter function for #t
           *
-          * @param debris New value of #t
+          * @param t New value of #t
           */
         void setT(double t);
     };

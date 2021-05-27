@@ -69,7 +69,7 @@ private:
     Debris::DebrisContainer *debris;/**< Reference to a Debris::DebrisContainer object to add Debris::Debris objects read from the input file*/
     std::string output_file_name;/**< Complete name of the output file containing the file extension*/
     Type output_file_type;/**< FileOutput::Type of the output file*/
-    std::ofstream out;/** output file*/
+    std::ofstream out;/**< output file stream*/
 public:
 
     /**

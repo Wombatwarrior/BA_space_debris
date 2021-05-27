@@ -81,26 +81,6 @@ private:
      */
     struct TxtLineContent tokenizeLine(const std::string &line);
 
-    struct TLEContent {
-        std::string name;
-        int catalog_nr;
-        int set_nr;
-        int epoch_year;
-        double epoch_day;
-        double fst_derivative;
-        double snd_derivative;
-        double drag_term;
-        double inclination;
-        double right_ascension;
-        double eccentricity;
-        double arg_of_perigee;
-        double mean_anomaly;
-    };
-
-    struct TLEContent parseTLE(const std::array<std::string,3> &lines);
-
-    void setDebrisValues(Debris::Debris &d, const struct TLEContent &tle);
-
     /**
      * @brief Sets the member variable of a given Debris::Debris object
      *
@@ -220,7 +200,7 @@ public:
     /**
      * @brief Setter function for #write_delta_t
      *
-     * @param deltaT New value of #write_delta_t
+     * @param writeDeltaT New value of #write_delta_t
      */
     void setWriteDeltaT(double writeDeltaT);
 

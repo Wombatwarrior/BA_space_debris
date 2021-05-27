@@ -23,30 +23,6 @@ struct FileInput::TxtLineContent FileInput::tokenizeLine(const std::string& line
     l.value = line.substr(split_pos + 1);
     return l;
 }
-struct FileInput::TLEContent FileInput::parseTLE(const std::array<std::string,3> &lines){
-    TLEContent tle;
-    //line 1
-    tle.name = lines[0];
-    //line 2
-    tle.catalog_nr = stoi(lines[1].substr(2, 5));
-    tle.set_nr = stoi(lines[1].substr(64, 4));
-    tle.epoch_year = stoi(lines[1].substr(18, 2));
-    tle.epoch_day = stod(lines[1].substr(20, 12));
-    tle.fst_derivative = stod(lines[1].substr(33, 10));
-    tle.snd_derivative = stod(lines[1].substr(44, 8));
-    tle.drag_term = stod(lines[1].substr(53, 8));
-    //line 3
-    tle.inclination = stod(lines[2].substr(8, 8));
-    tle.right_ascension = stod(lines[2].substr(17, 8));
-    tle.eccentricity = stod(lines[2].substr(26, 7));
-    tle.arg_of_perigee = stod(lines[2].substr(34, 8));
-    tle.mean_anomaly = stod(lines[2].substr(43, 8));
-    return tle;
-}
-
-void FileInput::setDebrisValues(Debris::Debris &d, const struct FileInput::TLEContent &tle){
-
-}
 
 void FileInput::setDebrisValues(Debris::Debris &d, const std::string &line) {
     auto position_split_pos = line.find("|");
@@ -101,50 +77,34 @@ void FileInput::readDebrisTXT() {
     std::ifstream input_file(input_file_name);
     std::string line;
     struct TxtLineContent line_content;
-    struct TLEContent tle_content;
     Debris::Debris d;
     if (input_file.is_open()) {
         while (std::getline(input_file, line)) {
             if (line.empty() or line[0] == '#') {
                 continue;
             }
-            // reached tle block?
-            if (line != "TLE") {
-                line_content = tokenizeLine(line);
-                if (line_content.value.empty()) {
-                    // no value
-                    continue;
-                }
-                if (line_content.token == "delta_t") {
-                    delta_t = stod(line_content.value);
-                } else if (line_content.token == "write_delta_t") {
-                    write_delta_t = stod(line_content.value);
-                } else if (line_content.token == "start_t") {
-                    start_t = stod(line_content.value);
-                } else if (line_content.token == "end_t") {
-                    end_t = stod(line_content.value);
-                } else if (line_content.token == "acc_config") {
-                    setConfigValues(line_content.value);
-                } else if (line_content.token == "debris") {
-                    setDebrisValues(d, line_content.value);
-                    debris->addDebris(d);
-                } else {
-                    // unknown token
-                }
-            }else{
-                std::array<std::string,3> lines;
-                while (std::getline(input_file, lines[0])
-                    && std::getline(input_file, lines[1])
-                    && std::getline(input_file, lines[2])) {
-                    if (lines[0].empty() || lines[1].empty() || lines[2].empty()) {
-                        continue;
-                    }
-                    tle_content = parseTLE(lines);
-                    setDebrisValues(d, tle_content);
-                    // for now don't add anything
-//                    debris->addDebris(d);
-                }
+            line_content = tokenizeLine(line);
+            if (line_content.value.empty()) {
+                // no value
+                continue;
             }
+            if (line_content.token == "delta_t") {
+                delta_t = stod(line_content.value);
+            } else if (line_content.token == "write_delta_t") {
+                write_delta_t = stod(line_content.value);
+            } else if (line_content.token == "start_t") {
+                start_t = stod(line_content.value);
+            } else if (line_content.token == "end_t") {
+                end_t = stod(line_content.value);
+            } else if (line_content.token == "acc_config") {
+                setConfigValues(line_content.value);
+            } else if (line_content.token == "debris") {
+                setDebrisValues(d, line_content.value);
+                debris->addDebris(d);
+            } else {
+                // unknown token
+            }
+
         }
     }
 }
@@ -157,7 +117,7 @@ void FileInput::setDebris(Debris::DebrisContainer &debris) {
     FileInput::debris = &debris;
 }
 
- std::string &FileInput::getInputFileName()  {
+std::string &FileInput::getInputFileName()  {
     return input_file_name;
 }
 
