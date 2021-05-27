@@ -226,7 +226,6 @@ TEST_F(S22ComponentTests, CalculationEquivalenceTest){
         EXPECT_NEAR(accelerations_1[i][1], accelerations_2[i][1], abs_err);
         EXPECT_NEAR(accelerations_1[i][2], accelerations_2[i][2], abs_err);
     }
-
 }
 
 /**
@@ -582,7 +581,7 @@ TEST_F(SolComponentTests, CompareSetupFunction){
 /**
  * Compares the result of the Acceleration::SolComponent::apply() function using the calcSolParams() function instead of Acceleration::SolComponent::setUp()
  */
-TEST_F(SolComponentTests, CompareAfterSetupCalculations){
+TEST_F(SolComponentTests, CompareAfterSetupCalculations) {
     const int num_debris = 9;
     std::array<std::array<double, 3>, num_debris> accelerations_1;
     std::array<std::array<double, 3>, num_debris> accelerations_2;
@@ -604,6 +603,8 @@ TEST_F(SolComponentTests, CompareAfterSetupCalculations){
             EXPECT_NEAR(accelerations_1[i][1], accelerations_2[i][1], abs_err);
             EXPECT_NEAR(accelerations_1[i][2], accelerations_2[i][2], abs_err);
         }
+    }
+}
 
 /**
  * Tests if the acceleration calculated using Acceleration::C22S22Component::apply() is the same as adding up the results of
