@@ -4,6 +4,7 @@
 
 #pragma once
 #include <fstream>
+#include <iomanip>
 #include "../debris/DebrisContainer.h"
 /**
  * @class FileOutput
@@ -18,7 +19,8 @@ public:
      * @brief Enumerates the possible file types used for output
      */
     enum Type {
-        TXT /**< File with .txt extension. Lines are in the format "<token>=<value>" and lines starting with "#" are ignored*/
+        TXT, /**< File with .txt extension. Lines are in the format "<token>=<value>" and lines starting with "#" are ignored*/
+        CSV /**< output data into a .csv file */
     };
 
     /**
@@ -30,9 +32,7 @@ public:
      * @param output_file_name_arg Complete name of the output file to write data to
      * @param output_file_type_arg FileOutput::Type of the output file
      */
-    FileOutput(Debris::DebrisContainer &debris_arg, std::string output_file_name_arg, Type output_file_type_arg)
-    : debris (&debris_arg), output_file_name(output_file_name_arg), output_file_type(output_file_type)
-    {}
+    FileOutput(Debris::DebrisContainer &debris_arg, std::string output_file_name_arg, Type output_file_type_arg);
 
     /**
      * @brief Default destructor
@@ -47,16 +47,29 @@ public:
      * Writes the data to the file with the #output_file_name
      * by calling a specialized function depending on the FileOutput::Type #output_file_type
      */
-    void writeDebrisData();
+    void writeDebrisData(double t);
 private:
     /**
-     * @brief Specialized function to write the data to a #TXT file
+     * @brief NOT IMPLEMENTED Specialized function to write the data to a #TXT file
+     *
+     * @param t Current simulation time
      */
-    void writeDebrisTXT();
+    void writeDebrisTXT(double t);
+
+    /**
+     * @brief Specialized function to write the data to a #CSV file
+     *
+     * Row structure:
+     * time,position,||position||,velocity,||velocity||,acc_t0,||acc_t0||,acc_t1,||acc_t1||,
+     *
+     * @param t Current simulation time
+     */
+    void writeDebrisCSV(double t);
 
     Debris::DebrisContainer *debris;/**< Reference to a Debris::DebrisContainer object to add Debris::Debris objects read from the input file*/
     std::string output_file_name;/**< Complete name of the output file containing the file extension*/
     Type output_file_type;/**< FileOutput::Type of the output file*/
+    std::ofstream out;/** output file*/
 public:
 
     /**
@@ -88,16 +101,16 @@ public:
     void setOutputFileName(std::string &outputFileName);
 
     /**
-     * @brief Setter function for #output_file_type
+     * @brief Getter function for #output_file_type
      *
      * @return New value of #output_file_type
      */
     Type getOutputFileType();
 
     /**
-     * @brief Getter function for #output_file_type
+     * @brief Setter function for #output_file_type
      *
-     * @return outputFileType Value of #output_file_type
+     * @param outputFileType Value of #output_file_type
      */
     void setOutputFileType(Type outputFileType);
 };

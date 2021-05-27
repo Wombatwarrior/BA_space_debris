@@ -12,6 +12,10 @@
  */
 namespace Physics {
     /**
+     * @brief Constant factor to get from degrees too radians
+     */
+     inline constexpr double RAD_FACTOR = M_PIf64/180;
+    /**
      * @brief Gravitational constant * earth mass
      *
      * Used in:
@@ -95,21 +99,21 @@ namespace Physics {
      * Used in:
      * - Acceleration::LunComponent
      */
-    inline constexpr double NU_MOON_A = 1.519185226843672e-4;
+    inline constexpr double NU_MOON_A = 1.512151961904581e-4;
     /**
      * @brief Angular velocity of moon at point p
      *
      * Used in:
      * - Acceleration::LunComponent
      */
-    inline constexpr double NU_MOON_P = 1.295389698040527e-6;
+    inline constexpr double NU_MOON_P = 1.2893925235125941e-6;
     /**
      * @brief Angular velocity of moon at point s
      *
      * Used in:
      * - Acceleration::LunComponent
      */
-    inline constexpr double NU_MOON_S = 6.157419543797653e-7;
+    inline constexpr double NU_MOON_S = 6.128913003523574e-7;
     /**
      * @brief Astronomical unit
      *
