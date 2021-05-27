@@ -4,7 +4,7 @@
 
 #pragma once
 #include "../debris/DebrisContainer.h"
-#include "../physics/Acceleration.h"
+#include "../physics/AccelerationAccumulator.h"
 
 /**
  * @class Integrator

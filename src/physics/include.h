@@ -3,6 +3,6 @@
 //
 
 #pragma once
-#include "Acceleration.h"
+#include "AccelerationAccumulator.h"
 #include "Constants.h"
 #include "Integrator.h"
