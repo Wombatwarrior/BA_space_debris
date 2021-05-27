@@ -42,9 +42,10 @@ namespace Acceleration {
          * @param config_arg The 8D bool vector encoding the Acceleration::AccelerationComponent to apply in the simulation.
          * The Order of flags is [::KEP, ::J2, ::C22, ::S22, ::SOL, ::LUN, ::SRP, ::DRAG]
          * @param debris_arg Reference to the Debris::DebrisContainer object holding the Debris::Debris objects to apply acceleration to
+         * @param t_arg Current time
          */
-        AccelerationAccumulator(const std::array<bool,8> &config_arg, Debris::DebrisContainer &debris_arg)
-        : config (config_arg), debris (&debris_arg)
+        AccelerationAccumulator(const std::array<bool,8> &config_arg, Debris::DebrisContainer &debris_arg, double t_arg)
+        : config (config_arg), debris (&debris_arg), t(t_arg)
         {};
 
         /**
@@ -91,6 +92,7 @@ namespace Acceleration {
          */
         std::array<bool,8> config;
         Debris::DebrisContainer *debris; /**< Reference to the Debris::DebrisContainer object holding the Debris::Debris objects to apply acceleration to*/
+        double t;/**< current time*/
     public:
         /**
          * @brief Getter function for #config
@@ -119,6 +121,20 @@ namespace Acceleration {
          * @param debris New value of #debris
          */
         void setDebris(Debris::DebrisContainer &debris);
+
+        /**
+         * @brief Getter function for #t
+         *
+         * @return Value of #t
+         */
+        double getT();
+
+        /**
+          * @brief Setter function for #t
+          *
+          * @param debris New value of #t
+          */
+        void setT(double t);
     };
 
     /**
@@ -144,7 +160,7 @@ namespace Acceleration {
      */
     namespace J2Component {
         namespace {
-            inline constexpr double getFactor_fst();
+            inline const double getFactor_fst();
         }
         /**
          * @brief Calculates acceleration due to earth gravity. Taking in account the earth is neither a point mass nor  a homogenous spherical mass

@@ -117,6 +117,8 @@ void FileInput::readDebrisTXT() {
                 }
                 if (line_content.token == "delta_t") {
                     delta_t = stod(line_content.value);
+                } else if (line_content.token == "write_delta_t") {
+                    write_delta_t = stod(line_content.value);
                 } else if (line_content.token == "start_t") {
                     start_t = stod(line_content.value);
                 } else if (line_content.token == "end_t") {
@@ -177,6 +179,14 @@ double FileInput::getDeltaT()  {
 
 void FileInput::setDeltaT(double deltaT) {
     delta_t = deltaT;
+}
+
+double FileInput::getWriteDeltaT()  {
+    return write_delta_t;
+}
+
+void FileInput::setWriteDeltaT(double writeDeltaT) {
+    write_delta_t = writeDeltaT;
 }
 
 double FileInput::getStartT()  {

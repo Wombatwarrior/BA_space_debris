@@ -66,6 +66,14 @@ namespace Acceleration{
         AccelerationAccumulator::debris = &debris;
     }
 
+    double AccelerationAccumulator::getT() {
+        return t;
+    }
+
+    void AccelerationAccumulator::setT(double t) {
+        AccelerationAccumulator::t = t;
+    }
+
     namespace KepComponent {
         void apply( Debris::Debris &d, std::array<double,3> &acc_kep, std::array<double,3> &acc_total) {
             acc_kep = d.getPosition();
@@ -87,7 +95,7 @@ namespace Acceleration{
 
     namespace J2Component {
         namespace {
-            inline constexpr double getFactor_fst(){
+            inline const double getFactor_fst(){
                 return 0.5*Physics::GM_EARTH*Physics::R_EARTH*Physics::R_EARTH*std::sqrt(5.0)*Physics::C_20;
             }
         }
