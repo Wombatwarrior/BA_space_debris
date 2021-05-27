@@ -4,15 +4,15 @@
 
 #pragma once
 // logging imports
-#include "log4cxx/logger.h"
-#include "log4cxx/propertyconfigurator.h"
-#include "log4cxx/patternlayout.h"
 #include "log4cxx/consoleappender.h"
 #include "log4cxx/helpers/properties.h"
+#include "log4cxx/logger.h"
+#include "log4cxx/patternlayout.h"
+#include "log4cxx/propertyconfigurator.h"
 // project imports
 #include "debris/include.h"
-#include "physics/include.h"
 #include "io/include.h"
+#include "physics/include.h"
 
 #include <memory>
 
@@ -24,7 +24,6 @@ std::shared_ptr<FileInput> file_input;
 std::shared_ptr<FileOutput> file_output;
 std::shared_ptr<Acceleration::AccelerationAccumulator> accumulator;
 std::shared_ptr<Integrator> integrator;
-
 
 int main(int argc, char **argv);
 

@@ -1,525 +1,551 @@
 //
 // Created by Oliver on 12.05.21.
-// based on https://www.overleaf.com/project/608918003323352d4d3ceb55 equations. for reference
+// based on https://www.overleaf.com/project/608918003323352d4d3ceb55 equations.
+// for reference
 //
 
 #include "Acceleration.h"
 #include <iostream>
 
-namespace Acceleration{
-    AccelerationAccumulator::~AccelerationAccumulator(){
+namespace Acceleration {
+AccelerationAccumulator::~AccelerationAccumulator() {}
 
+void AccelerationAccumulator::applyComponents() {
+  std::array<double, 3> new_acc_total{0, 0, 0};
+  std::array<double, 3> new_acc_component{0, 0, 0};
+  double t = 0;
+  const double c_term =
+      std::cos((Physics::THETA_G + Physics::NU_EARTH * t) * M_PIf64);
+  const double s_term =
+      std::sin((Physics::THETA_G + Physics::NU_EARTH * t) * M_PIf64);
+  debris->shiftAcceleration();
+  for (auto &d : debris->getDebrisVector()) {
+    new_acc_total[0] = 0;
+    new_acc_total[1] = 0;
+    new_acc_total[2] = 0;
+    new_acc_component[0] = 0;
+    new_acc_component[1] = 0;
+    new_acc_component[2] = 0;
+    if (config[KEP]) {
+      KepComponent::apply(d, new_acc_component, new_acc_total);
     }
-
-    void AccelerationAccumulator::applyComponents(){
-        std::array<double,3> new_acc_total{0,0,0};
-        std::array<double,3> new_acc_component{0,0,0};
-        double t = 0;
-        const double c_term = std::cos((Physics::THETA_G+Physics::NU_EARTH*t)*M_PIf64);
-        const double s_term = std::sin((Physics::THETA_G+Physics::NU_EARTH*t)*M_PIf64);
-        debris->shiftAcceleration();
-        for (auto &d : debris->getDebrisVector()) {
-            new_acc_total[0] = 0;
-            new_acc_total[1] = 0;
-            new_acc_total[2] = 0;
-            new_acc_component[0] = 0;
-            new_acc_component[1] = 0;
-            new_acc_component[2] = 0;
-            if (config[KEP]) {
-                KepComponent::apply(d, new_acc_component, new_acc_total);
-            }
-            if (config[J2]) {
-                J2Component::apply(d, new_acc_component, new_acc_total);
-            }
-            // if we want to calculate both C22 and S22 we can share many of the calculation steps
-            if (config[C22] && config[S22]) {
-                C22S22Component::apply(d, c_term, s_term, new_acc_component, new_acc_total);
-            } // if only one of the two should be calculated we only calculate the needed one
-            else {
-                if (config[C22]) {
-                    C22Component::apply(d, c_term, s_term, new_acc_component, new_acc_total);
-                }
-                if (config[S22]) {
-                    S22Component::apply(d, c_term, s_term, new_acc_component, new_acc_total);
-                }
-            }
-            if (config[SOL]) {
-                std::array<double,6> sun_params = SolComponent::setUp(t);
-                SolComponent::apply(d, sun_params, new_acc_component, new_acc_total);
-            }
-            if (config[LUN]) {
-                const std::array<double,6> moon_params=LunComponent::setUp(t);
-                LunComponent::apply(d, moon_params, new_acc_component, new_acc_total);
-            }
-            if (config[SRP]) {
-                SRPComponent::apply(d, new_acc_component, new_acc_total);
-            }
-            if (config[DRAG]) {
-                DragComponent::apply(d, new_acc_component, new_acc_total);
-            }
-            d.setAccT1(new_acc_total);
-        }
+    if (config[J2]) {
+      J2Component::apply(d, new_acc_component, new_acc_total);
     }
-
-    std::array<bool, 8> &AccelerationAccumulator::getConfig()  {
-        return config;
+    // if we want to calculate both C22 and S22 we can share many of the
+    // calculation steps
+    if (config[C22] && config[S22]) {
+      C22S22Component::apply(d, c_term, s_term, new_acc_component,
+                             new_acc_total);
+    } // if only one of the two should be calculated we only calculate the
+      // needed one
+    else {
+      if (config[C22]) {
+        C22Component::apply(d, c_term, s_term, new_acc_component,
+                            new_acc_total);
+      }
+      if (config[S22]) {
+        S22Component::apply(d, c_term, s_term, new_acc_component,
+                            new_acc_total);
+      }
     }
-
-    void AccelerationAccumulator::setConfig( std::array<bool, 8> &config) {
-        AccelerationAccumulator::config = config;
+    if (config[SOL]) {
+      std::array<double, 6> sun_params = SolComponent::setUp(t);
+      SolComponent::apply(d, sun_params, new_acc_component, new_acc_total);
     }
-
-    Debris::DebrisContainer &AccelerationAccumulator::getDebris()  {
-        return *debris;
+    if (config[LUN]) {
+      const std::array<double, 6> moon_params = LunComponent::setUp(t);
+      LunComponent::apply(d, moon_params, new_acc_component, new_acc_total);
     }
-
-    void AccelerationAccumulator::setDebris(Debris::DebrisContainer &debris) {
-        AccelerationAccumulator::debris = &debris;
+    if (config[SRP]) {
+      SRPComponent::apply(d, new_acc_component, new_acc_total);
     }
-
-    double AccelerationAccumulator::getT() {
-        return t;
+    if (config[DRAG]) {
+      DragComponent::apply(d, new_acc_component, new_acc_total);
     }
-
-    void AccelerationAccumulator::setT(double t) {
-        AccelerationAccumulator::t = t;
-    }
-
-    namespace KepComponent {
-        void apply( Debris::Debris &d, std::array<double,3> &acc_kep, std::array<double,3> &acc_total) {
-            acc_kep = d.getPosition();
-            double divisor = acc_kep[0] * acc_kep[0] + acc_kep[1] * acc_kep[1] + acc_kep[2] * acc_kep[2];
-            divisor = divisor * divisor * divisor;
-            divisor = 1/std::sqrt(divisor);
-            acc_kep[0] = Physics::GM_EARTH * acc_kep[0];
-            acc_kep[1] = Physics::GM_EARTH * acc_kep[1];
-            acc_kep[2] = Physics::GM_EARTH * acc_kep[2];
-            acc_kep[0] = -acc_kep[0] * divisor;
-            acc_kep[1] = -acc_kep[1] * divisor;
-            acc_kep[2] = -acc_kep[2] * divisor;
-            acc_total[0] = acc_total[0] + acc_kep[0];
-            acc_total[1] = acc_total[1] + acc_kep[1];
-            acc_total[2] = acc_total[2] + acc_kep[2];
-        }
-    }
-
-
-    namespace J2Component {
-        namespace {
-            inline const double getFactor_fst(){
-                return 0.5*Physics::GM_EARTH*Physics::R_EARTH*Physics::R_EARTH*std::sqrt(5.0)*Physics::C_20;
-            }
-        }
-        void apply( Debris::Debris &d, std::array<double,3> &acc_j2, std::array<double,3> &acc_total){
-            acc_j2 = d.getPosition();
-            const double x2y2z2 = acc_j2[0] * acc_j2[0] + acc_j2[1] * acc_j2[1] + acc_j2[2] * acc_j2[2];
-            const double divisor_1 = 1/std::sqrt(x2y2z2);
-            const double divisor_2 = 1/(x2y2z2*x2y2z2);
-            const double z2_15 = (15*(acc_j2[2]*acc_j2[2]))*divisor_2/x2y2z2;
-            double factor_snd = 3*divisor_2 - z2_15;
-            acc_j2[0] = (acc_j2[0]*divisor_1)*getFactor_fst();
-            acc_j2[1] = (acc_j2[1]*divisor_1)*getFactor_fst();
-            acc_j2[2] = (acc_j2[2]*divisor_1)*getFactor_fst();
-            acc_j2[0] = acc_j2[0] * factor_snd;
-            acc_j2[1] = acc_j2[1] * factor_snd;
-            factor_snd = 9*divisor_2 - z2_15;
-            acc_j2[2] = acc_j2[2] * factor_snd;
-            acc_total[0] = acc_total[0] + acc_j2[0];
-            acc_total[1] = acc_total[1] + acc_j2[1];
-            acc_total[2] = acc_total[2] + acc_j2[2];
-        }
-    }
-
-    namespace C22Component {
-        namespace {
-            inline double getFC22_x(double x, double y, double z){
-                double x2 = x*x;
-                double y2 = y*y;
-                const double n = getFactor_fst()*x*(y2-x2);
-                // x2 = (x^2 + y^2 + z^2)
-                x2 = x2 + y2 + z*z;
-                double fst = x2;
-                // y2 = (x^2 + y^2 +z^2)^2
-                y2 = x2*x2;
-                // x2 = (x^2 + y^2 +z^2)^3
-                x2 = x2*y2;
-                // y2 = (x^2 + y^2 +z^2)^4
-                y2 = y2*y2;
-                const double snd = (getFactor_snd()*x)/std::sqrt(y2*fst);
-                fst = n/std::sqrt(y2*x2);
-                return fst + snd;
-            }
-            inline double getFC22_y(double x, double y, double z){
-                double x2 = x*x;
-                double y2 = y*y;
-                const double n = getFactor_fst()*y*(y2-x2);
-                // x2 = (x^2 + y^2 + z^2)
-                x2 = x2 + y2 + z*z;
-                double fst = x2;
-                // y2 = (x^2 + y^2 +z^2)^2
-                y2 = x2*x2;
-                // x2 = (x^2 + y^2 +z^2)^3
-                x2 = x2*y2;
-                // y2 = (x^2 + y^2 +z^2)^4
-                y2 = y2*y2;
-                const double snd = (getFactor_snd()*y)/std::sqrt(y2*fst);
-                fst = n/std::sqrt(y2*x2);
-                return fst - snd;
-            }
-            inline double getFC22_z(double x, double y, double z){
-                double x2 = x*x;
-                double y2 = y*y;
-                const double n = getFactor_fst()*z*(y2-x2);
-                // x2 = x^2 + y^2 +z^2
-                x2 = x2 + y2 + z*z;
-                // y2 = (x^2 + y^2 +z^2)^2
-                y2 = x2*x2;
-                // x2 = (x^2 + y^2 +z^2)^3
-                x2 = x2*y2;
-                // y2 = (x^2 + y^2 +z^2)^4
-                y2 = y2*y2;
-                // y2 = (x^2 + y^2 +z^2)^(7/2)
-                y2 = std::sqrt(y2*x2);
-                return n/y2;
-            }
-            inline constexpr double getFactor_fst(){
-                return 2.5*getFactor_snd();
-            }
-            inline constexpr double getFactor_snd(){
-                return std::sqrt(15)*Physics::GM_EARTH*Physics::R_EARTH*Physics::R_EARTH*Physics::C_22;
-            }
-        }
-        void apply(Debris::Debris &d, double c_term, double s_term, std::array<double,3> &acc_c22, std::array<double,3> &acc_total){
-            acc_c22 = d.getPosition();
-            const double x = acc_c22[0]*c_term + acc_c22[1]*s_term;
-            const double y = -acc_c22[0]*s_term + acc_c22[1]*c_term;
-            const double z = acc_c22[2];
-            double x2 = x*x;
-            double y2 = y*y;
-            const double n = getFactor_fst()*(y2-x2);
-            // x2 = (x^2 + y^2 + z^2)
-            x2 = x2 + y2 + z*z;
-            // x2y2z2 = (x^2 + y^2 + z^2)
-            const double x2y2z2 = x2;
-            // y2 = (x^2 + y^2 +z^2)^2
-            y2 = x2*x2;
-            // x2 = (x^2 + y^2 +z^2)^3
-            x2 = x2*y2;
-            // y2 = (x^2 + y^2 +z^2)^4
-            y2 = y2*y2;
-            // d1 = (x^2 + y^2 +z^2)^(7/2)
-            const double d1 = 1/std::sqrt(y2*x2);
-            // d2 = (x^2 + y^2 +z^2)^(5/2)
-            const double d2 = 1/std::sqrt(y2 * x2y2z2);
-            // x2 = f_c22_x(x,y,z)
-            x2 = (n*x)*d1 + (getFactor_snd()*x)*d2;
-            // y2 = f_c22_y(x,y,z)
-            y2 = (n*y)*d1 - (getFactor_snd()*y)*d2;
-            acc_c22[0] = x2*c_term - y2*s_term;
-            acc_c22[1] = x2*s_term + y2*c_term;
-            acc_c22[2] = (n*z)*d1;
-            acc_total[0] += acc_c22[0];
-            acc_total[1] += acc_c22[1];
-            acc_total[2] += acc_c22[2];
-        }
-    }
-
-    namespace S22Component {
-        namespace {
-            inline double getFS22_x(double x, double y, double z){
-                double x2 = x*x;
-                double y2 = y*y;
-                const double n = getFactor_fst()*x2*y;
-                // x2 = (x^2 + y^2 + z^2)
-                x2 = x2 + y2 + z*z;
-                double fst = x2;
-                // y2 = (x^2 + y^2 +z^2)^2
-                y2 = x2*x2;
-                // x2 = (x^2 + y^2 +z^2)^3
-                x2 = x2*y2;
-                // y2 = (x^2 + y^2 +z^2)^4
-                y2 = y2*y2;
-                const double snd = (getFactor_snd()*y)/std::sqrt(y2*fst);
-                fst = n/std::sqrt(y2*x2);
-                return fst + snd;
-            }
-            inline double getFS22_y(double x, double y, double z){
-                double x2 = x*x;
-                double y2 = y*y;
-                const double n = getFactor_fst()*x*y2;
-                // x2 = (x^2 + y^2 + z^2)
-                x2 = x2 + y2 + z*z;
-                double fst = x2;
-                // y2 = (x^2 + y^2 +z^2)^2
-                y2 = x2*x2;
-                // x2 = (x^2 + y^2 +z^2)^3
-                x2 = x2*y2;
-                // y2 = (x^2 + y^2 +z^2)^4
-                y2 = y2*y2;
-                const double snd = (getFactor_snd()*x)/std::sqrt(y2*fst);
-                fst = n/std::sqrt(y2*x2);
-                return fst + snd;
-            }
-            inline double getFS22_z(double x, double y, double z){
-                const double n = getFactor_fst()*x*y*z;
-                // x2 = x^2 + y^2 +z^2
-                double x2 = x*x + y*y + z*z;
-                // y2 = (x^2 + y^2 +z^2)^2
-                double y2 = x2*x2;
-                // x2 = (x^2 + y^2 +z^2)^3
-                x2 = x2*y2;
-                // y2 = (x^2 + y^2 +z^2)^4
-                y2 = y2*y2;
-                // y2 = (x^2 + y^2 +z^2)^(7/2)
-                y2 = std::sqrt(y2*x2);
-                return n/y2;
-            }
-            inline constexpr double getFactor_fst(){
-                return -5*getFactor_snd();
-            }
-            inline constexpr double getFactor_snd(){
-                return std::sqrt(15)*Physics::GM_EARTH*Physics::R_EARTH*Physics::R_EARTH*Physics::S_22;
-            }
-        }
-        void apply( Debris::Debris &d, double c_term, double s_term, std::array<double,3> &acc_s22, std::array<double,3> &acc_total){
-            acc_s22 = d.getPosition();
-            const double x = acc_s22[0]*c_term + acc_s22[1]*s_term;
-            const double y = -acc_s22[0]*s_term + acc_s22[1]*c_term;
-            const double z = acc_s22[2];
-            const double n = getFactor_fst()*x*y;
-            // pow_3 = (x^2 + y^2 + z^2)
-            double pow_3 = x*x + y*y + z*z;
-            // pow_1 = (x^2 + y^2 + z^2)
-            double pow_1 = pow_3;
-            // pow_4 = (x^2 + y^2 +z^2)^2
-            double pow_4 = pow_3 * pow_3;
-            // pow_3 = (x^2 + y^2 +z^2)^3
-            pow_3 = pow_3 * pow_4;
-            // pow_4 = (x^2 + y^2 +z^2)^4
-            pow_4 = pow_4 * pow_4;
-            const double d2 = 1/std::sqrt(pow_4 * pow_1);
-            const double d1 = 1/std::sqrt(pow_4 * pow_3);
-            pow_1 = ((n*x) * d1) + ((getFactor_snd()*y)*d2);
-            pow_3 = ((n*y) * d1) + ((getFactor_snd()*x)*d2);
-            acc_s22[0] = pow_1*c_term - pow_3*s_term;
-            acc_s22[1] = pow_1*s_term + pow_3*c_term;
-            acc_s22[2] = ((n*z) * d1);
-            acc_total[0] += acc_s22[0];
-            acc_total[1] += acc_s22[1];
-            acc_total[2] += acc_s22[2];
-        }
-    }
-
-    namespace C22S22Component{
-        namespace {
-            inline constexpr double getFactor(){
-                return std::sqrt(15)*Physics::GM_EARTH*Physics::R_EARTH*Physics::R_EARTH;
-            }
-            inline constexpr double getFactorC22_snd(){
-                return getFactor()*Physics::C_22;
-            }
-            inline constexpr double getFactorC22_fst(){
-                return getFactorC22_snd()*2.5;
-            }
-            inline constexpr double getFactorS22_snd(){
-                return getFactor()*Physics::S_22;
-            }
-            inline constexpr double getFactorS22_fst(){
-                return getFactorS22_snd()*-5;
-            }
-        }
-        void apply( Debris::Debris &d, double c_term, double s_term, std::array<double,3> &acc_c22s22, std::array<double,3> &acc_total){
-            acc_c22s22 = d.getPosition();
-            const double x = acc_c22s22[0]*c_term + acc_c22s22[1]*s_term;
-            const double y = -acc_c22s22[0]*s_term + acc_c22s22[1]*c_term;
-            const double z = acc_c22s22[2];
-            // c22
-            double n = getFactorC22_fst()*(y*y-x*x);
-            // pow_3 = (x^2 + y^2 + z^2)
-            double pow_3 = x*x + y*y + z*z;
-            // pow_1 = (x^2 + y^2 + z^2)
-            const double pow_1 = pow_3;
-            // pow_4 = (x^2 + y^2 +z^2)^2
-            double pow_4 = pow_3 * pow_3;
-            // pow_3 = (x^2 + y^2 +z^2)^3
-            pow_3 = pow_3 * pow_4;
-            // pow_4 = (x^2 + y^2 +z^2)^4
-            pow_4 = pow_4 * pow_4;
-            const double d2 = 1/std::sqrt(pow_4 * pow_1);
-            const double d1 = 1/std::sqrt(pow_4 * pow_3);
-            double f_x = ((n*x) * d1) + ((getFactorC22_snd()*x)*d2);
-            double f_y = ((n*y) * d1) - ((getFactorC22_snd()*y)*d2);
-            acc_c22s22[0] = f_x*c_term - f_y*s_term;
-            acc_c22s22[1] = f_x*s_term + f_y*c_term;
-            acc_c22s22[2] = ((n*z) * d1);
-            // s22
-            n = getFactorS22_fst()*x*y;
-            f_x = ((n*x) * d1) + ((getFactorS22_snd()*y)*d2);
-            f_y = ((n*y) * d1) + ((getFactorS22_snd()*x)*d2);
-            acc_c22s22[0] += f_x*c_term - f_y*s_term;
-            acc_c22s22[1] += f_x*s_term + f_y*c_term;
-            acc_c22s22[2] += ((n*z) * d1);
-            acc_total[0] += acc_c22s22[0];
-            acc_total[1] += acc_c22s22[1];
-            acc_total[2] += acc_c22s22[2];
-        }
-    }
-
-    namespace SolComponent {
-        const std::array<double,6> setUp(double t){
-            const double l = Physics::PHI_SUN_0 + Physics::NU_SUN*t;
-            const double r = Physics::AU_SCALED - 2.499*std::cos(l*M_PIf64/180) - 0.021*std::cos(2*l*M_PIf64/180);
-            const double lambda = Physics::LONG_ASC + Physics::ARG_PERIAPSIS + l + (6892.0 / 3600) * std::sin(l * M_PIf64 / 180) + (72.0 / 3600) * std::sin((2 * l) * M_PIf64 / 180);
-            // contains the x,y,z position of the sun and 3 needed terms only depending on those coordinates
-            std::array<double,6> sun_params = {std::cos(lambda*M_PIf64/180),
-                                               std::sin(lambda*M_PIf64/180) * std::cos(Physics::EPSILON*M_PIf64/180),
-                                               std::sin(lambda*M_PIf64/180) * std::sin(Physics::EPSILON*M_PIf64/180),
-                                               0,
-                                               0,
-                                               0
-            };
-            sun_params[0] = (r*sun_params[0])*1e+6;
-            sun_params[1] = (r*sun_params[1])*1e+6;
-            sun_params[2] = (r*sun_params[2])*1e+6;
-            double d2 = std::inner_product(sun_params.begin(),sun_params.end(),sun_params.begin(),.0);
-            d2 = 1/std::sqrt(d2*d2*d2);
-            sun_params[3] = sun_params[0]*d2;
-            sun_params[4] = sun_params[1]*d2;
-            sun_params[5] = sun_params[2]*d2;
-            return sun_params;
-        }
-
-        void apply( Debris::Debris &d, const std::array<double,6> &sun_params, std::array<double,3> &acc_sol, std::array<double,3> &acc_total){
-            acc_sol = d.getPosition();
-            acc_sol[0] -= sun_params[0];
-            acc_sol[1] -= sun_params[1];
-            acc_sol[2] -= sun_params[2];
-            double d1 = std::inner_product(acc_sol.begin(),acc_sol.end(),acc_sol.begin(),.0);
-            d1 = 1/std::sqrt(d1*d1*d1);
-            acc_sol[0] = -Physics::GM_SUN * (acc_sol[0]*d1 + sun_params[3]);
-            acc_sol[1] = -Physics::GM_SUN * (acc_sol[1]*d1 + sun_params[4]);
-            acc_sol[2] = -Physics::GM_SUN * (acc_sol[2]*d1 + sun_params[5]);
-            acc_total[0] += acc_sol[0];
-            acc_total[1] += acc_sol[1];
-            acc_total[2] += acc_sol[2];
-        }
-    }
-
-    namespace LunComponent{
-        const std::array<double,6> setUp(double t) {
-            const double phi_m = Physics::NU_SUN*t;
-            const double phi_m_a = Physics::NU_MOON_A*t;
-            const double phi_m_p = Physics::NU_MOON_P*t;
-            const double phi_m_s = Physics::NU_MOON_S*t;
-            const double l_0 = phi_m_p + phi_m_a + 218.31617;
-            const double l_m = phi_m_a + 134.96292;
-            const double l1_m = phi_m + 357.52543;
-            const double f_m = phi_m_p + phi_m_a + phi_m_s + 93.27283;
-            const double d_m = phi_m_p + phi_m_a - phi_m + 297.85027;
-
-            // add up small terms first, to avoid floating point errors when adding small to big values
-            double r_m = -152*std::cos((l_m+l1_m-2*d_m)*Physics::RAD_FACTOR);
-            r_m -= 171*std::cos((l_m+2*d_m)*Physics::RAD_FACTOR);
-            r_m -= 205*std::cos((l1_m-2*d_m)*Physics::RAD_FACTOR);
-            r_m += 246*std::cos((2*l_m-2*d_m)*Physics::RAD_FACTOR);
-            r_m -= 570*std::cos((2*l_m)*Physics::RAD_FACTOR);
-            r_m -= 2956*std::cos((2*d_m)*Physics::RAD_FACTOR);
-            r_m -= 3699*std::cos((2*d_m-l_m)*Physics::RAD_FACTOR);
-            r_m -= 20905*std::cos(l_m*Physics::RAD_FACTOR);
-            r_m += 385000;
-
-            // add up small terms first, to avoid floating point errors when adding small to big values
-            double lambda_m = -(55.0/3600)*std::sin((2*f_m-2*d_m)*Physics::RAD_FACTOR);
-            lambda_m -= (110.0/3600)*std::sin((l_m+l1_m)*Physics::RAD_FACTOR);
-            lambda_m -= (125.0/3600)*std::sin((d_m)*Physics::RAD_FACTOR);
-            lambda_m += (148.0/3600)*std::sin((l_m-l1_m)*Physics::RAD_FACTOR);
-            lambda_m -= (165.0/3600)*std::sin((l1_m-2*d_m)*Physics::RAD_FACTOR);
-            lambda_m += (192.0/3600)*std::sin((l_m+2*d_m)*Physics::RAD_FACTOR);
-            lambda_m -= (206.0/3600)*std::sin((l_m+l1_m-2*d_m)*Physics::RAD_FACTOR);
-            lambda_m -= (212.0/3600)*std::sin((2*l_m-2*d_m)*Physics::RAD_FACTOR);
-            lambda_m -= (412.0/3600)*std::sin((2*f_m)*Physics::RAD_FACTOR);
-            lambda_m -= (668.0/3600)*std::sin((l1_m)*Physics::RAD_FACTOR);
-            lambda_m += (769.0/3600)*std::sin((2*l_m)*Physics::RAD_FACTOR);
-            lambda_m += (2370.0/3600)*std::sin((2*d_m)*Physics::RAD_FACTOR);
-            lambda_m -= (4856.0/3600)*std::sin((l_m-2*d_m)*Physics::RAD_FACTOR);
-            lambda_m += (22640.0/3600)*std::sin((l_m)*Physics::RAD_FACTOR);
-            lambda_m += l_0;
-
-            // add up small terms first, to avoid floating point errors when adding small to big values
-            double beta_m = (11.0/3600)*std::sin((-l1_m+f_m-2*d_m)*Physics::RAD_FACTOR);
-            beta_m += (21.0/3600)*std::sin((-l_m+f_m)*Physics::RAD_FACTOR);
-            beta_m -= (23.0/3600)*std::sin((l1_m+f_m-2*d_m)*Physics::RAD_FACTOR);
-            beta_m -= (25.0/3600)*std::sin((-2*l_m+f_m)*Physics::RAD_FACTOR);
-            beta_m -= (31.0/3600)*std::sin((-l_m+f_m-2*d_m)*Physics::RAD_FACTOR);
-            beta_m += (44.0/3600)*std::sin((l_m+f_m-2*d_m)*Physics::RAD_FACTOR);
-            beta_m -= (526.0/3600)*std::sin((f_m-2*d_m)*Physics::RAD_FACTOR);
-            beta_m += (18520.0/3600)*std::sin((f_m+lambda_m-l_0+(412.0/3600)*std::sin((2*f_m)*Physics::RAD_FACTOR)+(541.0/3600)*std::sin((l1_m)*Physics::RAD_FACTOR))*Physics::RAD_FACTOR);
-
-            // all the sin and cos terms have similar in [-1,1], so multiply them before multiplying BIG r_m value of ~380000
-            std::array<double,3> moon_pos;
-            double c_term = std::cos(lambda_m*Physics::RAD_FACTOR);
-            double s_term = std::sin(lambda_m*Physics::RAD_FACTOR);
-            moon_pos[0] = c_term;
-            moon_pos[1] = s_term;
-            c_term = std::cos(beta_m*Physics::RAD_FACTOR);
-            s_term = std::sin(beta_m*Physics::RAD_FACTOR);
-            moon_pos[0] *= c_term;
-            moon_pos[1] *= c_term;
-            moon_pos[2] = s_term;
-            c_term = std::cos(Physics::EPSILON*Physics::RAD_FACTOR);
-            s_term = std::sin(Physics::EPSILON*Physics::RAD_FACTOR);
-
-            // contains the x,y,z position of the moon and 3 needed terms only depending on those coordinates
-            std::array<double,6> moon_params = {moon_pos[0],
-                                                c_term*moon_pos[1] - s_term*moon_pos[2],
-                                                s_term*moon_pos[1] + c_term*moon_pos[2],
-                                                0,
-                                                0,
-                                                0
-            };
-            // multiplied small terms first, to avoid floating point errors when multiplying small with big values
-            moon_params[0] *= r_m;
-            moon_params[1] *= r_m;
-            moon_params[2] *= r_m;
-            double d2 = std::inner_product(moon_params.begin(), moon_params.end(), moon_params.begin(), 0.);
-            d2 = 1/std::sqrt(d2*d2*d2);
-            moon_params[3] = moon_params[0] * d2;
-            moon_params[4] = moon_params[1] * d2;
-            moon_params[5] = moon_params[2] * d2;
-            return moon_params;
-        }
-        void apply( Debris::Debris &d, const std::array<double,6> &moon_params, std::array<double,3> &acc_lun, std::array<double,3> &acc_total){
-            acc_lun = d.getPosition();
-            acc_lun[0] -= moon_params[0];
-            acc_lun[1] -= moon_params[1];
-            acc_lun[2] -= moon_params[2];
-            double d1 = std::inner_product(acc_lun.begin(), acc_lun.end(), acc_lun.begin(), 0.);
-            d1 = 1/std::sqrt(d1*d1*d1);
-            acc_lun[0] = -Physics::GM_MOON * (acc_lun[0]*d1 + moon_params[3]);
-            acc_lun[1] = -Physics::GM_MOON * (acc_lun[1]*d1 + moon_params[4]);
-            acc_lun[2] = -Physics::GM_MOON * (acc_lun[2]*d1 + moon_params[5]);
-            acc_total[0] += acc_lun[0];
-            acc_total[1] += acc_lun[1];
-            acc_total[2] += acc_lun[2];
-
-        }
-    }
-
-    namespace SRPComponent {
-        namespace {
-
-        }
-        void apply( Debris::Debris &d, std::array<double,3> &acc_srp, std::array<double,3> &acc_total){
-
-        }
-    }
-
-    namespace DragComponent  {
-        namespace {
-
-        }
-        void apply( Debris::Debris &d, std::array<double,3> &acc_drag, std::array<double,3> &acc_total){
-
-        }
-    }
+    d.setAccT1(new_acc_total);
+  }
 }
+
+std::array<bool, 8> &AccelerationAccumulator::getConfig() { return config; }
+
+void AccelerationAccumulator::setConfig(std::array<bool, 8> &config) {
+  AccelerationAccumulator::config = config;
+}
+
+Debris::DebrisContainer &AccelerationAccumulator::getDebris() {
+  return *debris;
+}
+
+void AccelerationAccumulator::setDebris(Debris::DebrisContainer &debris) {
+  AccelerationAccumulator::debris = &debris;
+}
+
+double AccelerationAccumulator::getT() { return t; }
+
+void AccelerationAccumulator::setT(double t) { AccelerationAccumulator::t = t; }
+
+namespace KepComponent {
+void apply(Debris::Debris &d, std::array<double, 3> &acc_kep,
+           std::array<double, 3> &acc_total) {
+  acc_kep = d.getPosition();
+  double divisor = acc_kep[0] * acc_kep[0] + acc_kep[1] * acc_kep[1] +
+                   acc_kep[2] * acc_kep[2];
+  divisor = divisor * divisor * divisor;
+  divisor = 1 / std::sqrt(divisor);
+  acc_kep[0] = Physics::GM_EARTH * acc_kep[0];
+  acc_kep[1] = Physics::GM_EARTH * acc_kep[1];
+  acc_kep[2] = Physics::GM_EARTH * acc_kep[2];
+  acc_kep[0] = -acc_kep[0] * divisor;
+  acc_kep[1] = -acc_kep[1] * divisor;
+  acc_kep[2] = -acc_kep[2] * divisor;
+  acc_total[0] = acc_total[0] + acc_kep[0];
+  acc_total[1] = acc_total[1] + acc_kep[1];
+  acc_total[2] = acc_total[2] + acc_kep[2];
+}
+} // namespace KepComponent
+
+namespace J2Component {
+namespace {
+inline const double getFactor_fst() {
+  return 0.5 * Physics::GM_EARTH * Physics::R_EARTH * Physics::R_EARTH *
+         std::sqrt(5.0) * Physics::C_20;
+}
+} // namespace
+void apply(Debris::Debris &d, std::array<double, 3> &acc_j2,
+           std::array<double, 3> &acc_total) {
+  acc_j2 = d.getPosition();
+  const double x2y2z2 =
+      acc_j2[0] * acc_j2[0] + acc_j2[1] * acc_j2[1] + acc_j2[2] * acc_j2[2];
+  const double divisor_1 = 1 / std::sqrt(x2y2z2);
+  const double divisor_2 = 1 / (x2y2z2 * x2y2z2);
+  const double z2_15 = (15 * (acc_j2[2] * acc_j2[2])) * divisor_2 / x2y2z2;
+  double factor_snd = 3 * divisor_2 - z2_15;
+  acc_j2[0] = (acc_j2[0] * divisor_1) * getFactor_fst();
+  acc_j2[1] = (acc_j2[1] * divisor_1) * getFactor_fst();
+  acc_j2[2] = (acc_j2[2] * divisor_1) * getFactor_fst();
+  acc_j2[0] = acc_j2[0] * factor_snd;
+  acc_j2[1] = acc_j2[1] * factor_snd;
+  factor_snd = 9 * divisor_2 - z2_15;
+  acc_j2[2] = acc_j2[2] * factor_snd;
+  acc_total[0] = acc_total[0] + acc_j2[0];
+  acc_total[1] = acc_total[1] + acc_j2[1];
+  acc_total[2] = acc_total[2] + acc_j2[2];
+}
+} // namespace J2Component
+
+namespace C22Component {
+namespace {
+inline double getFC22_x(double x, double y, double z) {
+  double x2 = x * x;
+  double y2 = y * y;
+  const double n = getFactor_fst() * x * (y2 - x2);
+  // x2 = (x^2 + y^2 + z^2)
+  x2 = x2 + y2 + z * z;
+  double fst = x2;
+  // y2 = (x^2 + y^2 +z^2)^2
+  y2 = x2 * x2;
+  // x2 = (x^2 + y^2 +z^2)^3
+  x2 = x2 * y2;
+  // y2 = (x^2 + y^2 +z^2)^4
+  y2 = y2 * y2;
+  const double snd = (getFactor_snd() * x) / std::sqrt(y2 * fst);
+  fst = n / std::sqrt(y2 * x2);
+  return fst + snd;
+}
+inline double getFC22_y(double x, double y, double z) {
+  double x2 = x * x;
+  double y2 = y * y;
+  const double n = getFactor_fst() * y * (y2 - x2);
+  // x2 = (x^2 + y^2 + z^2)
+  x2 = x2 + y2 + z * z;
+  double fst = x2;
+  // y2 = (x^2 + y^2 +z^2)^2
+  y2 = x2 * x2;
+  // x2 = (x^2 + y^2 +z^2)^3
+  x2 = x2 * y2;
+  // y2 = (x^2 + y^2 +z^2)^4
+  y2 = y2 * y2;
+  const double snd = (getFactor_snd() * y) / std::sqrt(y2 * fst);
+  fst = n / std::sqrt(y2 * x2);
+  return fst - snd;
+}
+inline double getFC22_z(double x, double y, double z) {
+  double x2 = x * x;
+  double y2 = y * y;
+  const double n = getFactor_fst() * z * (y2 - x2);
+  // x2 = x^2 + y^2 +z^2
+  x2 = x2 + y2 + z * z;
+  // y2 = (x^2 + y^2 +z^2)^2
+  y2 = x2 * x2;
+  // x2 = (x^2 + y^2 +z^2)^3
+  x2 = x2 * y2;
+  // y2 = (x^2 + y^2 +z^2)^4
+  y2 = y2 * y2;
+  // y2 = (x^2 + y^2 +z^2)^(7/2)
+  y2 = std::sqrt(y2 * x2);
+  return n / y2;
+}
+inline constexpr double getFactor_fst() { return 2.5 * getFactor_snd(); }
+inline constexpr double getFactor_snd() {
+  return std::sqrt(15) * Physics::GM_EARTH * Physics::R_EARTH *
+         Physics::R_EARTH * Physics::C_22;
+}
+} // namespace
+void apply(Debris::Debris &d, double c_term, double s_term,
+           std::array<double, 3> &acc_c22, std::array<double, 3> &acc_total) {
+  acc_c22 = d.getPosition();
+  const double x = acc_c22[0] * c_term + acc_c22[1] * s_term;
+  const double y = -acc_c22[0] * s_term + acc_c22[1] * c_term;
+  const double z = acc_c22[2];
+  double x2 = x * x;
+  double y2 = y * y;
+  const double n = getFactor_fst() * (y2 - x2);
+  // x2 = (x^2 + y^2 + z^2)
+  x2 = x2 + y2 + z * z;
+  // x2y2z2 = (x^2 + y^2 + z^2)
+  const double x2y2z2 = x2;
+  // y2 = (x^2 + y^2 +z^2)^2
+  y2 = x2 * x2;
+  // x2 = (x^2 + y^2 +z^2)^3
+  x2 = x2 * y2;
+  // y2 = (x^2 + y^2 +z^2)^4
+  y2 = y2 * y2;
+  // d1 = (x^2 + y^2 +z^2)^(7/2)
+  const double d1 = 1 / std::sqrt(y2 * x2);
+  // d2 = (x^2 + y^2 +z^2)^(5/2)
+  const double d2 = 1 / std::sqrt(y2 * x2y2z2);
+  // x2 = f_c22_x(x,y,z)
+  x2 = (n * x) * d1 + (getFactor_snd() * x) * d2;
+  // y2 = f_c22_y(x,y,z)
+  y2 = (n * y) * d1 - (getFactor_snd() * y) * d2;
+  acc_c22[0] = x2 * c_term - y2 * s_term;
+  acc_c22[1] = x2 * s_term + y2 * c_term;
+  acc_c22[2] = (n * z) * d1;
+  acc_total[0] += acc_c22[0];
+  acc_total[1] += acc_c22[1];
+  acc_total[2] += acc_c22[2];
+}
+} // namespace C22Component
+
+namespace S22Component {
+namespace {
+inline double getFS22_x(double x, double y, double z) {
+  double x2 = x * x;
+  double y2 = y * y;
+  const double n = getFactor_fst() * x2 * y;
+  // x2 = (x^2 + y^2 + z^2)
+  x2 = x2 + y2 + z * z;
+  double fst = x2;
+  // y2 = (x^2 + y^2 +z^2)^2
+  y2 = x2 * x2;
+  // x2 = (x^2 + y^2 +z^2)^3
+  x2 = x2 * y2;
+  // y2 = (x^2 + y^2 +z^2)^4
+  y2 = y2 * y2;
+  const double snd = (getFactor_snd() * y) / std::sqrt(y2 * fst);
+  fst = n / std::sqrt(y2 * x2);
+  return fst + snd;
+}
+inline double getFS22_y(double x, double y, double z) {
+  double x2 = x * x;
+  double y2 = y * y;
+  const double n = getFactor_fst() * x * y2;
+  // x2 = (x^2 + y^2 + z^2)
+  x2 = x2 + y2 + z * z;
+  double fst = x2;
+  // y2 = (x^2 + y^2 +z^2)^2
+  y2 = x2 * x2;
+  // x2 = (x^2 + y^2 +z^2)^3
+  x2 = x2 * y2;
+  // y2 = (x^2 + y^2 +z^2)^4
+  y2 = y2 * y2;
+  const double snd = (getFactor_snd() * x) / std::sqrt(y2 * fst);
+  fst = n / std::sqrt(y2 * x2);
+  return fst + snd;
+}
+inline double getFS22_z(double x, double y, double z) {
+  const double n = getFactor_fst() * x * y * z;
+  // x2 = x^2 + y^2 +z^2
+  double x2 = x * x + y * y + z * z;
+  // y2 = (x^2 + y^2 +z^2)^2
+  double y2 = x2 * x2;
+  // x2 = (x^2 + y^2 +z^2)^3
+  x2 = x2 * y2;
+  // y2 = (x^2 + y^2 +z^2)^4
+  y2 = y2 * y2;
+  // y2 = (x^2 + y^2 +z^2)^(7/2)
+  y2 = std::sqrt(y2 * x2);
+  return n / y2;
+}
+inline constexpr double getFactor_fst() { return -5 * getFactor_snd(); }
+inline constexpr double getFactor_snd() {
+  return std::sqrt(15) * Physics::GM_EARTH * Physics::R_EARTH *
+         Physics::R_EARTH * Physics::S_22;
+}
+} // namespace
+void apply(Debris::Debris &d, double c_term, double s_term,
+           std::array<double, 3> &acc_s22, std::array<double, 3> &acc_total) {
+  acc_s22 = d.getPosition();
+  const double x = acc_s22[0] * c_term + acc_s22[1] * s_term;
+  const double y = -acc_s22[0] * s_term + acc_s22[1] * c_term;
+  const double z = acc_s22[2];
+  const double n = getFactor_fst() * x * y;
+  // pow_3 = (x^2 + y^2 + z^2)
+  double pow_3 = x * x + y * y + z * z;
+  // pow_1 = (x^2 + y^2 + z^2)
+  double pow_1 = pow_3;
+  // pow_4 = (x^2 + y^2 +z^2)^2
+  double pow_4 = pow_3 * pow_3;
+  // pow_3 = (x^2 + y^2 +z^2)^3
+  pow_3 = pow_3 * pow_4;
+  // pow_4 = (x^2 + y^2 +z^2)^4
+  pow_4 = pow_4 * pow_4;
+  const double d2 = 1 / std::sqrt(pow_4 * pow_1);
+  const double d1 = 1 / std::sqrt(pow_4 * pow_3);
+  pow_1 = ((n * x) * d1) + ((getFactor_snd() * y) * d2);
+  pow_3 = ((n * y) * d1) + ((getFactor_snd() * x) * d2);
+  acc_s22[0] = pow_1 * c_term - pow_3 * s_term;
+  acc_s22[1] = pow_1 * s_term + pow_3 * c_term;
+  acc_s22[2] = ((n * z) * d1);
+  acc_total[0] += acc_s22[0];
+  acc_total[1] += acc_s22[1];
+  acc_total[2] += acc_s22[2];
+}
+} // namespace S22Component
+
+namespace C22S22Component {
+namespace {
+inline constexpr double getFactor() {
+  return std::sqrt(15) * Physics::GM_EARTH * Physics::R_EARTH *
+         Physics::R_EARTH;
+}
+inline constexpr double getFactorC22_snd() {
+  return getFactor() * Physics::C_22;
+}
+inline constexpr double getFactorC22_fst() { return getFactorC22_snd() * 2.5; }
+inline constexpr double getFactorS22_snd() {
+  return getFactor() * Physics::S_22;
+}
+inline constexpr double getFactorS22_fst() { return getFactorS22_snd() * -5; }
+} // namespace
+void apply(Debris::Debris &d, double c_term, double s_term,
+           std::array<double, 3> &acc_c22s22,
+           std::array<double, 3> &acc_total) {
+  acc_c22s22 = d.getPosition();
+  const double x = acc_c22s22[0] * c_term + acc_c22s22[1] * s_term;
+  const double y = -acc_c22s22[0] * s_term + acc_c22s22[1] * c_term;
+  const double z = acc_c22s22[2];
+  // c22
+  double n = getFactorC22_fst() * (y * y - x * x);
+  // pow_3 = (x^2 + y^2 + z^2)
+  double pow_3 = x * x + y * y + z * z;
+  // pow_1 = (x^2 + y^2 + z^2)
+  const double pow_1 = pow_3;
+  // pow_4 = (x^2 + y^2 +z^2)^2
+  double pow_4 = pow_3 * pow_3;
+  // pow_3 = (x^2 + y^2 +z^2)^3
+  pow_3 = pow_3 * pow_4;
+  // pow_4 = (x^2 + y^2 +z^2)^4
+  pow_4 = pow_4 * pow_4;
+  const double d2 = 1 / std::sqrt(pow_4 * pow_1);
+  const double d1 = 1 / std::sqrt(pow_4 * pow_3);
+  double f_x = ((n * x) * d1) + ((getFactorC22_snd() * x) * d2);
+  double f_y = ((n * y) * d1) - ((getFactorC22_snd() * y) * d2);
+  acc_c22s22[0] = f_x * c_term - f_y * s_term;
+  acc_c22s22[1] = f_x * s_term + f_y * c_term;
+  acc_c22s22[2] = ((n * z) * d1);
+  // s22
+  n = getFactorS22_fst() * x * y;
+  f_x = ((n * x) * d1) + ((getFactorS22_snd() * y) * d2);
+  f_y = ((n * y) * d1) + ((getFactorS22_snd() * x) * d2);
+  acc_c22s22[0] += f_x * c_term - f_y * s_term;
+  acc_c22s22[1] += f_x * s_term + f_y * c_term;
+  acc_c22s22[2] += ((n * z) * d1);
+  acc_total[0] += acc_c22s22[0];
+  acc_total[1] += acc_c22s22[1];
+  acc_total[2] += acc_c22s22[2];
+}
+} // namespace C22S22Component
+
+namespace SolComponent {
+const std::array<double, 6> setUp(double t) {
+  const double l = Physics::PHI_SUN_0 + Physics::NU_SUN * t;
+  const double r = Physics::AU_SCALED - 2.499 * std::cos(l * M_PIf64 / 180) -
+                   0.021 * std::cos(2 * l * M_PIf64 / 180);
+  const double lambda = Physics::LONG_ASC + Physics::ARG_PERIAPSIS + l +
+                        (6892.0 / 3600) * std::sin(l * M_PIf64 / 180) +
+                        (72.0 / 3600) * std::sin((2 * l) * M_PIf64 / 180);
+  // contains the x,y,z position of the sun and 3 needed terms only depending on
+  // those coordinates
+  std::array<double, 6> sun_params = {
+      std::cos(lambda * M_PIf64 / 180),
+      std::sin(lambda * M_PIf64 / 180) *
+          std::cos(Physics::EPSILON * M_PIf64 / 180),
+      std::sin(lambda * M_PIf64 / 180) *
+          std::sin(Physics::EPSILON * M_PIf64 / 180),
+      0,
+      0,
+      0};
+  sun_params[0] = (r * sun_params[0]) * 1e+6;
+  sun_params[1] = (r * sun_params[1]) * 1e+6;
+  sun_params[2] = (r * sun_params[2]) * 1e+6;
+  double d2 = std::inner_product(sun_params.begin(), sun_params.end(),
+                                 sun_params.begin(), .0);
+  d2 = 1 / std::sqrt(d2 * d2 * d2);
+  sun_params[3] = sun_params[0] * d2;
+  sun_params[4] = sun_params[1] * d2;
+  sun_params[5] = sun_params[2] * d2;
+  return sun_params;
+}
+
+void apply(Debris::Debris &d, const std::array<double, 6> &sun_params,
+           std::array<double, 3> &acc_sol, std::array<double, 3> &acc_total) {
+  acc_sol = d.getPosition();
+  acc_sol[0] -= sun_params[0];
+  acc_sol[1] -= sun_params[1];
+  acc_sol[2] -= sun_params[2];
+  double d1 =
+      std::inner_product(acc_sol.begin(), acc_sol.end(), acc_sol.begin(), .0);
+  d1 = 1 / std::sqrt(d1 * d1 * d1);
+  acc_sol[0] = -Physics::GM_SUN * (acc_sol[0] * d1 + sun_params[3]);
+  acc_sol[1] = -Physics::GM_SUN * (acc_sol[1] * d1 + sun_params[4]);
+  acc_sol[2] = -Physics::GM_SUN * (acc_sol[2] * d1 + sun_params[5]);
+  acc_total[0] += acc_sol[0];
+  acc_total[1] += acc_sol[1];
+  acc_total[2] += acc_sol[2];
+}
+} // namespace SolComponent
+
+namespace LunComponent {
+const std::array<double, 6> setUp(double t) {
+  const double phi_m = Physics::NU_SUN * t;
+  const double phi_m_a = Physics::NU_MOON_A * t;
+  const double phi_m_p = Physics::NU_MOON_P * t;
+  const double phi_m_s = Physics::NU_MOON_S * t;
+  const double l_0 = phi_m_p + phi_m_a + 218.31617;
+  const double l_m = phi_m_a + 134.96292;
+  const double l1_m = phi_m + 357.52543;
+  const double f_m = phi_m_p + phi_m_a + phi_m_s + 93.27283;
+  const double d_m = phi_m_p + phi_m_a - phi_m + 297.85027;
+
+  // add up small terms first, to avoid floating point errors when adding small
+  // to big values
+  double r_m = -152 * std::cos((l_m + l1_m - 2 * d_m) * Physics::RAD_FACTOR);
+  r_m -= 171 * std::cos((l_m + 2 * d_m) * Physics::RAD_FACTOR);
+  r_m -= 205 * std::cos((l1_m - 2 * d_m) * Physics::RAD_FACTOR);
+  r_m += 246 * std::cos((2 * l_m - 2 * d_m) * Physics::RAD_FACTOR);
+  r_m -= 570 * std::cos((2 * l_m) * Physics::RAD_FACTOR);
+  r_m -= 2956 * std::cos((2 * d_m) * Physics::RAD_FACTOR);
+  r_m -= 3699 * std::cos((2 * d_m - l_m) * Physics::RAD_FACTOR);
+  r_m -= 20905 * std::cos(l_m * Physics::RAD_FACTOR);
+  r_m += 385000;
+
+  // add up small terms first, to avoid floating point errors when adding small
+  // to big values
+  double lambda_m =
+      -(55.0 / 3600) * std::sin((2 * f_m - 2 * d_m) * Physics::RAD_FACTOR);
+  lambda_m -= (110.0 / 3600) * std::sin((l_m + l1_m) * Physics::RAD_FACTOR);
+  lambda_m -= (125.0 / 3600) * std::sin((d_m)*Physics::RAD_FACTOR);
+  lambda_m += (148.0 / 3600) * std::sin((l_m - l1_m) * Physics::RAD_FACTOR);
+  lambda_m -= (165.0 / 3600) * std::sin((l1_m - 2 * d_m) * Physics::RAD_FACTOR);
+  lambda_m += (192.0 / 3600) * std::sin((l_m + 2 * d_m) * Physics::RAD_FACTOR);
+  lambda_m -=
+      (206.0 / 3600) * std::sin((l_m + l1_m - 2 * d_m) * Physics::RAD_FACTOR);
+  lambda_m -=
+      (212.0 / 3600) * std::sin((2 * l_m - 2 * d_m) * Physics::RAD_FACTOR);
+  lambda_m -= (412.0 / 3600) * std::sin((2 * f_m) * Physics::RAD_FACTOR);
+  lambda_m -= (668.0 / 3600) * std::sin((l1_m)*Physics::RAD_FACTOR);
+  lambda_m += (769.0 / 3600) * std::sin((2 * l_m) * Physics::RAD_FACTOR);
+  lambda_m += (2370.0 / 3600) * std::sin((2 * d_m) * Physics::RAD_FACTOR);
+  lambda_m -= (4856.0 / 3600) * std::sin((l_m - 2 * d_m) * Physics::RAD_FACTOR);
+  lambda_m += (22640.0 / 3600) * std::sin((l_m)*Physics::RAD_FACTOR);
+  lambda_m += l_0;
+
+  // add up small terms first, to avoid floating point errors when adding small
+  // to big values
+  double beta_m =
+      (11.0 / 3600) * std::sin((-l1_m + f_m - 2 * d_m) * Physics::RAD_FACTOR);
+  beta_m += (21.0 / 3600) * std::sin((-l_m + f_m) * Physics::RAD_FACTOR);
+  beta_m -=
+      (23.0 / 3600) * std::sin((l1_m + f_m - 2 * d_m) * Physics::RAD_FACTOR);
+  beta_m -= (25.0 / 3600) * std::sin((-2 * l_m + f_m) * Physics::RAD_FACTOR);
+  beta_m -=
+      (31.0 / 3600) * std::sin((-l_m + f_m - 2 * d_m) * Physics::RAD_FACTOR);
+  beta_m +=
+      (44.0 / 3600) * std::sin((l_m + f_m - 2 * d_m) * Physics::RAD_FACTOR);
+  beta_m -= (526.0 / 3600) * std::sin((f_m - 2 * d_m) * Physics::RAD_FACTOR);
+  beta_m +=
+      (18520.0 / 3600) *
+      std::sin((f_m + lambda_m - l_0 +
+                (412.0 / 3600) * std::sin((2 * f_m) * Physics::RAD_FACTOR) +
+                (541.0 / 3600) * std::sin((l1_m)*Physics::RAD_FACTOR)) *
+               Physics::RAD_FACTOR);
+
+  // all the sin and cos terms have similar in [-1,1], so multiply them before
+  // multiplying BIG r_m value of ~380000
+  std::array<double, 3> moon_pos;
+  double c_term = std::cos(lambda_m * Physics::RAD_FACTOR);
+  double s_term = std::sin(lambda_m * Physics::RAD_FACTOR);
+  moon_pos[0] = c_term;
+  moon_pos[1] = s_term;
+  c_term = std::cos(beta_m * Physics::RAD_FACTOR);
+  s_term = std::sin(beta_m * Physics::RAD_FACTOR);
+  moon_pos[0] *= c_term;
+  moon_pos[1] *= c_term;
+  moon_pos[2] = s_term;
+  c_term = std::cos(Physics::EPSILON * Physics::RAD_FACTOR);
+  s_term = std::sin(Physics::EPSILON * Physics::RAD_FACTOR);
+
+  // contains the x,y,z position of the moon and 3 needed terms only depending
+  // on those coordinates
+  std::array<double, 6> moon_params = {
+      moon_pos[0],
+      c_term * moon_pos[1] - s_term * moon_pos[2],
+      s_term * moon_pos[1] + c_term * moon_pos[2],
+      0,
+      0,
+      0};
+  // multiplied small terms first, to avoid floating point errors when
+  // multiplying small with big values
+  moon_params[0] *= r_m;
+  moon_params[1] *= r_m;
+  moon_params[2] *= r_m;
+  double d2 = std::inner_product(moon_params.begin(), moon_params.end(),
+                                 moon_params.begin(), 0.);
+  d2 = 1 / std::sqrt(d2 * d2 * d2);
+  moon_params[3] = moon_params[0] * d2;
+  moon_params[4] = moon_params[1] * d2;
+  moon_params[5] = moon_params[2] * d2;
+  return moon_params;
+}
+void apply(Debris::Debris &d, const std::array<double, 6> &moon_params,
+           std::array<double, 3> &acc_lun, std::array<double, 3> &acc_total) {
+  acc_lun = d.getPosition();
+  acc_lun[0] -= moon_params[0];
+  acc_lun[1] -= moon_params[1];
+  acc_lun[2] -= moon_params[2];
+  double d1 =
+      std::inner_product(acc_lun.begin(), acc_lun.end(), acc_lun.begin(), 0.);
+  d1 = 1 / std::sqrt(d1 * d1 * d1);
+  acc_lun[0] = -Physics::GM_MOON * (acc_lun[0] * d1 + moon_params[3]);
+  acc_lun[1] = -Physics::GM_MOON * (acc_lun[1] * d1 + moon_params[4]);
+  acc_lun[2] = -Physics::GM_MOON * (acc_lun[2] * d1 + moon_params[5]);
+  acc_total[0] += acc_lun[0];
+  acc_total[1] += acc_lun[1];
+  acc_total[2] += acc_lun[2];
+}
+} // namespace LunComponent
+
+namespace SRPComponent {
+namespace {}
+void apply(Debris::Debris &d, std::array<double, 3> &acc_srp,
+           std::array<double, 3> &acc_total) {}
+} // namespace SRPComponent
+
+namespace DragComponent {
+namespace {}
+void apply(Debris::Debris &d, std::array<double, 3> &acc_drag,
+           std::array<double, 3> &acc_total) {}
+} // namespace DragComponent
+} // namespace Acceleration
