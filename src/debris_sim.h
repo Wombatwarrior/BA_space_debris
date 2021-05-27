@@ -21,6 +21,7 @@ log4cxx::LoggerPtr logger;
 std::shared_ptr<Debris::DebrisContainer> debris;
 std::shared_ptr<CommandLineInput> command_line;
 std::shared_ptr<FileInput> file_input;
+std::shared_ptr<FileOutput> file_output;
 std::shared_ptr<Acceleration::AccelerationAccumulator> accumulator;
 std::shared_ptr<Integrator> integrator;
 

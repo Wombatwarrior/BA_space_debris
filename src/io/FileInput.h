@@ -151,6 +151,7 @@ private:
     double delta_t;/**< Time step to use in the simulation*/
     double start_t;/**< Start time of the simulation*/
     double end_t;/**< End time of the simulation*/
+    double write_delta_t;/**< Time interval to write output */
     /**
      * @brief 8D bool vector encoding the Acceleration::AccelerationComponent to apply in the simulation.
      *
@@ -215,6 +216,20 @@ public:
      * @return Value of #delta_t
      */
     double getDeltaT();
+
+    /**
+     * @brief Setter function for #write_delta_t
+     *
+     * @param deltaT New value of #write_delta_t
+     */
+    void setWriteDeltaT(double writeDeltaT);
+
+    /**
+     * @brief Getter function for #write_delta_t
+     *
+     * @return Value of #write_delta_t
+     */
+    double getWriteDeltaT();
 
     /**
      * @brief Setter function for #delta_t
