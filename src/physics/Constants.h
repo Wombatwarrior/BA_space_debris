@@ -119,10 +119,16 @@ namespace Physics {
      * @brief Astronomical unit
      *
      * Used in:
-     * - Acceleration::SolComponent
      * - Acceleration::SRPComponent
      */
     inline constexpr double AU = 1.49619e+8;
+    /**
+     * @brief Astronomical unit in 1e+6 km
+     *
+     * Used in:
+     * - Acceleration::SolComponent
+     */
+    inline constexpr double AU_SCALED = 149.619;
     /**
      * @brief Constant angle
      *
@@ -145,4 +151,18 @@ namespace Physics {
      * - Acceleration::SRPComponent
      */
     inline constexpr double P_SRP = 4.56e-6;
+    /**
+     * @brief Longitude of the ascending node
+     *
+     * Used in:
+     * - Acceleration::SolComponent
+     */
+    inline constexpr double LONG_ASC = -11.26064;
+    /**
+     * @brief Omega_2 of sun
+     *
+     * Used in:
+     * - Acceleration::SolComponent
+     */
+    inline constexpr double ARG_PERIAPSIS = 102.94719;
 }
