@@ -3,6 +3,7 @@
 //
 
 #pragma once
+#include <math.h>
 
 // Define global constants
 /**
