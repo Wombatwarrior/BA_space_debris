@@ -6,8 +6,10 @@
 
 namespace Acceleration {
 namespace SRPComponent {
-namespace {}
-void apply(Debris::Debris &d, std::array<double, 3> &acc_srp,
-           std::array<double, 3> &acc_total) {}
+    namespace {
+    }
+    void apply(Debris::Debris& d,
+        std::array<double, 3>& acc_srp,
+        std::array<double, 3>& acc_total) { }
 } // namespace SRPComponent
 } // namespace Acceleration

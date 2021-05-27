@@ -10,11 +10,11 @@
 #include "log4cxx/patternlayout.h"
 #include "log4cxx/propertyconfigurator.h"
 // project imports
+#include <memory>
+
 #include "debris/include.h"
 #include "io/include.h"
 #include "physics/include.h"
-
-#include <memory>
 
 log4cxx::LoggerPtr logger;
 
@@ -25,10 +25,10 @@ std::shared_ptr<FileOutput> file_output;
 std::shared_ptr<Acceleration::AccelerationAccumulator> accumulator;
 std::shared_ptr<Integrator> integrator;
 
-int main(int argc, char **argv);
+int main(int argc, char** argv);
 
 void initLoggeer();
 
-void initSimulation(int argc, char **argv);
+void initSimulation(int argc, char** argv);
 
 void runSimulation();
