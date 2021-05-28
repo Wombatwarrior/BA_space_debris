@@ -1,0 +1,316 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{url}
+\usepackage{amsmath}
+
+\title{Math Reference}
+\author{Oliver Bösing}
+\date{May 2021}
+
+\begin{document}
+
+\maketitle
+
+\section{Equations of Motion}
+
+Let (X,Y,Z) be EME2000 fixed frame Cartesian co-ordinates. The orbit of an object is governed by the following equations of motion:
+
+\begin{equation}
+\begin{array}{ll}
+     \ddot{X} = f_{Kep,X}(X,Y,Z)+f_{J2,X}(X,Y,Z)+f_{C22,X}(X,Y,Z,t)+f_{S22,X}(X,Y,Z,t)\\
+    +f_{Moon,X}(X,Y,Z,t)+f_{Sun,X}(X,Y,Z,t)+f_{SRP,X}(X,Y,Z,t) \\
+    \ddot{Y} = f_{Kep,Y}(X,Y,Z)+f_{J2,Y}(X,Y,Z)+f_{C22,Y}(X,Y,Z,t)+f_{S22,Y}(X,Y,Z,t)\\
+    +f_{Moon,Y}(X,Y,Z,t)+f_{Sun,Y}(X,Y,Z,t)+f_{SRP,Y}(X,Y,Z,t) \\
+    \ddot{Z} = f_{Kep,Z}(X,Y,Z)+f_{J2,Z}(X,Y,Z)+f_{C22,Z}(X,Y,Z,t)+f_{S22,Z}(X,Y,Z,t)\\
+    +f_{Moon,Z}(X,Y,Z,t)+f_{Sun,Z}(X,Y,Z,t)+f_{SRP,Z}(X,Y,Z,t)
+\end{array}
+\end{equation}
+
+\subsection{KepComponent}
+
+\begin{equation}
+\begin{array}{ll}
+f_{Kep,X}(X,Y,Z) &= -{GM_E X\over (X^2+Y^2+Z^2)^{3/2}}\\
+f_{Kep,Y}(X,Y,Z) &= -{GM_E Y\over (X^2+Y^2+Z^2)^{3/2}}\\
+f_{Kep,Z}(X,Y,Z) &= -{GM_E Z\over (X^2+Y^2+Z^2)^{3/2}}
+\end{array}
+\end{equation}
+
+\subsubsection{Implementation details}
+
+First calculate shared factor
+
+\begin{equation}
+\begin{array}{ll}
+d &= {-GM_E\over (X^2+Y^2+Z^2)^{3/2}}
+\end{array}
+\end{equation}
+
+After that calculate
+
+\begin{equation}
+\begin{array}{ll}
+f_{Kep,X}(X,Y,Z) &= d*X\\
+f_{Kep,Y}(X,Y,Z) &= d*Y\\
+f_{Kep,Z}(X,Y,Z) &= d*Z
+\end{array}
+\end{equation}
+
+\subsection{J2Component}
+
+\begin{equation}
+\begin{array}{ll}
+f_{J2,X}(X,Y,Z) &=
+{GM_ER_E^2\sqrt{5}C_{20} X\over 2(X^2+Y^2+Z^2)^{1/2}} \left({3\over(X^2+Y^2+Z^2)^2}-{15Z^2\over(X^2+Y^2+Z^2)^3}\right) \\
+f_{J2,Y}(X,Y,Z) &=
+{GM_ER_E^2\sqrt{5}C_{20} Y\over 2(X^2+Y^2+Z^2)^{1/2}} \left({3\over(X^2+Y^2+Z^2)^2}-{15Z^2\over(X^2+Y^2+Z^2)^3}\right) \\
+f_{J2,Z}(X,Y,Z) &=
+{GM_ER_E^2\sqrt{5}C_{20} Z\over 2(X^2+Y^2+Z^2)^{1/2}} \left({9\over(X^2+Y^2+Z^2)^2}-{15Z^2\over(X^2+Y^2+Z^2)^3}\right)
+\end{array}
+\end{equation}
+
+\subsubsection{Implementation details}
+
+Precalculate constant factor
+
+\begin{equation}
+\begin{array}{ll}
+f &= {GM_ER_E^2\sqrt{5}C_{20}\over 2}
+\end{array}
+\end{equation}
+
+Per (X,Y,Z) calculate
+
+\begin{equation}
+\begin{array}{ll}
+d_1 &= {1\over \sqrt{X^2+Y^2+Z^2}} \\
+d_2 &= {1\over (X^2+Y^2+Z^2)^2} \\
+s &= {15Z^2\over(X^2+Y^2+Z^2)^3}
+\end{array}
+\end{equation}
+
+After that calculate
+
+\begin{equation}
+\begin{array}{ll}
+f_{J2,X}(X,Y,Z) &= {d_1X\left({3d_2}-{s}\right)} \\
+f_{J2,Y}(X,Y,Z) &= {d_1X\left({3d_2}-{s}\right)} \\
+f_{J2,Z}(X,Y,Z) &= {d_1X\left({9d_2}-{s}\right)}
+\end{array}
+\end{equation}
+
+\subsection{C22S22Component}
+
+\begin{equation}
+\begin{array}{ll}
+f_{C22,X}(X,Y,Z,t) &= f_{C22,x}(x,y,z)\cos(\theta_G+\nu_Et) - f_{C22,y}(x,y,z)\sin(\theta_G+\nu_Et) \\
+f_{C22,Y}(X,Y,Z,t) &= f_{C22,x}(x,y,z)\sin(\theta_G+\nu_E t) + f_{C22,y}(x,y,z)\cos(\theta_G+\nu_E t) \\
+f_{C22,Z}(X,Y,Z,t) &= f_{C22,z}(x,y,z)\\
+f_{S22,X}(X,Y,Z,t) &= f_{S22,x}(x,y,z)\cos(\theta_G+\nu_Et) - f_{S22,y}(x,y,z)\sin(\theta_G+\nu_Et) \\
+f_{S22,Y}(X,Y,Z,t) &= f_{S22,x}(x,y,z)\sin(\theta_G+\nu_E t) + f_{S22,y}(x,y,z)\cos(\theta_G+\nu_E t) \\
+f_{S22,Z}(X,Y,Z,t) &= f_{S22,z}(x,y,z)
+\end{array}
+\end{equation}
+
+with
+
+\begin{equation}
+\begin{array}{ll}
+x&=~X\cos(\theta_G+\nu_Et)+Y\sin(\theta_G+\nu_Et) \\
+y&=-X\sin(\theta_G+\nu_Et)+Y\cos(\theta_G+\nu_Et) \\
+z&=~Z
+\end{array}
+\end{equation}
+
+and
+
+\begin{equation}
+\begin{array}{ll}
+f_{C22,x}(x,y,z) &= {5GM_ER_E^2\sqrt{15}C_{22}x(y^2-x^2)\over 2(x^2+y^2+z^2)^{7/2}}+{GM_ER_E^2\sqrt{15}C_{22}x\over(x^2+y^2+z^2)^{5/2}} \\
+f_{C22,y}(x,y,z) &= {5GM_ER_E^2\sqrt{15}C_{22}y(y^2-x^2)\over 2(x^2+y^2+z^2)^{7/2}}-{GM_ER_E^2\sqrt{15}C_{22}y\over(x^2+y^2+z^2)^{5/2}} \\
+f_{C22,z}(x,y,z) &= {5GM_ER_E^2\sqrt{15}C_{22}z(y^2-x^2)\over 2(x^2+y^2+z^2)^{7/2}}\\
+f_{S22,x}(x,y,z) &= -{5GM_ER_E^2\sqrt{15}S_{22}x^2y\over (x^2+y^2+z^2)^{7/2}}+{GM_ER_E^2\sqrt{15}S_{22}y\over(x^2+y^2+z^2)^{5/2}} \\
+f_{S22,y}(x,y,z) &= -{5GM_ER_E^2\sqrt{15}S_{22}xy^2\over (x^2+y^2+z^2)^{7/2}}+{GM_ER_E^2\sqrt{15}S_{22}x\over(x^2+y^2+z^2)^{5/2}} \\
+f_{S22,z}(x,y,z) &= -{5GM_ER_E^2\sqrt{15}S_{22}xyz\over (x^2+y^2+z^2)^{7/2}}
+\end{array}
+\end{equation}
+
+\subsubsection{Implementation details}
+\subsection{SolComponent}
+
+\begin{equation}
+\begin{array}{ll}
+f_{Sun,X}(X,Y,Z,t) &=-G M_\odot\left(
+{(X-X_\odot)\over [(X-X_\odot)^2+(Y-Y_\odot)^2+(Z-Z_\odot)^2]^{3/2}}
++{X_\odot\over(X_\odot^2+Y_\odot^2+Z_\odot^2)^{3/2}} \right)\\
+f_{Sun,Y}(X,Y,Z,t) &=-G M_\odot\left(
+{(Y-Y_\odot)\over [(X-X_\odot)^2+(Y-Y_\odot)^2+(Z-Z_\odot)^2]^{3/2}}
++{Y_\odot\over(X_\odot^2+Y_\odot^2+Z_\odot^2)^{3/2}} \right)\\
+f_{Sun,Z}(X,Y,Z,t) &=-G M_\odot\left(
+{(Z-Z_\odot)\over [(X-X_\odot)^2+(Y-Y_\odot)^2+(Z-Z_\odot)^2]^{3/2}}
++{Z_\odot\over(X_\odot^2+Y_\odot^2+Z_\odot^2)^{3/2}} \right)
+\end{array}
+\end{equation}
+
+where
+
+\begin{equation}
+\begin{pmatrix}
+X_\odot\\
+Y_\odot\\
+Z_\odot
+\end{pmatrix} = \begin{pmatrix}
+r_\odot \cos \lambda_\odot\\
+r_\odot \sin \lambda_\odot \cos \varepsilon\\
+r_\odot \sin \lambda_\odot \sin \varepsilon
+\end{pmatrix}
+\end{equation}
+
+with
+
+\begin{equation}
+\begin{array}{ll}
+\lambda_\odot &= \Omega_\odot+\omega_\odot+\ell_{\odot}+\frac{\pi}{180}\left(
+{6892\over3600} \sin \ell_{\odot} + {72\over 3600} \sin 2\ell_{\odot}\right)\\
+r_\odot[10^6\mbox{km}] &=149.619-2.499 \cos \ell_{\odot} - 0.021 \cos 2\ell_{\odot}\\
+\ell_{\odot} &= \varphi_{\odot,0}+\nu_\odot t
+\end{array}
+\end{equation}
+
+\subsubsection{Implementation details}
+\subsection{LunComponent}
+
+\begin{equation}
+\begin{array}{ll}
+f_{Moon,X}(X,Y,Z,t) &=-G M_{\mathcal M}\left({(X-X_{\mathcal M})\over [(X-X_{\mathcal M})^2+(Y-Y_{\mathcal M})^2+(Z-Z_{\mathcal M})^2]^{3/2}}
++{X_{\mathcal M}\over(X_{\mathcal M}^2+Y_{\mathcal M}^2+Z_{\mathcal M}^2)^{3/2}} \right)\\
+f_{Moon,Y}(X,Y,Z,t) &=-G M_{\mathcal M}\left({(Y-Y_{\mathcal M})\over [(X-X_{\mathcal M})^2+(Y-Y_{\mathcal M})^2+(Z-Z_{\mathcal M})^2]^{3/2}}
++{Y_{\mathcal M}\over(X_{\mathcal M}^2+Y_{\mathcal M}^2+Z_{\mathcal M}^2)^{3/2}} \right)\\
+f_{Moon,Z}(X,Y,Z,t) &=-G M_{\mathcal M}\left({(Z-Z_{\mathcal M})\over [(X-X_{\mathcal M})^2+(Y-Y_{\mathcal M})^2+(Z-Z_{\mathcal M})^2]^{3/2}}
++{Z_{\mathcal M}\over(X_{\mathcal M}^2+Y_{\mathcal M}^2+Z_{\mathcal M}^2)^{3/2}} \right)
+\end{array}
+\end{equation}
+
+where
+
+\begin{equation}
+\begin{pmatrix}
+X_{\mathcal M}\\
+Y_{\mathcal M}\\
+Z_{\mathcal M}
+\end{pmatrix} = \begin{pmatrix}
+1 & 0 & 0 \\
+0 & \cos\varepsilon & -\sin\varepsilon\\
+0 & \sin\varepsilon & \cos\varepsilon
+\end{pmatrix} \cdot \begin{pmatrix}
+r_{{\mathcal M}} \cos \lambda_{{\mathcal M}} \cos \beta_{{\mathcal M}}\\
+r_{{\mathcal M}} \sin \lambda_{{\mathcal M}} \cos \beta_{{\mathcal M}}\\
+r_{{\mathcal M}} \sin \beta_{{\mathcal M}}
+\end{pmatrix}
+\end{equation}
+
+with
+
+\begin{equation}
+\begin{array}{ll}
+r_{{\mathcal M}}[\mbox{km}] &= 385000-20905 \cos(l_{{{\mathcal M}}})-3699 \cos(2 D_{{{\mathcal M}}}-l_{{{\mathcal M}}})\nonumber \\
+&-2956 \cos(2 D_{{{\mathcal M}}})-570 \cos(2 l_{{{\mathcal M}}})\\
+&+246\cos(2 l_{{{\mathcal M}}}-2 D_{{{\mathcal M}}})-205 \cos(l'_{{{\mathcal M}}}-2 D_{{{\mathcal M}}})\nonumber\\
+&-171 \cos(l_{{{\mathcal M}}}+2 D_{{{\mathcal M}}})\nonumber\\
+&-152 \cos(l_{{{\mathcal M}}}+l'_{{{\mathcal M}}}-2 D_{{{\mathcal M}}})
+\end{array}
+\end{equation}
+\begin{equation}
+\begin{array}{ll}
+\begin{array}{ll}
+\lambda_{\mathcal M} &= L_0+ \frac{\pi}{180} ( {22640\over 3600} \sin(l_{\mathcal M})
++ {769\over 3600} \sin(2 l_{\mathcal M})\\
+&- {4856\over 3600} \sin(l_{\mathcal M} - 2 D_{\mathcal M})
++ {2370\over 3600} \sin(2 D_{\mathcal M})\\
+&- {668\over 3600} \sin(l'_{\mathcal M}) - {412\over 3600} \sin(2 F_{\mathcal M})\\
+&- {212\over 3600} \sin(2 l_{\mathcal M} - 2 D_{\mathcal M})
+- {206\over 3600} \sin(l_{\mathcal M} + l'_{\mathcal M} - 2 D_{\mathcal M})\\
+&+ {192\over 3600} \sin(l_{\mathcal M} + 2 D_{\mathcal M})
+- {165\over 3600} \sin(l'_{\mathcal M} - 2 D_{\mathcal M})\\
+&+ {148\over 3600} \sin(l_{\mathcal M} - l'_{\mathcal M})
+- {125\over 3600} \sin(D_{\mathcal M})\\
+&- {110\over 3600} \sin(l_{\mathcal M} + l'_{\mathcal M})
+- {55\over 3600} \sin(2 F_{\mathcal M} - 2 D_{\mathcal M}) )
+\end{array}
+\end{array}
+\end{equation}
+\begin{equation}
+\begin{array}{ll}
+\beta_{{\mathcal M}} &= \frac{\pi}{180} ( {18520\over 3600} \sin\left(F_{{\mathcal M}}
++ \lambda_{{\mathcal M}}-L_0 + \frac{\pi}{180} ( {412\over 3600} \sin(2F_{{\mathcal M}})
++ {541\over 3600} \sin(l'_{{\mathcal M}})) \right)\\
+&- {526\over 3600} \sin(F_{{\mathcal M}} - 2D_{{\mathcal M}})\\
+&+ {44\over 3600} \sin(l_{{\mathcal M}} + F_{{\mathcal M}} - 2D_{{\mathcal M}})
+- {31\over 3600} \sin(-l_{{\mathcal M}} + F_{{\mathcal M}} - 2D_{{\mathcal M}})\\
+&- {25\over 3600} \sin(-2l_{{\mathcal M}} + F_{\mathcal M})
+- {23\over 3600} \sin(l'_{\mathcal M}
++ F_{\mathcal M} - 2D_{\mathcal M})\\
+&+ {21\over 3600} \sin(-l_{\mathcal M} + F_{\mathcal M})
++ {11\over 3600} \sin(-l'_{\mathcal M} + F_{\mathcal M} - 2D_{\mathcal M}) )
+\end{array}
+\end{equation}
+
+and
+
+\begin{equation}
+\begin{array}{ll}
+\varphi_{M}&=\nu_\odot t\\
+\varphi_{M_a}&=\nu_{M_a}t\\
+\varphi_{M_p}&=\nu_{M_p}t\\
+\varphi_{M_S}&=\nu_{M_s}t\\
+L_0&=\varphi_{M_p}+\varphi_{M_a}+ \frac{\pi}{180}(218.31617)\nonumber\\
+l_{\mathcal M}&=\varphi_{M_a}+ \frac{\pi}{180}(134.96292)\nonumber\\
+l'_{\mathcal M}&=\ell_{\odot}=\varphi_M+ \frac{\pi}{180} (357.52543)\\
+F_{\mathcal M}&=\varphi_{M_p}+\varphi_{M_a}+\varphi_{M_S}+ \frac{\pi}{180} (93.27283)\nonumber\\
+D_{\mathcal M}&=\varphi_{M_p}+\varphi_{M_a}-\varphi_{M}+ \frac{\pi}{180} (297.85027)\nonumber
+\end{array}
+\end{equation}
+
+\subsubsection{Implementation details}
+\subsection{SRPComponent}
+
+\begin{equation}
+\begin{array}{ll}
+f_{SRP,X}(X,Y,Z,t) &= AOM
+{P_{SRP}a_\odot^2(X-X_\odot)\over [(X-X_\odot)^2+(Y-Y_\odot)^2+(Z-Z_\odot)^2]^{3/2}}\\
+f_{SRP,Y}(X,Y,Z,t) &= AOM
+{P_{SRP}a_\odot^2(Y-Y_\odot)\over [(X-X_\odot)^2+(Y-Y_\odot)^2+(Z-Z_\odot)^2]^{3/2}}\\
+f_{SRP,Z}(X,Y,Z,t) &= AOM
+{P_{SRP}a_\odot^2(Z-Z_\odot)\over [(X-X_\odot)^2+(Y-Y_\odot)^2+(Z-Z_\odot)^2]^{3/2}}
+\end{array}
+\end{equation}
+
+\subsubsection{Implementation details}
+\subsection{DragComponent}
+\subsubsection{Implementation details}
+\section{Constants}
+
+\begin{align}
+%\begin{array}{ll}
+GM_E &=3.986004407799724\times 10^5 km^3 sec^{-2} \\
+GM_\odot &= 1.32712440018\times 10^{11}km^3 sec^{-2} \\
+GM_{\mathcal M} &=4.9028\times 10^{3}km^3 sec^{-2} \\
+R_E &=6378.1363 km\\
+C_{20} &= -4.84165371736\times 10^{-4}\\
+C_{22} &= 2.43914352398\times 10^{-6}\\
+S_{22} &=-1.40016683654\times 10^{-6}\\
+\theta_G &= \frac{\pi}{180} (280.4606)\\
+\nu_E  &= \frac{\pi}{180} (4.178074622024230\times 10^{-3})\\
+\nu_\odot &= \frac{\pi}{180} (1.1407410259335311\times 10^{-5})\\
+\nu_{M_a} &= \frac{\pi}{180} (1.512151961904581\times 10^{-4})\\
+\nu_{M_p} &= \frac{\pi}{180} (1.2893925235125941\times 10^{-6})\\
+\nu_{M_s} &= \frac{\pi}{180} (6.128913003523574\times 10^{-7})\\
+a_\odot &= 1.49619 \times 10^8 km\\
+\varepsilon&= \frac{\pi}{180}(23.4392911)\\
+\varphi_{\odot,0} &= \frac{\pi}{180} (357.5256)\\
+\Omega_\odot + \omega_\odot &= \frac{\pi}{180} (282.94) \\
+P_{SRP} &=4.56\times 10^{-6}
+%\end{array}
+\end{align}
+
+\end{document}
