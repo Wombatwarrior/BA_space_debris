@@ -1,0 +1,131 @@
+%%% SETTINGS
+
+% no word wrapping
+%\righthyphenmin=62
+%\lefthyphenmin=62
+% fewer hyphens
+\usepackage{microtype}
+
+% german symbols
+\usepackage[utf8]{inputenc}
+
+% strikethrough by \sout
+\usepackage[normalem]{ulem}
+
+% insert graphics
+\usepackage{graphicx}
+% more flexible figures e.g. graphics with captions beside them
+\usepackage{floatrow}
+% more flexible captions.
+% Use \captionsetup{options} to configure,
+% use it in an environment for local setup
+\usepackage{caption}
+% subfigures (see template):
+\usepackage{subcaption}
+
+% more control of enumerations and itemizations
+\usepackage{enumitem}
+% less space between items
+\setlist[itemize]{itemsep=0cm}
+\setlist[enumerate]{itemsep=0cm}
+% more customizeable tables (e.g. multiple lines per cell)
+\usepackage{tabularx}
+% fix for vertical centering
+\usepackage{ragged2e}
+\renewcommand\tabularxcolumn[1]{>{\Centering}m{#1}}
+% column types with multiple lines and formatting
+\usepackage{array}
+\newcolumntype{C}{>{\centering\arraybackslash}X}
+\newcolumntype{R}{>{\raggedleft\arraybackslash}X}
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}
+% merge multiple rows \multirow{2}{*}{bla} & \\ &
+\usepackage{multirow}
+% activate for tables with page breaking
+%\usepackage{ltablex}
+% fix for table movement and itemizations
+%\keepXColumns
+
+% fix for dynamics spaces after custom commands
+\usepackage{xspace}
+
+% tabbing: use with \tab
+\usepackage{tabto}
+\TabPositions{4cm}
+
+%% fancy math
+% propper matrices, underbrace text
+%\usepackage{amsmath}
+\usepackage{mathtools}
+% special symbols e.g. squares
+\usepackage{amssymb}
+
+%% plotting
+\usepackage{pgfplots}
+\usepgfplotslibrary{fillbetween}
+
+%%Settings for code
+% code placement right there
+\usepackage{float}
+% code coloring
+\usepackage{xcolor}
+% code listing
+\usepackage{listings}
+
+% flexible multi column style
+\usepackage{multicol}
+
+% graphs
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows}
+% define some elements
+\tikzstyle{startstop} = [rectangle, rounded corners, minimum width=3cm, minimum height=1cm,text centered, draw=black, fill=blue!30]
+\tikzstyle{arrow} = [thick,->,>=stealth]
+
+% Some code highlighting styles you can use with lstlistings
+% C++ code style similar to default eclipse
+\lstdefinestyle{eclipse-cpp} {
+    captionpos=bottom,
+    language=C++,
+    otherkeywords={final},
+    basicstyle=\footnotesize,
+    numbers=left,
+    numberstyle=\small,
+    showstringspaces=false,
+    tabsize=2,
+    frame=single,
+    breaklines=true,
+    keywordstyle=\bfseries\color[RGB]{127,0,85},
+    identifierstyle=\color[RGB]{0,0,192},
+    stringstyle=\color[RGB]{42,0,255},
+    commentstyle=\color[RGB]{63,127,95},
+}
+
+% If no highlighting is intended
+\lstdefinestyle{plain}{
+}
+
+% fancy algorithms (see template)
+\usepackage[ruled, vlined, linesnumbered]{algorithm2e}
+\DontPrintSemicolon
+\SetKw{KwBy}{by}
+\SetKw{KwAnd}{and}
+
+% clickable links and clickable table of content <3
+% Options: links with linebreaks
+\PassOptionsToPackage{hyphens}{url}\usepackage[bookmarks=false]{hyperref}
+\hypersetup{
+    colorlinks,
+    citecolor=black,
+    filecolor=black,
+    linkcolor=black,
+    urlcolor=black
+}
+% Alterations to labels used by \autoref{}: Capitalize everyything
+\def\chapterautorefname{Chapter}
+\def\sectionautorefname{Section}
+\def\subsectionautorefname{Subsection}
+\def\algorithmautorefname{Algorithm}
+\def\subfigureautorefname{Figure}
+% for custon stuff like use:
+% \hyperref[custom:foo]{Custom~\ref*{custom:foo}}
+
