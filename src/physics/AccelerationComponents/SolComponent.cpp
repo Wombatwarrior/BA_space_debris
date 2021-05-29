@@ -10,7 +10,7 @@ namespace SolComponent {
     {
         const double l = Physics::PHI_SUN_0 + Physics::NU_SUN * t;
         const double r = Physics::AU_SCALED - 2.499 * std::cos(l * M_PIf64 / 180) - 0.021 * std::cos(2 * l * M_PIf64 / 180);
-        const double lambda = Physics::LONG_ASC + Physics::ARG_PERIAPSIS + l + (6892.0 / 3600) * std::sin(l * M_PIf64 / 180) + (72.0 / 3600) * std::sin((2 * l) * M_PIf64 / 180);
+        const double lambda = Physics::OMEGA + l + (6892.0 / 3600) * std::sin(l * M_PIf64 / 180) + (72.0 / 3600) * std::sin((2 * l) * M_PIf64 / 180);
         // contains the x,y,z position of the sun and 3 needed terms only depending
         // on those coordinates
         std::array<double, 6> sun_params = {

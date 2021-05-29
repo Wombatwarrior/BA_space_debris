@@ -581,19 +581,17 @@ protected:
         double gms = 1.32712440018e+11;
         double phis0 = 357.5256;
         double nus = 1.1407410259335311e-5;
-        double lan = -11.26064;
-        double ap = 102.94719;
+        double o = 282.94;
         double e = 23.4392911;
         ASSERT_EQ(gms, Physics::GM_SUN);
         ASSERT_EQ(phis0, Physics::PHI_SUN_0);
         ASSERT_EQ(nus, Physics::NU_SUN);
-        ASSERT_EQ(lan, Physics::LONG_ASC);
-        ASSERT_EQ(ap, Physics::ARG_PERIAPSIS);
+        ASSERT_EQ(o, Physics::OMEGA);
         ASSERT_EQ(e, Physics::EPSILON);
 
         double l = phis0 + nus * t;
         double r = 149.619 - 2.499 * std::cos(l * M_PIf64 / 180) - 0.021 * std::cos(2 * l * M_PIf64 / 180);
-        double lambda = ap + lan + l + (6892.0 / 3600) * std::sin(l * M_PIf64 / 180) + (72.0 / 3600) * std::sin(2 * l * M_PIf64 / 180);
+        double lambda = o + l + (6892.0 / 3600) * std::sin(l * M_PIf64 / 180) + (72.0 / 3600) * std::sin(2 * l * M_PIf64 / 180);
         double xs = r * std::cos(lambda * M_PIf64 / 180);
         double ys = r * std::sin(lambda * M_PIf64 / 180) * std::cos(e * M_PIf64 / 180);
         double zs = r * std::sin(lambda * M_PIf64 / 180) * std::sin(e * M_PIf64 / 180);
@@ -617,13 +615,12 @@ protected:
         std::array<double, 6> sol_params;
         double phis0 = 357.5256;
         double nus = 1.1407410259335311e-5;
-        double lan = -11.26064;
-        double ap = 102.94719;
+        double o = 282.94;
         double e = 23.4392911;
 
         double l = phis0 + nus * t;
         double r = 149.619 - 2.499 * std::cos(l * M_PIf64 / 180) - 0.021 * std::cos(2 * l * M_PIf64 / 180);
-        double lambda = ap + lan + l + (6892.0 / 3600) * std::sin(l * M_PIf64 / 180) + (72.0 / 3600) * std::sin(2 * l * M_PIf64 / 180);
+        double lambda = o + l + (6892.0 / 3600) * std::sin(l * M_PIf64 / 180) + (72.0 / 3600) * std::sin(2 * l * M_PIf64 / 180);
         sol_params[0] = r * std::cos(lambda * M_PIf64 / 180);
         sol_params[1] = r * std::sin(lambda * M_PIf64 / 180) * std::cos(e * M_PIf64 / 180);
         sol_params[2] = r * std::sin(lambda * M_PIf64 / 180) * std::sin(e * M_PIf64 / 180);

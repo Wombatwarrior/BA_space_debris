@@ -152,18 +152,11 @@ inline constexpr double PHI_SUN_0 = 357.5256;
  * - Acceleration::SRPComponent
  */
 inline constexpr double P_SRP = 4.56e-6;
+
 /**
- * @brief Longitude of the ascending node
+ * @brief sum of longitude of Ascending node and argument of periapsis elements
  *
  * Used in:
  * - Acceleration::SolComponent
- */
-inline constexpr double LONG_ASC = -11.26064;
-/**
- * @brief Omega_2 of sun
- *
- * Used in:
- * - Acceleration::SolComponent
- */
-inline constexpr double ARG_PERIAPSIS = 102.94719;
+ */inline constexpr double OMEGA = 282.94;
 } // namespace Physics

@@ -150,7 +150,7 @@ f &= {GM_ER_E^2\sqrt{15}}
 f_{C_{22_2}} &= {GM_ER_E^2\sqrt{15}C_{22}} \\
              &= fC_{22} \\
 f_{C_{22_1}} &= {{5GM_ER_E^2\sqrt{15}C_{22}} \over {2}} \\
-             &= f\left( 5 \over 2\right)
+             &= f_{C_{22_2}}\left( 5 \over 2\right)
 \end{array}
 \end{equation}
 
@@ -222,7 +222,6 @@ f_{S22,Z}(X,Y,Z,t) &= f_{S22,z}(x,y,z)
 \end{array}
 \end{equation}
 
-
 \subsection{SolComponent}
 
 \begin{equation}
@@ -257,7 +256,7 @@ with
 
 \begin{equation}
 \begin{array}{ll}
-\lambda_\odot &= \Omega_\odot+\omega_\odot+\ell_{\odot}+\frac{\pi}{180}\left(
+\lambda_\odot &= \Omega_\odot+\omega_\odot+\ell_{\odot}+\left(
 {6892\over3600} \sin \ell_{\odot} + {72\over 3600} \sin 2\ell_{\odot}\right)\\
 r_\odot[10^6\mbox{km}] &=149.619-2.499 \cos \ell_{\odot} - 0.021 \cos 2\ell_{\odot}\\
 \ell_{\odot} &= \varphi_{\odot,0}+\nu_\odot t
@@ -270,7 +269,7 @@ Per time step calculate
 
 \begin{equation}
 \begin{array}{ll}
-\lambda_\odot &= \Omega_\odot+\omega_\odot+\ell_{\odot}+\frac{\pi}{180}\left(
+\lambda_\odot &= \Omega_\odot+\omega_\odot+\ell_{\odot}+\left(
 {6892\over3600} \sin \ell_{\odot} + {72\over 3600} \sin 2\ell_{\odot}\right)\\
 r_\odot[10^6\mbox{km}] &=149.619-2.499 \cos \ell_{\odot} - 0.021 \cos 2\ell_{\odot}\\
 \ell_{\odot} &= \varphi_{\odot,0}+\nu_\odot t
@@ -358,17 +357,17 @@ with
 
 \begin{equation}
 \begin{array}{ll}
-r_{{\mathcal M}}[\mbox{km}] &= 385000-20905 \cos(l_{{{\mathcal M}}})-3699 \cos(2 D_{{{\mathcal M}}}-l_{{{\mathcal M}}})\nonumber \\
+r_{{\mathcal M}}[\mbox{km}] &= 385000-20905 \cos(l_{{{\mathcal M}}})-3699 \cos(2 D_{{{\mathcal M}}}-l_{{{\mathcal M}}}) \\
 &-2956 \cos(2 D_{{{\mathcal M}}})-570 \cos(2 l_{{{\mathcal M}}})\\
-&+246\cos(2 l_{{{\mathcal M}}}-2 D_{{{\mathcal M}}})-205 \cos(l'_{{{\mathcal M}}}-2 D_{{{\mathcal M}}})\nonumber\\
-&-171 \cos(l_{{{\mathcal M}}}+2 D_{{{\mathcal M}}})\nonumber\\
+&+246\cos(2 l_{{{\mathcal M}}}-2 D_{{{\mathcal M}}})-205 \cos(l'_{{{\mathcal M}}}-2 D_{{{\mathcal M}}})\\
+&-171 \cos(l_{{{\mathcal M}}}+2 D_{{{\mathcal M}}})\\
 &-152 \cos(l_{{{\mathcal M}}}+l'_{{{\mathcal M}}}-2 D_{{{\mathcal M}}})
 \end{array}
 \end{equation}
 \begin{equation}
 \begin{array}{ll}
 \begin{array}{ll}
-\lambda_{\mathcal M} &= L_0+ \frac{\pi}{180} ( {22640\over 3600} \sin(l_{\mathcal M})
+\lambda_{\mathcal M} &= L_0+ ( {22640\over 3600} \sin(l_{\mathcal M})
 + {769\over 3600} \sin(2 l_{\mathcal M})\\
 &- {4856\over 3600} \sin(l_{\mathcal M} - 2 D_{\mathcal M})
 + {2370\over 3600} \sin(2 D_{\mathcal M})\\
@@ -386,8 +385,8 @@ r_{{\mathcal M}}[\mbox{km}] &= 385000-20905 \cos(l_{{{\mathcal M}}})-3699 \cos(2
 \end{equation}
 \begin{equation}
 \begin{array}{ll}
-\beta_{{\mathcal M}} &= \frac{\pi}{180} ( {18520\over 3600} \sin\left(F_{{\mathcal M}}
-+ \lambda_{{\mathcal M}}-L_0 + \frac{\pi}{180} ( {412\over 3600} \sin(2F_{{\mathcal M}})
+\beta_{{\mathcal M}} &= ( {18520\over 3600} \sin\left(F_{{\mathcal M}}
++ \lambda_{{\mathcal M}}-L_0 +  ( {412\over 3600} \sin(2F_{{\mathcal M}})
 + {541\over 3600} \sin(l'_{{\mathcal M}})) \right)\\
 &- {526\over 3600} \sin(F_{{\mathcal M}} - 2D_{{\mathcal M}})\\
 &+ {44\over 3600} \sin(l_{{\mathcal M}} + F_{{\mathcal M}} - 2D_{{\mathcal M}})
@@ -408,15 +407,124 @@ and
 \varphi_{M_a}&=\nu_{M_a}t\\
 \varphi_{M_p}&=\nu_{M_p}t\\
 \varphi_{M_S}&=\nu_{M_s}t\\
-L_0&=\varphi_{M_p}+\varphi_{M_a}+ \frac{\pi}{180}(218.31617)\nonumber\\
-l_{\mathcal M}&=\varphi_{M_a}+ \frac{\pi}{180}(134.96292)\nonumber\\
-l'_{\mathcal M}&=\ell_{\odot}=\varphi_M+ \frac{\pi}{180} (357.52543)\\
-F_{\mathcal M}&=\varphi_{M_p}+\varphi_{M_a}+\varphi_{M_S}+ \frac{\pi}{180} (93.27283)\nonumber\\
-D_{\mathcal M}&=\varphi_{M_p}+\varphi_{M_a}-\varphi_{M}+ \frac{\pi}{180} (297.85027)\nonumber
+L_0&=\varphi_{M_p}+\varphi_{M_a}+ (218.31617)\\
+l_{\mathcal M}&=\varphi_{M_a}+ (134.96292)\\
+l'_{\mathcal M}&=\ell_{\odot}=\varphi_M+ (357.52543)\\
+F_{\mathcal M}&=\varphi_{M_p}+\varphi_{M_a}+\varphi_{M_S}+ (93.27283)\\
+D_{\mathcal M}&=\varphi_{M_p}+\varphi_{M_a}-\varphi_{M}+ (297.85027)
 \end{array}
 \end{equation}
 
 \subsubsection{Implementation details}
+
+Per time step calculate
+
+\begin{equation}
+\begin{array}{ll}
+\varphi_{M}&=\nu_\odot t\\
+\varphi_{M_a}&=\nu_{M_a}t\\
+\varphi_{M_p}&=\nu_{M_p}t\\
+\varphi_{M_S}&=\nu_{M_s}t\\
+L_0&=\varphi_{M_p}+\varphi_{M_a}+(218.31617)\\
+l_{\mathcal M}&=\varphi_{M_a}+(134.96292)\\
+l'_{\mathcal M}&=\ell_{\odot}=\varphi_M+ (357.52543)\\
+F_{\mathcal M}&=\varphi_{M_p}+\varphi_{M_a}+\varphi_{M_S}+ (93.27283)\\
+D_{\mathcal M}&=\varphi_{M_p}+\varphi_{M_a}-\varphi_{M}+  (297.85027)
+\end{array}
+\end{equation}
+
+Rearrangement of terms clarifies order of executed calculations
+
+\begin{equation}
+\begin{array}{ll}
+r_{{\mathcal M}} &= -152 \cos(l_{{{\mathcal M}}}+l'_{{{\mathcal M}}}-2 D_{{{\mathcal M}}})\\
+&-171 \cos(l_{{{\mathcal M}}}+2 D_{{{\mathcal M}}})\\
+&-205 \cos(l'_{{{\mathcal M}}}-2 D_{{{\mathcal M}}})\\
+&+246 \cos(2 l_{{{\mathcal M}}}-2 D_{{{\mathcal M}}})\\
+&-2956 \cos(2 D_{{{\mathcal M}}})\\
+&-3699 \cos(2 D_{{{\mathcal M}}}-l_{{{\mathcal M}}}) \\
+&-20905 \cos(l_{{{\mathcal M}}})\\
+&+ 385000
+\end{array}
+\end{equation}
+\begin{equation}
+\begin{array}{ll}
+\lambda_{\mathcal M} &= -{55\over 3600} \sin(2 F_{\mathcal M} - 2 D_{\mathcal M}) \\
+&- {110\over 3600} \sin(l_{\mathcal M} + l'_{\mathcal M})\\
+&- {125\over 3600} \sin(D_{\mathcal M})\\
+&+ {148\over 3600} \sin(l_{\mathcal M} - l'_{\mathcal M})\\
+&- {165\over 3600} \sin(l'_{\mathcal M} - 2 D_{\mathcal M})\\
+&+ {192\over 3600} \sin(l_{\mathcal M} + 2 D_{\mathcal M})\\
+&- {206\over 3600} \sin(l_{\mathcal M} + l'_{\mathcal M} - 2 D_{\mathcal M})\\
+&- {212\over 3600} \sin(2 l_{\mathcal M} - 2 D_{\mathcal M}) \\
+&- {412\over 3600} \sin(2 F_{\mathcal M})\\
+&- {668\over 3600} \sin(l'_{\mathcal M}) \\
+&+ {769\over 3600} \sin(2 l_{\mathcal M})\\
+&+ {2370\over 3600} \sin(2 D_{\mathcal M})\\
+&- {4856\over 3600} \sin(l_{\mathcal M} - 2 D_{\mathcal M}) \\
+&+ {22640\over 3600} \sin(l_{\mathcal M})\\
+&+ L_0
+\end{array}
+\end{equation}
+\begin{equation}
+\begin{array}{ll}
+\beta_{{\mathcal M}} &= {11\over 3600} \sin(-l'_{\mathcal M} + F_{\mathcal M} - 2D_{\mathcal M})\\
+&+ {21\over 3600} \sin(-l_{\mathcal M} + F_{\mathcal M})+ F_{\mathcal M} - 2D_{\mathcal M})\\
+&- {23\over 3600} \sin(l'_{\mathcal M} \\
+&- {25\over 3600} \sin(-2l_{{\mathcal M}} + F_{\mathcal M})\\
+&- {31\over 3600} \sin(-l_{{\mathcal M}} + F_{{\mathcal M}} - 2D_{{\mathcal M}})\\
+&+ {44\over 3600} \sin(l_{{\mathcal M}} + F_{{\mathcal M}} - 2D_{{\mathcal M}}) \\
+&- {526\over 3600} \sin(F_{{\mathcal M}} - 2D_{{\mathcal M}})\\
+&+ {18520\over 3600} \sin\left(F_{{\mathcal M}} + \lambda_{{\mathcal M}}-L_0 + ( {412\over 3600} \sin(2F_{{\mathcal M}} + {541\over 3600} \sin(l'_{{\mathcal M}})) \right)\\
+\end{array}
+\end{equation}
+
+\begin{equation}
+\begin{array}{ll}
+f_{\mathcal M,1} &= \cos{\lambda_{\mathcal M}}\cos{\beta_{\mathcal M}} \\
+f_{\mathcal M,2} &= \sin{\lambda_{\mathcal M}}\cos{\beta_{\mathcal M}} \\
+f_{\mathcal M,3} &= \sin{\beta_{\mathcal M}}
+\end{array}
+\end{equation}
+
+\begin{equation}
+\begin{array}{ll}
+X_{\mathcal M} &= f_{\mathcal M,1}r_{\mathcal M} \\
+Y_{\mathcal M} &= (f_{\mathcal M,2}\cos\varepsilon - f_{\mathcal M,3}\sin\varepsilon)r_{\mathcal M} \\
+Z_{\mathcal M} &= (f_{\mathcal M,2}\sin\varepsilon + f_{\mathcal M,3}\cos\varepsilon)r_{\mathcal M}
+\end{array}
+\end{equation}
+
+\begin{equation}
+\begin{array}{ll}
+d_1 &= {1 \over \sqrt{(X_\mathcal M^2+Y_\mathcal M^2+Z_\mathcal M^2)^3}}
+\end{array}
+\end{equation}
+
+\begin{equation}
+\begin{array}{ll}
+P_{X_{\mathcal M}} &= d_1X_{\mathcal M} \\
+P_{Y_{\mathcal M}} &= d_1Y_{\mathcal M} \\
+P_{Z_{\mathcal M}} &= d_1Z_{\mathcal M}
+\end{array}
+\end{equation}
+
+Per (X,Y,Z) calculate
+
+\begin{equation}
+\begin{array}{ll}
+d_2 &= {1 \over \sqrt{((X-X_\mathcal M)^2+(Y-Y_\mathcal M)^2+(Z-Z_\mathcal M)^2)^3}}
+\end{array}
+\end{equation}
+
+\begin{equation}
+\begin{array}{ll}
+f_{Moon,X}(X,Y,Z,t) &=-GM_\mathcal M(d_2(X-X_{\mathcal M})+P_{X_{\mathcal M}}) \\
+f_{Moon,Y}(X,Y,Z,t) &=-GM_\mathcal M(d_2(Y-Y_{\mathcal M})+P_{Y_{\mathcal M}}) \\
+f_{Moon,Z}(X,Y,Z,t) &=-GM_\mathcal M(d_2(Z-Z_{\mathcal M})+P_{Z_{\mathcal M}})
+\end{array}
+\end{equation}
+
 \subsection{SRPComponent}
 
 \begin{equation}
@@ -444,16 +552,16 @@ R_E &=6378.1363 km\\
 C_{20} &= -4.84165371736\times 10^{-4}\\
 C_{22} &= 2.43914352398\times 10^{-6}\\
 S_{22} &=-1.40016683654\times 10^{-6}\\
-\theta_G &= \frac{\pi}{180} (280.4606)\\
-\nu_E  &= \frac{\pi}{180} (4.178074622024230\times 10^{-3})\\
-\nu_\odot &= \frac{\pi}{180} (1.1407410259335311\times 10^{-5})\\
-\nu_{M_a} &= \frac{\pi}{180} (1.512151961904581\times 10^{-4})\\
-\nu_{M_p} &= \frac{\pi}{180} (1.2893925235125941\times 10^{-6})\\
-\nu_{M_s} &= \frac{\pi}{180} (6.128913003523574\times 10^{-7})\\
+\theta_G &= (280.4606)\\
+\nu_E  &=(4.178074622024230\times 10^{-3})\\
+\nu_\odot &=  (1.1407410259335311\times 10^{-5})\\
+\nu_{M_a} &=  (1.512151961904581\times 10^{-4})\\
+\nu_{M_p} &=  (1.2893925235125941\times 10^{-6})\\
+\nu_{M_s} &=  (6.128913003523574\times 10^{-7})\\
 a_\odot &= 1.49619 \times 10^8 km\\
-\varepsilon&= \frac{\pi}{180}(23.4392911)\\
-\varphi_{\odot,0} &= \frac{\pi}{180} (357.5256)\\
-\Omega_\odot + \omega_\odot &= \frac{\pi}{180} (282.94) \\
+\varepsilon&= (23.4392911)\\
+\varphi_{\odot,0} &= (357.5256)\\
+\Omega_\odot + \omega_\odot &=  (282.94) \\
 P_{SRP} &=4.56\times 10^{-6}
 %\end{array}
 \end{align}
