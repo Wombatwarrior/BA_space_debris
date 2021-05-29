@@ -15,7 +15,7 @@ void AccelerationAccumulator::applyComponents()
 {
     std::array<double, 3> new_acc_total { 0, 0, 0 };
     std::array<double, 3> new_acc_component { 0, 0, 0 };
-    double t = 0;
+    // Eq 15
     const double c_term = std::cos((Physics::THETA_G + Physics::NU_EARTH * t) * Physics::RAD_FACTOR);
     const double s_term = std::sin((Physics::THETA_G + Physics::NU_EARTH * t) * Physics::RAD_FACTOR);
     debris->shiftAcceleration();
@@ -26,6 +26,7 @@ void AccelerationAccumulator::applyComponents()
         new_acc_component[0] = 0;
         new_acc_component[1] = 0;
         new_acc_component[2] = 0;
+        // Eq 1
         if (config[KEP]) {
             KepComponent::apply(d, new_acc_component, new_acc_total);
         }

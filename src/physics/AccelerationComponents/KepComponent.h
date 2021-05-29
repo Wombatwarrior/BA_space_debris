@@ -13,6 +13,8 @@ namespace Acceleration {
  *
  * @brief Encapsulates functionality to calculate acceleration for
  * Acceleration::KEP
+ *
+ * <a href="Math.pdf#page=1"> math reference subsection 1.1</a>
  */
 namespace KepComponent {
     /**

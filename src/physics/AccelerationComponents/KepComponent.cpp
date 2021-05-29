@@ -11,9 +11,11 @@ namespace KepComponent {
         std::array<double, 3>& acc_total)
     {
         acc_kep = d.getPosition();
+        // Eq 3
         double divisor = acc_kep[0] * acc_kep[0] + acc_kep[1] * acc_kep[1] + acc_kep[2] * acc_kep[2];
         divisor = divisor * divisor * divisor;
         divisor = 1 / std::sqrt(divisor);
+        // Eq 4
         acc_kep[0] = Physics::GM_EARTH * acc_kep[0];
         acc_kep[1] = Physics::GM_EARTH * acc_kep[1];
         acc_kep[2] = Physics::GM_EARTH * acc_kep[2];

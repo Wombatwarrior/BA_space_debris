@@ -7,6 +7,7 @@
 namespace Acceleration {
 namespace J2Component {
     namespace {
+        // Eq 6
         inline const double getFactor_fst()
         {
             return 0.5 * Physics::GM_EARTH * Physics::R_EARTH * Physics::R_EARTH * std::sqrt(5.0) * Physics::C_20;
@@ -18,10 +19,12 @@ namespace J2Component {
     {
         acc_j2 = d.getPosition();
         const double x2y2z2 = acc_j2[0] * acc_j2[0] + acc_j2[1] * acc_j2[1] + acc_j2[2] * acc_j2[2];
+        // Eq 7
         const double divisor_1 = getFactor_fst() / std::sqrt(x2y2z2);
         const double divisor_2 = 1 / (x2y2z2 * x2y2z2);
         const double z2_15 = (15 * (acc_j2[2] * acc_j2[2])) * divisor_2 / x2y2z2;
         double factor_snd = 3 * divisor_2 - z2_15;
+        // Eq 8
         acc_j2[0] = acc_j2[0] * divisor_1;
         acc_j2[1] = acc_j2[1] * divisor_1;
         acc_j2[2] = acc_j2[2] * divisor_1;

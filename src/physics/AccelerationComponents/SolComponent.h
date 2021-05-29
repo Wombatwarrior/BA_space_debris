@@ -13,6 +13,8 @@ namespace Acceleration {
  *
  * @brief Encapsulates functionality to calculate acceleration for
  * Acceleration::SOL
+ *
+ * <a href="Math.pdf#page=4"> math reference subsection 1.4</a>
  */
 namespace SolComponent {
     /**

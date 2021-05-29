@@ -18,6 +18,7 @@ namespace Acceleration {
  * and Acceleration::S22 at once, because many terms are shared between the two
  * calculations. If both Components are both set active use this.
  *
+ * <a href="Math.pdf#page=2"> math reference subsection 1.3</a>
  */
 namespace C22S22Component {
     namespace {

@@ -8,6 +8,7 @@ namespace Acceleration {
 namespace LunComponent {
     const std::array<double, 6> setUp(double t)
     {
+        // Eq 37
         const double phi_m = Physics::NU_SUN * t;
         const double phi_m_a = Physics::NU_MOON_A * t;
         const double phi_m_p = Physics::NU_MOON_P * t;
@@ -20,6 +21,7 @@ namespace LunComponent {
 
         // add up small terms first, to avoid floating point errors when adding small
         // to big values
+        // Eq 38
         double r_m = -152 * std::cos((l_m + l1_m - 2 * d_m) * Physics::RAD_FACTOR);
         r_m -= 171 * std::cos((l_m + 2 * d_m) * Physics::RAD_FACTOR);
         r_m -= 205 * std::cos((l1_m - 2 * d_m) * Physics::RAD_FACTOR);
@@ -32,6 +34,7 @@ namespace LunComponent {
 
         // add up small terms first, to avoid floating point errors when adding small
         // to big values
+        // Eq 39
         double lambda_m = -(55.0 / 3600) * std::sin((2 * f_m - 2 * d_m) * Physics::RAD_FACTOR);
         lambda_m -= (110.0 / 3600) * std::sin((l_m + l1_m) * Physics::RAD_FACTOR);
         lambda_m -= (125.0 / 3600) * std::sin((d_m)*Physics::RAD_FACTOR);
@@ -50,6 +53,7 @@ namespace LunComponent {
 
         // add up small terms first, to avoid floating point errors when adding small
         // to big values
+        // Eq 40
         double beta_m = (11.0 / 3600) * std::sin((-l1_m + f_m - 2 * d_m) * Physics::RAD_FACTOR);
         beta_m += (21.0 / 3600) * std::sin((-l_m + f_m) * Physics::RAD_FACTOR);
         beta_m -= (23.0 / 3600) * std::sin((l1_m + f_m - 2 * d_m) * Physics::RAD_FACTOR);
@@ -61,6 +65,7 @@ namespace LunComponent {
 
         // all the sin and cos terms have similar in [-1,1], so multiply them before
         // multiplying BIG r_m value of ~380000
+        // Eq 47
         std::array<double, 3> moon_pos;
         double c_term = std::cos(lambda_m * Physics::RAD_FACTOR);
         double s_term = std::sin(lambda_m * Physics::RAD_FACTOR);
@@ -86,12 +91,15 @@ namespace LunComponent {
         };
         // multiplied small terms first, to avoid floating point errors when
         // multiplying small with big values
+        // Eq 42
         moon_params[0] *= r_m;
         moon_params[1] *= r_m;
         moon_params[2] *= r_m;
+        // Eq 43
         double d2 = std::inner_product(moon_params.begin(), moon_params.end(),
             moon_params.begin(), 0.);
         d2 = 1 / std::sqrt(d2 * d2 * d2);
+        // Eq 44
         moon_params[3] = moon_params[0] * d2;
         moon_params[4] = moon_params[1] * d2;
         moon_params[5] = moon_params[2] * d2;
@@ -106,8 +114,10 @@ namespace LunComponent {
         acc_lun[0] -= moon_params[0];
         acc_lun[1] -= moon_params[1];
         acc_lun[2] -= moon_params[2];
+        // Eq 45
         double d1 = std::inner_product(acc_lun.begin(), acc_lun.end(), acc_lun.begin(), 0.);
         d1 = 1 / std::sqrt(d1 * d1 * d1);
+        // Eq 46
         acc_lun[0] = -Physics::GM_MOON * (acc_lun[0] * d1 + moon_params[3]);
         acc_lun[1] = -Physics::GM_MOON * (acc_lun[1] * d1 + moon_params[4]);
         acc_lun[2] = -Physics::GM_MOON * (acc_lun[2] * d1 + moon_params[5]);

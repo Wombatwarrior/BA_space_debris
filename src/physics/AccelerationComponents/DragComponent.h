@@ -13,6 +13,8 @@ namespace Acceleration {
  *
  * @brief Encapsulates functionality to calculate acceleration for
  * Acceleration::DRAG
+ *
+ * <a href="Math.pdf#page=8"> math reference subsection 1.8</a>
  */
 namespace DragComponent {
     namespace {

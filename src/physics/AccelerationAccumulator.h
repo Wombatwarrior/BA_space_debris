@@ -17,6 +17,9 @@
  *
  * @brief Contains classes and functions to calculate accelerations for
  * Debris::Debris objects
+ *
+ * The implementations are following the equations in <a href="Math.pdf"> math reference</a>
+ *
  */
 namespace Acceleration {
 /**
@@ -24,19 +27,19 @@ namespace Acceleration {
  */
 enum AccelerationComponent {
     KEP, /**< Kepler: %Acceleration due to earth gravity. Assuming the earth as a
-        point mass*/
+        point mass <a href="Math.pdf#page=1"> math reference subsection 1.1</a>*/
     J2, /**< J2: %Acceleration due to earth gravity. Taking in account the earth
-         is neither a point mass nor  a homogenous spherical mass*/
+         is neither a point mass nor a homogenous spherical mass <a href="Math.pdf#page=2"> math reference subsection 1.2</a>*/
     C22, /**< C22: %Acceleration due to earth gravity. Taking in account the
-        earth is neither a point mass nor not a homogenous spherical mass*/
+        earth is neither a point mass nor not a homogenous spherical mass <a href="Math.pdf#page=3"> math reference subsection 1.3</a>*/
     S22, /**< S22: %Acceleration due to earth gravity. Taking in account the
-        earth is neither a point mass nor not a homogenous spherical mass*/
-    SOL, /**< Solar tide: %Acceleration due to tidal forces caused by the sun*/
-    LUN, /**< Lunar tide: %Acceleration due to tidal forces caused by the moon*/
+        earth is neither a point mass nor not a homogenous spherical mass <a href="Math.pdf#page=3"> math reference subsection 1.3</a>*/
+    SOL, /**< Solar tide: %Acceleration due to tidal forces caused by the sun <a href="Math.pdf#page=4"> math reference subsection 1.4</a>*/
+    LUN, /**< Lunar tide: %Acceleration due to tidal forces caused by the moon <a href="Math.pdf#page=5"> math reference subsection 1.5</a>*/
     SRP, /**< Solar radiation pressure: %Acceleration due to pressure of the suns
-        radiation*/
+        radiation <a href="Math.pdf#page=8"> math reference subsection 1.6</a>*/
     DRAG /**< Drag: %Acceleration due to the friction between the object and the
-        earths atmosphere*/
+        earths atmosphere <a href="Math.pdf#page=8"> math reference subsection 1.7</a>*/
 };
 
 /**

@@ -13,6 +13,8 @@ namespace Acceleration {
  *
  * @brief Encapsulates functionality to calculate acceleration for
  * Acceleration::J2
+ *
+ * <a href="Math.pdf#page=2"> math reference subsection 1.2</a>
  */
 namespace J2Component {
     namespace {

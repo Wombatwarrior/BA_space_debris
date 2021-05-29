@@ -13,6 +13,8 @@ namespace Acceleration {
  *
  * @brief Encapsulates functionality to calculate acceleration for
  * Acceleration::C22
+ *
+ * <a href="Math.pdf#page=2"> math reference subsection 1.3</a> *
  */
 namespace C22Component {
     namespace {

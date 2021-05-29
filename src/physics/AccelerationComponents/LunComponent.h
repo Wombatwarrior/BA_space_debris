@@ -12,6 +12,8 @@ namespace Acceleration {
  *
  * @brief Encapsulates functionality to calculate acceleration for
  * Acceleration::LUN
+ *
+ * <a href="Math.pdf#page=5"> math reference subsection 1.5</a>
  */
 namespace LunComponent {
     /**
