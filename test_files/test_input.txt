@@ -9,9 +9,9 @@ write_delta_t=60.0
 # test debris
 # position|velocity|acceleration_t0|acceleration_t1
 # should be something similar to the ISS orbit in respect to orbit energy
-debris=6780,0,0|0,5.5,5.5|0,0,0|0,0,0
+debris=6780,0,0|0,5.5,5.5|0,0,0|0,0,0|1.5
 # acceleration components to apply
-acc_config=1,1,1,1,0,0,0,0
+acc_config=1,1,1,1,0,1,1,1
 # tle data no comments after this
 TLE
 FENGYUN 1C
