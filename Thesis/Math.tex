@@ -89,7 +89,7 @@ s &= {15Z^2\over (X^2+Y^2+Z^2)^3}
 \end{array}
 \end{equation}
 
-After that calculate
+And
 
 \begin{equation}
 \begin{array}{ll}
@@ -104,10 +104,10 @@ f_{J2,Z}(X,Y,Z) &= {d_1Z\left({9d_2}-{s}\right)}
 \begin{equation}
 \begin{array}{ll}
 f_{C22,X}(X,Y,Z,t) &= f_{C22,x}(x,y,z)\cos(\theta_G+\nu_Et) - f_{C22,y}(x,y,z)\sin(\theta_G+\nu_Et) \\
-f_{C22,Y}(X,Y,Z,t) &= f_{C22,x}(x,y,z)\sin(\theta_G+\nu_E t) + f_{C22,y}(x,y,z)\cos(\theta_G+\nu_E t) \\
+f_{C22,Y}(X,Y,Z,t) &= f_{C22,x}(x,y,z)\sin(\theta_G+\nu_Et) + f_{C22,y}(x,y,z)\cos(\theta_G+\nu_Et) \\
 f_{C22,Z}(X,Y,Z,t) &= f_{C22,z}(x,y,z)\\
 f_{S22,X}(X,Y,Z,t) &= f_{S22,x}(x,y,z)\cos(\theta_G+\nu_Et) - f_{S22,y}(x,y,z)\sin(\theta_G+\nu_Et) \\
-f_{S22,Y}(X,Y,Z,t) &= f_{S22,x}(x,y,z)\sin(\theta_G+\nu_E t) + f_{S22,y}(x,y,z)\cos(\theta_G+\nu_E t) \\
+f_{S22,Y}(X,Y,Z,t) &= f_{S22,x}(x,y,z)\sin(\theta_G+\nu_Et) + f_{S22,y}(x,y,z)\cos(\theta_G+\nu_Et) \\
 f_{S22,Z}(X,Y,Z,t) &= f_{S22,z}(x,y,z)
 \end{array}
 \end{equation}
@@ -136,6 +136,93 @@ f_{S22,z}(x,y,z) &= -{5GM_ER_E^2\sqrt{15}S_{22}xyz\over (x^2+y^2+z^2)^{7/2}}
 \end{equation}
 
 \subsubsection{Implementation details}
+
+Precalculate constant factors
+
+\begin{equation}
+\begin{array}{ll}
+f &= {GM_ER_E^2\sqrt{15}}
+\end{array}
+\end{equation}
+
+\begin{equation}
+\begin{array}{ll}
+f_{C_{22_2}} &= {GM_ER_E^2\sqrt{15}C_{22}} \\
+             &= fC_{22} \\
+f_{C_{22_1}} &= {{5GM_ER_E^2\sqrt{15}C_{22}} \over {2}} \\
+             &= f\left( 5 \over 2\right)
+\end{array}
+\end{equation}
+
+\begin{equation}
+\begin{array}{ll}
+f_{S_{22_2}} &= {GM_ER_E^2\sqrt{15}S_{22}} \\
+             &= fS_{22} \\
+f_{S_{22_1}} &= {-5GM_ER_E^2\sqrt{15}S_{22}} \\
+             &= -5f_{S22_2}
+\end{array}
+\end{equation}
+
+Per time step calculate
+
+\begin{equation}
+\begin{array}{ll}
+f_{sin} &= \sin(\theta_G+\nu_Et) \\
+f_{cos} &= \cos(\theta_G+\nu_Et)
+\end{array}
+\end{equation}
+
+Per (X,Y,Z) calculate
+
+\begin{equation}
+\begin{array}{ll}
+x&=~Xf_{cos}+Yf_{sin} \\
+y&=-Xf_{sin}+Yf_{cos} \\
+z&=~Z
+\end{array}
+\end{equation}
+
+Shared terms
+
+\begin{equation}
+\begin{array}{ll}
+n_{C_{22}} &= f_{C_{22_1}}(y^2-x^2) \\
+n_{S_{22}} &= f_{S_{22_1}}xy
+\end{array}
+\end{equation}
+
+\begin{equation}
+\begin{array}{ll}
+d_1 &= {1 \over \sqrt{(x^2+y^2+z^2)^7}} \\
+d_2 &= {1 \over \sqrt{(x^2+y^2+z^2)^5}}
+\end{array}
+\end{equation}
+
+Calculate
+
+\begin{equation}
+\begin{array}{ll}
+f_{C22,x}(x,y,z) &= n_{C_{22}}xd_1 + f_{C_{22_2}}xd_2 \\
+f_{C22,y}(x,y,z) &= n_{C_{22}}yd_1 + f_{C_{22_2}}yd_2 \\
+f_{C22,z}(x,y,z) &= n_{C_{22}}zd_1 \\
+f_{S22,x}(x,y,z) &= n_{S_{22}}xd_1 + f_{S_{22_2}}yd_2 \\
+f_{S22,y}(x,y,z) &= n_{S_{22}}yd_1 + f_{S_{22_2}}xd_2 \\
+f_{S22,z}(x,y,z) &= n_{S_{22}}zd_1
+\end{array}
+\end{equation}
+
+\begin{equation}
+\begin{array}{ll}
+f_{C22,X}(X,Y,Z,t) &= f_{C22,x}(x,y,z)f_{cos} - f_{C22,y}(x,y,z)f_{sin} \\
+f_{C22,Y}(X,Y,Z,t) &= f_{C22,x}(x,y,z)f_{sin} + f_{C22,y}(x,y,z)f_{cos} \\
+f_{C22,Z}(X,Y,Z,t) &= f_{C22,z}(x,y,z) \\
+f_{S22,X}(X,Y,Z,t) &= f_{S22,x}(x,y,z)f_{cos} - f_{S22,y}(x,y,z)f_{sin} \\
+f_{S22,Y}(X,Y,Z,t) &= f_{S22,x}(x,y,z)f_{sin} + f_{S22,y}(x,y,z)f_{cos} \\
+f_{S22,Z}(X,Y,Z,t) &= f_{S22,z}(x,y,z)
+\end{array}
+\end{equation}
+
+
 \subsection{SolComponent}
 
 \begin{equation}
