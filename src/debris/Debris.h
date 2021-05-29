@@ -93,6 +93,7 @@ private:
                                  acceleration at the last time step*/
     std::array<double, 3> acc_t1; /**< 3D vector representation of the debris
                                  acceleration at the current time step*/
+    double aom; /**< Area to mass ration*/
 public:
     /**
      * @brief Getter function for #position vector
@@ -149,5 +150,19 @@ public:
      * @param accT1 3D vector representation of the debris #acc_t1
      */
     void setAccT1(std::array<double, 3>& accT1);
+
+    /**
+     * @brief Getter function for #aom vector
+     *
+     * @return 3D vector representation of the debris #aom
+     */
+    double getAom();
+
+    /**
+     * @brief Setter function for #aom vector
+     *
+     * @param aom 3D vector representation of the debris #aom
+     */
+    void setAom(double aom);
 };
 } // namespace Debris
