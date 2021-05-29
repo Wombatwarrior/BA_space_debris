@@ -158,5 +158,6 @@ inline constexpr double P_SRP = 4.56e-6;
  *
  * Used in:
  * - Acceleration::SolComponent
- */inline constexpr double OMEGA = 282.94;
+ */
+inline constexpr double OMEGA = 282.94;
 } // namespace Physics
