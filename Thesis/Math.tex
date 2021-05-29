@@ -265,6 +265,64 @@ r_\odot[10^6\mbox{km}] &=149.619-2.499 \cos \ell_{\odot} - 0.021 \cos 2\ell_{\od
 \end{equation}
 
 \subsubsection{Implementation details}
+
+Per time step calculate
+
+\begin{equation}
+\begin{array}{ll}
+\lambda_\odot &= \Omega_\odot+\omega_\odot+\ell_{\odot}+\frac{\pi}{180}\left(
+{6892\over3600} \sin \ell_{\odot} + {72\over 3600} \sin 2\ell_{\odot}\right)\\
+r_\odot[10^6\mbox{km}] &=149.619-2.499 \cos \ell_{\odot} - 0.021 \cos 2\ell_{\odot}\\
+\ell_{\odot} &= \varphi_{\odot,0}+\nu_\odot t
+\end{array}
+\end{equation}
+
+\begin{equation}
+\begin{array}{ll}
+f_{X_{\odot}} &=\cos \lambda_\odot \\
+f_{Y_{\odot}} &=\sin \lambda_\odot \cos \varepsilon \\
+f_{Z_{\odot}} &=\sin \lambda_\odot \sin \varepsilon
+\end{array}
+\end{equation}
+
+\begin{equation}
+\begin{array}{ll}
+X_{\odot} &= f_{X_{\odot}}r_\odot\times 10^{6} \\
+Y_{\odot} &= f_{Y_{\odot}}r_\odot\times 10^{6} \\
+Z_{\odot} &= f_{Z_{\odot}}r_\odot\times 10^{6} \\
+\end{array}
+\end{equation}
+
+\begin{equation}
+\begin{array}{ll}
+d_1 &= {1 \over \sqrt{(X_\odot^2+Y_\odot^2+Z_\odot^2)^3}}
+\end{array}
+\end{equation}
+
+\begin{equation}
+\begin{array}{ll}
+P_{X_{\odot}} &= d_1X_{\odot} \\
+P_{Y_{\odot}} &= d_1Y_{\odot} \\
+P_{Z_{\odot}} &= d_1Z_{\odot}
+\end{array}
+\end{equation}
+
+Per (X,Y,Z) calculate
+
+\begin{equation}
+\begin{array}{ll}
+d_2 &= {1 \over \sqrt{((X-X_\odot)^2+(Y-Y_\odot)^2+(Z-Z_\odot)^2)^3}}
+\end{array}
+\end{equation}
+
+\begin{equation}
+\begin{array}{ll}
+f_{Sun,X}(X,Y,Z,t) &=-GM_\odot(d_2(X-X_{\odot})+P_{X_{\odot}}) \\
+f_{Sun,Y}(X,Y,Z,t) &=-GM_\odot(d_2(Y-Y_{\odot})+P_{Y_{\odot}}) \\
+f_{Sun,Z}(X,Y,Z,t) &=-GM_\odot(d_2(Z-Z_{\odot})+P_{Z_{\odot}})
+\end{array}
+\end{equation}
+
 \subsection{LunComponent}
 
 \begin{equation}

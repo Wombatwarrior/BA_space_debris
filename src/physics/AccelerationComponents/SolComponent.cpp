@@ -24,12 +24,12 @@ namespace SolComponent {
         sun_params[0] = (r * sun_params[0]) * 1e+6;
         sun_params[1] = (r * sun_params[1]) * 1e+6;
         sun_params[2] = (r * sun_params[2]) * 1e+6;
-        double d2 = std::inner_product(sun_params.begin(), sun_params.end(),
+        double d = std::inner_product(sun_params.begin(), sun_params.end(),
             sun_params.begin(), .0);
-        d2 = 1 / std::sqrt(d2 * d2 * d2);
-        sun_params[3] = sun_params[0] * d2;
-        sun_params[4] = sun_params[1] * d2;
-        sun_params[5] = sun_params[2] * d2;
+        d = 1 / std::sqrt(d * d * d);
+        sun_params[3] = sun_params[0] * d;
+        sun_params[4] = sun_params[1] * d;
+        sun_params[5] = sun_params[2] * d;
         return sun_params;
     }
 
