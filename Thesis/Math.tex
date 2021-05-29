@@ -537,8 +537,39 @@ f_{SRP,Z}(X,Y,Z,t) &= AOM
 \end{equation}
 
 \subsubsection{Implementation details}
+
+Precalculated constant factor
+
+\begin{equation}
+\begin{array}{ll}
+f &= P_{SRP}a_\odot^2
+\end{array}
+\end{equation}
+
+Per time step
+
+Use \(X_{\odot}\), \(Y_{\odot}\) and \(Z_{\odot}\) from SolComponent
+
+Per (X,Y,Z) calculate
+
+\begin{equation}
+\begin{array}{ll}
+d &= {1 \over \sqrt{((X-X_\odot)^2+(Y-Y_\odot)^2+(Z-Z_\odot)^2)^3}}
+\end{array}
+\end{equation}
+
+\begin{equation}
+\begin{array}{ll}
+f_{SRP,X}(X,Y,Z,t) &=AOM(df(X-X_{\odot})) \\
+f_{SRP,Y}(X,Y,Z,t) &=AOM(df(Y-Y_{\odot})) \\
+f_{SRP,Z}(X,Y,Z,t) &=AOM(df(Z-Z_{\odot}))
+\end{array}
+\end{equation}
+
 \subsection{DragComponent}
+
 \subsubsection{Implementation details}
+
 \section{Constants}
 
 \begin{align}
