@@ -71,7 +71,7 @@ void AccelerationAccumulator::applyComponents()
             }
         }
         if (config[SOL]) {
-            SolComponent::apply(d, sun_params, new_acc_component, new_acc_total);
+            SolComponent::apply(d, d_srp, sun_params, new_acc_component, new_acc_total);
         }
         if (config[LUN]) {
             LunComponent::apply(d, moon_params, new_acc_component, new_acc_total);
