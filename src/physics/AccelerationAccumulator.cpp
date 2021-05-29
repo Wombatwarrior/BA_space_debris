@@ -16,7 +16,7 @@ void AccelerationAccumulator::applyComponents()
     // will be modified by the apply functions
     std::array<double, 3> new_acc_total { 0, 0, 0 };
     std::array<double, 3> new_acc_component { 0, 0, 0 };
-    double d_srp = 0.0;
+    double d_srp = 0;
     // are constant for this time step
     double c_term;
     double s_term;
@@ -45,6 +45,7 @@ void AccelerationAccumulator::applyComponents()
         new_acc_component[0] = 0;
         new_acc_component[1] = 0;
         new_acc_component[2] = 0;
+        d_srp = 0;
         // Eq 1
         if (config[KEP]) {
             KepComponent::apply(d, new_acc_component, new_acc_total);
