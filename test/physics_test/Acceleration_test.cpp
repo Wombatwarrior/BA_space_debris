@@ -614,12 +614,14 @@ TEST_F(SolComponentTests, CalculationEquivalenceTest)
     std::array<std::array<double, 3>, num_debris> accelerations_2;
     std::array<double, 3> acc_total_dummy;
     double t = 0.1;
+    double d_ref;
     for (int j = 0; j < 10; ++j) {
         std::array<double, 6> sun_params = Acceleration::SolComponent::setUp(t * j);
         // calculate the acceleration for all particles using two different
         // functions
         for (int i = 0; i < debris->getDebrisVector().size(); ++i) {
             Acceleration::SolComponent::apply(debris->getDebrisVector()[i],
+                d_ref,
                 sun_params, accelerations_1[i],
                 acc_total_dummy);
             calcSol(debris->getDebrisVector()[i], t * j, accelerations_2[i]);
@@ -693,12 +695,14 @@ TEST_F(SolComponentTests, CompareAfterSetupCalculations)
     std::array<std::array<double, 3>, num_debris> accelerations_2;
     std::array<double, 3> acc_total_dummy;
     double t = 0.1;
+    double d_ref;
     for (int j = 0; j < 10; ++j) {
         std::array<double, 6> sun_params = calcSolParams(t * j);
         // calculate the acceleration for all particles using two different
         // functions
         for (int i = 0; i < debris->getDebrisVector().size(); ++i) {
             Acceleration::SolComponent::apply(debris->getDebrisVector()[i],
+                d_ref,
                 sun_params, accelerations_1[i],
                 acc_total_dummy);
             calcSol(debris->getDebrisVector()[i], t * j, accelerations_2[i]);
