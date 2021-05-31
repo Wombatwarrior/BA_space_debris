@@ -11,6 +11,7 @@ Debris::Debris()
     velocity = { 0, 0, 0 };
     acc_t0 = { 0, 0, 0 };
     acc_t1 = { 0, 0, 0 };
+    bc_inv = 0;
 }
 
 Debris::Debris(const Debris& other)
@@ -19,6 +20,7 @@ Debris::Debris(const Debris& other)
     velocity = other.velocity;
     acc_t0 = other.acc_t0;
     acc_t1 = other.acc_t1;
+    bc_inv = other.bc_inv;
 }
 
 Debris::~Debris() { }
@@ -96,5 +98,13 @@ void Debris::setAccT1(std::array<double, 3>& accT1)
 {
     acc_t1 = accT1;
 }
+
+    double Debris::getBcInv() {
+        return bc_inv;
+    }
+
+    void Debris::setBcInv(double bcInv) {
+        bc_inv = bcInv;
+    }
 
 } // namespace Debris
