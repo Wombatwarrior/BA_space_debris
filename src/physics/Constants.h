@@ -152,7 +152,6 @@ inline constexpr double PHI_SUN_0 = 357.5256;
  * - Acceleration::SRPComponent
  */
 inline constexpr double P_SRP = 4.56e-6;
-
 /**
  * @brief sum of longitude of Ascending node and argument of periapsis elements
  *
@@ -160,4 +159,25 @@ inline constexpr double P_SRP = 4.56e-6;
  * - Acceleration::SolComponent
  */
 inline constexpr double OMEGA = 282.94;
+/**
+ * @brief Atmospheric scale height.
+ *
+ * Used in:
+ * - Acceleration::SolComponent
+ */
+inline constexpr double H_ATMOSPHERE = 8.5;
+/**
+ * @brief Rotation speed of earth around it's axis
+ *
+ * Used in:
+ * - Acceleration::DragComponent
+ */
+inline constexpr double ROT_ATMOSPHERE = 7.292115e-5;
+/**
+ * @brief Atmospheric density at ground level
+ *
+ * Used in:
+ * - Acceleration::DragComponent
+ */
+inline constexpr double P_GROUND = 1.3;
 } // namespace Physics
