@@ -103,12 +103,14 @@ void Debris::setAccT1(std::array<double, 3>& accT1)
     acc_t1 = accT1;
 }
 
-    double Debris::getAom() {
-        return aom;
-    }
+double Debris::getAom()
+{
+    return aom;
+}
 
-    void Debris::setAom(double aom) {
-        Debris::aom = aom;
-    }
+void Debris::setAom(double aom)
+{
+    Debris::aom = aom;
+}
 
 } // namespace Debris

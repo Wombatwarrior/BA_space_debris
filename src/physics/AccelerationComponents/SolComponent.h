@@ -40,7 +40,7 @@ namespace SolComponent {
      * for all applied Acceleration::AccelerationComponent.
      */
     void apply(Debris::Debris& d,
-        double &d_ref,
+        double& d_ref,
         const std::array<double, 6>& sun_params,
         std::array<double, 3>& acc_sol,
         std::array<double, 3>& acc_total);

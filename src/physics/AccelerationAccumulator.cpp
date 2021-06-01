@@ -22,12 +22,12 @@ void AccelerationAccumulator::applyComponents()
     double s_term;
     std::array<double, 6> sun_params;
     // setup only needed for SolComponent and SRPComponent
-    if (config[SOL] || config[SRP]){
+    if (config[SOL] || config[SRP]) {
         sun_params = SolComponent::setUp(t);
     }
     std::array<double, 6> moon_params;
     // setup only needed for LunComponent
-    if (config[LUN]){
+    if (config[LUN]) {
         moon_params = LunComponent::setUp(t);
     }
     // setup only needed for C22Component and S22Component
