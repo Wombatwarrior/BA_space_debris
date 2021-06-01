@@ -99,12 +99,14 @@ void Debris::setAccT1(std::array<double, 3>& accT1)
     acc_t1 = accT1;
 }
 
-    double Debris::getBcInv() {
-        return bc_inv;
-    }
+double Debris::getBcInv()
+{
+    return bc_inv;
+}
 
-    void Debris::setBcInv(double bcInv) {
-        bc_inv = bcInv;
-    }
+void Debris::setBcInv(double bcInv)
+{
+    bc_inv = bcInv;
+}
 
 } // namespace Debris
