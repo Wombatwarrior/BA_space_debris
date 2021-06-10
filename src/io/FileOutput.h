@@ -40,7 +40,7 @@ public:
     FileOutput(Debris::DebrisContainer& debris_arg,
         std::string output_file_name_arg,
         Type output_file_type_arg,
-        std::array<bool,8> &acc_config);
+        std::array<bool, 8>& acc_config);
 
     /**
      * @brief Default destructor
@@ -60,10 +60,9 @@ public:
 
     void writeAcc_start(double t);
 
-    void writeAcc_value(std::array<double,3> &acc_val);
+    void writeAcc_value(std::array<double, 3>& acc_val);
 
-    void writeAcc_end(std::array<double,3> &acc_val);
-
+    void writeAcc_end(std::array<double, 3>& acc_val);
 
 private:
     /**

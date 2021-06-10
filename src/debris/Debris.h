@@ -5,9 +5,9 @@
 #pragma once
 #include <math.h>
 
+#include "utils/MathUtils.h"
 #include <array>
 #include <memory>
-#include "utils/MathUtils.h"
 #include <sstream>
 
 #include "../io/IOUtils.h"

@@ -49,7 +49,7 @@ public:
      *
      * @param write_time_step if true all calculated acceleration components are writen to a file
      */
-    void integrate(bool write_time_step=false);
+    void integrate(bool write_time_step = false);
 
     /**
      * @brief Calculates the new position

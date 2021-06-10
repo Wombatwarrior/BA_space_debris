@@ -68,7 +68,8 @@ void AccelerationAccumulator::applyComponents()
     }
 }
 
-void AccelerationAccumulator::applyAmdWriteComponents(){
+void AccelerationAccumulator::applyAmdWriteComponents()
+{
     std::array<double, 3> new_acc_total { 0, 0, 0 };
     std::array<double, 3> new_acc_component { 0, 0, 0 };
     // Eq 15
@@ -95,12 +96,12 @@ void AccelerationAccumulator::applyAmdWriteComponents(){
         }
         if (config[C22]) {
             C22Component::apply(d, c_term, s_term, new_acc_component,
-                                new_acc_total);
+                new_acc_total);
             file_output->writeAcc_value(new_acc_component);
         }
         if (config[S22]) {
             S22Component::apply(d, c_term, s_term, new_acc_component,
-                                new_acc_total);
+                new_acc_total);
             file_output->writeAcc_value(new_acc_component);
         }
         if (config[SOL]) {
@@ -156,11 +157,13 @@ void AccelerationAccumulator::setT(double t)
     AccelerationAccumulator::t = t;
 }
 
-    FileOutput &AccelerationAccumulator::getFileOutput()  {
-        return *file_output;
-    }
+FileOutput& AccelerationAccumulator::getFileOutput()
+{
+    return *file_output;
+}
 
-    void AccelerationAccumulator::setFileOutput(FileOutput &fileOutput) {
-        file_output = &fileOutput;
-    }
+void AccelerationAccumulator::setFileOutput(FileOutput& fileOutput)
+{
+    file_output = &fileOutput;
+}
 } // namespace Acceleration

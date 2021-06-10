@@ -12,7 +12,7 @@ void Integrator::integrate(bool write_time_step)
     calculatePosition();
     calculateVelocity();
     // update time
-    accumulator.setT(accumulator.getT()+delta_t);
+    accumulator.setT(accumulator.getT() + delta_t);
 }
 
 void Integrator::calculatePosition()
@@ -43,9 +43,9 @@ void Integrator::calculateVelocity()
 
 void Integrator::calculateAcceleration(bool write_time_step)
 {
-    if (write_time_step){
+    if (write_time_step) {
         accumulator.applyAmdWriteComponents();
-    }else {
+    } else {
         accumulator.applyComponents();
     }
 }

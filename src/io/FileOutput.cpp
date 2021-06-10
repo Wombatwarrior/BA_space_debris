@@ -8,7 +8,7 @@
 FileOutput::FileOutput(Debris::DebrisContainer& debris_arg,
     std::string output_file_name_arg,
     FileOutput::Type output_file_type_arg,
-    std::array<bool,8> &acc_config)
+    std::array<bool, 8>& acc_config)
     : debris(&debris_arg)
     , output_file_name(output_file_name_arg)
     , output_file_type(output_file_type_arg)
@@ -110,21 +110,23 @@ void FileOutput::writeDebrisTXT(double t)
     // NOT IMPLEMENTED YET
 }
 
-void FileOutput::writeAcc_start(double t){
+void FileOutput::writeAcc_start(double t)
+{
     acc_out << acc_row_count++ << ',';
     acc_out << t << ',';
 }
 
-void FileOutput::writeAcc_value(std::array<double,3> &acc_val){
-    IOUtils::to_ostream(acc_val,acc_out);
+void FileOutput::writeAcc_value(std::array<double, 3>& acc_val)
+{
+    IOUtils::to_ostream(acc_val, acc_out);
     acc_out << "," << MathUtils::euclideanNorm(acc_val) << ",";
 }
 
-void FileOutput::writeAcc_end(std::array<double,3> &acc_val){
-    IOUtils::to_ostream(acc_val,acc_out);
+void FileOutput::writeAcc_end(std::array<double, 3>& acc_val)
+{
+    IOUtils::to_ostream(acc_val, acc_out);
     acc_out << "," << MathUtils::euclideanNorm(acc_val) << "\n";
 }
-
 
 Debris::DebrisContainer& FileOutput::getDebris()
 {

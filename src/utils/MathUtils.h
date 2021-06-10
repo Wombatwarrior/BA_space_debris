@@ -3,12 +3,13 @@
 //
 
 #include <array>
-#include <numeric>
 #include <math.h>
+#include <numeric>
 
-namespace MathUtils{
-    template <class T>
-    inline double euclideanNorm(T&& a){
-        return std::sqrt(std::inner_product(std::cbegin(a), std::cend(a), std::cbegin(a), 0.));
-    }
+namespace MathUtils {
+template <class T>
+inline double euclideanNorm(T&& a)
+{
+    return std::sqrt(std::inner_product(std::cbegin(a), std::cend(a), std::cbegin(a), 0.));
+}
 }
