@@ -30,10 +30,12 @@ void FileInput::setDebrisValues(Debris::Debris& d, const std::string& line)
     auto position_split_pos = line.find("|");
     auto velocity_split_pos = line.find("|", position_split_pos + 1);
     auto acc_split_pos = line.find("|", velocity_split_pos + 1);
+    auto bc_inv_split_pos = line.find("|", acc_split_pos + 1);
     std::string position_str = line.substr(0, position_split_pos);
     std::string velocity_str = line.substr(position_split_pos + 1, velocity_split_pos);
     std::string acc_t0_str = line.substr(velocity_split_pos + 1, acc_split_pos);
-    std::string acc_t1_str = line.substr(acc_split_pos + 1);
+    std::string acc_t1_str = line.substr(acc_split_pos + 1, bc_inv_split_pos);
+    std::string bc_inv_str = line.substr(bc_inv_split_pos + 1);
     std::array<double, 3> vec;
 
     auto x_split_pos = position_str.find(",");
@@ -63,6 +65,8 @@ void FileInput::setDebrisValues(Debris::Debris& d, const std::string& line)
     vec[1] = stod(acc_t1_str.substr(x_split_pos + 1, y_split_pos));
     vec[2] = stod(acc_t1_str.substr(y_split_pos + 1));
     d.setAccT1(vec);
+
+    d.setBcInv(stof(bc_inv_str));
 }
 
 void FileInput::setConfigValues(const std::string& line)
