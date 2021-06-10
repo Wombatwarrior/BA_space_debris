@@ -152,16 +152,16 @@ public:
     void setAccT1(std::array<double, 3>& accT1);
 
     /**
-     * @brief Getter function for #aom vector
+     * @brief Getter function for #aom
      *
-     * @return 3D vector representation of the debris #aom
+     * @return value of #aom
      */
     double getAom();
 
     /**
-     * @brief Setter function for #aom vector
+     * @brief Setter function for #aom
      *
-     * @param aom 3D vector representation of the debris #aom
+     * @param aom New value #aom
      */
     void setAom(double aom);
 };
