@@ -5,11 +5,14 @@
 #include "Integrator.h"
 
 Integrator::~Integrator() { }
-void Integrator::integrate()
+
+void Integrator::integrate(bool write_time_step)
 {
-    calculateAcceleration();
+    calculateAcceleration(write_time_step);
     calculatePosition();
     calculateVelocity();
+    // update time
+    accumulator.setT(accumulator.getT()+delta_t);
 }
 
 void Integrator::calculatePosition()
@@ -38,9 +41,13 @@ void Integrator::calculateVelocity()
     }
 }
 
-void Integrator::calculateAcceleration()
+void Integrator::calculateAcceleration(bool write_time_step)
 {
-    accumulator.applyComponents();
+    if (write_time_step){
+        accumulator.applyAmdWriteComponents();
+    }else {
+        accumulator.applyComponents();
+    }
 }
 
 double Integrator::getDeltaT()

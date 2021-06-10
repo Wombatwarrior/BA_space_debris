@@ -7,7 +7,7 @@
 
 #include <array>
 #include <memory>
-#include <numeric>
+#include "utils/MathUtils.h"
 #include <sstream>
 
 #include "../io/IOUtils.h"

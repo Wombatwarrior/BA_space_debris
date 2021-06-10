@@ -35,26 +35,22 @@ std::string Debris::toString()
 
 double Debris::getHeight()
 {
-    return std::sqrt(std::inner_product(position.begin(), position.end(),
-        position.begin(), .0));
+    return MathUtils::euclideanNorm(position);
 }
 
 double Debris::getSpeed()
 {
-    return std::sqrt(std::inner_product(velocity.begin(), velocity.end(),
-        velocity.begin(), .0));
+    return MathUtils::euclideanNorm(velocity);
 }
 
 double Debris::getAccT0Norm()
 {
-    return std::sqrt(
-        std::inner_product(acc_t0.begin(), acc_t0.end(), acc_t0.begin(), .0));
+    return MathUtils::euclideanNorm(acc_t0);
 }
 
 double Debris::getAccT1Norm()
 {
-    return std::sqrt(
-        std::inner_product(acc_t1.begin(), acc_t1.end(), acc_t1.begin(), .0));
+    return MathUtils::euclideanNorm(acc_t1);
 }
 
 std::array<double, 3>& Debris::getPosition()

@@ -39,7 +39,8 @@ public:
      */
     FileOutput(Debris::DebrisContainer& debris_arg,
         std::string output_file_name_arg,
-        Type output_file_type_arg);
+        Type output_file_type_arg,
+        std::array<bool,8> &acc_config);
 
     /**
      * @brief Default destructor
@@ -56,6 +57,13 @@ public:
      * #output_file_type
      */
     void writeDebrisData(double t);
+
+    void writeAcc_start(double t);
+
+    void writeAcc_value(std::array<double,3> &acc_val);
+
+    void writeAcc_end(std::array<double,3> &acc_val);
+
 
 private:
     /**
@@ -83,6 +91,9 @@ private:
                                  containing the file extension*/
     Type output_file_type; /**< FileOutput::Type of the output file*/
     std::ofstream out; /**< output file stream*/
+    double row_count; /**< keeps track of the row number for indexing the lines */
+    std::ofstream acc_out; /**< output file stream for output of single acceleration components*/
+    double acc_row_count; /**< keeps track of the row number for indexing the lines of the acceleration data*/
 public:
     /**
      * @brief Getter function for #debris
