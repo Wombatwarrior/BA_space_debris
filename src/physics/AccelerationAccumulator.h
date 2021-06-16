@@ -53,7 +53,7 @@ class AccelerationAccumulator {
 public:
     /**
      * @brief Constructor creates a new Acceleration::AcceleratorAccumulator
-     * object and sets #config vector and #debris members
+     * object
      *
      * @param config_arg The 8D bool vector encoding the
      * Acceleration::AccelerationComponent to apply in the simulation. The Order
@@ -61,6 +61,7 @@ public:
      * @param debris_arg Reference to the Debris::DebrisContainer object holding
      * the Debris::Debris objects to apply acceleration to
      * @param t_arg Current time
+     * @param file_output_arg Reference to the FileOutput object used for output of the acceleration values during computation
      */
     AccelerationAccumulator(const std::array<bool, 8>& config_arg,
         Debris::DebrisContainer& debris_arg,

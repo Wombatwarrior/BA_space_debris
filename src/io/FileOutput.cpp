@@ -117,16 +117,16 @@ void FileOutput::writeAcc_start(double t)
     acc_out << t << ',';
 }
 
-void FileOutput::writeAcc_value(std::array<double, 3>& acc_val)
+void FileOutput::writeAcc_value(std::array<double, 3>& vec)
 {
-    IOUtils::to_ostream(acc_val, acc_out);
-    acc_out << "," << MathUtils::euclideanNorm(acc_val) << ",";
+    IOUtils::to_ostream(vec, acc_out);
+    acc_out << "," << MathUtils::euclideanNorm(vec) << ",";
 }
 
-void FileOutput::writeAcc_end(std::array<double, 3>& acc_val)
+void FileOutput::writeAcc_end(std::array<double, 3>& vec)
 {
-    IOUtils::to_ostream(acc_val, acc_out);
-    acc_out << "," << MathUtils::euclideanNorm(acc_val) << "\n";
+    IOUtils::to_ostream(vec, acc_out);
+    acc_out << "," << MathUtils::euclideanNorm(vec) << "\n";
 }
 
 Debris::DebrisContainer& FileOutput::getDebris()

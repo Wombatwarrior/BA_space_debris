@@ -60,7 +60,7 @@ public:
     /**
      * @brief Reads data from a file
      *
-     * Reads the data from the file with the #input_file_name
+     * Reads the data from the file with the #input_file_path
      * by calling a specialized function depending on the FileInput::Type
      * #input_file_type
      */

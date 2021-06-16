@@ -35,10 +35,8 @@ private:
      * @brief The internal parsing function
      *
      * Parses the command line arguments ans sets the private member variables
-     * #input_file_name, #input_file_type, #output_file_name and
+     * #input_file_path, #input_file_type, #output_file_path and
      * #output_file_type The file types are determined by the file extensions.
-     * The tile name still contain the extension.
-     *
      *
      * @param argc Number of command line parameters
      * @param argv Pointer array holding the argument strings
@@ -47,8 +45,8 @@ private:
 
     FileInput::Type input_file_type = FileInput::TXT; /**< Holds the type of the input file*/
     FileOutput::Type output_file_type = FileOutput::CSV; /**< Holds the type of the output file*/
-    std::filesystem::path input_file_path;
-    std::filesystem::path output_file_path;
+    std::filesystem::path input_file_path; /**< Path to the input file */
+    std::filesystem::path output_file_path; /**< Path to the main output file. USed to construct other output file paths */
 
 public:
     /**
@@ -89,7 +87,7 @@ public:
     /**
      * @brief Setter function for #input_file_path
      *
-     * @param inputFileType New value of #input_file_path
+     * @param inputFilePath New value of #input_file_path
      */
     void setInputFilePath(std::filesystem::path& inputFilePath);
 
