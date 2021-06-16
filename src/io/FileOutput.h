@@ -5,6 +5,7 @@
 #pragma once
 #include <fstream>
 #include <iomanip>
+#include <filesystem>
 
 #include "../debris/DebrisContainer.h"
 /**
@@ -38,7 +39,7 @@ public:
      * @param output_file_type_arg FileOutput::Type of the output file
      */
     FileOutput(Debris::DebrisContainer& debris_arg,
-        std::string output_file_name_arg,
+        std::filesystem::path output_file_path_arg,
         Type output_file_type_arg,
         std::array<bool, 8>& acc_config);
 
@@ -86,11 +87,12 @@ private:
     Debris::DebrisContainer*
         debris; /**< Reference to a Debris::DebrisContainer object to add
              Debris::Debris objects read from the input file*/
-    std::string output_file_name; /**< Complete name of the output file
+    std::filesystem::path output_file_path; /**< Complete name of the output file
                                  containing the file extension*/
     Type output_file_type; /**< FileOutput::Type of the output file*/
     std::ofstream out; /**< output file stream*/
     double row_count; /**< keeps track of the row number for indexing the lines */
+    std::filesystem::path acc_output_file_path;
     std::ofstream acc_out; /**< output file stream for output of single acceleration components*/
     double acc_row_count; /**< keeps track of the row number for indexing the lines of the acceleration data*/
 public:
@@ -109,18 +111,18 @@ public:
     void setDebris(Debris::DebrisContainer& debris);
 
     /**
-     * @brief Getter function for #output_file_name
+     * @brief Getter function for #output_file_path
      *
-     * @return Value of #output_file_name
+     * @return Value of #output_file_path
      */
-    std::string& getOutputFileName();
+    std::filesystem::path& getOutputFilePath();
 
     /**
-     * @brief Setter function for #output_file_name
+     * @brief Setter function for #output_file_path
      *
-     * @param outputFileName New value of #output_file_name
+     * @param outputFilePath New value of #output_file_path
      */
-    void setOutputFileName(std::string& outputFileName);
+    void setOutputFilePath(std::filesystem::path& outputFilePath);
 
     /**
      * @brief Getter function for #output_file_type
@@ -135,4 +137,18 @@ public:
      * @param outputFileType Value of #output_file_type
      */
     void setOutputFileType(Type outputFileType);
+
+    /**
+      * @brief Getter function for #acc_output_file_path
+      *
+      * @return Value of #acc_output_file_path
+      */
+    std::filesystem::path &getAccOutputFilePath();
+
+    /**
+     * @brief Setter function for #acc_output_file_path
+     *
+     * @param accOutputFilePath New value of #acc_output_file_path
+     */
+    void setAccOutputFilePath( std::filesystem::path &accOutputFilePath);
 };

@@ -3,7 +3,7 @@ start_t=1.0
 # time step
 delta_t=0.01
 # end time of the simulation
-end_t=540000
+end_t=5400
 # time interval to write output
 write_delta_t=60.0
 # test debris

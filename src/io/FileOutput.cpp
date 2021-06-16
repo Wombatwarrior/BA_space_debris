@@ -6,14 +6,15 @@
 #include "physics/AccelerationAccumulator.h"
 
 FileOutput::FileOutput(Debris::DebrisContainer& debris_arg,
-    std::string output_file_name_arg,
+    std::filesystem::path output_file_path_arg,
     FileOutput::Type output_file_type_arg,
     std::array<bool, 8>& acc_config)
     : debris(&debris_arg)
-    , output_file_name(output_file_name_arg)
+    , output_file_path(output_file_path_arg)
     , output_file_type(output_file_type_arg)
-    , out(output_file_name_arg)
-    , acc_out(output_file_name_arg + "_acc.csv")
+    , out(output_file_path)
+    , acc_output_file_path(output_file_path_arg.replace_extension().concat("_acc.csv"))
+    , acc_out(acc_output_file_path)
 {
     out << std::setprecision(std::numeric_limits<double>::digits10 + 1);
     acc_out << std::setprecision(std::numeric_limits<double>::digits10 + 1);
@@ -72,7 +73,7 @@ FileOutput::FileOutput(Debris::DebrisContainer& debris_arg,
     }
 }
 
-FileOutput::~FileOutput() { }
+FileOutput::~FileOutput() = default;
 
 void FileOutput::writeDebrisData(double t)
 {
@@ -138,14 +139,14 @@ void FileOutput::setDebris(Debris::DebrisContainer& debris)
     FileOutput::debris = &debris;
 }
 
-std::string& FileOutput::getOutputFileName()
+std::filesystem::path& FileOutput::getOutputFilePath()
 {
-    return output_file_name;
+    return output_file_path;
 }
 
-void FileOutput::setOutputFileName(std::string& outputFileName)
+void FileOutput::setOutputFilePath(std::filesystem::path& outputFilePath)
 {
-    output_file_name = outputFileName;
+    output_file_path = outputFilePath;
 }
 
 FileOutput::Type FileOutput::getOutputFileType()
@@ -156,4 +157,12 @@ FileOutput::Type FileOutput::getOutputFileType()
 void FileOutput::setOutputFileType(FileOutput::Type outputFileType)
 {
     output_file_type = outputFileType;
+}
+
+std::filesystem::path &FileOutput::getAccOutputFilePath() {
+    return acc_output_file_path;
+}
+
+void FileOutput::setAccOutputFilePath(std::filesystem::path &accOutputFilePath) {
+    acc_output_file_path = accOutputFilePath;
 }

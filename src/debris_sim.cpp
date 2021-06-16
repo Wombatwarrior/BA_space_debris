@@ -31,9 +31,9 @@ void initSimulation(int argc, char** argv)
     try {
         command_line = std::make_shared<CommandLineInput>(argc, argv);
         debris = std::make_shared<Debris::DebrisContainer>();
-        file_input = std::make_shared<FileInput>(*debris, command_line->getInputFileName(),
+        file_input = std::make_shared<FileInput>(*debris, command_line->getInputFilePath(),
             command_line->getInputFileType());
-        file_output = std::make_shared<FileOutput>(*debris, command_line->getOutputFileName(),
+        file_output = std::make_shared<FileOutput>(*debris, command_line->getOutputFilePath(),
             command_line->getOutputFileType(), file_input->getAccConfig());
         accumulator = std::make_shared<Acceleration::AccelerationAccumulator>(
             file_input->getAccConfig(), *debris, file_input->getStartT(), *file_output);
