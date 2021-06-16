@@ -27,7 +27,7 @@ std::shared_ptr<Integrator> integrator;
 
 int main(int argc, char** argv);
 
-void initLoggeer();
+void initLogger();
 
 void initSimulation(int argc, char** argv);
 

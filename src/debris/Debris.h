@@ -5,12 +5,11 @@
 #pragma once
 #include <math.h>
 
+#include "../io/IOUtils.h"
 #include <array>
 #include <memory>
 #include <numeric>
 #include <sstream>
-
-#include "../io/IOUtils.h"
 
 /**
  * @namespace Debris
