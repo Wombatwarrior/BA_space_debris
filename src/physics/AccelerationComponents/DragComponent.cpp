@@ -14,7 +14,7 @@ namespace DragComponent {
     {
 
         // calculate atmospheric density
-        const double p = Physics::P_GROUND * std::exp((d.getHeight() - Physics::R_EARTH) / Physics::H_ATMOSPHERE);
+        const double p = Physics::P_GROUND * std::exp(-(d.getHeight() - Physics::R_EARTH) / Physics::H_ATMOSPHERE);
         const double f = -0.5 * p * d.getBcInv();
         // calculate velocity relative to atmosphere
         acc_drag = d.getVelocity();

@@ -755,3 +755,57 @@ TEST_F(C22S22ComponentTests, CalculationEquivalenceTest)
             accelerations_3[i][2], abs_err);
     }
 }
+
+/**
+ * Tests if the acceleration calculated using
+ * Acceleration::DragComponent::apply() is the same as using another
+ * implementation
+ */
+TEST_F(DragComponentTests, CalculationEquivalenceTest)
+{
+    const int num_debris = 12;
+    std::array<std::array<double, 3>, num_debris> accelerations_1;
+    std::array<std::array<double, 3>, num_debris> accelerations_2;
+    std::array<double, 3> acc_total_dummy;
+
+    // calculate the acceleration for all particles using two different functions
+    for (int i = 0; i < debris->getDebrisVector().size(); ++i) {
+        Acceleration::DragComponent::apply(debris->getDebrisVector()[i],
+            accelerations_1[i], acc_total_dummy);
+        calcDrag(debris->getDebrisVector()[i], accelerations_2[i]);
+    }
+
+    // 10e-20 fails, but e-19 passes
+    double abs_err = 1e-10;
+    for (int i = 0; i < debris->getDebrisVector().size(); ++i) {
+        EXPECT_NEAR(accelerations_1[i][0], accelerations_2[i][0], abs_err);
+        EXPECT_NEAR(accelerations_1[i][1], accelerations_2[i][1], abs_err);
+        EXPECT_NEAR(accelerations_1[i][2], accelerations_2[i][2], abs_err);
+    }
+}
+
+/**
+ * Tests if the acceleration calculated using
+ * Acceleration::DragComponent::apply() is the same as some hand calculated
+ * values
+ */
+TEST_F(DragComponentTests, EquilavelnceWIthPreCalculatedTest)
+{
+    const int num_debris = 9;
+    std::array<std::array<double, 3>, num_debris> accelerations;
+    std::array<double, 3> acc_total_dummy;
+
+    // calculate the acceleration for all particles using two different functions
+    for (int i = 0; i < debris->getDebrisVector().size(); ++i) {
+        Acceleration::DragComponent::apply(debris->getDebrisVector()[i],
+            accelerations[i], acc_total_dummy);
+    }
+
+    // e-21 fails, but e-20 passes
+    double abs_err = 1;
+    for (int i = 0; i < num_debris; ++i) {
+        EXPECT_NEAR(accelerations[i][0], pre_calculated[i][0], abs_err);
+        EXPECT_NEAR(accelerations[i][1], pre_calculated[i][1], abs_err);
+        EXPECT_NEAR(accelerations[i][2], pre_calculated[i][2], abs_err);
+    }
+}
