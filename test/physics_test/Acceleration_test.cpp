@@ -76,7 +76,7 @@ TEST_F(KepComponentTests, CalculationEquivalenceTest)
     std::array<double, 3> acc_total_dummy;
 
     // calculate the acceleration for all particles using two different functions
-    for (int i = 0; i < debris->getDebrisVector().size(); ++i) {
+    for (int i = 0; i < num_debris; ++i) {
         Acceleration::KepComponent::apply(debris->getDebrisVector()[i],
             accelerations_1[i], acc_total_dummy);
         calcKep(debris->getDebrisVector()[i], accelerations_2[i]);
@@ -84,7 +84,7 @@ TEST_F(KepComponentTests, CalculationEquivalenceTest)
 
     // e-17 fails, but e-16 passes
     double abs_err = 1e-16;
-    for (int i = 0; i < debris->getDebrisVector().size(); ++i) {
+    for (int i = 0; i < num_debris; ++i) {
         EXPECT_NEAR(accelerations_1[i][0], accelerations_2[i][0], abs_err);
         EXPECT_NEAR(accelerations_1[i][1], accelerations_2[i][1], abs_err);
         EXPECT_NEAR(accelerations_1[i][2], accelerations_2[i][2], abs_err);
@@ -130,7 +130,7 @@ TEST_F(J2ComponentTests, CalculationEquivalenceTest)
     std::array<double, 3> acc_total_dummy;
 
     // calculate the acceleration for all particles using two different functions
-    for (int i = 0; i < debris->getDebrisVector().size(); ++i) {
+    for (int i = 0; i < num_debris; ++i) {
         Acceleration::J2Component::apply(debris->getDebrisVector()[i],
             accelerations_1[i], acc_total_dummy);
         calcJ2(debris->getDebrisVector()[i], accelerations_2[i]);
@@ -138,7 +138,7 @@ TEST_F(J2ComponentTests, CalculationEquivalenceTest)
 
     // 10e-20 fails, but e-19 passes
     double abs_err = 1e-10;
-    for (int i = 0; i < debris->getDebrisVector().size(); ++i) {
+    for (int i = 0; i < num_debris; ++i) {
         EXPECT_NEAR(accelerations_1[i][0], accelerations_2[i][0], abs_err);
         EXPECT_NEAR(accelerations_1[i][1], accelerations_2[i][1], abs_err);
         EXPECT_NEAR(accelerations_1[i][2], accelerations_2[i][2], abs_err);
@@ -157,7 +157,7 @@ TEST_F(J2ComponentTests, EquilavelnceWIthPreCalculatedTest)
     std::array<double, 3> acc_total_dummy;
 
     // calculate the acceleration for all particles using two different functions
-    for (int i = 0; i < debris->getDebrisVector().size(); ++i) {
+    for (int i = 0; i < num_debris; ++i) {
         Acceleration::J2Component::apply(debris->getDebrisVector()[i],
             accelerations[i], acc_total_dummy);
     }
@@ -313,7 +313,7 @@ TEST_F(LunComponentTests, CalculationEquivalenceTest)
         std::array<double, 6> moon_params = Acceleration::LunComponent::setUp(t * j);
         // calculate the acceleration for all particles using two different
         // functions
-        for (int i = 0; i < debris->getDebrisVector().size(); ++i) {
+        for (int i = 0; i < num_debris; ++i) {
             Acceleration::LunComponent::apply(debris->getDebrisVector()[i],
                 moon_params, accelerations_1[i],
                 acc_total_dummy);
@@ -322,7 +322,7 @@ TEST_F(LunComponentTests, CalculationEquivalenceTest)
 
         // 10e-20 fails, but e-19 passes
         double abs_err = 1e-22;
-        for (int i = 0; i < debris->getDebrisVector().size(); ++i) {
+        for (int i = 0; i < num_debris; ++i) {
             EXPECT_NEAR(accelerations_1[i][0], accelerations_2[i][0], abs_err);
             EXPECT_NEAR(accelerations_1[i][1], accelerations_2[i][1], abs_err);
             EXPECT_NEAR(accelerations_1[i][2], accelerations_2[i][2], abs_err);
@@ -344,7 +344,7 @@ TEST_F(LunComponentTests, EquilavelnceWIthPreCalculatedTest)
     std::array<double, 6> moon_params = Acceleration::LunComponent::setUp(t);
 
     // calculate the acceleration for all particles using two different functions
-    for (int i = 0; i < debris->getDebrisVector().size(); ++i) {
+    for (int i = 0; i < num_debris; ++i) {
         Acceleration::LunComponent::apply(debris->getDebrisVector()[i], moon_params,
             accelerations[i], acc_total_dummy);
     }
@@ -562,45 +562,45 @@ TEST_F(LunComponentTests, CompareTrigonometricTerms)
  * simply check if calcMoonParams() is faster than
  * Acceleration::LunComponent::setUp()
  */
-TEST_F(LunComponentTests, CompareLessTrigonometryRuntime)
-{
-    double t = 0.1;
-    std::cout << "normal trigonometry" << std::endl;
-    std::chrono::steady_clock::time_point begin1 = std::chrono::steady_clock::now();
-    for (int i = 0; i < 10000; ++i) {
-        const std::array<double, 6> params_1 = Acceleration::LunComponent::setUp(t * i);
-    }
-    std::chrono::steady_clock::time_point end1 = std::chrono::steady_clock::now();
-
-    std::cout << "Time difference = "
-              << std::chrono::duration_cast<std::chrono::microseconds>(end1 - begin1)
-                     .count()
-              << "[µs]" << std::endl;
-    std::cout << "Time difference = "
-              << std::chrono::duration_cast<std::chrono::nanoseconds>(end1 - begin1)
-                     .count()
-              << "[ns]" << std::endl;
-    std::cout << "reduced trigonometry" << std::endl;
-    std::chrono::steady_clock::time_point begin2 = std::chrono::steady_clock::now();
-    for (int i = 0; i < 10000; ++i) {
-        const std::array<double, 6> params_2 = calcMoonParams(t * i);
-    }
-    std::chrono::steady_clock::time_point end2 = std::chrono::steady_clock::now();
-    std::cout << "Time difference = "
-              << std::chrono::duration_cast<std::chrono::microseconds>(end2 - begin2)
-                     .count()
-              << "[µs]" << std::endl;
-    std::cout << "Time difference = "
-              << std::chrono::duration_cast<std::chrono::nanoseconds>(end2 - begin2)
-                     .count()
-              << "[ns]" << std::endl;
-
-    // if the optimized version s slower
-    ASSERT_LT(std::chrono::duration_cast<std::chrono::microseconds>(end2 - begin2)
-                  .count(),
-        std::chrono::duration_cast<std::chrono::microseconds>(end1 - begin1)
-            .count());
-}
+//TEST_F(LunComponentTests, CompareLessTrigonometryRuntime)
+//{
+//    double t = 0.1;
+//    std::cout << "normal trigonometry" << std::endl;
+//    std::chrono::steady_clock::time_point begin1 = std::chrono::steady_clock::now();
+//    for (int i = 0; i < 10000; ++i) {
+//        const std::array<double, 6> params_1 = Acceleration::LunComponent::setUp(t * i);
+//    }
+//    std::chrono::steady_clock::time_point end1 = std::chrono::steady_clock::now();
+//
+//    std::cout << "Time difference = "
+//              << std::chrono::duration_cast<std::chrono::microseconds>(end1 - begin1)
+//                     .count()
+//              << "[µs]" << std::endl;
+//    std::cout << "Time difference = "
+//              << std::chrono::duration_cast<std::chrono::nanoseconds>(end1 - begin1)
+//                     .count()
+//              << "[ns]" << std::endl;
+//    std::cout << "reduced trigonometry" << std::endl;
+//    std::chrono::steady_clock::time_point begin2 = std::chrono::steady_clock::now();
+//    for (int i = 0; i < 10000; ++i) {
+//        const std::array<double, 6> params_2 = calcMoonParams(t * i);
+//    }
+//    std::chrono::steady_clock::time_point end2 = std::chrono::steady_clock::now();
+//    std::cout << "Time difference = "
+//              << std::chrono::duration_cast<std::chrono::microseconds>(end2 - begin2)
+//                     .count()
+//              << "[µs]" << std::endl;
+//    std::cout << "Time difference = "
+//              << std::chrono::duration_cast<std::chrono::nanoseconds>(end2 - begin2)
+//                     .count()
+//              << "[ns]" << std::endl;
+//
+//    // if the optimized version s slower
+//    ASSERT_LT(std::chrono::duration_cast<std::chrono::microseconds>(end2 - begin2)
+//                  .count(),
+//        std::chrono::duration_cast<std::chrono::microseconds>(end1 - begin1)
+//            .count());
+//}
 
 /**
  * Tests if the acceleration calculated using
@@ -618,7 +618,7 @@ TEST_F(SolComponentTests, CalculationEquivalenceTest)
         std::array<double, 6> sun_params = Acceleration::SolComponent::setUp(t * j);
         // calculate the acceleration for all particles using two different
         // functions
-        for (int i = 0; i < debris->getDebrisVector().size(); ++i) {
+        for (int i = 0; i < num_debris; ++i) {
             Acceleration::SolComponent::apply(debris->getDebrisVector()[i],
                 sun_params, accelerations_1[i],
                 acc_total_dummy);
@@ -627,7 +627,7 @@ TEST_F(SolComponentTests, CalculationEquivalenceTest)
 
         // 10e-20 fails, but e-19 passes
         double abs_err = 1e-20;
-        for (int i = 0; i < debris->getDebrisVector().size(); ++i) {
+        for (int i = 0; i < num_debris; ++i) {
             EXPECT_NEAR(accelerations_1[i][0], accelerations_2[i][0], abs_err);
             EXPECT_NEAR(accelerations_1[i][1], accelerations_2[i][1], abs_err);
             EXPECT_NEAR(accelerations_1[i][2], accelerations_2[i][2], abs_err);
@@ -647,7 +647,7 @@ TEST_F(SolComponentTests, EquilavelnceWIthPreCalculatedTest)
     std::array<double, 3> acc_total_dummy;
 
     // calculate the acceleration for all particles using two different functions
-    for (int i = 0; i < debris->getDebrisVector().size(); ++i) {
+    for (int i = 0; i < num_debris; ++i) {
         Acceleration::J2Component::apply(debris->getDebrisVector()[i],
             accelerations[i], acc_total_dummy);
     }
@@ -697,7 +697,7 @@ TEST_F(SolComponentTests, CompareAfterSetupCalculations)
         std::array<double, 6> sun_params = calcSolParams(t * j);
         // calculate the acceleration for all particles using two different
         // functions
-        for (int i = 0; i < debris->getDebrisVector().size(); ++i) {
+        for (int i = 0; i < num_debris; ++i) {
             Acceleration::SolComponent::apply(debris->getDebrisVector()[i],
                 sun_params, accelerations_1[i],
                 acc_total_dummy);
@@ -706,7 +706,7 @@ TEST_F(SolComponentTests, CompareAfterSetupCalculations)
 
         // 10e-20 fails, but e-19 passes
         double abs_err = 1e-20;
-        for (int i = 0; i < debris->getDebrisVector().size(); ++i) {
+        for (int i = 0; i < num_debris; ++i) {
             EXPECT_NEAR(accelerations_1[i][0], accelerations_2[i][0], abs_err);
             EXPECT_NEAR(accelerations_1[i][1], accelerations_2[i][1], abs_err);
             EXPECT_NEAR(accelerations_1[i][2], accelerations_2[i][2], abs_err);
@@ -769,7 +769,7 @@ TEST_F(DragComponentTests, CalculationEquivalenceTest)
     std::array<double, 3> acc_total_dummy;
 
     // calculate the acceleration for all particles using two different functions
-    for (int i = 0; i < debris->getDebrisVector().size(); ++i) {
+    for (int i = 0; i < num_debris; ++i) {
         Acceleration::DragComponent::apply(debris->getDebrisVector()[i],
             accelerations_1[i], acc_total_dummy);
         calcDrag(debris->getDebrisVector()[i], accelerations_2[i]);
@@ -777,7 +777,7 @@ TEST_F(DragComponentTests, CalculationEquivalenceTest)
 
     // 10e-20 fails, but e-19 passes
     double abs_err = 1e-10;
-    for (int i = 0; i < debris->getDebrisVector().size(); ++i) {
+    for (int i = 0; i < num_debris; ++i) {
         EXPECT_NEAR(accelerations_1[i][0], accelerations_2[i][0], abs_err);
         EXPECT_NEAR(accelerations_1[i][1], accelerations_2[i][1], abs_err);
         EXPECT_NEAR(accelerations_1[i][2], accelerations_2[i][2], abs_err);
@@ -796,7 +796,7 @@ TEST_F(DragComponentTests, EquilavelnceWIthPreCalculatedTest)
     std::array<double, 3> acc_total_dummy;
 
     // calculate the acceleration for all particles using two different functions
-    for (int i = 0; i < debris->getDebrisVector().size(); ++i) {
+    for (int i = 0; i < num_debris; ++i) {
         Acceleration::DragComponent::apply(debris->getDebrisVector()[i],
             accelerations[i], acc_total_dummy);
     }
