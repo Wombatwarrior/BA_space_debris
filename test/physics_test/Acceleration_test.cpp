@@ -775,8 +775,8 @@ TEST_F(DragComponentTests, CalculationEquivalenceTest)
         calcDrag(debris->getDebrisVector()[i], accelerations_2[i]);
     }
 
-    // 10e-20 fails, but e-19 passes
-    double abs_err = 1e-10;
+    // no error
+    double abs_err = 0;
     for (int i = 0; i < num_debris; ++i) {
         EXPECT_NEAR(accelerations_1[i][0], accelerations_2[i][0], abs_err);
         EXPECT_NEAR(accelerations_1[i][1], accelerations_2[i][1], abs_err);
