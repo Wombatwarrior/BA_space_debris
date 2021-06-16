@@ -3,10 +3,9 @@
 //
 
 #pragma once
-#include <string>
-
 #include "FileInput.h"
 #include "FileOutput.h"
+#include <string>
 
 /**
  * @class CommandLineInput

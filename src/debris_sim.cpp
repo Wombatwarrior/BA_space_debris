@@ -6,13 +6,13 @@
 
 int main(int argc, char** argv)
 {
-    initLoggeer();
+    initLogger();
     initSimulation(argc, argv);
     runSimulation();
     return 0;
 }
 
-void initLoggeer()
+void initLogger()
 {
     log4cxx::helpers::Properties logging_properties;
     logging_properties.setProperty("log4j.rootLogger", "INFO, A1");

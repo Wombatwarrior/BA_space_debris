@@ -12,6 +12,8 @@ set (PROJECT_BINARY debris_sim)
 add_subdirectory(src)
 add_subdirectory(lib/googletest)
 add_subdirectory(test)
+add_subdirectory(Thesis)
+
 
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 
