@@ -93,18 +93,22 @@ void CommandLineInput::setOutputFileType(FileOutput::Type outputFileType)
     output_file_type = outputFileType;
 }
 
-std::filesystem::path &CommandLineInput::getInputFilePath()  {
+std::filesystem::path& CommandLineInput::getInputFilePath()
+{
     return input_file_path;
 }
 
-void CommandLineInput::setInputFilePath( std::filesystem::path &inputFilePath) {
+void CommandLineInput::setInputFilePath(std::filesystem::path& inputFilePath)
+{
     input_file_path = inputFilePath;
 }
 
-std::filesystem::path &CommandLineInput::getOutputFilePath()  {
+std::filesystem::path& CommandLineInput::getOutputFilePath()
+{
     return output_file_path;
 }
 
-void CommandLineInput::setOutputFilePath( std::filesystem::path &outputFilePath) {
+void CommandLineInput::setOutputFilePath(std::filesystem::path& outputFilePath)
+{
     output_file_path = outputFilePath;
 }

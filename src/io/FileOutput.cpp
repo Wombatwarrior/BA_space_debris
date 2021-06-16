@@ -159,10 +159,12 @@ void FileOutput::setOutputFileType(FileOutput::Type outputFileType)
     output_file_type = outputFileType;
 }
 
-std::filesystem::path &FileOutput::getAccOutputFilePath() {
+std::filesystem::path& FileOutput::getAccOutputFilePath()
+{
     return acc_output_file_path;
 }
 
-void FileOutput::setAccOutputFilePath(std::filesystem::path &accOutputFilePath) {
+void FileOutput::setAccOutputFilePath(std::filesystem::path& accOutputFilePath)
+{
     acc_output_file_path = accOutputFilePath;
 }

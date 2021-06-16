@@ -5,9 +5,8 @@
 #pragma once
 #include "FileInput.h"
 #include "FileOutput.h"
-#include <string>
 #include <filesystem>
-
+#include <string>
 
 /**
  * @class CommandLineInput
@@ -85,26 +84,26 @@ public:
      *
      * @return Value of #input_file_path
      */
-    std::filesystem::path &getInputFilePath() ;
+    std::filesystem::path& getInputFilePath();
 
     /**
      * @brief Setter function for #input_file_path
      *
      * @param inputFileType New value of #input_file_path
      */
-    void setInputFilePath( std::filesystem::path &inputFilePath);
+    void setInputFilePath(std::filesystem::path& inputFilePath);
 
     /**
      * @brief Getter function for #output_file_path
      *
      * @return Value of #output_file_path
      */
-    std::filesystem::path &getOutputFilePath() ;
+    std::filesystem::path& getOutputFilePath();
 
     /**
      * @brief Setter function for #output_file_path
      *
      * @param outputFilePath New value of #output_file_path
      */
-    void setOutputFilePath( std::filesystem::path &outputFilePath);
+    void setOutputFilePath(std::filesystem::path& outputFilePath);
 };

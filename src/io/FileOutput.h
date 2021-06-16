@@ -3,9 +3,9 @@
 //
 
 #pragma once
+#include <filesystem>
 #include <fstream>
 #include <iomanip>
-#include <filesystem>
 
 #include "../debris/DebrisContainer.h"
 /**
@@ -143,12 +143,12 @@ public:
       *
       * @return Value of #acc_output_file_path
       */
-    std::filesystem::path &getAccOutputFilePath();
+    std::filesystem::path& getAccOutputFilePath();
 
     /**
      * @brief Setter function for #acc_output_file_path
      *
      * @param accOutputFilePath New value of #acc_output_file_path
      */
-    void setAccOutputFilePath( std::filesystem::path &accOutputFilePath);
+    void setAccOutputFilePath(std::filesystem::path& accOutputFilePath);
 };
