@@ -6,8 +6,6 @@
 
 #include "AccelerationAccumulator.h"
 
-#include <iostream>
-
 namespace Acceleration {
 AccelerationAccumulator::~AccelerationAccumulator() { }
 

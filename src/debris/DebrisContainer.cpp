@@ -13,7 +13,10 @@ void DebrisContainer::addDebris(Debris& debris)
     debris_vector.push_back(debris);
 }
 
-void DebrisContainer::cleanDebrisVector() { }
+void DebrisContainer::cleanDebrisVector()
+{
+    debris_vector.clear();
+}
 
 void DebrisContainer::shiftAcceleration()
 {
