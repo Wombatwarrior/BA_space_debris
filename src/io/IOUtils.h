@@ -15,30 +15,6 @@
  */
 namespace IOUtils {
 /**
- * @brief Converts a 3D vector of doubles into a readable string representation
- * @deprecated
- * @param array Reference to the 3D vector to convert
- * @return String representation of the given 3D vector
- */
-inline std::string array3DToString(const std::array<double, 3>& array)
-{
-    std::ostringstream result;
-    result << "[" << array[0] << ", " << array[1] << ", " << array[2] << "]";
-    return result.str();
-}
-/**
- * @brief write a 3D vector of doubles into a csv format to output file stream
- * @deprecated
- * @param array Reference to the 3D vector to convert
- * @param out Output file stream to write to
- */
-inline void array3DToCSV(std::ostream& out,
-    const std::array<double, 3>& array)
-{
-    out << array[0] << "," << array[1] << "," << array[2];
-}
-
-/**
  * Formatted output of a container which fulfills the Container requirement
  * (provide cbegin() and cend()) to a given ostring .
  * @tparam T Type of Container.

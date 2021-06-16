@@ -3,14 +3,12 @@
 //
 
 #pragma once
-#include <math.h>
-
-#include <array>
-#include <numeric>
-
 #include "AccelerationComponents/include.h"
 #include "Constants.h"
 #include "debris/DebrisContainer.h"
+#include <array>
+#include <math.h>
+#include <numeric>
 
 /**
  * @namespace Acceleration
