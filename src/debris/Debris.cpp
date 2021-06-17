@@ -6,13 +6,7 @@
 namespace Debris {
 
 Debris::Debris()
-{
-    position = { 0, 0, 0 };
-    velocity = { 0, 0, 0 };
-    acc_t0 = { 0, 0, 0 };
-    acc_t1 = { 0, 0, 0 };
-    aom = 0.0;
-}
+= default;
 
 Debris::Debris(const Debris& other)
 {
@@ -21,9 +15,10 @@ Debris::Debris(const Debris& other)
     acc_t0 = other.acc_t0;
     acc_t1 = other.acc_t1;
     aom = other.aom;
+    bc_inv = other.bc_inv;
 }
 
-Debris::~Debris() { }
+Debris::~Debris() = default;
 std::string Debris::toString()
 {
     std::stringstream stream;
@@ -34,8 +29,8 @@ std::string Debris::toString()
            << " a0:" << IOUtils::to_string(acc_t0)
            << " ||a0||: " << getAccT0Norm()
            << " a1:" << IOUtils::to_string(acc_t1)
-           << " ||a1||: " << getAccT1Norm()
-           << " AOM: " << aom;
+           << " ||X||: " << getHeight()
+           << " ||v||: " << getSpeed();
     return stream.str();
 }
 
@@ -111,6 +106,16 @@ double Debris::getAom()
 void Debris::setAom(double aom)
 {
     Debris::aom = aom;
+}
+
+double Debris::getBcInv()
+{
+    return bc_inv;
+}
+
+void Debris::setBcInv(double bcInv)
+{
+    bc_inv = bcInv;
 }
 
 } // namespace Debris
