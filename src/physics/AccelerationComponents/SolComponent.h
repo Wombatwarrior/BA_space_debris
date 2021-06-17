@@ -31,6 +31,7 @@ namespace SolComponent {
      * @brief Calculates acceleration due to tidal forces caused by the sun
      *
      * @param d Reference to the Debris::Debris object to apply the acceleration to
+     * @param d_ref Acceleration::SRPComponent::apply() can use this value to avoid calculations per particle
      * @param sun_params 6D array with precalculated values: [X_sun, Y_sun, Z_sun,
      * X_sun/||POS_sun||, Y_sun/||POS_sun||, Z_sun/||POS_sun||]
      * @param acc_sol Reference to an 3D vector to write the result for this
@@ -39,6 +40,7 @@ namespace SolComponent {
      * for all applied Acceleration::AccelerationComponent.
      */
     void apply(Debris::Debris& d,
+        double& d_ref,
         const std::array<double, 6>& sun_params,
         std::array<double, 3>& acc_sol,
         std::array<double, 3>& acc_total);

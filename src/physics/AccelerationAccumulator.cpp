@@ -11,11 +11,30 @@ AccelerationAccumulator::~AccelerationAccumulator() { }
 
 void AccelerationAccumulator::applyComponents()
 {
+    // will be modified by the apply functions
     std::array<double, 3> new_acc_total { 0, 0, 0 };
     std::array<double, 3> new_acc_component { 0, 0, 0 };
-    // Eq 15
-    const double c_term = std::cos((Physics::THETA_G + Physics::NU_EARTH * t) * Physics::RAD_FACTOR);
-    const double s_term = std::sin((Physics::THETA_G + Physics::NU_EARTH * t) * Physics::RAD_FACTOR);
+    double d_srp = 0;
+    // are constant for this time step
+    double c_term;
+    double s_term;
+    std::array<double, 6> sun_params;
+    // setup only needed for SolComponent and SRPComponent
+    if (config[SOL] || config[SRP]) {
+        sun_params = SolComponent::setUp(t);
+    }
+    std::array<double, 6> moon_params;
+    // setup only needed for LunComponent
+    if (config[LUN]) {
+        moon_params = LunComponent::setUp(t);
+    }
+    // setup only needed for C22Component and S22Component
+    if (config[C22] || config[S22]) {
+        // Eq 15
+        c_term = std::cos((Physics::THETA_G + Physics::NU_EARTH * t) * Physics::RAD_FACTOR);
+        s_term = std::sin((Physics::THETA_G + Physics::NU_EARTH * t) * Physics::RAD_FACTOR);
+    }
+
     debris->shiftAcceleration();
     for (auto& d : debris->getDebrisVector()) {
         new_acc_total[0] = 0;
@@ -24,6 +43,7 @@ void AccelerationAccumulator::applyComponents()
         new_acc_component[0] = 0;
         new_acc_component[1] = 0;
         new_acc_component[2] = 0;
+        d_srp = 0;
         // Eq 1
         if (config[KEP]) {
             KepComponent::apply(d, new_acc_component, new_acc_total);
@@ -49,15 +69,13 @@ void AccelerationAccumulator::applyComponents()
             }
         }
         if (config[SOL]) {
-            std::array<double, 6> sun_params = SolComponent::setUp(t);
-            SolComponent::apply(d, sun_params, new_acc_component, new_acc_total);
+            SolComponent::apply(d, d_srp, sun_params, new_acc_component, new_acc_total);
         }
         if (config[LUN]) {
-            const std::array<double, 6> moon_params = LunComponent::setUp(t);
             LunComponent::apply(d, moon_params, new_acc_component, new_acc_total);
         }
         if (config[SRP]) {
-            SRPComponent::apply(d, new_acc_component, new_acc_total);
+            SRPComponent::apply(d, d_srp, sun_params, new_acc_component, new_acc_total);
         }
         if (config[DRAG]) {
             DragComponent::apply(d, new_acc_component, new_acc_total);

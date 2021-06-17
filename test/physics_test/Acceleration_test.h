@@ -635,3 +635,125 @@ protected:
         return sol_params;
     }
 };
+
+class SRPComponentTests : public ::testing::Test {
+protected:
+    std::shared_ptr<Debris::DebrisContainer> debris;
+    std::array<std::array<double, 3>, 9> pre_calculated;
+
+    virtual void SetUp()
+    {
+        debris = std::make_shared<Debris::DebrisContainer>();
+        Debris::Debris d;
+        double t = 0;
+
+        for (int i = 0; i < 3; ++i) {
+            for (int j = 0; j < 3; ++j) {
+                std::array<double, 3> pos { 0, 0, 0 };
+                pos[j] = (i + 2) * 3.5e3;
+                d.setPosition(pos);
+                debris->addDebris(d);
+            }
+        }
+        // calculated with wolfram alpha
+        pre_calculated[0] = { 0, 0, 0 };
+        pre_calculated[0] = { 0, 0, 0 };
+        pre_calculated[2] = { 0, 0, 0 };
+        pre_calculated[3] = { 0, 0, 0 };
+        pre_calculated[4] = { 0, 0, 0 };
+        pre_calculated[5] = { 0, 0, 0 };
+        pre_calculated[6] = { 0, 0, 0 };
+        pre_calculated[7] = { 0, 0, 0 };
+        pre_calculated[8] = { 0, 0, 0 };
+    }
+
+    void calcSRP(Debris::Debris& d, double t, std::array<double, 3>& acc_srp)
+    {
+        double p = 4.56e-6;
+        double a = 1.49619e+8;
+        double as = 149.619;
+        double phis0 = 357.5256;
+        double nus = 1.1407410259335311e-5;
+        double o = 282.94;
+        double e = 23.4392911;
+        ASSERT_EQ(p, Physics::P_SRP);
+        ASSERT_EQ(a, Physics::AU);
+        ASSERT_EQ(as, Physics::AU_SCALED);
+        ASSERT_EQ(phis0, Physics::PHI_SUN_0);
+        ASSERT_EQ(nus, Physics::NU_SUN);
+        ASSERT_EQ(o, Physics::OMEGA);
+        ASSERT_EQ(e, Physics::EPSILON);
+
+        double l = phis0 + nus * t;
+        double r = as - 2.499 * std::cos(l * M_PIf64 / 180) - 0.021 * std::cos(2 * l * M_PIf64 / 180);
+        double lambda = o + l + (6892.0 / 3600) * std::sin(l * M_PIf64 / 180) + (72.0 / 3600) * std::sin(2 * l * M_PIf64 / 180);
+        double xs = r * std::cos(lambda * M_PIf64 / 180);
+        double ys = r * std::sin(lambda * M_PIf64 / 180) * std::cos(e * M_PIf64 / 180);
+        double zs = r * std::sin(lambda * M_PIf64 / 180) * std::sin(e * M_PIf64 / 180);
+        xs *= 1e+6;
+        ys *= 1e+6;
+        zs *= 1e+6;
+
+        double x = d.getPosition()[0];
+        double y = d.getPosition()[1];
+        double z = d.getPosition()[2];
+
+        acc_srp[0] = (d.getAom() * p * a * a * (x - xs)) / std::pow((x - xs) * (x - xs) + (y - ys) * (y - ys) + (z - zs) * (z - zs), 1.5);
+        acc_srp[1] = (d.getAom() * p * a * a * (y - ys)) / std::pow((x - xs) * (x - xs) + (y - ys) * (y - ys) + (z - zs) * (z - zs), 1.5);
+        acc_srp[2] = (d.getAom() * p * a * a * (z - zs)) / std::pow((x - xs) * (x - xs) + (y - ys) * (y - ys) + (z - zs) * (z - zs), 1.5);
+    }
+};
+
+class DragComponentTests : public ::testing::Test {
+protected:
+    std::shared_ptr<Debris::DebrisContainer> debris;
+    std::array<std::array<double, 3>, 9> pre_calculated;
+
+    virtual void SetUp()
+    {
+        debris = std::make_shared<Debris::DebrisContainer>();
+        Debris::Debris d;
+
+        for (int i = 0; i < 3; ++i) {
+            for (int j = 0; j < 3; ++j) {
+                std::array<double, 3> pos { 0, 0, 0 };
+                pos[j] = (i + 2) * 3.5e3;
+                d.setPosition(pos);
+                debris->addDebris(d);
+            }
+        }
+        for (int i = 0; i < 3; ++i) {
+            std::array<double, 3> pos { 0, 0, 0 };
+            pos[i] = 5000;
+            pos[(i + 1) % 3] = 4321;
+            pos[(i + 2) % 3] = 3210;
+            d.setPosition(pos);
+            debris->addDebris(d);
+        }
+    }
+    void calcDrag(Debris::Debris& d, std::array<double, 3>& acc_drag)
+    {
+        double re = 6378.1363;
+        double p0 = 1.3;
+        double h = 8.500;
+        double oe = 7.292115e-5;
+        ASSERT_EQ(re, Physics::R_EARTH);
+        ASSERT_EQ(p0, Physics::P_GROUND);
+        ASSERT_EQ(h, Physics::H_ATMOSPHERE);
+        ASSERT_EQ(oe, Physics::ROT_ATMOSPHERE);
+
+        double x = d.getPosition()[0];
+        double y = d.getPosition()[1];
+        double z = d.getPosition()[2];
+
+        double p = p0 * std::exp(-(std::sqrt(x * x + y * y + z * z) - re) / h);
+
+        double v_rel_x = d.getVelocity()[0] + oe * y;
+        double v_rel_y = d.getVelocity()[0] - oe * x;
+        double v_rel_z = d.getVelocity()[0];
+
+        acc_drag[0] = -(p * v_rel_x * v_rel_x * d.getBcInv()) / 2;
+        acc_drag[1] = -(p * v_rel_y * v_rel_y * d.getBcInv()) / 2;
+        acc_drag[2] = -(p * v_rel_z * v_rel_z * d.getBcInv()) / 2;
+    }
+};

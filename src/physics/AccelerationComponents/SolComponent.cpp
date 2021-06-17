@@ -39,6 +39,7 @@ namespace SolComponent {
     }
 
     void apply(Debris::Debris& d,
+        double& d_ref,
         const std::array<double, 6>& sun_params,
         std::array<double, 3>& acc_sol,
         std::array<double, 3>& acc_total)
@@ -48,12 +49,12 @@ namespace SolComponent {
         acc_sol[1] -= sun_params[1];
         acc_sol[2] -= sun_params[2];
         // Eq 29
-        double d1 = std::inner_product(acc_sol.begin(), acc_sol.end(), acc_sol.begin(), .0);
-        d1 = 1 / std::sqrt(d1 * d1 * d1);
+        d_ref = std::inner_product(acc_sol.begin(), acc_sol.end(), acc_sol.begin(), .0);
+        d_ref = 1 / std::sqrt(d_ref * d_ref * d_ref);
         // Eq 30
-        acc_sol[0] = -Physics::GM_SUN * (acc_sol[0] * d1 + sun_params[3]);
-        acc_sol[1] = -Physics::GM_SUN * (acc_sol[1] * d1 + sun_params[4]);
-        acc_sol[2] = -Physics::GM_SUN * (acc_sol[2] * d1 + sun_params[5]);
+        acc_sol[0] = -Physics::GM_SUN * (acc_sol[0] * d_ref + sun_params[3]);
+        acc_sol[1] = -Physics::GM_SUN * (acc_sol[1] * d_ref + sun_params[4]);
+        acc_sol[2] = -Physics::GM_SUN * (acc_sol[2] * d_ref + sun_params[5]);
         acc_total[0] += acc_sol[0];
         acc_total[1] += acc_sol[1];
         acc_total[2] += acc_sol[2];

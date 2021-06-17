@@ -3,7 +3,7 @@
 //
 
 #pragma once
-#include <math.h>
+#include <cmath>
 
 #include "utils/MathUtils.h"
 #include <array>
@@ -87,13 +87,15 @@ public:
 
 private:
     std::array<double, 3>
-        position; /**< 3D vector representation of the debris position*/
+        position{}; /**< 3D vector representation of the debris position*/
     std::array<double, 3>
-        velocity; /**< 3D vector representation of the debris velocity*/
-    std::array<double, 3> acc_t0; /**< 3D vector representation of the debris
+        velocity{}; /**< 3D vector representation of the debris velocity*/
+    std::array<double, 3> acc_t0{}; /**< 3D vector representation of the debris
                                  acceleration at the last time step*/
-    std::array<double, 3> acc_t1; /**< 3D vector representation of the debris
+    std::array<double, 3> acc_t1{}; /**< 3D vector representation of the debris
                                  acceleration at the current time step*/
+    double bc_inv = 0; /**< (C_cA)/m is the inverse of the ballistic coefficient. Used for Acceleration::DragComponent::apply()*/
+    double aom = 0; /**< Area to mass ration*/
 public:
     /**
      * @brief Getter function for #position vector
@@ -150,5 +152,33 @@ public:
      * @param accT1 3D vector representation of the debris #acc_t1
      */
     void setAccT1(std::array<double, 3>& accT1);
+
+    /**
+     * @brief Getter function for #aom
+     *
+     * @return value of #aom
+     */
+    double getAom();
+
+    /**
+     * @brief Setter function for #aom
+     *
+     * @param aom New value #aom
+     */
+    void setAom(double aom);
+
+    /**
+     * @brief Getter function for #bc_inv
+     *
+     * @return Value of #bc_inv
+     */
+    double getBcInv();
+
+    /**
+     * @brief Setter function for #bc_inv
+     *
+     * @param bcInv New value of#bc_inv
+     */
+    void setBcInv(double bcInv);
 };
 } // namespace Debris
