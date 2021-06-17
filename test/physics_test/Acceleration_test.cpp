@@ -559,50 +559,6 @@ TEST_F(LunComponentTests, CompareTrigonometricTerms)
 }
 
 /**
- * simply check if calcMoonParams() is faster than
- * Acceleration::LunComponent::setUp()
- */
-//TEST_F(LunComponentTests, CompareLessTrigonometryRuntime)
-//{
-//    double t = 0.1;
-//    std::cout << "normal trigonometry" << std::endl;
-//    std::chrono::steady_clock::time_point begin1 = std::chrono::steady_clock::now();
-//    for (int i = 0; i < 10000; ++i) {
-//        const std::array<double, 6> params_1 = Acceleration::LunComponent::setUp(t * i);
-//    }
-//    std::chrono::steady_clock::time_point end1 = std::chrono::steady_clock::now();
-//
-//    std::cout << "Time difference = "
-//              << std::chrono::duration_cast<std::chrono::microseconds>(end1 - begin1)
-//                     .count()
-//              << "[µs]" << std::endl;
-//    std::cout << "Time difference = "
-//              << std::chrono::duration_cast<std::chrono::nanoseconds>(end1 - begin1)
-//                     .count()
-//              << "[ns]" << std::endl;
-//    std::cout << "reduced trigonometry" << std::endl;
-//    std::chrono::steady_clock::time_point begin2 = std::chrono::steady_clock::now();
-//    for (int i = 0; i < 10000; ++i) {
-//        const std::array<double, 6> params_2 = calcMoonParams(t * i);
-//    }
-//    std::chrono::steady_clock::time_point end2 = std::chrono::steady_clock::now();
-//    std::cout << "Time difference = "
-//              << std::chrono::duration_cast<std::chrono::microseconds>(end2 - begin2)
-//                     .count()
-//              << "[µs]" << std::endl;
-//    std::cout << "Time difference = "
-//              << std::chrono::duration_cast<std::chrono::nanoseconds>(end2 - begin2)
-//                     .count()
-//              << "[ns]" << std::endl;
-//
-//    // if the optimized version s slower
-//    ASSERT_LT(std::chrono::duration_cast<std::chrono::microseconds>(end2 - begin2)
-//                  .count(),
-//        std::chrono::duration_cast<std::chrono::microseconds>(end1 - begin1)
-//            .count());
-//}
-
-/**
  * Tests if the acceleration calculated using
  * Acceleration::SolComponent::apply() is the same as using a inefficient
  * implementation

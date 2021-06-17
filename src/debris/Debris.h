@@ -3,7 +3,7 @@
 //
 
 #pragma once
-#include <math.h>
+#include <cmath>
 
 #include "../io/IOUtils.h"
 #include <array>
@@ -85,14 +85,14 @@ public:
 
 private:
     std::array<double, 3>
-        position; /**< 3D vector representation of the debris position*/
+        position{}; /**< 3D vector representation of the debris position*/
     std::array<double, 3>
-        velocity; /**< 3D vector representation of the debris velocity*/
-    std::array<double, 3> acc_t0; /**< 3D vector representation of the debris
+        velocity{}; /**< 3D vector representation of the debris velocity*/
+    std::array<double, 3> acc_t0{}; /**< 3D vector representation of the debris
                                  acceleration at the last time step*/
-    std::array<double, 3> acc_t1; /**< 3D vector representation of the debris
+    std::array<double, 3> acc_t1{}; /**< 3D vector representation of the debris
                                  acceleration at the current time step*/
-    double bc_inv; /**< (C_cA)/m is the inverse of the ballistic coefficient. Used for Acceleration::DragComponent::apply()*/
+    double bc_inv = 0; /**< (C_cA)/m is the inverse of the ballistic coefficient. Used for Acceleration::DragComponent::apply()*/
 public:
     /**
      * @brief Getter function for #position vector

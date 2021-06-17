@@ -6,13 +6,7 @@
 namespace Debris {
 
 Debris::Debris()
-{
-    position = { 0, 0, 0 };
-    velocity = { 0, 0, 0 };
-    acc_t0 = { 0, 0, 0 };
-    acc_t1 = { 0, 0, 0 };
-    bc_inv = 0;
-}
+= default;
 
 Debris::Debris(const Debris& other)
 {
@@ -23,7 +17,7 @@ Debris::Debris(const Debris& other)
     bc_inv = other.bc_inv;
 }
 
-Debris::~Debris() { }
+Debris::~Debris() = default;
 std::string Debris::toString()
 {
     std::stringstream stream;
