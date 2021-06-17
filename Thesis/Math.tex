@@ -18,11 +18,11 @@ Let (X,Y,Z) be EME2000 fixed frame Cartesian co-ordinates. The orbit of an objec
 \begin{equation}
 \begin{array}{ll}
      \ddot{X} = f_{Kep,X}(X,Y,Z)+f_{J2,X}(X,Y,Z)+f_{C22,X}(X,Y,Z,t)+f_{S22,X}(X,Y,Z,t)\\
-    +f_{Moon,X}(X,Y,Z,t)+f_{Sun,X}(X,Y,Z,t)+f_{SRP,X}(X,Y,Z,t) \\
+    +f_{Moon,X}(X,Y,Z,t)+f_{Sun,X}(X,Y,Z,t)+f_{SRP,X}(X,Y,Z,AOM)+f_{Drag,X}(X,Y,Z,A,m,v) \\
     \ddot{Y} = f_{Kep,Y}(X,Y,Z)+f_{J2,Y}(X,Y,Z)+f_{C22,Y}(X,Y,Z,t)+f_{S22,Y}(X,Y,Z,t)\\
-    +f_{Moon,Y}(X,Y,Z,t)+f_{Sun,Y}(X,Y,Z,t)+f_{SRP,Y}(X,Y,Z,t) \\
+    +f_{Moon,Y}(X,Y,Z,t)+f_{Sun,Y}(X,Y,Z,t)+f_{SRP,Y}(X,Y,Z,AOM)+f_{Drag,Y}(X,Y,Z,A,m,v) \\
     \ddot{Z} = f_{Kep,Z}(X,Y,Z)+f_{J2,Z}(X,Y,Z)+f_{C22,Z}(X,Y,Z,t)+f_{S22,Z}(X,Y,Z,t)\\
-    +f_{Moon,Z}(X,Y,Z,t)+f_{Sun,Z}(X,Y,Z,t)+f_{SRP,Z}(X,Y,Z,t)
+    +f_{Moon,Z}(X,Y,Z,t)+f_{Sun,Z}(X,Y,Z,t)+f_{SRP,Z}(X,Y,Z,AOM)+f_{Drag,Z}(X,Y,Z,A,m,v)
 \end{array}
 \end{equation}
 
@@ -537,8 +537,70 @@ f_{SRP,Z}(X,Y,Z,t) &= AOM
 \end{equation}
 
 \subsubsection{Implementation details}
+
 \subsection{DragComponent}
+Page 145 (PDF 82) http://farside.ph.utexas.edu/teaching/celestial/Celestialhtml/node94.html
+
+\begin{equation}
+\begin{array}{ll}
+f_{Drag,X}(X,Y,Z,C_D,A,m,v) &= -{{pC_DAv_{rel,x}^2} \over {2m}} \\
+f_{Drag,Y}(X,Y,Z,C_D,A,m,v) &= -{{pC_DAv_{rel,y}^2} \over {2m}} \\
+f_{Drag,Z}(X,Y,Z,C_D,A,m,v) &= -{{pC_DAv_{rel,z}^2} \over {2m}}
+\end{array}
+\end{equation}
+
+with
+
+http://farside.ph.utexas.edu/teaching/celestial/Celestialhtml/node94.html
+
+\begin{equation}
+\begin{array}{ll}
+p &= p_0\exp\left(-{{\sqrt{X^2+Y^2+Z^2} - R_E} \over H}\right)
+\end{array}
+\end{equation}
+
+and
+
+Calculate relative velocity \(v_{rel}\) in respect to atmosphere:
+
+
+Vallado s. 550
+
+\begin{equation}
+\begin{array}{ll}
+v_{rel,x} &= v_x + \omega_{\oplus}Y \\
+v_{rel,y} &= v_y - \omega_{\oplus}X \\
+v_{rel,z} &= v_z
+\end{array}
+\end{equation}
+
 \subsubsection{Implementation details}
+
+Precalculated and constant per Particle
+
+\begin{equation}
+\begin{array}{ll}
+BC^{-1} &={C_DA \over m}
+\end{array}
+\end{equation}
+
+calculate shared factor
+
+\begin{equation}
+\begin{array}{ll}
+f &= -\left(p \over 2\right)BC^{-1}
+\end{array}
+\end{equation}
+
+\begin{equation}
+\begin{array}{ll}
+f_{Drag,X}(X,Y,Z,C_D,A,m,v) &= fv_{rel,x}^2 \\
+f_{Drag,Y}(X,Y,Z,C_D,A,m,v) &= fv_{rel,y}^2 \\
+f_{Drag,Z}(X,Y,Z,C_D,A,m,v) &= fv_{rel,z}^2
+\end{array}
+\end{equation}
+
+
 \section{Constants}
 
 \begin{align}
@@ -550,17 +612,20 @@ R_E &=6378.1363 km\\
 C_{20} &= -4.84165371736\times 10^{-4}\\
 C_{22} &= 2.43914352398\times 10^{-6}\\
 S_{22} &=-1.40016683654\times 10^{-6}\\
-\theta_G &= (280.4606)\\
-\nu_E  &=(4.178074622024230\times 10^{-3})\\
-\nu_\odot &=  (1.1407410259335311\times 10^{-5})\\
-\nu_{M_a} &=  (1.512151961904581\times 10^{-4})\\
-\nu_{M_p} &=  (1.2893925235125941\times 10^{-6})\\
-\nu_{M_s} &=  (6.128913003523574\times 10^{-7})\\
+\theta_G &= 280.4606^\circ\\
+\nu_E &= 4.178074622024230\times 10^{-3\circ} s^{-1}\\
+\nu_\odot &= 1.1407410259335311\times 10^{-5\circ} s^{-1}\\
+\nu_{M_a} &= 1.512151961904581\times 10^{-4\circ} s^{-1}\\
+\nu_{M_p} &= 1.2893925235125941\times 10^{-6\circ} s^{-1}\\
+\nu_{M_s} &= 6.128913003523574\times 10^{-7\circ} s^{-1}\\
 a_\odot &= 1.49619 \times 10^8 km\\
-\varepsilon&= (23.4392911)\\
-\varphi_{\odot,0} &= (357.5256)\\
-\Omega_\odot + \omega_\odot &=  (282.94) \\
-P_{SRP} &=4.56\times 10^{-6}
+\varepsilon &= 23.4392911^\circ\\
+\varphi_{\odot,0} &= 357.5256^\circ\\
+\Omega_\odot + \omega_\odot &= 282.94^\circ \\
+P_{SRP} &= 4.56\times 10^{-6} \\
+p_0 &= 1.3 kg m^{-3} \\
+H &= 8.5 km \\
+\omega_{\oplus} &= 7.292115 \times 10^{-5} s^{-1}
 %\end{array}
 \end{align}
 

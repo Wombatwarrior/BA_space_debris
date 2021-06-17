@@ -635,3 +635,57 @@ protected:
         return sol_params;
     }
 };
+
+class DragComponentTests : public ::testing::Test {
+protected:
+    std::shared_ptr<Debris::DebrisContainer> debris;
+    std::array<std::array<double, 3>, 9> pre_calculated;
+
+    virtual void SetUp()
+    {
+        debris = std::make_shared<Debris::DebrisContainer>();
+        Debris::Debris d;
+
+        for (int i = 0; i < 3; ++i) {
+            for (int j = 0; j < 3; ++j) {
+                std::array<double, 3> pos { 0, 0, 0 };
+                pos[j] = (i + 2) * 3.5e3;
+                d.setPosition(pos);
+                debris->addDebris(d);
+            }
+        }
+        for (int i = 0; i < 3; ++i) {
+            std::array<double, 3> pos { 0, 0, 0 };
+            pos[i] = 5000;
+            pos[(i + 1) % 3] = 4321;
+            pos[(i + 2) % 3] = 3210;
+            d.setPosition(pos);
+            debris->addDebris(d);
+        }
+    }
+    void calcDrag(Debris::Debris& d, std::array<double, 3>& acc_drag)
+    {
+        double re = 6378.1363;
+        double p0 = 1.3;
+        double h = 8.500;
+        double oe = 7.292115e-5;
+        ASSERT_EQ(re, Physics::R_EARTH);
+        ASSERT_EQ(p0, Physics::P_GROUND);
+        ASSERT_EQ(h, Physics::H_ATMOSPHERE);
+        ASSERT_EQ(oe, Physics::ROT_ATMOSPHERE);
+
+        double x = d.getPosition()[0];
+        double y = d.getPosition()[1];
+        double z = d.getPosition()[2];
+
+        double p = p0 * std::exp(-(std::sqrt(x * x + y * y + z * z) - re) / h);
+
+        double v_rel_x = d.getVelocity()[0] + oe * y;
+        double v_rel_y = d.getVelocity()[0] - oe * x;
+        double v_rel_z = d.getVelocity()[0];
+
+        acc_drag[0] = -(p * v_rel_x * v_rel_x * d.getBcInv()) / 2;
+        acc_drag[1] = -(p * v_rel_y * v_rel_y * d.getBcInv()) / 2;
+        acc_drag[2] = -(p * v_rel_z * v_rel_z * d.getBcInv()) / 2;
+    }
+};
