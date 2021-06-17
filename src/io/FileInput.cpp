@@ -4,7 +4,7 @@
 
 #include "FileInput.h"
 
-FileInput::~FileInput() { }
+FileInput::~FileInput() = default;
 
 void FileInput::readDebrisData()
 {
@@ -27,9 +27,9 @@ struct FileInput::TxtLineContent FileInput::tokenizeLine(
 
 void FileInput::setDebrisValues(Debris::Debris& d, const std::string& line)
 {
-    auto position_split_pos = line.find("|");
-    auto velocity_split_pos = line.find("|", position_split_pos + 1);
-    auto acc_split_pos = line.find("|", velocity_split_pos + 1);
+    auto position_split_pos = line.find('|');
+    auto velocity_split_pos = line.find('|', position_split_pos + 1);
+    auto acc_split_pos = line.find('|', velocity_split_pos + 1);
     auto aom_split_pos = line.find("|", acc_split_pos + 1);
     auto bc_inv_split_pos = line.find("|", aom_split_pos + 1);
     std::string position_str = line.substr(0, position_split_pos);
@@ -38,31 +38,31 @@ void FileInput::setDebrisValues(Debris::Debris& d, const std::string& line)
     std::string acc_t1_str = line.substr(acc_split_pos + 1, aom_split_pos);
     std::string aom_str = line.substr(aom_split_pos + 1, bc_inv_split_pos);
     std::string bc_inv_str = line.substr(bc_inv_split_pos + 1);
-    std::array<double, 3> vec;
+    std::array<double, 3> vec {};
 
-    auto x_split_pos = position_str.find(",");
-    auto y_split_pos = position_str.find(",", x_split_pos + 1);
+    auto x_split_pos = position_str.find(',');
+    auto y_split_pos = position_str.find(',', x_split_pos + 1);
     vec[0] = stod(position_str.substr(0, x_split_pos));
     vec[1] = stod(position_str.substr(x_split_pos + 1, y_split_pos));
     vec[2] = stod(position_str.substr(y_split_pos + 1));
     d.setPosition(vec);
 
-    x_split_pos = velocity_str.find(",");
-    y_split_pos = velocity_str.find(",", x_split_pos + 1);
+    x_split_pos = velocity_str.find(',');
+    y_split_pos = velocity_str.find(',', x_split_pos + 1);
     vec[0] = stod(velocity_str.substr(0, x_split_pos));
     vec[1] = stod(velocity_str.substr(x_split_pos + 1, y_split_pos));
     vec[2] = stod(velocity_str.substr(y_split_pos + 1));
     d.setVelocity(vec);
 
-    x_split_pos = acc_t0_str.find(",");
-    y_split_pos = acc_t0_str.find(",", x_split_pos + 1);
+    x_split_pos = acc_t0_str.find(',');
+    y_split_pos = acc_t0_str.find(',', x_split_pos + 1);
     vec[0] = stod(acc_t0_str.substr(0, x_split_pos));
     vec[1] = stod(acc_t0_str.substr(x_split_pos + 1, y_split_pos));
     vec[2] = stod(acc_t0_str.substr(y_split_pos + 1));
     d.setAccT0(vec);
 
-    x_split_pos = acc_t1_str.find(",");
-    y_split_pos = acc_t1_str.find(",", x_split_pos + 1);
+    x_split_pos = acc_t1_str.find(',');
+    y_split_pos = acc_t1_str.find(',', x_split_pos + 1);
     vec[0] = stod(acc_t1_str.substr(0, x_split_pos));
     vec[1] = stod(acc_t1_str.substr(x_split_pos + 1, y_split_pos));
     vec[2] = stod(acc_t1_str.substr(y_split_pos + 1));
@@ -86,7 +86,7 @@ void FileInput::setConfigValues(const std::string& line)
 
 void FileInput::readDebrisTXT()
 {
-    std::ifstream input_file(input_file_name);
+    std::ifstream input_file(input_file_path);
     std::string line;
     struct TxtLineContent line_content;
     Debris::Debris d;
@@ -130,14 +130,14 @@ void FileInput::setDebris(Debris::DebrisContainer& debris)
     FileInput::debris = &debris;
 }
 
-std::string& FileInput::getInputFileName()
+std::filesystem::path& FileInput::getInputFilePath()
 {
-    return input_file_name;
+    return input_file_path;
 }
 
-void FileInput::setInputFileName(std::string& inputFileName)
+void FileInput::setInputFilePath(std::filesystem::path& inputFilePath)
 {
-    input_file_name = inputFileName;
+    input_file_path = inputFilePath;
 }
 
 FileInput::Type FileInput::getInputFileType()

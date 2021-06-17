@@ -3,6 +3,7 @@
 //
 
 #pragma once
+#include <filesystem>
 #include <fstream>
 #include <iomanip>
 
@@ -28,18 +29,20 @@ public:
     /**
      * @brief Creates new FileOutput object
      *
-     * Constructor sets #debris, #output_file_name amd #output_file_type private
+     * Constructor sets #debris, #output_file_path amd #output_file_type private
      * member variables.
      *
      * @param debris_arg Reference to the Debris:DebrisContainer object to take
      * Debris::Debris objects data from
-     * @param output_file_name_arg Complete name of the output file to write data
+     * @param output_file_path_arg Path to the main output file to write data
      * to
      * @param output_file_type_arg FileOutput::Type of the output file
+     * @param acc_config Configuration vector for acceleration output
      */
     FileOutput(Debris::DebrisContainer& debris_arg,
-        std::string output_file_name_arg,
-        Type output_file_type_arg);
+        std::filesystem::path output_file_path_arg,
+        Type output_file_type_arg,
+        std::array<bool, 8>& acc_config);
 
     /**
      * @brief Default destructor
@@ -51,11 +54,32 @@ public:
     /**
      * @brief Writes data to a file
      *
-     * Writes the data to the file with the #output_file_name
+     * Writes the data to the file with the #output_file_path
      * by calling a specialized function depending on the FileOutput::Type
      * #output_file_type
      */
     void writeDebrisData(double t);
+
+    /**
+     * @brief Starts a new output line
+     *
+     * @param t Current time
+     */
+    void writeAcc_start(double t);
+
+    /**
+     * @brief Writes the content of a 3D Vector to the output file
+     *
+     * @param vec Reference to the 3D vector
+     */
+    void writeAcc_value(std::array<double, 3>& vec);
+
+    /**
+     * @brief Writes the last 3D vector of a line to the output file
+     *
+     * @param vec Reference to the 3D vector
+     */
+    void writeAcc_end(std::array<double, 3>& vec);
 
 private:
     /**
@@ -79,10 +103,13 @@ private:
     Debris::DebrisContainer*
         debris; /**< Reference to a Debris::DebrisContainer object to add
              Debris::Debris objects read from the input file*/
-    std::string output_file_name; /**< Complete name of the output file
-                                 containing the file extension*/
+    std::filesystem::path output_file_path; /**< Path to the main output file*/
     Type output_file_type; /**< FileOutput::Type of the output file*/
     std::ofstream out; /**< output file stream*/
+    double row_count; /**< keeps track of the row number for indexing the lines */
+    std::filesystem::path acc_output_file_path; /**< Path to the acceleration output file*/
+    std::ofstream acc_out; /**< output file stream for output of single acceleration components*/
+    double acc_row_count; /**< keeps track of the row number for indexing the lines of the acceleration data*/
 public:
     /**
      * @brief Getter function for #debris
@@ -99,18 +126,18 @@ public:
     void setDebris(Debris::DebrisContainer& debris);
 
     /**
-     * @brief Getter function for #output_file_name
+     * @brief Getter function for #output_file_path
      *
-     * @return Value of #output_file_name
+     * @return Value of #output_file_path
      */
-    std::string& getOutputFileName();
+    std::filesystem::path& getOutputFilePath();
 
     /**
-     * @brief Setter function for #output_file_name
+     * @brief Setter function for #output_file_path
      *
-     * @param outputFileName New value of #output_file_name
+     * @param outputFilePath New value of #output_file_path
      */
-    void setOutputFileName(std::string& outputFileName);
+    void setOutputFilePath(std::filesystem::path& outputFilePath);
 
     /**
      * @brief Getter function for #output_file_type
@@ -125,4 +152,18 @@ public:
      * @param outputFileType Value of #output_file_type
      */
     void setOutputFileType(Type outputFileType);
+
+    /**
+      * @brief Getter function for #acc_output_file_path
+      *
+      * @return Value of #acc_output_file_path
+      */
+    std::filesystem::path& getAccOutputFilePath();
+
+    /**
+     * @brief Setter function for #acc_output_file_path
+     *
+     * @param accOutputFilePath New value of #acc_output_file_path
+     */
+    void setAccOutputFilePath(std::filesystem::path& accOutputFilePath);
 };

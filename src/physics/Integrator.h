@@ -46,8 +46,10 @@ public:
      * Debris::Debris::velocity vector of the last time step of the
      * Debris::Debris objects of the Debris::DebrisContainer #debris it is called
      * before Integrator::calculateVelocity()
+     *
+     * @param write_time_step if true all calculated acceleration components are writen to a file
      */
-    void integrate();
+    void integrate(bool write_time_step = false);
 
     /**
      * @brief Calculates the new position
@@ -76,8 +78,10 @@ public:
      * function of the Acceleration::AccelerationAccumulator object #accumulator
      * After this function is called the Debris::Debris objects of the
      * Debris::DebrisContainer #debris are ready for integrating
+     *
+     * @param write_time_step if true all calculated acceleration components are writen to a file
      */
-    void calculateAcceleration();
+    void calculateAcceleration(bool write_time_step);
 
 private:
     Debris::DebrisContainer*

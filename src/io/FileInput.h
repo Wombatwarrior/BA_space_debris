@@ -3,6 +3,7 @@
 //
 
 #pragma once
+#include <filesystem>
 #include <fstream>
 #include <string>
 
@@ -35,15 +36,15 @@ public:
      *
      * @param debris_arg Reference to the Debris:DebrisContainer object to add
      * Debris::Debris objects to
-     * @param input_file_name_arg Complete name of the input file to read data
+     * @param input_file_path_arg Complete name of the input file to read data
      * from
      * @param input_file_type_arg FileInput::Type of the input file
      */
     FileInput(Debris::DebrisContainer& debris_arg,
-        std::string input_file_name_arg,
+        std::string input_file_path_arg,
         Type input_file_type_arg)
         : debris(&debris_arg)
-        , input_file_name(input_file_name_arg)
+        , input_file_path(input_file_path_arg)
         , input_file_type(input_file_type_arg)
     {
         readDebrisData();
@@ -59,7 +60,7 @@ public:
     /**
      * @brief Reads data from a file
      *
-     * Reads the data from the file with the #input_file_name
+     * Reads the data from the file with the #input_file_path
      * by calling a specialized function depending on the FileInput::Type
      * #input_file_type
      */
@@ -93,7 +94,7 @@ private:
      * @return FileInput::TxtLineContent struct holding the result of splitting
      * up the line
      */
-    struct TxtLineContent tokenizeLine(const std::string& line);
+    static struct TxtLineContent tokenizeLine(const std::string& line);
 
     /**
      * @brief Sets the member variable of a given Debris::Debris object
@@ -110,7 +111,7 @@ private:
      * @param line A string representing the state of a Debris::Debris object in
      * the format "position|velocity|acc_t0|acc_t1"
      */
-    void setDebrisValues(Debris::Debris& d, const std::string& line);
+    static void setDebrisValues(Debris::Debris& d, const std::string& line);
 
     /**
      * @brief Sets the configuration vector specifying the
@@ -149,7 +150,7 @@ private:
     Debris::DebrisContainer*
         debris; /**< Reference to a Debris::DebrisContainer object to add
              Debris::Debris objects read from the input file*/
-    std::string input_file_name; /**< Complete name of the input file containing
+    std::filesystem::path input_file_path; /**< Complete name of the input file containing
                                 the file extension*/
     Type input_file_type; /**< InputFile::Type of the input file*/
     double delta_t; /**< Time step to use in the simulation*/
@@ -189,18 +190,18 @@ public:
     void setDebris(Debris::DebrisContainer& debris);
 
     /**
-     * @brief Getter function for #input_file_name
+     * @brief Getter function for #input_file_path
      *
-     * @return Value of #input_file_name
+     * @return Value of #input_file_path
      */
-    std::string& getInputFileName();
+    std::filesystem::path& getInputFilePath();
 
     /**
-     * @brief Setter function for #input_file_name
+     * @brief Setter function for #input_file_path
      *
-     * @param inputFileName New value of #input_file_name
+     * @param inputFilePath New value of #input_file_path
      */
-    void setInputFileName(std::string& inputFileName);
+    void setInputFilePath(std::filesystem::path& inputFilePath);
 
     /**
      * @brief Getter function for #input_file_type

@@ -3,12 +3,15 @@
 //
 
 #pragma once
+#include <math.h>
+
+#include <array>
+#include <numeric>
+
 #include "AccelerationComponents/include.h"
 #include "Constants.h"
 #include "debris/DebrisContainer.h"
-#include <array>
-#include <math.h>
-#include <numeric>
+#include "io/FileOutput.h"
 
 /**
  * @namespace Acceleration
@@ -50,7 +53,7 @@ class AccelerationAccumulator {
 public:
     /**
      * @brief Constructor creates a new Acceleration::AcceleratorAccumulator
-     * object and sets #config vector and #debris members
+     * object
      *
      * @param config_arg The 8D bool vector encoding the
      * Acceleration::AccelerationComponent to apply in the simulation. The Order
@@ -58,13 +61,16 @@ public:
      * @param debris_arg Reference to the Debris::DebrisContainer object holding
      * the Debris::Debris objects to apply acceleration to
      * @param t_arg Current time
+     * @param file_output_arg Reference to the FileOutput object used for output of the acceleration values during computation
      */
     AccelerationAccumulator(const std::array<bool, 8>& config_arg,
         Debris::DebrisContainer& debris_arg,
-        double t_arg)
+        double t_arg,
+        FileOutput& file_output_arg)
         : config(config_arg)
         , debris(&debris_arg)
-        , t(t_arg) {};
+        , t(t_arg)
+        , file_output(&file_output_arg) {};
 
     /**
      * @brief Default destructor
@@ -95,6 +101,13 @@ public:
      */
     void applyComponents();
 
+    /**
+     * @brief does the same as #applyComponents() plus output
+     *
+     * Calculates the needed acceleration components and writes the value for each one to a csv file
+     */
+    void applyAmdWriteComponents();
+
 private:
     /**
      * @brief 8D bool vector encoding the Acceleration::AccelerationComponent to
@@ -116,6 +129,7 @@ private:
         debris; /**< Reference to the Debris::DebrisContainer object holding the
              Debris::Debris objects to apply acceleration to*/
     double t; /**< current time*/
+    FileOutput* file_output; /**< used to write detailed output data during calculations */
 public:
     /**
      * @brief Getter function for #config
@@ -158,5 +172,19 @@ public:
      * @param t New value of #t
      */
     void setT(double t);
+
+    /**
+     * @brief Getter function for #file_output
+     *
+     * @return Value of #file_output
+     */
+    FileOutput& getFileOutput();
+
+    /**
+     * @brief Setter function for #file_output
+     *
+     * @param fileOutput New value of #file_output
+     */
+    void setFileOutput(FileOutput& fileOutput);
 };
 } // namespace Acceleration
