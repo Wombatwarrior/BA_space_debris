@@ -86,11 +86,30 @@ void AccelerationAccumulator::applyComponents()
 
 void AccelerationAccumulator::applyAmdWriteComponents()
 {
+    // will be modified by the apply functions
     std::array<double, 3> new_acc_total { 0, 0, 0 };
     std::array<double, 3> new_acc_component { 0, 0, 0 };
-    // Eq 15
-    const double c_term = std::cos((Physics::THETA_G + Physics::NU_EARTH * t) * Physics::RAD_FACTOR);
-    const double s_term = std::sin((Physics::THETA_G + Physics::NU_EARTH * t) * Physics::RAD_FACTOR);
+    double d_srp = 0;
+    // are constant for this time step
+    double c_term;
+    double s_term;
+    std::array<double, 6> sun_params;
+    // setup only needed for SolComponent and SRPComponent
+    if (config[SOL] || config[SRP]) {
+        sun_params = SolComponent::setUp(t);
+    }
+    std::array<double, 6> moon_params;
+    // setup only needed for LunComponent
+    if (config[LUN]) {
+        moon_params = LunComponent::setUp(t);
+    }
+    // setup only needed for C22Component and S22Component
+    if (config[C22] || config[S22]) {
+        // Eq 15
+        c_term = std::cos((Physics::THETA_G + Physics::NU_EARTH * t) * Physics::RAD_FACTOR);
+        s_term = std::sin((Physics::THETA_G + Physics::NU_EARTH * t) * Physics::RAD_FACTOR);
+    }
+
     debris->shiftAcceleration();
     for (auto& d : debris->getDebrisVector()) {
         // start a new line o data for each particle
@@ -122,7 +141,7 @@ void AccelerationAccumulator::applyAmdWriteComponents()
         }
         if (config[SOL]) {
             std::array<double, 6> sun_params = SolComponent::setUp(t);
-            SolComponent::apply(d, sun_params, new_acc_component, new_acc_total);
+            SolComponent::apply(d, d_srp, sun_params, new_acc_component, new_acc_total);
             file_output->writeAcc_value(new_acc_component);
         }
         if (config[LUN]) {
@@ -131,7 +150,7 @@ void AccelerationAccumulator::applyAmdWriteComponents()
             file_output->writeAcc_value(new_acc_component);
         }
         if (config[SRP]) {
-            SRPComponent::apply(d, new_acc_component, new_acc_total);
+            SRPComponent::apply(d, d_srp, sun_params, new_acc_component, new_acc_total);
             file_output->writeAcc_value(new_acc_component);
         }
         if (config[DRAG]) {
