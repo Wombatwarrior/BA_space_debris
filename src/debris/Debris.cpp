@@ -14,6 +14,7 @@ Debris::Debris(const Debris& other)
     velocity = other.velocity;
     acc_t0 = other.acc_t0;
     acc_t1 = other.acc_t1;
+    aom = other.aom;
     bc_inv = other.bc_inv;
 }
 
@@ -22,8 +23,11 @@ std::string Debris::toString()
 {
     std::stringstream stream;
     stream << "Debris: X:" << IOUtils::to_string(position)
+           << " ||X||: " << getHeight()
            << " v:" << IOUtils::to_string(velocity)
+           << " ||v||: " << getSpeed()
            << " a0:" << IOUtils::to_string(acc_t0)
+           << " ||a0||: " << getAccT0Norm()
            << " a1:" << IOUtils::to_string(acc_t1)
            << " ||X||: " << getHeight()
            << " ||v||: " << getSpeed();
@@ -92,6 +96,16 @@ std::array<double, 3>& Debris::getAccT1()
 void Debris::setAccT1(std::array<double, 3>& accT1)
 {
     acc_t1 = accT1;
+}
+
+double Debris::getAom()
+{
+    return aom;
+}
+
+void Debris::setAom(double aom)
+{
+    Debris::aom = aom;
 }
 
 double Debris::getBcInv()

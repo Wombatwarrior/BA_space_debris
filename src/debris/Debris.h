@@ -93,6 +93,7 @@ private:
     std::array<double, 3> acc_t1{}; /**< 3D vector representation of the debris
                                  acceleration at the current time step*/
     double bc_inv = 0; /**< (C_cA)/m is the inverse of the ballistic coefficient. Used for Acceleration::DragComponent::apply()*/
+    double aom = 0; /**< Area to mass ration*/
 public:
     /**
      * @brief Getter function for #position vector
@@ -149,6 +150,20 @@ public:
      * @param accT1 3D vector representation of the debris #acc_t1
      */
     void setAccT1(std::array<double, 3>& accT1);
+
+    /**
+     * @brief Getter function for #aom
+     *
+     * @return value of #aom
+     */
+    double getAom();
+
+    /**
+     * @brief Setter function for #aom
+     *
+     * @param aom New value #aom
+     */
+    void setAom(double aom);
 
     /**
      * @brief Getter function for #bc_inv

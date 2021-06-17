@@ -570,12 +570,14 @@ TEST_F(SolComponentTests, CalculationEquivalenceTest)
     std::array<std::array<double, 3>, num_debris> accelerations_2;
     std::array<double, 3> acc_total_dummy;
     double t = 0.1;
+    double d_ref;
     for (int j = 0; j < 10; ++j) {
         std::array<double, 6> sun_params = Acceleration::SolComponent::setUp(t * j);
         // calculate the acceleration for all particles using two different
         // functions
         for (int i = 0; i < num_debris; ++i) {
             Acceleration::SolComponent::apply(debris->getDebrisVector()[i],
+                d_ref,
                 sun_params, accelerations_1[i],
                 acc_total_dummy);
             calcSol(debris->getDebrisVector()[i], t * j, accelerations_2[i]);
@@ -649,12 +651,14 @@ TEST_F(SolComponentTests, CompareAfterSetupCalculations)
     std::array<std::array<double, 3>, num_debris> accelerations_2;
     std::array<double, 3> acc_total_dummy;
     double t = 0.1;
+    double d_ref;
     for (int j = 0; j < 10; ++j) {
         std::array<double, 6> sun_params = calcSolParams(t * j);
         // calculate the acceleration for all particles using two different
         // functions
         for (int i = 0; i < num_debris; ++i) {
             Acceleration::SolComponent::apply(debris->getDebrisVector()[i],
+                d_ref,
                 sun_params, accelerations_1[i],
                 acc_total_dummy);
             calcSol(debris->getDebrisVector()[i], t * j, accelerations_2[i]);
@@ -709,6 +713,67 @@ TEST_F(C22S22ComponentTests, CalculationEquivalenceTest)
             accelerations_3[i][1], abs_err);
         EXPECT_NEAR(accelerations_1[i][2] + accelerations_2[i][2],
             accelerations_3[i][2], abs_err);
+    }
+}
+
+/**
+ * Tests if the acceleration calculated using
+ * Acceleration::SRPComponent::apply() is the same as using a inefficient
+ * implementation
+ */
+TEST_F(SRPComponentTests, CalculationEquivalenceTest)
+{
+    const int num_debris = 9;
+    std::array<std::array<double, 3>, num_debris> accelerations_1;
+    std::array<std::array<double, 3>, num_debris> accelerations_2;
+    std::array<double, 3> acc_total_dummy;
+    double t = 0.1;
+    double d_ref = 0;
+    for (int j = 0; j < 10; ++j) {
+        std::array<double, 6> sun_params = Acceleration::SRPComponent::setUp(t * j);
+        // calculate the acceleration for all particles using two different
+        // functions
+        for (int i = 0; i < debris->getDebrisVector().size(); ++i) {
+            Acceleration::SRPComponent::apply(debris->getDebrisVector()[i],
+                d_ref,
+                sun_params, accelerations_1[i],
+                acc_total_dummy);
+            calcSRP(debris->getDebrisVector()[i], t * j, accelerations_2[i]);
+        }
+
+        // result is identical
+        double abs_err = 0;
+        for (int i = 0; i < debris->getDebrisVector().size(); ++i) {
+            EXPECT_NEAR(accelerations_1[i][0], accelerations_2[i][0], abs_err);
+            EXPECT_NEAR(accelerations_1[i][1], accelerations_2[i][1], abs_err);
+            EXPECT_NEAR(accelerations_1[i][2], accelerations_2[i][2], abs_err);
+        }
+    }
+}
+
+/**
+ * Tests if the acceleration calculated using
+ * Acceleration::SRPComponent::apply() is the same as some and calculated
+ * values
+ */
+TEST_F(SRPComponentTests, EquilavelnceWIthPreCalculatedTest)
+{
+    const int num_debris = 9;
+    std::array<std::array<double, 3>, num_debris> accelerations;
+    std::array<double, 3> acc_total_dummy;
+
+    // calculate the acceleration for all particles using two different functions
+    for (int i = 0; i < debris->getDebrisVector().size(); ++i) {
+        Acceleration::J2Component::apply(debris->getDebrisVector()[i],
+            accelerations[i], acc_total_dummy);
+    }
+
+    // 10e-22 fails, but e-21 passes
+    double abs_err = 1e-0;
+    for (int i = 0; i < num_debris; ++i) {
+        EXPECT_NEAR(accelerations[i][0], pre_calculated[i][0], abs_err);
+        EXPECT_NEAR(accelerations[i][1], pre_calculated[i][1], abs_err);
+        EXPECT_NEAR(accelerations[i][2], pre_calculated[i][2], abs_err);
     }
 }
 
