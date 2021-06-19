@@ -55,44 +55,44 @@ public:
      *
      * @return The string "Debris: X:#position v:#velocity a0:#acc_t0 a1:#acc_t1"
      */
-    std::string toString();
+    [[nodiscard]] std::string toString() const;
 
     /**
      * @brief Calculates distance from the origin of the coordinate frame
      *
      * @return Euclidean norm of the #position vector
      */
-    double getHeight();
+    [[nodiscard]] double getHeight() const;
 
     /**
      * @brief Calculates speed of the debris
      *
      * @return Euclidean norm of the #velocity vector
      */
-    double getSpeed();
+    [[nodiscard]] double getSpeed() const;
 
     /**
      * @brief Calculates the euclidean norm of the #acc_t0
      *
      * @return Calculates the euclidean norm of the #acc_t0
      */
-    double getAccT0Norm();
+    [[nodiscard]] double getAccT0Norm() const;
 
     /**
      * @brief Calculates the euclidean norm of the #acc_t1
      *
      * @return Calculates the euclidean norm of the #acc_t1
      */
-    double getAccT1Norm();
+    [[nodiscard]] double getAccT1Norm() const;
 
 private:
     std::array<double, 3>
-        position{}; /**< 3D vector representation of the debris position*/
+        position {}; /**< 3D vector representation of the debris position*/
     std::array<double, 3>
-        velocity{}; /**< 3D vector representation of the debris velocity*/
-    std::array<double, 3> acc_t0{}; /**< 3D vector representation of the debris
+        velocity {}; /**< 3D vector representation of the debris velocity*/
+    std::array<double, 3> acc_t0 {}; /**< 3D vector representation of the debris
                                  acceleration at the last time step*/
-    std::array<double, 3> acc_t1{}; /**< 3D vector representation of the debris
+    std::array<double, 3> acc_t1 {}; /**< 3D vector representation of the debris
                                  acceleration at the current time step*/
     double bc_inv = 0; /**< (C_cA)/m is the inverse of the ballistic coefficient. Used for Acceleration::DragComponent::apply()*/
     double aom = 0; /**< Area to mass ration*/
@@ -102,20 +102,22 @@ public:
      *
      * @return 3D vector representation of the debris #position
      */
-    std::array<double, 3>& getPosition();
+    [[nodiscard]] const std::array<double, 3>& getPosition() const;
+    std::array<double, 3>& getPosition() ;
 
     /**
      * @brief Setter function for #position vector
      *
      * @param position 3D vector representation of the debris #position
      */
-    void setPosition(std::array<double, 3>& position);
+    void setPosition(const std::array<double, 3>& position);
 
     /**
      * @brief Getter function for #velocity vector
      *
      * @return 3D vector representation of the debris #velocity
      */
+    [[nodiscard]] const std::array<double, 3>& getVelocity() const;
     std::array<double, 3>& getVelocity();
 
     /**
@@ -123,13 +125,14 @@ public:
      *
      * @param velocity 3D vector representation of the debris #velocity
      */
-    void setVelocity(std::array<double, 3>& velocity);
+    void setVelocity(const std::array<double, 3>& velocity);
 
     /**
      * @brief Getter function for #acc_t0 vector
      *
      * @return 3D vector representation of the debris #acc_t0
      */
+    [[nodiscard]] const std::array<double, 3>& getAccT0() const;
     std::array<double, 3>& getAccT0();
 
     /**
@@ -137,28 +140,29 @@ public:
      *
      * @param accT0 3D vector representation of the debris #acc_t0
      */
-    void setAccT0(std::array<double, 3>& accT0);
+    void setAccT0(const std::array<double, 3>& accT0);
 
     /**
      * @brief Getter function for #acc_t1 vector
      *
      * @return 3D vector representation of the debris #acc_t1
      */
-    std::array<double, 3>& getAccT1();
+    [[nodiscard]] const std::array<double, 3>& getAccT1() const;
+     std::array<double, 3>& getAccT1() ;
 
     /**
      * @brief Setter function for #acc_t1 vector
      *
      * @param accT1 3D vector representation of the debris #acc_t1
      */
-    void setAccT1(std::array<double, 3>& accT1);
+    void setAccT1(const std::array<double, 3>& accT1);
 
     /**
      * @brief Getter function for #aom
      *
      * @return value of #aom
      */
-    double getAom();
+    [[nodiscard]] double getAom() const;
 
     /**
      * @brief Setter function for #aom
@@ -172,7 +176,7 @@ public:
      *
      * @return Value of #bc_inv
      */
-    double getBcInv();
+    [[nodiscard]] double getBcInv() const;
 
     /**
      * @brief Setter function for #bc_inv

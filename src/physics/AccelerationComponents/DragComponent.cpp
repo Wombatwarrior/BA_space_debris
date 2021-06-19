@@ -4,11 +4,10 @@
 
 #include "DragComponent.h"
 
-namespace Acceleration {
-namespace DragComponent {
+namespace Acceleration::DragComponent {
     namespace {
     }
-    void apply(Debris::Debris& d,
+    void apply(const Debris::Debris& d,
         std::array<double, 3>& acc_drag,
         std::array<double, 3>& acc_total)
     {
@@ -28,5 +27,4 @@ namespace DragComponent {
         acc_total[1] += acc_drag[1];
         acc_total[2] += acc_drag[2];
     }
-} // namespace DragComponent
 } // namespace Acceleration

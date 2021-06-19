@@ -4,9 +4,8 @@
 
 #include "LunComponent.h"
 
-namespace Acceleration {
-namespace LunComponent {
-    const std::array<double, 6> setUp(double t)
+namespace Acceleration::LunComponent {
+    std::array<double, 6> setUp(double t)
     {
         // Eq 37
         const double phi_m = Physics::NU_SUN * t;
@@ -66,7 +65,7 @@ namespace LunComponent {
         // all the sin and cos terms have similar in [-1,1], so multiply them before
         // multiplying BIG r_m value of ~380000
         // Eq 47
-        std::array<double, 3> moon_pos;
+        std::array<double, 3> moon_pos{};
         double c_term = std::cos(lambda_m * Physics::RAD_FACTOR);
         double s_term = std::sin(lambda_m * Physics::RAD_FACTOR);
         moon_pos[0] = c_term;
@@ -105,7 +104,7 @@ namespace LunComponent {
         moon_params[5] = moon_params[2] * d2;
         return moon_params;
     }
-    void apply(Debris::Debris& d,
+    void apply(const Debris::Debris& d,
         const std::array<double, 6>& moon_params,
         std::array<double, 3>& acc_lun,
         std::array<double, 3>& acc_total)
@@ -125,5 +124,4 @@ namespace LunComponent {
         acc_total[1] += acc_lun[1];
         acc_total[2] += acc_lun[2];
     }
-} // namespace LunComponent
 } // namespace Acceleration

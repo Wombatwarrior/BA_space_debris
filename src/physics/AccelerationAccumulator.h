@@ -3,7 +3,7 @@
 //
 
 #pragma once
-#include <math.h>
+#include <cmath>
 
 #include <array>
 #include <numeric>
@@ -99,14 +99,14 @@ public:
      * - Acceleration::DragComponent::apply() if #config[Acceleration::DRAG]
      *
      */
-    void applyComponents();
+    void applyComponents() const;
 
     /**
      * @brief does the same as #applyComponents() plus output
      *
      * Calculates the needed acceleration components and writes the value for each one to a csv file
      */
-    void applyAmdWriteComponents();
+    void applyAmdWriteComponents() const;
 
 private:
     /**
@@ -124,11 +124,11 @@ private:
      * - #Acceleration::SRP
      * - #Acceleration::DRAG
      */
-    std::array<bool, 8> config;
+    std::array<bool, 8> config{};
     Debris::DebrisContainer*
         debris; /**< Reference to the Debris::DebrisContainer object holding the
              Debris::Debris objects to apply acceleration to*/
-    double t; /**< current time*/
+    double t = 0; /**< current time*/
     FileOutput* file_output; /**< used to write detailed output data during calculations */
 public:
     /**
@@ -136,20 +136,22 @@ public:
      *
      * @return Value of #config
      */
-    std::array<bool, 8>& getConfig();
+    [[nodiscard]] const std::array<bool, 8>& getConfig() const;
+    std::array<bool, 8>& getConfig() ;
 
     /**
      * @brief Setter function for #config
      *
      * @param config New value of #config
      */
-    void setConfig(std::array<bool, 8>& config);
+    void setConfig(const std::array<bool, 8>& config);
 
     /**
      * @brief Getter function for #debris
      *
      * @return Value of #debris
      */
+    [[nodiscard]] const Debris::DebrisContainer& getDebris() const;
     Debris::DebrisContainer& getDebris();
 
     /**
@@ -164,7 +166,7 @@ public:
      *
      * @return Value of #t
      */
-    double getT();
+    [[nodiscard]] double getT() const;
 
     /**
      * @brief Setter function for #t
@@ -178,6 +180,7 @@ public:
      *
      * @return Value of #file_output
      */
+    [[nodiscard]] const FileOutput& getFileOutput() const;
     FileOutput& getFileOutput();
 
     /**

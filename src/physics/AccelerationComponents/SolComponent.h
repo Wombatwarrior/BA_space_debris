@@ -6,17 +6,7 @@
 #include "../../debris/Debris.h"
 #include "../Constants.h"
 
-namespace Acceleration {
-
-/**
- * @namespace Acceleration::SolComponent
- *
- * @brief Encapsulates functionality to calculate acceleration for
- * Acceleration::SOL
- *
- * <a href="Math.pdf#page=4"> math reference subsection 1.4</a>
- */
-namespace SolComponent {
+namespace Acceleration::SolComponent {
     /**
      * @brief Precalculates values needed for Acceleration::SolComponent::apply()
      *
@@ -26,7 +16,7 @@ namespace SolComponent {
      * @return 6D vector
      * [X_sun,Y_sun,Z_sun,X_sun/||POS_sunY||,Y_sun/||POS_sun||,Z_sun/||POS_sun||]
      */
-    const std::array<double, 6> setUp(double t);
+    std::array<double, 6> setUp(double t);
     /**
      * @brief Calculates acceleration due to tidal forces caused by the sun
      *
@@ -39,10 +29,9 @@ namespace SolComponent {
      * @param acc_total Reference to an 3D vector to accumulate the accelerations
      * for all applied Acceleration::AccelerationComponent.
      */
-    void apply(Debris::Debris& d,
+    void apply(const Debris::Debris& d,
         double& d_ref,
         const std::array<double, 6>& sun_params,
         std::array<double, 3>& acc_sol,
         std::array<double, 3>& acc_total);
-} // namespace SolComponent
 } // namespace Acceleration

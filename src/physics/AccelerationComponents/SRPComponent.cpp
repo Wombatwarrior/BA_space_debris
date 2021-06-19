@@ -4,23 +4,22 @@
 
 #include "SRPComponent.h"
 
-namespace Acceleration {
-namespace SRPComponent {
+namespace Acceleration::SRPComponent {
     namespace {
         inline constexpr double getFactor()
         {
             return Physics::P_SRP * Physics::AU * Physics::AU;
         }
     }
-    const std::array<double, 6> setUp(double t)
+    std::array<double, 6> setUp(double t)
     {
         // calculation are the same as in the SolComponent setUp() function
         return Acceleration::SolComponent::setUp(t);
     }
 
-    void apply(Debris::Debris& d,
+    void apply(const Debris::Debris& d,
         double d_srp,
-        std::array<double, 6>& sun_params,
+        const std::array<double, 6>& sun_params,
         std::array<double, 3>& acc_srp,
         std::array<double, 3>& acc_total)
     {
@@ -34,12 +33,11 @@ namespace SRPComponent {
             d_srp = 1 / std::sqrt(d_srp * d_srp * d_srp);
         }
         // Eq 50
-        acc_srp[0] = d.getAom() * (acc_srp[0] * d_srp);
-        acc_srp[1] = d.getAom() * (acc_srp[1] * d_srp);
-        acc_srp[2] = d.getAom() * (acc_srp[2] * d_srp);
+        acc_srp[0] = d.getAom() * (getFactor()*d_srp*acc_srp[0]);
+        acc_srp[1] = d.getAom() * (getFactor()*d_srp*acc_srp[1]);
+        acc_srp[2] = d.getAom() * (getFactor()*d_srp*acc_srp[2]);
         acc_total[0] += acc_srp[0];
         acc_total[1] += acc_srp[1];
         acc_total[2] += acc_srp[2];
     }
-} // namespace SRPComponent
 } // namespace Acceleration

@@ -6,21 +6,7 @@
 #include "../../debris/Debris.h"
 #include "../Constants.h"
 
-namespace Acceleration {
-
-/**
- * @namespace Acceleration::C22S22Component
- *
- * @brief Encapsulates functionality to calculate acceleration for
- * Acceleration::C22 and Acceleration::S22 at once
- *
- * Encapsulates functionality to calculate acceleration for Acceleration::C22
- * and Acceleration::S22 at once, because many terms are shared between the two
- * calculations. If both Components are both set active use this.
- *
- * <a href="Math.pdf#page=2"> math reference subsection 1.3</a>
- */
-namespace C22S22Component {
+namespace Acceleration::C22S22Component {
     namespace {
         /**
          * @brief  Calculates factor of the calculations consisting only on constants
@@ -75,10 +61,9 @@ namespace C22S22Component {
      * @param acc_total Reference to an 3D vector to accumulate the accelerations
      * for all applied Acceleration::AccelerationComponent.
      */
-    void apply(Debris::Debris& d,
+    void apply(const Debris::Debris& d,
         double c_term,
         double s_term,
         std::array<double, 3>& acc_c22s22,
         std::array<double, 3>& acc_total);
-} // namespace C22S22Component
 } // namespace Acceleration

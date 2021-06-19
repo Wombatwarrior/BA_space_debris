@@ -6,6 +6,7 @@
 #include <filesystem>
 #include <fstream>
 #include <string>
+#include <utility>
 
 #include "../debris/DebrisContainer.h"
 
@@ -41,10 +42,10 @@ public:
      * @param input_file_type_arg FileInput::Type of the input file
      */
     FileInput(Debris::DebrisContainer& debris_arg,
-        std::string input_file_path_arg,
+        std::filesystem::path input_file_path_arg,
         Type input_file_type_arg)
         : debris(&debris_arg)
-        , input_file_path(input_file_path_arg)
+        , input_file_path(std::move(input_file_path_arg))
         , input_file_type(input_file_type_arg)
     {
         readDebrisData();
@@ -148,15 +149,15 @@ private:
     void readDebrisTXT();
 
     Debris::DebrisContainer*
-        debris; /**< Reference to a Debris::DebrisContainer object to add
+        debris = nullptr; /**< Reference to a Debris::DebrisContainer object to add
              Debris::Debris objects read from the input file*/
-    std::filesystem::path input_file_path; /**< Complete name of the input file containing
+    std::filesystem::path input_file_path{}; /**< Complete name of the input file containing
                                 the file extension*/
-    Type input_file_type; /**< InputFile::Type of the input file*/
-    double delta_t; /**< Time step to use in the simulation*/
-    double start_t; /**< Start time of the simulation*/
-    double end_t; /**< End time of the simulation*/
-    double write_delta_t; /**< Time interval to write output */
+    Type input_file_type = TXT; /**< InputFile::Type of the input file*/
+    double delta_t = 0; /**< Time step to use in the simulation*/
+    double start_t = 0; /**< Start time of the simulation*/
+    double end_t = 0; /**< End time of the simulation*/
+    double write_delta_t = 0; /**< Time interval to write output */
     /**
      * @brief 8D bool vector encoding the Acceleration::AccelerationComponent to
      * apply in the simulation.
@@ -172,7 +173,7 @@ private:
      * - #Acceleration::SRP
      * - #Acceleration::DRAG
      */
-    std::array<bool, 8> acc_config;
+    std::array<bool, 8> acc_config{};
 
 public:
     /**
@@ -180,6 +181,7 @@ public:
      *
      * @return Value of #debris
      */
+    [[nodiscard]] const Debris::DebrisContainer& getDebris() const;
     Debris::DebrisContainer& getDebris();
 
     /**
@@ -194,6 +196,7 @@ public:
      *
      * @return Value of #input_file_path
      */
+    [[nodiscard]] const std::filesystem::path& getInputFilePath() const;
     std::filesystem::path& getInputFilePath();
 
     /**
@@ -201,14 +204,14 @@ public:
      *
      * @param inputFilePath New value of #input_file_path
      */
-    void setInputFilePath(std::filesystem::path& inputFilePath);
+    void setInputFilePath(const std::filesystem::path& inputFilePath);
 
     /**
      * @brief Getter function for #input_file_type
      *
      * @return Value of #input_file_type
      */
-    Type getInputFileType();
+    [[nodiscard]] Type getInputFileType() const;
 
     /**
      * @brief Setter function for #input_file_type
@@ -222,7 +225,7 @@ public:
      *
      * @return Value of #delta_t
      */
-    double getDeltaT();
+    [[nodiscard]] double getDeltaT() const;
 
     /**
      * @brief Setter function for #write_delta_t
@@ -236,7 +239,7 @@ public:
      *
      * @return Value of #write_delta_t
      */
-    double getWriteDeltaT();
+    [[nodiscard]] double getWriteDeltaT() const;
 
     /**
      * @brief Setter function for #delta_t
@@ -250,7 +253,7 @@ public:
      *
      * @return Value of #start_t
      */
-    double getStartT();
+    [[nodiscard]] double getStartT() const;
 
     /**
      * @brief Setter function for #start_t
@@ -264,7 +267,7 @@ public:
      *
      * @return Value of #end_t
      */
-    double getEndT();
+    [[nodiscard]] double getEndT() const;
 
     /**
      * @brief Setter function for #end_t
@@ -278,6 +281,7 @@ public:
      *
      * @return Value of #acc_config
      */
+    [[nodiscard]] const std::array<bool, 8>& getAccConfig() const;
     std::array<bool, 8>& getAccConfig();
 
     /**
@@ -285,5 +289,5 @@ public:
      *
      * @param accConfig New value of #acc_config
      */
-    void setAccConfig(std::array<bool, 8>& accConfig);
+    void setAccConfig(const std::array<bool, 8>& accConfig);
 };

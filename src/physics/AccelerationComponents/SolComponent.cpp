@@ -4,9 +4,8 @@
 
 #include "SolComponent.h"
 
-namespace Acceleration {
-namespace SolComponent {
-    const std::array<double, 6> setUp(double t)
+namespace Acceleration::SolComponent {
+    std::array<double, 6> setUp(double t)
     {
         // Eq 24
         const double l = Physics::PHI_SUN_0 + Physics::NU_SUN * t;
@@ -38,7 +37,7 @@ namespace SolComponent {
         return sun_params;
     }
 
-    void apply(Debris::Debris& d,
+    void apply(const Debris::Debris& d,
         double& d_ref,
         const std::array<double, 6>& sun_params,
         std::array<double, 3>& acc_sol,
@@ -59,5 +58,4 @@ namespace SolComponent {
         acc_total[1] += acc_sol[1];
         acc_total[2] += acc_sol[2];
     }
-} // namespace SolComponent
 } // namespace Acceleration

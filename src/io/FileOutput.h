@@ -72,14 +72,14 @@ public:
      *
      * @param vec Reference to the 3D vector
      */
-    void writeAcc_value(std::array<double, 3>& vec);
+    void writeAcc_value(const std::array<double, 3>& vec);
 
     /**
      * @brief Writes the last 3D vector of a line to the output file
      *
      * @param vec Reference to the 3D vector
      */
-    void writeAcc_end(std::array<double, 3>& vec);
+    void writeAcc_end(const std::array<double, 3>& vec);
 
 private:
     /**
@@ -104,18 +104,19 @@ private:
         debris; /**< Reference to a Debris::DebrisContainer object to add
              Debris::Debris objects read from the input file*/
     std::filesystem::path output_file_path; /**< Path to the main output file*/
-    Type output_file_type; /**< FileOutput::Type of the output file*/
+    Type output_file_type = CSV; /**< FileOutput::Type of the output file*/
     std::ofstream out; /**< output file stream*/
-    double row_count; /**< keeps track of the row number for indexing the lines */
+    double row_count = 0; /**< keeps track of the row number for indexing the lines */
     std::filesystem::path acc_output_file_path; /**< Path to the acceleration output file*/
     std::ofstream acc_out; /**< output file stream for output of single acceleration components*/
-    double acc_row_count; /**< keeps track of the row number for indexing the lines of the acceleration data*/
+    double acc_row_count = 0; /**< keeps track of the row number for indexing the lines of the acceleration data*/
 public:
     /**
      * @brief Getter function for #debris
      *
      * @return Value of #debris
      */
+    const Debris::DebrisContainer& getDebris() const;
     Debris::DebrisContainer& getDebris();
 
     /**
@@ -130,6 +131,7 @@ public:
      *
      * @return Value of #output_file_path
      */
+    const std::filesystem::path& getOutputFilePath() const;
     std::filesystem::path& getOutputFilePath();
 
     /**
@@ -137,14 +139,14 @@ public:
      *
      * @param outputFilePath New value of #output_file_path
      */
-    void setOutputFilePath(std::filesystem::path& outputFilePath);
+    void setOutputFilePath(const std::filesystem::path& outputFilePath);
 
     /**
      * @brief Getter function for #output_file_type
      *
      * @return New value of #output_file_type
      */
-    Type getOutputFileType();
+    Type getOutputFileType() const;
 
     /**
      * @brief Setter function for #output_file_type
@@ -158,6 +160,7 @@ public:
       *
       * @return Value of #acc_output_file_path
       */
+    const std::filesystem::path& getAccOutputFilePath() const;
     std::filesystem::path& getAccOutputFilePath();
 
     /**
@@ -165,5 +168,5 @@ public:
      *
      * @param accOutputFilePath New value of #acc_output_file_path
      */
-    void setAccOutputFilePath(std::filesystem::path& accOutputFilePath);
+    void setAccOutputFilePath(const std::filesystem::path& accOutputFilePath);
 };

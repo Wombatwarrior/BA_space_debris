@@ -45,8 +45,8 @@ private:
 
     FileInput::Type input_file_type = FileInput::TXT; /**< Holds the type of the input file*/
     FileOutput::Type output_file_type = FileOutput::CSV; /**< Holds the type of the output file*/
-    std::filesystem::path input_file_path; /**< Path to the input file */
-    std::filesystem::path output_file_path; /**< Path to the main output file. USed to construct other output file paths */
+    std::filesystem::path input_file_path{}; /**< Path to the input file */
+    std::filesystem::path output_file_path{}; /**< Path to the main output file. USed to construct other output file paths */
 
 public:
     /**
@@ -54,7 +54,7 @@ public:
      *
      * @return Value of #input_file_type
      */
-    FileInput::Type getInputFileType();
+    [[nodiscard]] FileInput::Type getInputFileType() const;
 
     /**
      * @brief Setter function for #input_file_type
@@ -68,7 +68,7 @@ public:
      *
      * @return Value of #output_file_type
      */
-    FileOutput::Type getOutputFileType();
+    [[nodiscard]] FileOutput::Type getOutputFileType() const;
 
     /**
      * @brief Setter function for #output_file_type
@@ -89,13 +89,14 @@ public:
      *
      * @param inputFilePath New value of #input_file_path
      */
-    void setInputFilePath(std::filesystem::path& inputFilePath);
+    void setInputFilePath(const std::filesystem::path& inputFilePath);
 
     /**
      * @brief Getter function for #output_file_path
      *
      * @return Value of #output_file_path
      */
+    [[nodiscard]] const std::filesystem::path& getOutputFilePath() const;
     std::filesystem::path& getOutputFilePath();
 
     /**
@@ -103,5 +104,5 @@ public:
      *
      * @param outputFilePath New value of #output_file_path
      */
-    void setOutputFilePath(std::filesystem::path& outputFilePath);
+    void setOutputFilePath(const std::filesystem::path& outputFilePath);
 };

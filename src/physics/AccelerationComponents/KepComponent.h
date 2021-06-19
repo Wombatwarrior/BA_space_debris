@@ -6,17 +6,7 @@
 #include "../../debris/Debris.h"
 #include "../Constants.h"
 
-namespace Acceleration {
-
-/**
- * @namespace Acceleration::KepComponent
- *
- * @brief Encapsulates functionality to calculate acceleration for
- * Acceleration::KEP
- *
- * <a href="Math.pdf#page=1"> math reference subsection 1.1</a>
- */
-namespace KepComponent {
+namespace Acceleration::KepComponent {
     /**
      * @brief Calculates acceleration due to earth gravity. Assuming the earth as a
      * point mass
@@ -27,8 +17,7 @@ namespace KepComponent {
      * @param acc_total Reference to an 3D vector to accumulate the accelerations
      * for all applied Acceleration::AccelerationComponent.
      */
-    void apply(Debris::Debris& d,
+    void apply(const Debris::Debris& d,
         std::array<double, 3>& acc_kep,
         std::array<double, 3>& acc_total);
-} // namespace KepComponent
 } // namespace Acceleration

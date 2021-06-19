@@ -35,7 +35,7 @@ public:
      *
      * @param debris Reference to the Debris object to add
      */
-    void addDebris(Debris& debris);
+    void addDebris(const Debris& debris);
 
     /**
      * @brief Clear the #debris_vector
@@ -63,6 +63,7 @@ public:
      *
      * @return Value of #debris_vector
      */
+    [[nodiscard]] const std::vector<Debris>& getDebrisVector() const;
     std::vector<Debris>& getDebrisVector();
 
     /**

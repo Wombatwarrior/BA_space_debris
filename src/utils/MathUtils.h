@@ -3,7 +3,7 @@
 //
 
 #include <array>
-#include <math.h>
+#include <cmath>
 #include <numeric>
 
 namespace MathUtils {

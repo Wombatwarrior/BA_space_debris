@@ -6,16 +6,7 @@
 #include "../../debris/Debris.h"
 #include "../Constants.h"
 
-namespace Acceleration {
-/**
- * @namespace Acceleration::LunComponent
- *
- * @brief Encapsulates functionality to calculate acceleration for
- * Acceleration::LUN
- *
- * <a href="Math.pdf#page=5"> math reference subsection 1.5</a>
- */
-namespace LunComponent {
+namespace Acceleration::LunComponent {
     /**
      * @brief Precalculates values needed for Acceleration::LunComponent::apply()
      *
@@ -25,7 +16,7 @@ namespace LunComponent {
      * @return 6D vector
      * [X_moon,Y_moon,Z_moon,X_moon/||POS_moon||,Y_moon/||POS_moon||,Z_moon/||POS_moon||]
      */
-    const std::array<double, 6> setUp(double t);
+    std::array<double, 6> setUp(double t);
     /**
      * @brief Calculates acceleration due to tidal forces caused by the moon
      *
@@ -37,9 +28,8 @@ namespace LunComponent {
      * @param acc_total Reference to an 3D vector to accumulate the accelerations
      * for all applied Acceleration::AccelerationComponent.
      */
-    void apply(Debris::Debris& d,
+    void apply(const Debris::Debris& d,
         const std::array<double, 6>& moon_params,
         std::array<double, 3>& acc_lun,
         std::array<double, 3>& acc_total);
-} // namespace LunComponent
 } // namespace Acceleration

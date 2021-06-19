@@ -6,7 +6,7 @@
 namespace Debris {
 
 Debris::Debris()
-= default;
+    = default;
 
 Debris::Debris(const Debris& other)
 {
@@ -19,7 +19,8 @@ Debris::Debris(const Debris& other)
 }
 
 Debris::~Debris() = default;
-std::string Debris::toString()
+
+std::string Debris::toString() const
 {
     std::stringstream stream;
     stream << "Debris: X:" << IOUtils::to_string(position)
@@ -34,24 +35,29 @@ std::string Debris::toString()
     return stream.str();
 }
 
-double Debris::getHeight()
+double Debris::getHeight() const
 {
     return MathUtils::euclideanNorm(position);
 }
 
-double Debris::getSpeed()
+double Debris::getSpeed() const
 {
     return MathUtils::euclideanNorm(velocity);
 }
 
-double Debris::getAccT0Norm()
+double Debris::getAccT0Norm() const
 {
     return MathUtils::euclideanNorm(acc_t0);
 }
 
-double Debris::getAccT1Norm()
+double Debris::getAccT1Norm() const
 {
     return MathUtils::euclideanNorm(acc_t1);
+}
+
+const std::array<double, 3>& Debris::getPosition() const
+{
+    return position;
 }
 
 std::array<double, 3>& Debris::getPosition()
@@ -59,9 +65,14 @@ std::array<double, 3>& Debris::getPosition()
     return position;
 }
 
-void Debris::setPosition(std::array<double, 3>& position)
+void Debris::setPosition(const std::array<double, 3>& position)
 {
     Debris::position = position;
+}
+
+const std::array<double, 3>& Debris::getVelocity() const
+{
+    return velocity;
 }
 
 std::array<double, 3>& Debris::getVelocity()
@@ -69,9 +80,14 @@ std::array<double, 3>& Debris::getVelocity()
     return velocity;
 }
 
-void Debris::setVelocity(std::array<double, 3>& velocity)
+void Debris::setVelocity(const std::array<double, 3>& velocity)
 {
     Debris::velocity = velocity;
+}
+
+const std::array<double, 3>& Debris::getAccT0() const
+{
+    return acc_t0;
 }
 
 std::array<double, 3>& Debris::getAccT0()
@@ -79,9 +95,14 @@ std::array<double, 3>& Debris::getAccT0()
     return acc_t0;
 }
 
-void Debris::setAccT0(std::array<double, 3>& accT0)
+void Debris::setAccT0(const std::array<double, 3>& accT0)
 {
     acc_t0 = accT0;
+}
+
+const std::array<double, 3>& Debris::getAccT1() const
+{
+    return acc_t1;
 }
 
 std::array<double, 3>& Debris::getAccT1()
@@ -89,27 +110,27 @@ std::array<double, 3>& Debris::getAccT1()
     return acc_t1;
 }
 
-void Debris::setAccT1(std::array<double, 3>& accT1)
+void Debris::setAccT1(const std::array<double, 3>& accT1)
 {
     acc_t1 = accT1;
 }
 
-double Debris::getAom()
+double Debris::getAom() const
 {
     return aom;
 }
 
-void Debris::setAom(double aom)
+void Debris::setAom(const double aom)
 {
     Debris::aom = aom;
 }
 
-double Debris::getBcInv()
+double Debris::getBcInv() const
 {
     return bc_inv;
 }
 
-void Debris::setBcInv(double bcInv)
+void Debris::setBcInv(const double bcInv)
 {
     bc_inv = bcInv;
 }

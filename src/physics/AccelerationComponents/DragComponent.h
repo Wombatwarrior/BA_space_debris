@@ -6,17 +6,7 @@
 #include "../../debris/Debris.h"
 #include "../Constants.h"
 
-namespace Acceleration {
-
-/**
- * @namespace Acceleration::DragComponent
- *
- * @brief Encapsulates functionality to calculate acceleration for
- * Acceleration::DRAG
- *
- * <a href="Math.pdf#page=8"> math reference subsection 1.8</a>
- */
-namespace DragComponent {
+namespace Acceleration::DragComponent {
     namespace {
     }
     /**
@@ -29,8 +19,7 @@ namespace DragComponent {
      * @param acc_total Reference to an 3D vector to accumulate the accelerations
      * for all applied Acceleration::AccelerationComponent.
      */
-    void apply(Debris::Debris& d,
+    void apply(const Debris::Debris& d,
         std::array<double, 3>& acc_drag,
         std::array<double, 3>& acc_total);
-} // namespace DragComponent
 } // namespace Acceleration
