@@ -28,7 +28,7 @@ public:
         Acceleration::AccelerationAccumulator& accumulator_arg,
         double delta_t_arg)
         : debris(&debris_arg)
-        , accumulator(accumulator_arg)
+        , accumulator(&accumulator_arg)
         , delta_t(delta_t_arg) {};
 
     /**
@@ -49,7 +49,7 @@ public:
      *
      * @param write_time_step if true all calculated acceleration components are writen to a file
      */
-    void integrate(bool write_time_step = false);
+    void integrate(bool write_time_step = false) const;
 
     /**
      * @brief Calculates the new position
@@ -59,7 +59,7 @@ public:
      * with Debris::Debris::velocity and Debris::Debris::acc_t0
      *
      */
-    void calculatePosition();
+    void calculatePosition() const;
 
     /**
      * @brief Calculates the new velocities
@@ -69,7 +69,7 @@ public:
      * with Debris::Debris::acc_t0 and Debris::Debris::acc_t1
      *
      */
-    void calculateVelocity();
+    void calculateVelocity() const;
 
     /**
      * @brief Calculates te acceleration for the current time step
@@ -81,24 +81,24 @@ public:
      *
      * @param write_time_step if true all calculated acceleration components are writen to a file
      */
-    void calculateAcceleration(bool write_time_step);
+    void calculateAcceleration(bool write_time_step) const;
 
 private:
     Debris::DebrisContainer*
-        debris; /**< Reference to the Debris::DebrisContainer object holding the
+        debris = nullptr; /**< Reference to the Debris::DebrisContainer object holding the
              Debris::Debris objects to integrate for*/
-    Acceleration::AccelerationAccumulator&
-        accumulator; /**< Reference to the Acceleration::AccelerationAccumulator
+    Acceleration::AccelerationAccumulator*
+        accumulator = nullptr; /**< Reference to the Acceleration::AccelerationAccumulator
                    object to calculate acceleration for the current time
                    step*/
-    double delta_t; /**< Time step to Integrate over */
+    double delta_t = 0; /**< Time step to Integrate over */
 public:
     /**
      * @brief Getter function for #delta_t
      *
      * @return Value of #delta_t
      */
-    double getDeltaT();
+    [[nodiscard]] double getDeltaT() const;
 
     /**
      * @brief Setter function for #delta_t
@@ -112,6 +112,7 @@ public:
      *
      * @return Value of #accumulator
      */
+    [[nodiscard]] const Acceleration::AccelerationAccumulator& getAccumulator() const;
     Acceleration::AccelerationAccumulator& getAccumulator();
 
     /**
@@ -126,6 +127,7 @@ public:
      *
      * @return Value of #debris
      */
+    [[nodiscard]] const Debris::DebrisContainer& getDebris() const;
     Debris::DebrisContainer& getDebris();
 
     /**

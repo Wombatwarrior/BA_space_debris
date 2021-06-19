@@ -4,60 +4,8 @@
 
 #include "S22Component.h"
 
-namespace Acceleration {
-namespace S22Component {
+namespace Acceleration::S22Component {
     namespace {
-        inline double getFS22_x(double x, double y, double z)
-        {
-            double x2 = x * x;
-            double y2 = y * y;
-            const double n = getFactor_fst() * x2 * y;
-            // x2 = (x^2 + y^2 + z^2)
-            x2 = x2 + y2 + z * z;
-            double fst = x2;
-            // y2 = (x^2 + y^2 +z^2)^2
-            y2 = x2 * x2;
-            // x2 = (x^2 + y^2 +z^2)^3
-            x2 = x2 * y2;
-            // y2 = (x^2 + y^2 +z^2)^4
-            y2 = y2 * y2;
-            const double snd = (getFactor_snd() * y) / std::sqrt(y2 * fst);
-            fst = n / std::sqrt(y2 * x2);
-            return fst + snd;
-        }
-        inline double getFS22_y(double x, double y, double z)
-        {
-            double x2 = x * x;
-            double y2 = y * y;
-            const double n = getFactor_fst() * x * y2;
-            // x2 = (x^2 + y^2 + z^2)
-            x2 = x2 + y2 + z * z;
-            double fst = x2;
-            // y2 = (x^2 + y^2 +z^2)^2
-            y2 = x2 * x2;
-            // x2 = (x^2 + y^2 +z^2)^3
-            x2 = x2 * y2;
-            // y2 = (x^2 + y^2 +z^2)^4
-            y2 = y2 * y2;
-            const double snd = (getFactor_snd() * x) / std::sqrt(y2 * fst);
-            fst = n / std::sqrt(y2 * x2);
-            return fst + snd;
-        }
-        inline double getFS22_z(double x, double y, double z)
-        {
-            const double n = getFactor_fst() * x * y * z;
-            // x2 = x^2 + y^2 +z^2
-            double x2 = x * x + y * y + z * z;
-            // y2 = (x^2 + y^2 +z^2)^2
-            double y2 = x2 * x2;
-            // x2 = (x^2 + y^2 +z^2)^3
-            x2 = x2 * y2;
-            // y2 = (x^2 + y^2 +z^2)^4
-            y2 = y2 * y2;
-            // y2 = (x^2 + y^2 +z^2)^(7/2)
-            y2 = std::sqrt(y2 * x2);
-            return n / y2;
-        }
         // Eq 14
         inline constexpr double getFactor_fst()
         {
@@ -69,7 +17,7 @@ namespace S22Component {
             return std::sqrt(15) * Physics::GM_EARTH * Physics::R_EARTH * Physics::R_EARTH * Physics::S_22;
         }
     } // namespace
-    void apply(Debris::Debris& d,
+    void apply(const Debris::Debris& d,
         double c_term,
         double s_term,
         std::array<double, 3>& acc_s22,
@@ -106,5 +54,4 @@ namespace S22Component {
         acc_total[1] += acc_s22[1];
         acc_total[2] += acc_s22[2];
     }
-} // namespace S22Component
 } // namespace Acceleration

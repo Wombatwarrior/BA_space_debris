@@ -4,11 +4,11 @@
 
 #include "DebrisContainer.h"
 namespace Debris {
-DebrisContainer::DebrisContainer() { }
+DebrisContainer::DebrisContainer() = default;
 
-DebrisContainer::~DebrisContainer() { }
+DebrisContainer::~DebrisContainer() = default;
 
-void DebrisContainer::addDebris(Debris& debris)
+void DebrisContainer::addDebris(const Debris& debris)
 {
     debris_vector.push_back(debris);
 }
@@ -25,6 +25,11 @@ void DebrisContainer::shiftAcceleration()
         d.setAccT0(d.getAccT1());
         d.setAccT1(new_acc);
     }
+}
+
+const std::vector<Debris>& DebrisContainer::getDebrisVector() const
+{
+    return debris_vector;
 }
 
 std::vector<Debris>& DebrisContainer::getDebrisVector()

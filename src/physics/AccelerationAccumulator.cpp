@@ -7,9 +7,9 @@
 #include "AccelerationAccumulator.h"
 
 namespace Acceleration {
-AccelerationAccumulator::~AccelerationAccumulator() { }
+AccelerationAccumulator::~AccelerationAccumulator() = default;
 
-void AccelerationAccumulator::applyComponents()
+void AccelerationAccumulator::applyComponents() const
 {
     // will be modified by the apply functions
     std::array<double, 3> new_acc_total { 0, 0, 0 };
@@ -18,12 +18,12 @@ void AccelerationAccumulator::applyComponents()
     // are constant for this time step
     double c_term;
     double s_term;
-    std::array<double, 6> sun_params;
+    std::array<double, 6> sun_params{};
     // setup only needed for SolComponent and SRPComponent
     if (config[SOL] || config[SRP]) {
         sun_params = SolComponent::setUp(t);
     }
-    std::array<double, 6> moon_params;
+    std::array<double, 6> moon_params{};
     // setup only needed for LunComponent
     if (config[LUN]) {
         moon_params = LunComponent::setUp(t);
@@ -36,7 +36,7 @@ void AccelerationAccumulator::applyComponents()
     }
 
     debris->shiftAcceleration();
-    for (auto& d : debris->getDebrisVector()) {
+    for (auto& d : debris->getDebrisVector()){
         new_acc_total[0] = 0;
         new_acc_total[1] = 0;
         new_acc_total[2] = 0;
@@ -84,7 +84,7 @@ void AccelerationAccumulator::applyComponents()
     }
 }
 
-void AccelerationAccumulator::applyAmdWriteComponents()
+void AccelerationAccumulator::applyAmdWriteComponents() const
 {
     // will be modified by the apply functions
     std::array<double, 3> new_acc_total { 0, 0, 0 };
@@ -93,12 +93,12 @@ void AccelerationAccumulator::applyAmdWriteComponents()
     // are constant for this time step
     double c_term;
     double s_term;
-    std::array<double, 6> sun_params;
+    std::array<double, 6> sun_params{};
     // setup only needed for SolComponent and SRPComponent
     if (config[SOL] || config[SRP]) {
         sun_params = SolComponent::setUp(t);
     }
-    std::array<double, 6> moon_params;
+    std::array<double, 6> moon_params{};
     // setup only needed for LunComponent
     if (config[LUN]) {
         moon_params = LunComponent::setUp(t);
@@ -140,12 +140,10 @@ void AccelerationAccumulator::applyAmdWriteComponents()
             file_output->writeAcc_value(new_acc_component);
         }
         if (config[SOL]) {
-            std::array<double, 6> sun_params = SolComponent::setUp(t);
             SolComponent::apply(d, d_srp, sun_params, new_acc_component, new_acc_total);
             file_output->writeAcc_value(new_acc_component);
         }
         if (config[LUN]) {
-            const std::array<double, 6> moon_params = LunComponent::setUp(t);
             LunComponent::apply(d, moon_params, new_acc_component, new_acc_total);
             file_output->writeAcc_value(new_acc_component);
         }
@@ -162,14 +160,24 @@ void AccelerationAccumulator::applyAmdWriteComponents()
     }
 }
 
+const std::array<bool, 8>& AccelerationAccumulator::getConfig() const
+{
+    return config;
+}
+
 std::array<bool, 8>& AccelerationAccumulator::getConfig()
 {
     return config;
 }
 
-void AccelerationAccumulator::setConfig(std::array<bool, 8>& config)
+void AccelerationAccumulator::setConfig(const std::array<bool, 8>& config)
 {
     AccelerationAccumulator::config = config;
+}
+
+const Debris::DebrisContainer& AccelerationAccumulator::getDebris() const
+{
+    return *debris;
 }
 
 Debris::DebrisContainer& AccelerationAccumulator::getDebris()
@@ -182,7 +190,7 @@ void AccelerationAccumulator::setDebris(Debris::DebrisContainer& debris)
     AccelerationAccumulator::debris = &debris;
 }
 
-double AccelerationAccumulator::getT()
+double AccelerationAccumulator::getT() const
 {
     return t;
 }
@@ -190,6 +198,11 @@ double AccelerationAccumulator::getT()
 void AccelerationAccumulator::setT(double t)
 {
     AccelerationAccumulator::t = t;
+}
+
+const FileOutput& AccelerationAccumulator::getFileOutput() const
+{
+    return *file_output;
 }
 
 FileOutput& AccelerationAccumulator::getFileOutput()

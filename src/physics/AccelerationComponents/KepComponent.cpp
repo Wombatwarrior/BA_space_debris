@@ -4,9 +4,8 @@
 
 #include "KepComponent.h"
 
-namespace Acceleration {
-namespace KepComponent {
-    void apply(Debris::Debris& d,
+namespace Acceleration::KepComponent {
+    void apply(const Debris::Debris& d,
         std::array<double, 3>& acc_kep,
         std::array<double, 3>& acc_total)
     {
@@ -26,5 +25,4 @@ namespace KepComponent {
         acc_total[1] += acc_kep[1];
         acc_total[2] += acc_kep[2];
     }
-} // namespace KepComponent
 } // namespace Acceleration

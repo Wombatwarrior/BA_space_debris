@@ -117,16 +117,21 @@ void FileOutput::writeAcc_start(double t)
     acc_out << t << ',';
 }
 
-void FileOutput::writeAcc_value(std::array<double, 3>& vec)
+void FileOutput::writeAcc_value(const std::array<double, 3>& vec)
 {
     IOUtils::to_ostream(vec, acc_out);
     acc_out << "," << MathUtils::euclideanNorm(vec) << ",";
 }
 
-void FileOutput::writeAcc_end(std::array<double, 3>& vec)
+void FileOutput::writeAcc_end(const std::array<double, 3>& vec)
 {
     IOUtils::to_ostream(vec, acc_out);
     acc_out << "," << MathUtils::euclideanNorm(vec) << "\n";
+}
+
+const Debris::DebrisContainer& FileOutput::getDebris() const
+{
+    return *debris;
 }
 
 Debris::DebrisContainer& FileOutput::getDebris()
@@ -139,17 +144,22 @@ void FileOutput::setDebris(Debris::DebrisContainer& debris)
     FileOutput::debris = &debris;
 }
 
+const std::filesystem::path& FileOutput::getOutputFilePath() const
+{
+    return output_file_path;
+}
+
 std::filesystem::path& FileOutput::getOutputFilePath()
 {
     return output_file_path;
 }
 
-void FileOutput::setOutputFilePath(std::filesystem::path& outputFilePath)
+void FileOutput::setOutputFilePath(const std::filesystem::path& outputFilePath)
 {
     output_file_path = outputFilePath;
 }
 
-FileOutput::Type FileOutput::getOutputFileType()
+FileOutput::Type FileOutput::getOutputFileType() const
 {
     return output_file_type;
 }
@@ -159,12 +169,17 @@ void FileOutput::setOutputFileType(FileOutput::Type outputFileType)
     output_file_type = outputFileType;
 }
 
+const std::filesystem::path& FileOutput::getAccOutputFilePath() const
+{
+    return acc_output_file_path;
+}
+
 std::filesystem::path& FileOutput::getAccOutputFilePath()
 {
     return acc_output_file_path;
 }
 
-void FileOutput::setAccOutputFilePath(std::filesystem::path& accOutputFilePath)
+void FileOutput::setAccOutputFilePath(const std::filesystem::path& accOutputFilePath)
 {
     acc_output_file_path = accOutputFilePath;
 }

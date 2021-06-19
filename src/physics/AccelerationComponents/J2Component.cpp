@@ -4,16 +4,15 @@
 
 #include "J2Component.h"
 
-namespace Acceleration {
-namespace J2Component {
+namespace Acceleration::J2Component {
     namespace {
         // Eq 6
-        inline const double getFactor_fst()
+        inline constexpr double getFactor_fst()
         {
-            return 0.5 * Physics::GM_EARTH * Physics::R_EARTH * Physics::R_EARTH * std::sqrt(5.0) * Physics::C_20;
+            return 0.5 * Physics::GM_EARTH * Physics::R_EARTH * Physics::R_EARTH * std::sqrt(5) * Physics::C_20;
         }
     } // namespace
-    void apply(Debris::Debris& d,
+    void apply(const Debris::Debris& d,
         std::array<double, 3>& acc_j2,
         std::array<double, 3>& acc_total)
     {
@@ -36,5 +35,4 @@ namespace J2Component {
         acc_total[1] += acc_j2[1];
         acc_total[2] += acc_j2[2];
     }
-} // namespace J2Component
 } // namespace Acceleration

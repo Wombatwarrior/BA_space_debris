@@ -652,6 +652,7 @@ protected:
                 std::array<double, 3> pos { 0, 0, 0 };
                 pos[j] = (i + 2) * 3.5e3;
                 d.setPosition(pos);
+                d.setAom(i*j+0.1);
                 debris->addDebris(d);
             }
         }
@@ -719,6 +720,7 @@ protected:
                 std::array<double, 3> pos { 0, 0, 0 };
                 pos[j] = (i + 2) * 3.5e3;
                 d.setPosition(pos);
+                d.setBcInv(i*j+0.1);
                 debris->addDebris(d);
             }
         }
@@ -728,6 +730,7 @@ protected:
             pos[(i + 1) % 3] = 4321;
             pos[(i + 2) % 3] = 3210;
             d.setPosition(pos);
+            d.setBcInv(i+0.1);
             debris->addDebris(d);
         }
     }

@@ -6,48 +6,8 @@
 #include "../../debris/Debris.h"
 #include "../Constants.h"
 
-namespace Acceleration {
-
-/**
- * @namespace Acceleration::C22Component
- *
- * @brief Encapsulates functionality to calculate acceleration for
- * Acceleration::C22
- *
- * <a href="Math.pdf#page=2"> math reference subsection 1.3</a> *
- */
-namespace C22Component {
+namespace Acceleration::C22Component {
     namespace {
-        /**
-         * @brief Calculate terms for the x component of C22
-         * @deprecated
-         * @param x
-         * @param y
-         * @param z
-         * @return
-         */
-        inline double getFC22_x(double x, double y, double z);
-
-        /**
-         * @brief Calculate terms for the y component of C22
-         * @deprecated
-         * @param x
-         * @param y
-         * @param z
-         * @return
-         */
-        inline double getFC22_y(double x, double y, double z);
-
-        /**
-         * @brief Calculate terms for the z component of C22
-         * @deprecated
-         * @param x
-         * @param y
-         * @param z
-         * @return
-         */
-        inline double getFC22_z(double x, double y, double z);
-
         /**
          * @brief Constant factor for the first C22 term
          *
@@ -76,10 +36,9 @@ namespace C22Component {
      * @param acc_total Reference to an 3D vector to accumulate the accelerations
      * for all applied Acceleration::AccelerationComponent.
      */
-    void apply(Debris::Debris& d,
+    void apply(const Debris::Debris& d,
         double c_term,
         double s_term,
         std::array<double, 3>& acc_c22,
         std::array<double, 3>& acc_total);
-} // namespace C22Component
 } // namespace Acceleration

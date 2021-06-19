@@ -4,21 +4,21 @@
 
 #include "Integrator.h"
 
-Integrator::~Integrator() { }
+Integrator::~Integrator() = default;
 
-void Integrator::integrate(bool write_time_step)
+void Integrator::integrate(bool write_time_step) const
 {
     calculateAcceleration(write_time_step);
     calculatePosition();
     calculateVelocity();
     // update time
-    accumulator.setT(accumulator.getT() + delta_t);
+    accumulator->setT(accumulator->getT() + delta_t);
 }
 
-void Integrator::calculatePosition()
+void Integrator::calculatePosition() const
 {
     double factor = delta_t * delta_t * 0.5;
-    std::array<double, 3> new_pos;
+    std::array<double, 3> new_pos{};
     for (auto& d : debris->getDebrisVector()) {
         new_pos = d.getPosition();
         new_pos[0] = new_pos[0] + delta_t * d.getVelocity()[0] + factor * d.getAccT0()[0];
@@ -28,10 +28,10 @@ void Integrator::calculatePosition()
     }
 }
 
-void Integrator::calculateVelocity()
+void Integrator::calculateVelocity() const
 {
-    double factor = delta_t * 0.5;
-    std::array<double, 3> new_velocity;
+    const double factor = delta_t * 0.5;
+    std::array<double, 3> new_velocity{};
     for (auto& d : debris->getDebrisVector()) {
         new_velocity = d.getVelocity();
         new_velocity[0] = new_velocity[0] + factor * (d.getAccT0()[0] + d.getAccT1()[0]);
@@ -41,16 +41,16 @@ void Integrator::calculateVelocity()
     }
 }
 
-void Integrator::calculateAcceleration(bool write_time_step)
+void Integrator::calculateAcceleration(bool write_time_step) const
 {
     if (write_time_step) {
-        accumulator.applyAmdWriteComponents();
+        accumulator->applyAmdWriteComponents();
     } else {
-        accumulator.applyComponents();
+        accumulator->applyComponents();
     }
 }
 
-double Integrator::getDeltaT()
+double Integrator::getDeltaT() const
 {
     return delta_t;
 }
@@ -58,6 +58,11 @@ double Integrator::getDeltaT()
 void Integrator::setDeltaT(double deltaT)
 {
     delta_t = deltaT;
+}
+
+const Debris::DebrisContainer& Integrator::getDebris() const
+{
+    return *debris;
 }
 
 Debris::DebrisContainer& Integrator::getDebris()
@@ -70,13 +75,17 @@ void Integrator::setDebris(Debris::DebrisContainer& debris)
     Integrator::debris = &debris;
 }
 
-Acceleration::AccelerationAccumulator& Integrator::getAccumulator()
+const Acceleration::AccelerationAccumulator& Integrator::getAccumulator() const
 {
-    return accumulator;
+    return *accumulator;
 }
 
-void Integrator::setAccumulator(
-    Acceleration::AccelerationAccumulator& accumulator)
+Acceleration::AccelerationAccumulator& Integrator::getAccumulator()
 {
-    Integrator::accumulator = accumulator;
+    return *accumulator;
+}
+
+void Integrator::setAccumulator(Acceleration::AccelerationAccumulator& accumulator)
+{
+    Integrator::accumulator = &accumulator;
 }

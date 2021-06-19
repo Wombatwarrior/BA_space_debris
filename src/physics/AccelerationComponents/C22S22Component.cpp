@@ -4,8 +4,7 @@
 
 #include "C22S22Component.h"
 
-namespace Acceleration {
-namespace C22S22Component {
+namespace Acceleration::C22S22Component {
     namespace {
         // EQ 12
         inline constexpr double getFactor()
@@ -33,7 +32,7 @@ namespace C22S22Component {
             return getFactorS22_snd() * -5;
         }
     } // namespace
-    void apply(Debris::Debris& d,
+    void apply(const Debris::Debris& d,
         double c_term,
         double s_term,
         std::array<double, 3>& acc_c22s22,
@@ -81,5 +80,4 @@ namespace C22S22Component {
         acc_total[1] += acc_c22s22[1];
         acc_total[2] += acc_c22s22[2];
     }
-} // namespace C22S22Component
 } // namespace Acceleration

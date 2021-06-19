@@ -30,8 +30,8 @@ void FileInput::setDebrisValues(Debris::Debris& d, const std::string& line)
     auto position_split_pos = line.find('|');
     auto velocity_split_pos = line.find('|', position_split_pos + 1);
     auto acc_split_pos = line.find('|', velocity_split_pos + 1);
-    auto aom_split_pos = line.find("|", acc_split_pos + 1);
-    auto bc_inv_split_pos = line.find("|", aom_split_pos + 1);
+    auto aom_split_pos = line.find('|', acc_split_pos + 1);
+    auto bc_inv_split_pos = line.find('|', aom_split_pos + 1);
     std::string position_str = line.substr(0, position_split_pos);
     std::string velocity_str = line.substr(position_split_pos + 1, velocity_split_pos);
     std::string acc_t0_str = line.substr(velocity_split_pos + 1, acc_split_pos);
@@ -120,6 +120,11 @@ void FileInput::readDebrisTXT()
     }
 }
 
+const Debris::DebrisContainer& FileInput::getDebris() const
+{
+    return *debris;
+}
+
 Debris::DebrisContainer& FileInput::getDebris()
 {
     return *debris;
@@ -130,17 +135,22 @@ void FileInput::setDebris(Debris::DebrisContainer& debris)
     FileInput::debris = &debris;
 }
 
+const std::filesystem::path& FileInput::getInputFilePath() const
+{
+    return input_file_path;
+}
+
 std::filesystem::path& FileInput::getInputFilePath()
 {
     return input_file_path;
 }
 
-void FileInput::setInputFilePath(std::filesystem::path& inputFilePath)
+void FileInput::setInputFilePath(const std::filesystem::path& inputFilePath)
 {
     input_file_path = inputFilePath;
 }
 
-FileInput::Type FileInput::getInputFileType()
+FileInput::Type FileInput::getInputFileType() const
 {
     return input_file_type;
 }
@@ -150,7 +160,7 @@ void FileInput::setInputFileType(FileInput::Type inputFileType)
     input_file_type = inputFileType;
 }
 
-double FileInput::getDeltaT()
+double FileInput::getDeltaT() const
 {
     return delta_t;
 }
@@ -160,7 +170,7 @@ void FileInput::setDeltaT(double deltaT)
     delta_t = deltaT;
 }
 
-double FileInput::getWriteDeltaT()
+double FileInput::getWriteDeltaT() const
 {
     return write_delta_t;
 }
@@ -170,7 +180,7 @@ void FileInput::setWriteDeltaT(double writeDeltaT)
     write_delta_t = writeDeltaT;
 }
 
-double FileInput::getStartT()
+double FileInput::getStartT() const
 {
     return start_t;
 }
@@ -180,7 +190,7 @@ void FileInput::setStartT(double startT)
     start_t = startT;
 }
 
-double FileInput::getEndT()
+double FileInput::getEndT() const
 {
     return end_t;
 }
@@ -190,12 +200,17 @@ void FileInput::setEndT(double endT)
     end_t = endT;
 }
 
+const std::array<bool, 8>& FileInput::getAccConfig() const
+{
+    return acc_config;
+}
+
 std::array<bool, 8>& FileInput::getAccConfig()
 {
     return acc_config;
 }
 
-void FileInput::setAccConfig(std::array<bool, 8>& accConfig)
+void FileInput::setAccConfig(const std::array<bool, 8>& accConfig)
 {
     acc_config = accConfig;
 }

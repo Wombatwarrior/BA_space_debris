@@ -11,7 +11,7 @@
  */
 TEST_F(KepComponentTests, RadialSymmetryTest)
 {
-    std::array<std::array<double, 3>, 8> accelerations;
+    std::array<std::array<double, 3>, 8> accelerations{};
     for (auto& acc : accelerations) {
         acc[0] = 0;
         acc[1] = 0;
@@ -71,9 +71,9 @@ TEST_F(KepComponentTests, RadialSymmetryTest)
 TEST_F(KepComponentTests, CalculationEquivalenceTest)
 {
     const int num_debris = 15;
-    std::array<std::array<double, 3>, num_debris> accelerations_1;
-    std::array<std::array<double, 3>, num_debris> accelerations_2;
-    std::array<double, 3> acc_total_dummy;
+    std::array<std::array<double, 3>, num_debris> accelerations_1{};
+    std::array<std::array<double, 3>, num_debris> accelerations_2{};
+    std::array<double, 3> acc_total_dummy{};
 
     // calculate the acceleration for all particles using two different functions
     for (int i = 0; i < num_debris; ++i) {
@@ -99,8 +99,8 @@ TEST_F(KepComponentTests, CalculationEquivalenceTest)
 TEST_F(KepComponentTests, EquilavelnceWIthPreCalculatedTest)
 {
     const int num_debris = 9;
-    std::array<std::array<double, 3>, num_debris> accelerations;
-    std::array<double, 3> acc_total_dummy;
+    std::array<std::array<double, 3>, num_debris> accelerations{};
+    std::array<double, 3> acc_total_dummy{};
 
     // calculate the acceleration for all particles using two different functions
     for (int i = 6; i < 6 + num_debris; ++i) {
@@ -125,9 +125,9 @@ TEST_F(KepComponentTests, EquilavelnceWIthPreCalculatedTest)
 TEST_F(J2ComponentTests, CalculationEquivalenceTest)
 {
     const int num_debris = 9;
-    std::array<std::array<double, 3>, num_debris> accelerations_1;
-    std::array<std::array<double, 3>, num_debris> accelerations_2;
-    std::array<double, 3> acc_total_dummy;
+    std::array<std::array<double, 3>, num_debris> accelerations_1{};
+    std::array<std::array<double, 3>, num_debris> accelerations_2{};
+    std::array<double, 3> acc_total_dummy{};
 
     // calculate the acceleration for all particles using two different functions
     for (int i = 0; i < num_debris; ++i) {
@@ -153,8 +153,8 @@ TEST_F(J2ComponentTests, CalculationEquivalenceTest)
 TEST_F(J2ComponentTests, EquilavelnceWIthPreCalculatedTest)
 {
     const int num_debris = 9;
-    std::array<std::array<double, 3>, num_debris> accelerations;
-    std::array<double, 3> acc_total_dummy;
+    std::array<std::array<double, 3>, num_debris> accelerations{};
+    std::array<double, 3> acc_total_dummy{};
 
     // calculate the acceleration for all particles using two different functions
     for (int i = 0; i < num_debris; ++i) {
@@ -179,9 +179,9 @@ TEST_F(J2ComponentTests, EquilavelnceWIthPreCalculatedTest)
 TEST_F(C22ComponentTests, CalculationEquivalenceTest)
 {
     const int num_debris = 12;
-    std::array<std::array<double, 3>, num_debris> accelerations_1;
-    std::array<std::array<double, 3>, num_debris> accelerations_2;
-    std::array<double, 3> acc_total_dummy;
+    std::array<std::array<double, 3>, num_debris> accelerations_1{};
+    std::array<std::array<double, 3>, num_debris> accelerations_2{};
+    std::array<double, 3> acc_total_dummy{};
     double t = 0;
     double c_term = std::cos(Physics::THETA_G + Physics::NU_EARTH * t);
     double s_term = std::sin(Physics::THETA_G + Physics::NU_EARTH * t);
@@ -211,8 +211,8 @@ TEST_F(C22ComponentTests, CalculationEquivalenceTest)
 TEST_F(C22ComponentTests, EquilavelnceWIthPreCalculatedTest)
 {
     const int num_debris = 9;
-    std::array<std::array<double, 3>, num_debris> accelerations;
-    std::array<double, 3> acc_total_dummy;
+    std::array<std::array<double, 3>, num_debris> accelerations{};
+    std::array<double, 3> acc_total_dummy{};
     double t = 0;
     double c_term = std::cos(Physics::THETA_G + Physics::NU_EARTH * t);
     double s_term = std::sin(Physics::THETA_G + Physics::NU_EARTH * t);
@@ -241,9 +241,9 @@ TEST_F(C22ComponentTests, EquilavelnceWIthPreCalculatedTest)
 TEST_F(S22ComponentTests, CalculationEquivalenceTest)
 {
     const int num_debris = 12;
-    std::array<std::array<double, 3>, num_debris> accelerations_1;
-    std::array<std::array<double, 3>, num_debris> accelerations_2;
-    std::array<double, 3> acc_total_dummy;
+    std::array<std::array<double, 3>, num_debris> accelerations_1{};
+    std::array<std::array<double, 3>, num_debris> accelerations_2{};
+    std::array<double, 3> acc_total_dummy{};
     double t = 0;
     double c_term = std::cos(Physics::THETA_G + Physics::NU_EARTH * t);
     double s_term = std::sin(Physics::THETA_G + Physics::NU_EARTH * t);
@@ -273,8 +273,8 @@ TEST_F(S22ComponentTests, CalculationEquivalenceTest)
 TEST_F(S22ComponentTests, EquilavelnceWIthPreCalculatedTest)
 {
     const int num_debris = 9;
-    std::array<std::array<double, 3>, num_debris> accelerations;
-    std::array<double, 3> acc_total_dummy;
+    std::array<std::array<double, 3>, num_debris> accelerations{};
+    std::array<double, 3> acc_total_dummy{};
     double t = 0;
     double c_term = std::cos(Physics::THETA_G + Physics::NU_EARTH * t);
     double s_term = std::sin(Physics::THETA_G + Physics::NU_EARTH * t);
@@ -303,9 +303,9 @@ TEST_F(S22ComponentTests, EquilavelnceWIthPreCalculatedTest)
 TEST_F(LunComponentTests, CalculationEquivalenceTest)
 {
     const int num_debris = 9;
-    std::array<std::array<double, 3>, num_debris> accelerations_1;
-    std::array<std::array<double, 3>, num_debris> accelerations_2;
-    std::array<double, 3> acc_total_dummy;
+    std::array<std::array<double, 3>, num_debris> accelerations_1{};
+    std::array<std::array<double, 3>, num_debris> accelerations_2{};
+    std::array<double, 3> acc_total_dummy{};
     double t = 1;
 
     // test for different t values
@@ -338,8 +338,8 @@ TEST_F(LunComponentTests, CalculationEquivalenceTest)
 TEST_F(LunComponentTests, EquilavelnceWIthPreCalculatedTest)
 {
     const int num_debris = 9;
-    std::array<std::array<double, 3>, num_debris> accelerations;
-    std::array<double, 3> acc_total_dummy;
+    std::array<std::array<double, 3>, num_debris> accelerations{};
+    std::array<double, 3> acc_total_dummy{};
     double t = 0;
     std::array<double, 6> moon_params = Acceleration::LunComponent::setUp(t);
 
@@ -537,7 +537,7 @@ TEST_F(LunComponentTests, CompareTrigonometricTerms)
     ASSERT_NEAR(std::sin((f_m + lambda1 - l_0 + (412.0 / 3600) * s_2fm + (541.0 / 3600) * s_l1m) * M_PIf64 / 180),
         std::sin((f_m + lambda2 - l_0 + (412.0 / 3600) * std::sin((2 * f_m) * M_PIf64 / 180) + (541.0 / 3600) * std::sin((l1_m)*M_PIf64 / 180)) * M_PIf64 / 180),
         abs_err);
-    ;
+
     ASSERT_NEAR(s_fm * c_2dm - c_fm * s_2dm,
         std::sin((f_m - 2 * d_m) * M_PIf64 / 180), abs_err);
     ASSERT_NEAR(
@@ -566,9 +566,9 @@ TEST_F(LunComponentTests, CompareTrigonometricTerms)
 TEST_F(SolComponentTests, CalculationEquivalenceTest)
 {
     const int num_debris = 9;
-    std::array<std::array<double, 3>, num_debris> accelerations_1;
-    std::array<std::array<double, 3>, num_debris> accelerations_2;
-    std::array<double, 3> acc_total_dummy;
+    std::array<std::array<double, 3>, num_debris> accelerations_1{};
+    std::array<std::array<double, 3>, num_debris> accelerations_2{};
+    std::array<double, 3> acc_total_dummy{};
     double t = 0.1;
     double d_ref;
     for (int j = 0; j < 10; ++j) {
@@ -601,8 +601,8 @@ TEST_F(SolComponentTests, CalculationEquivalenceTest)
 TEST_F(SolComponentTests, EquilavelnceWIthPreCalculatedTest)
 {
     const int num_debris = 9;
-    std::array<std::array<double, 3>, num_debris> accelerations;
-    std::array<double, 3> acc_total_dummy;
+    std::array<std::array<double, 3>, num_debris> accelerations{};
+    std::array<double, 3> acc_total_dummy{};
 
     // calculate the acceleration for all particles using two different functions
     for (int i = 0; i < num_debris; ++i) {
@@ -647,9 +647,9 @@ TEST_F(SolComponentTests, CompareSetupFunction)
 TEST_F(SolComponentTests, CompareAfterSetupCalculations)
 {
     const int num_debris = 9;
-    std::array<std::array<double, 3>, num_debris> accelerations_1;
-    std::array<std::array<double, 3>, num_debris> accelerations_2;
-    std::array<double, 3> acc_total_dummy;
+    std::array<std::array<double, 3>, num_debris> accelerations_1{};
+    std::array<std::array<double, 3>, num_debris> accelerations_2{};
+    std::array<double, 3> acc_total_dummy{};
     double t = 0.1;
     double d_ref;
     for (int j = 0; j < 10; ++j) {
@@ -683,10 +683,10 @@ TEST_F(SolComponentTests, CompareAfterSetupCalculations)
 TEST_F(C22S22ComponentTests, CalculationEquivalenceTest)
 {
     const int num_debris = 12;
-    std::array<std::array<double, 3>, num_debris> accelerations_1;
-    std::array<std::array<double, 3>, num_debris> accelerations_2;
-    std::array<std::array<double, 3>, num_debris> accelerations_3;
-    std::array<double, 3> acc_total_dummy;
+    std::array<std::array<double, 3>, num_debris> accelerations_1{};
+    std::array<std::array<double, 3>, num_debris> accelerations_2{};
+    std::array<std::array<double, 3>, num_debris> accelerations_3{};
+    std::array<double, 3> acc_total_dummy{};
     double t = 0;
     double c_term = std::cos(Physics::THETA_G + Physics::NU_EARTH * t);
     double s_term = std::sin(Physics::THETA_G + Physics::NU_EARTH * t);
@@ -724,9 +724,9 @@ TEST_F(C22S22ComponentTests, CalculationEquivalenceTest)
 TEST_F(SRPComponentTests, CalculationEquivalenceTest)
 {
     const int num_debris = 9;
-    std::array<std::array<double, 3>, num_debris> accelerations_1;
-    std::array<std::array<double, 3>, num_debris> accelerations_2;
-    std::array<double, 3> acc_total_dummy;
+    std::array<std::array<double, 3>, num_debris> accelerations_1{};
+    std::array<std::array<double, 3>, num_debris> accelerations_2{};
+    std::array<double, 3> acc_total_dummy{};
     double t = 0.1;
     double d_ref = 0;
     for (int j = 0; j < 10; ++j) {
@@ -742,7 +742,7 @@ TEST_F(SRPComponentTests, CalculationEquivalenceTest)
         }
 
         // result is identical
-        double abs_err = 0;
+        double abs_err = 1e-19;
         for (int i = 0; i < debris->getDebrisVector().size(); ++i) {
             EXPECT_NEAR(accelerations_1[i][0], accelerations_2[i][0], abs_err);
             EXPECT_NEAR(accelerations_1[i][1], accelerations_2[i][1], abs_err);
@@ -759,8 +759,8 @@ TEST_F(SRPComponentTests, CalculationEquivalenceTest)
 TEST_F(SRPComponentTests, EquilavelnceWIthPreCalculatedTest)
 {
     const int num_debris = 9;
-    std::array<std::array<double, 3>, num_debris> accelerations;
-    std::array<double, 3> acc_total_dummy;
+    std::array<std::array<double, 3>, num_debris> accelerations{};
+    std::array<double, 3> acc_total_dummy{};
 
     // calculate the acceleration for all particles using two different functions
     for (int i = 0; i < debris->getDebrisVector().size(); ++i) {
@@ -785,9 +785,9 @@ TEST_F(SRPComponentTests, EquilavelnceWIthPreCalculatedTest)
 TEST_F(DragComponentTests, CalculationEquivalenceTest)
 {
     const int num_debris = 12;
-    std::array<std::array<double, 3>, num_debris> accelerations_1;
-    std::array<std::array<double, 3>, num_debris> accelerations_2;
-    std::array<double, 3> acc_total_dummy;
+    std::array<std::array<double, 3>, num_debris> accelerations_1{};
+    std::array<std::array<double, 3>, num_debris> accelerations_2{};
+    std::array<double, 3> acc_total_dummy{};
 
     // calculate the acceleration for all particles using two different functions
     for (int i = 0; i < num_debris; ++i) {
@@ -797,7 +797,7 @@ TEST_F(DragComponentTests, CalculationEquivalenceTest)
     }
 
     // no error
-    double abs_err = 0;
+    double abs_err = 1e-49;
     for (int i = 0; i < num_debris; ++i) {
         EXPECT_NEAR(accelerations_1[i][0], accelerations_2[i][0], abs_err);
         EXPECT_NEAR(accelerations_1[i][1], accelerations_2[i][1], abs_err);
@@ -813,8 +813,8 @@ TEST_F(DragComponentTests, CalculationEquivalenceTest)
 TEST_F(DragComponentTests, EquilavelnceWIthPreCalculatedTest)
 {
     const int num_debris = 9;
-    std::array<std::array<double, 3>, num_debris> accelerations;
-    std::array<double, 3> acc_total_dummy;
+    std::array<std::array<double, 3>, num_debris> accelerations{};
+    std::array<double, 3> acc_total_dummy{};
 
     // calculate the acceleration for all particles using two different functions
     for (int i = 0; i < num_debris; ++i) {
