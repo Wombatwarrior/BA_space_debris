@@ -10,16 +10,14 @@ jobs:
       - run: sudo apt-get install -y liblog4cxx-dev
       - run: sudo git clone https://github.com/bluescarni/heyoka.git
       - run: cd heyoka
-      - run: ls
+        working-directory: ./heyoka
       - run: mkdir build
-      - run: ls
-      - run: cd build
-      - run: ls
+        working-directory: ./build
       - run: cmake .. .
       - run: cmake --build . --target install
-      - run: cd ..
+        working-directory: ../..
       - run: mkdir build
-      - run: cd build
+        working-directory: ./build
       - run: cmake .. .
       - run: cmake --build . --target debris_sim_test
       - run: ./debris_sim_test
