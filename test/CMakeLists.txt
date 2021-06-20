@@ -4,8 +4,10 @@ file(GLOB_RECURSE TEST_SOURCES LIST_DIRECTORIES false *.h *.cpp)
 
 set(SOURCES ${TEST_SOURCES})
 
+find_package(heyoka REQUIRED)
+
 add_executable(${BINARY} ${TEST_SOURCES})
 
 add_test(NAME ${BINARY} COMMAND ${BINARY})
 
-target_link_libraries(${BINARY} PUBLIC ${PROJECT_BINARY}_lib gtest)
+target_link_libraries(${BINARY} PUBLIC ${PROJECT_BINARY}_lib gtest heyoka::heyoka)
