@@ -3,4 +3,162 @@
 //
 
 #pragma once
+#include "heyoka/heyoka.hpp"
+#include "physics/Constants.h"
+#include "physics/Integrator.h"
 #include "gtest/gtest.h"
+
+class CompareWithHeyokaTests : public ::testing::Test {
+protected:
+    //constants
+    const double GMe = 3.986004407799724e+5;
+    const double GMo = 1.32712440018e+11;
+    const double GMm = 4.9028e+3;
+    const double Re = 6378.1363;
+    const double C20 = -4.84165371736e-4;
+    const double C22 = 2.43914352398e-6;
+    const double S22 = -1.40016683654e-6;
+    const double theta_g = Physics::RAD_FACTOR * 280.4606;
+    const double nu_e = Physics::RAD_FACTOR * (4.178074622024230e-3);
+    const double nu_o = Physics::RAD_FACTOR * (1.1407410259335311e-5);
+    const double nu_ma = Physics::RAD_FACTOR * (1.512151961904581e-4);
+    const double nu_mp = Physics::RAD_FACTOR * (1.2893925235125941e-6);
+    const double nu_ms = Physics::RAD_FACTOR * (6.128913003523574e-7);
+    const double alpha_o = 1.49619e+8;
+    const double epsilon = Physics::RAD_FACTOR * 23.4392911;
+    const double phi_o = Physics::RAD_FACTOR * 357.5256;
+    const double Omega_plus_w = Physics::RAD_FACTOR * 282.94;
+    const double PSRP = 4.56e-3;
+
+    //heyoka variables
+    std::array<heyoka::expression, 3> pos;
+    std::array<heyoka::expression, 3> vel;
+
+    heyoka::taylor_adaptive<double>* ta;
+
+    virtual void SetUp()
+    {
+        //create heyoka variables
+        pos = heyoka::make_vars("X", "Y", "Z");
+        vel = heyoka::make_vars("VX", "VY", "VZ");
+
+        //Sun's position
+        auto lo = phi_o + nu_o * heyoka::time;
+        auto lambda_o = Omega_plus_w + lo + Physics::RAD_FACTOR * ((6892. / 3600) * heyoka::sin(lo) + (72. / 3600) * heyoka::sin(2. * lo));
+        auto ro = (149.619 - 2.499 * heyoka::cos(lo) - 0.021 * heyoka::cos(2. * lo)) * (1e6);
+
+        auto Xo = ro * heyoka::cos(lambda_o);
+        auto Yo = ro * heyoka::sin(lambda_o) * std::cos(epsilon);
+        auto Zo = ro * heyoka::sin(lambda_o) * std::sin(epsilon);
+
+        //Moon's position
+        auto phi_m = nu_o * heyoka::time;
+        auto phi_ma = nu_ma * heyoka::time;
+        auto phi_mp = nu_mp * heyoka::time;
+        auto phi_ms = nu_ms * heyoka::time;
+        auto L0 = phi_mp + phi_ma + Physics::RAD_FACTOR * 218.31617;
+        auto lm = phi_ma + Physics::RAD_FACTOR * 134.96292;
+        auto llm = phi_m + Physics::RAD_FACTOR * 357.5256;
+        auto Fm = phi_mp + phi_ma + phi_ms + Physics::RAD_FACTOR * 93.27283;
+        auto Dm = phi_mp + phi_ma - phi_m + Physics::RAD_FACTOR * 297.85027;
+
+        auto rm = 385000. - 20905. * heyoka::cos(lm) - 3699. * heyoka::cos(2. * Dm - lm) - 2956. * heyoka::cos(2. * Dm) - 570. * heyoka::cos(2. * lm) + 246. * heyoka::cos(2. * lm - 2. * Dm) - 205. * heyoka::cos(llm - 2. * Dm) - 171. * heyoka::cos(lm + 2. * Dm) - 152. * heyoka::cos(lm + llm - 2. * Dm);
+
+        auto lambda_m = L0 + Physics::RAD_FACTOR * ((22640. / 3600) * heyoka::sin(lm) + (769. / 3600) * heyoka::sin(2. * lm) - (4856. / 3600) * heyoka::sin(lm - 2. * Dm) + (2370. / 3600) * heyoka::sin(2. * Dm) - (668. / 3600) * heyoka::sin(llm) - (412. / 3600) * heyoka::sin(2. * Fm) - (212. / 3600) * heyoka::sin(2. * lm - 2. * Dm) - (206. / 3600) * heyoka::sin(lm + llm - 2. * Dm) + (192. / 3600) * heyoka::sin(lm + 2. * Dm) - (165. / 3600) * heyoka::sin(llm - 2. * Dm) + (148. / 3600) * heyoka::sin(lm - llm) - (125. / 3600) * heyoka::sin(Dm) - (110. / 3600) * heyoka::sin(lm + llm) - (55. / 3600) * heyoka::sin(2. * Fm - 2. * Dm));
+
+        auto Bm = Physics::RAD_FACTOR * ((18520. / 3600) * heyoka::sin(Fm + lambda_m - L0 + Physics::RAD_FACTOR * ((412. / 3600) * heyoka::sin(2. * Fm) + (541. / 3600) * heyoka::sin(llm))) - (526. / 3600) * heyoka::sin(Fm - 2. * Dm) + (44. / 3600) * heyoka::sin(lm + Fm - 2. * Dm) - (31. / 3600) * heyoka::sin(-lm + Fm - 2. * Dm) - (25. / 3600) * heyoka::sin(-2. * lm + Fm) - (23. / 3600) * heyoka::sin(llm + Fm - 2. * Dm) + (21. / 3600) * heyoka::sin(-lm + Fm) + (11. / 3600) * heyoka::sin(-llm + Fm - 2. * Dm));
+
+        auto Xm = heyoka::cos(Bm) * heyoka::cos(lambda_m) * rm;
+        auto Ym = -std::sin(epsilon) * heyoka::sin(Bm) * rm + std::cos(epsilon) * heyoka::cos(Bm) * heyoka::sin(lambda_m) * rm;
+        auto Zm = std::cos(epsilon) * heyoka::sin(Bm) * rm + heyoka::cos(Bm) * std::sin(epsilon) * heyoka::sin(lambda_m) * rm;
+
+        //Earth's Keplerian terms
+        auto magR2 = heyoka::pow(pos[0], 2.) + heyoka::pow(pos[1], 2.) + heyoka::pow(pos[2], 2.);
+        auto fKepX = -GMe * pos[0] / (heyoka::pow(magR2, (3. / 2)));
+        auto fKepY = -GMe * pos[1] / (heyoka::pow(magR2, (3. / 2)));
+        auto fKepZ = -GMe * pos[2] / (heyoka::pow(magR2, (3. / 2)));
+
+        //Earth's J2 terms
+        auto J2term1 = GMe * (std::pow(Re, 2)) * std::sqrt(5) * C20 / (2. * heyoka::pow(magR2, (1. / 2)));
+        auto J2term2 = 3. / (heyoka::pow(magR2, 2.));
+        auto J2term3 = 15. * (heyoka::pow(pos[2], 2.)) / (heyoka::pow(magR2, 3.));
+        auto fJ2X = J2term1 * pos[0] * (J2term2 - J2term3);
+        auto fJ2Y = J2term1 * pos[1] * (J2term2 - J2term3);
+        auto fJ2Z = J2term1 * pos[2] * (3. * J2term2 - J2term3);
+
+        //Earth's C22 and S22 terms
+        auto x = pos[0] * heyoka::cos(theta_g + nu_e * heyoka::time) + pos[1] * heyoka::sin(theta_g + nu_e * heyoka::time);
+        auto y = -pos[0] * heyoka::sin(theta_g + nu_e * heyoka::time) + pos[1] * heyoka::cos(theta_g + nu_e * heyoka::time);
+        auto z = pos[2];
+        auto magr2 = heyoka::pow(x, 2.) + heyoka::pow(y, 2.) + heyoka::pow(z, 2.);
+
+        auto C22term1 = 5 * GMe * (std::pow(Re, 2)) * std::sqrt(15) * C22 / (2. * heyoka::pow(magr2, (7. / 2)));
+        auto C22term2 = GMe * (std::pow(Re, 2)) * std::sqrt(15) * C22 / (heyoka::pow(magr2, (5. / 2)));
+        auto fC22x = C22term1 * x * (heyoka::pow(y, 2.) - heyoka::pow(x, 2.)) + C22term2 * x;
+        auto fC22y = C22term1 * y * (heyoka::pow(y, 2.) - heyoka::pow(x, 2.)) - C22term2 * y;
+        auto fC22z = C22term1 * z * (heyoka::pow(y, 2.) - heyoka::pow(x, 2.));
+
+        auto S22term1 = 5 * GMe * (std::pow(Re, 2)) * std::sqrt(15) * S22 / (heyoka::pow(magr2, (7. / 2)));
+        auto S22term2 = GMe * (std::pow(Re, 2)) * std::sqrt(15) * S22 / (heyoka::pow(magr2, (5. / 2)));
+        auto fS22x = -S22term1 * (heyoka::pow(x, 2.)) * y + S22term2 * y;
+        auto fS22y = -S22term1 * x * (heyoka::pow(y, 2.)) + S22term2 * x;
+        auto fS22z = -S22term1 * x * y * z;
+
+        auto fC22X = fC22x * heyoka::cos(theta_g + nu_e * heyoka::time) - fC22y * heyoka::sin(theta_g + nu_e * heyoka::time);
+        auto fC22Y = fC22x * heyoka::sin(theta_g + nu_e * heyoka::time) + fC22y * heyoka::cos(theta_g + nu_e * heyoka::time);
+        auto fC22Z = fC22z;
+
+        auto fS22X = fS22x * heyoka::cos(theta_g + nu_e * heyoka::time) - fS22y * heyoka::sin(theta_g + nu_e * heyoka::time);
+        auto fS22Y = fS22x * heyoka::sin(theta_g + nu_e * heyoka::time) + fS22y * heyoka::cos(theta_g + nu_e * heyoka::time);
+        auto fS22Z = fS22z;
+
+        //Sun's gravity
+        auto magRo2 = heyoka::pow(Xo, 2.) + heyoka::pow(Yo, 2.) + heyoka::pow(Zo, 2.);
+        auto magRRo2 = heyoka::pow((pos[0] - Xo), 2.) + heyoka::pow((pos[1] - Yo), 2.) + heyoka::pow((pos[2] - Zo), 2.);
+        auto fSunX = -GMo * ((pos[0] - Xo) / (heyoka::pow(magRRo2, (3. / 2))) + Xo / (heyoka::pow(magRo2, (3. / 2))));
+        auto fSunY = -GMo * ((pos[1] - Yo) / (heyoka::pow(magRRo2, (3. / 2))) + Yo / (heyoka::pow(magRo2, (3. / 2))));
+        auto fSunZ = -GMo * ((pos[2] - Zo) / (heyoka::pow(magRRo2, (3. / 2))) + Zo / (heyoka::pow(magRo2, (3. / 2))));
+
+        //Moon's gravity
+        auto magRm2 = heyoka::pow(Xm, 2.) + heyoka::pow(Ym, 2.) + heyoka::pow(Zm, 2.);
+        auto magRRm2 = heyoka::pow((pos[0] - Xm), 2.) + heyoka::pow((pos[1] - Ym), 2.) + heyoka::pow((pos[2] - Zm), 2.);
+        auto fMoonX = -GMm * ((pos[0] - Xm) / (heyoka::pow(magRRm2, (3. / 2))) + Xm / (heyoka::pow(magRm2, (3. / 2))));
+        auto fMoonY = -GMm * ((pos[1] - Ym) / (heyoka::pow(magRRm2, (3. / 2))) + Ym / (heyoka::pow(magRm2, (3. / 2))));
+        auto fMoonZ = -GMm * ((pos[2] - Zm) / (heyoka::pow(magRRm2, (3. / 2))) + Zm / (heyoka::pow(magRm2, (3. / 2))));
+
+        //Sun's radiation pressure (AOM is a heyoka parameter hy.par[0]. We
+        //will be able to set it later without recompiling the integartor)
+        auto SRPterm = heyoka::par[0] * PSRP * (std::pow(alpha_o, 2)) / (heyoka::pow(magRRo2, (3. / 2)));
+        auto fSRPX = SRPterm * (pos[0] - Xo);
+        auto fSRPY = SRPterm * (pos[1] - Yo);
+        auto fSRPZ = SRPterm * (pos[2] - Zo);
+
+        // EOM
+        auto dXdt = vel[0];
+        auto dYdt = vel[1];
+        auto dZdt = vel[2];
+        auto dVXdt = fKepX + fJ2X + fC22X + fS22X + fSunX + fMoonX + fSRPX;
+        auto dVYdt = fKepY + fJ2Y + fC22Y + fS22Y + fSunY + fMoonY + fSRPY;
+        auto dVZdt = fKepZ + fJ2Z + fC22Z + fS22Z + fSunZ + fMoonZ + fSRPZ;
+
+        // Initial conditions (ic) -  can be changed later
+        auto x0 = -8509.601467747452261;
+        auto y0 = 41462.967598908115178;
+        auto z0 = 4433.499739334900369;
+        auto vx0 = -2.976021793775544;
+        auto vy0 = -0.623108664781654;
+        auto vz0 = 0.235057994478775;
+
+        auto t0 = 0.0;
+
+        std::cout << "Compiling the Taylor integrator ... (this is done only once)" << std::endl;
+
+        ta = new heyoka::taylor_adaptive<double> {
+            { pos[0] = dXdt, pos[1] = dYdt, pos[2] = dZdt, vel[0] = dVXdt, vel[1] = dVYdt, vel[2] = dVZdt },
+            { x0, y0, z0, vx0, vy0, vz0 },
+            heyoka::kw::time = t0,
+            heyoka::kw::tol = 1e-16,
+            heyoka::kw::compact_mode = true
+        };
+    }
+};
