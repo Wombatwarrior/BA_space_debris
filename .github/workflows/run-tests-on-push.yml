@@ -10,8 +10,11 @@ jobs:
       - run: sudo apt-get install -y liblog4cxx-dev
       - run: sudo git clone https://github.com/bluescarni/heyoka.git
       - run: cd heyoka
+      - run: ls
       - run: mkdir build
+      - run: ls
       - run: cd build
+      - run: ls
       - run: cmake .. .
       - run: cmake --build . --target install
       - run: cd ..
