@@ -33,9 +33,14 @@ protected:
     //heyoka variables
     std::array<heyoka::expression, 3> pos;
     std::array<heyoka::expression, 3> vel;
+    heyoka::taylor_adaptive<double>* ta_total;
+    std::array<heyoka::taylor_adaptive<double>*,8> ta_components;
 
-    heyoka::taylor_adaptive<double>* ta;
-
+    // won integrators
+    Integrator* i_total;
+    Acceleration::AccelerationAccumulator* aa_total;
+    std::array<Integrator*,8> i_components;
+    std::array<Acceleration::AccelerationAccumulator*,8> aa_components;
     virtual void SetUp()
     {
         //create heyoka variables
@@ -153,12 +158,134 @@ protected:
 
         std::cout << "Compiling the Taylor integrator ... (this is done only once)" << std::endl;
 
-        ta = new heyoka::taylor_adaptive<double> {
+        ta_total = new heyoka::taylor_adaptive<double> {
             { pos[0] = dXdt, pos[1] = dYdt, pos[2] = dZdt, vel[0] = dVXdt, vel[1] = dVYdt, vel[2] = dVZdt },
             { x0, y0, z0, vx0, vy0, vz0 },
             heyoka::kw::time = t0,
             heyoka::kw::tol = 1e-16,
             heyoka::kw::compact_mode = true
         };
+
+        ta_components[Acceleration::KEP]= new heyoka::taylor_adaptive<double> {
+                { pos[0] = dXdt, pos[1] = dYdt, pos[2] = dZdt, vel[0] = fKepX, vel[1] = fKepY, vel[2] = fKepZ },
+                { x0, y0, z0, vx0, vy0, vz0 },
+                heyoka::kw::time = t0,
+                heyoka::kw::tol = 1e-16,
+                heyoka::kw::compact_mode = true
+        };
+        ta_components[Acceleration::J2]= new heyoka::taylor_adaptive<double> {
+                { pos[0] = dXdt, pos[1] = dYdt, pos[2] = dZdt, vel[0] = fJ2X, vel[1] = fJ2Y, vel[2] = fJ2Z },
+                { x0, y0, z0, vx0, vy0, vz0 },
+                heyoka::kw::time = t0,
+                heyoka::kw::tol = 1e-16,
+                heyoka::kw::compact_mode = true
+        };
+        ta_components[Acceleration::C22]= new heyoka::taylor_adaptive<double> {
+                { pos[0] = dXdt, pos[1] = dYdt, pos[2] = dZdt, vel[0] = fC22X, vel[1] = fC22Y, vel[2] = fC22Z },
+                { x0, y0, z0, vx0, vy0, vz0 },
+                heyoka::kw::time = t0,
+                heyoka::kw::tol = 1e-16,
+                heyoka::kw::compact_mode = true
+        };
+        ta_components[Acceleration::S22]= new heyoka::taylor_adaptive<double> {
+                { pos[0] = dXdt, pos[1] = dYdt, pos[2] = dZdt, vel[0] = fS22X, vel[1] = fS22Y, vel[2] = fS22Z },
+                { x0, y0, z0, vx0, vy0, vz0 },
+                heyoka::kw::time = t0,
+                heyoka::kw::tol = 1e-16,
+                heyoka::kw::compact_mode = true
+        };
+        ta_components[Acceleration::SOL]= new heyoka::taylor_adaptive<double> {
+                { pos[0] = dXdt, pos[1] = dYdt, pos[2] = dZdt, vel[0] = fSunX, vel[1] = fSunY, vel[2] = fSunZ },
+                { x0, y0, z0, vx0, vy0, vz0 },
+                heyoka::kw::time = t0,
+                heyoka::kw::tol = 1e-16,
+                heyoka::kw::compact_mode = true
+        };
+        ta_components[Acceleration::LUN]= new heyoka::taylor_adaptive<double> {
+                { pos[0] = dXdt, pos[1] = dYdt, pos[2] = dZdt, vel[0] = fMoonX, vel[1] = fMoonY, vel[2] = fMoonZ },
+                { x0, y0, z0, vx0, vy0, vz0 },
+                heyoka::kw::time = t0,
+                heyoka::kw::tol = 1e-16,
+                heyoka::kw::compact_mode = true
+        };
+        ta_components[Acceleration::SRP]= new heyoka::taylor_adaptive<double> {
+                { pos[0] = dXdt, pos[1] = dYdt, pos[2] = dZdt, vel[0] = fSRPX, vel[1] = fSRPY, vel[2] = fSRPZ },
+                { x0, y0, z0, vx0, vy0, vz0 },
+                heyoka::kw::time = t0,
+                heyoka::kw::tol = 1e-16,
+                heyoka::kw::compact_mode = true
+        };
+        ta_components[Acceleration::DRAG]= new heyoka::taylor_adaptive<double> {
+                { pos[0] = dXdt, pos[1] = dYdt, pos[2] = dZdt, vel[0] = dVXdt, vel[1] = dVYdt, vel[2] = dVZdt },
+                { x0, y0, z0, vx0, vy0, vz0 },
+                heyoka::kw::time = t0,
+                heyoka::kw::tol = 1e-16,
+                heyoka::kw::compact_mode = true
+        };
+
+        // setup own integrator for all components
+        std::array<bool,8> config{true,true,true,true,true,true,true,true};
+
+        aa_total = new Acceleration::AccelerationAccumulator;
+        aa_total->setConfig(config);
+        i_total = new Integrator;
+        i_total->setAccumulator(*aa_total);
+
+        config = {false,false,false,false,false,false,false,false};
+        aa_components[Acceleration::KEP] = new Acceleration::AccelerationAccumulator;
+        config[Acceleration::KEP] = true;
+        aa_components[Acceleration::KEP]->setConfig(config);
+        config[Acceleration::KEP] = false;
+        i_components[Acceleration::KEP] = new Integrator;
+        i_components[Acceleration::KEP]->setAccumulator(*aa_components[Acceleration::KEP]);
+
+        aa_components[Acceleration::J2] = new Acceleration::AccelerationAccumulator;
+        config[Acceleration::J2] = true;
+        aa_components[Acceleration::J2]->setConfig(config);
+        config[Acceleration::J2] = false;
+        i_components[Acceleration::J2] = new Integrator;
+        i_components[Acceleration::J2]->setAccumulator(*aa_components[Acceleration::J2]);
+
+        aa_components[Acceleration::C22] = new Acceleration::AccelerationAccumulator;
+        config[Acceleration::C22] = true;
+        aa_components[Acceleration::C22]->setConfig(config);
+        config[Acceleration::C22] = false;
+        i_components[Acceleration::C22] = new Integrator;
+        i_components[Acceleration::C22]->setAccumulator(*aa_components[Acceleration::C22]);
+
+        aa_components[Acceleration::S22] = new Acceleration::AccelerationAccumulator;
+        config[Acceleration::S22] = true;
+        aa_components[Acceleration::S22]->setConfig(config);
+        config[Acceleration::S22] = false;
+        i_components[Acceleration::S22] = new Integrator;
+        i_components[Acceleration::S22]->setAccumulator(*aa_components[Acceleration::S22]);
+
+        aa_components[Acceleration::LUN] = new Acceleration::AccelerationAccumulator;
+        config[Acceleration::LUN] = true;
+        aa_components[Acceleration::LUN]->setConfig(config);
+        config[Acceleration::LUN] = false;
+        i_components[Acceleration::LUN] = new Integrator;
+        i_components[Acceleration::LUN]->setAccumulator(*aa_components[Acceleration::LUN]);
+
+        aa_components[Acceleration::SOL] = new Acceleration::AccelerationAccumulator;
+        config[Acceleration::SOL] = true;
+        aa_components[Acceleration::SOL]->setConfig(config);
+        config[Acceleration::SOL] = false;
+        i_components[Acceleration::SOL] = new Integrator;
+        i_components[Acceleration::SOL]->setAccumulator(*aa_components[Acceleration::SOL]);
+
+        aa_components[Acceleration::SRP] = new Acceleration::AccelerationAccumulator;
+        config[Acceleration::SRP] = true;
+        aa_components[Acceleration::SRP]->setConfig(config);
+        config[Acceleration::SRP] = false;
+        i_components[Acceleration::SRP] = new Integrator;
+        i_components[Acceleration::SRP]->setAccumulator(*aa_components[Acceleration::SRP]);
+
+        aa_components[Acceleration::DRAG] = new Acceleration::AccelerationAccumulator;
+        config[Acceleration::DRAG] = true;
+        aa_components[Acceleration::DRAG]->setConfig(config);
+        config[Acceleration::DRAG] = false;
+        i_components[Acceleration::DRAG] = new Integrator;
+        i_components[Acceleration::DRAG]->setAccumulator(*aa_components[Acceleration::DRAG]);
     }
 };

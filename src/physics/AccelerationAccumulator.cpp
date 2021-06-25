@@ -7,6 +7,9 @@
 #include "AccelerationAccumulator.h"
 
 namespace Acceleration {
+
+AccelerationAccumulator::AccelerationAccumulator() = default;
+
 AccelerationAccumulator::~AccelerationAccumulator() = default;
 
 void AccelerationAccumulator::applyComponents() const

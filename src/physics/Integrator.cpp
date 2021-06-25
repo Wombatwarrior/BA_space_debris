@@ -4,6 +4,8 @@
 
 #include "Integrator.h"
 
+Integrator::Integrator() = default;
+
 Integrator::~Integrator() = default;
 
 void Integrator::integrate(bool write_time_step) const

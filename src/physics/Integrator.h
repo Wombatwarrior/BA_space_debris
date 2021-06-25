@@ -14,6 +14,13 @@
 class Integrator {
 public:
     /**
+     * @brief Default constructor
+     *
+     * Creates a new Integrator object with all values zero initialized
+     */
+    Integrator();
+
+    /**
      * @brief Creates a Integrator object and sets the private #debris and
      * #delta_t member variables
      *

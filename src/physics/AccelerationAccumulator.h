@@ -52,6 +52,12 @@ enum AccelerationComponent {
 class AccelerationAccumulator {
 public:
     /**
+     * @brief Default constructor
+     *
+     * creates ann AccelerationAccumulator object wit all value zero initialized
+     */
+     AccelerationAccumulator();
+    /**
      * @brief Constructor creates a new Acceleration::AcceleratorAccumulator
      * object
      *
@@ -126,10 +132,10 @@ private:
      */
     std::array<bool, 8> config{};
     Debris::DebrisContainer*
-        debris; /**< Reference to the Debris::DebrisContainer object holding the
+        debris = nullptr; /**< Reference to the Debris::DebrisContainer object holding the
              Debris::Debris objects to apply acceleration to*/
     double t = 0; /**< current time*/
-    FileOutput* file_output; /**< used to write detailed output data during calculations */
+    FileOutput* file_output = nullptr; /**< used to write detailed output data during calculations */
 public:
     /**
      * @brief Getter function for #config
