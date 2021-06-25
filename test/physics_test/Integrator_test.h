@@ -11,40 +11,40 @@
 class CompareWithHeyokaTests : public ::testing::Test {
 protected:
     //constants
-    const double GMe = 3.986004407799724e+5;
-    const double GMo = 1.32712440018e+11;
-    const double GMm = 4.9028e+3;
-    const double Re = 6378.1363;
-    const double C20 = -4.84165371736e-4;
-    const double C22 = 2.43914352398e-6;
-    const double S22 = -1.40016683654e-6;
-    const double theta_g = Physics::RAD_FACTOR * 280.4606;
-    const double nu_e = Physics::RAD_FACTOR * (4.178074622024230e-3);
-    const double nu_o = Physics::RAD_FACTOR * (1.1407410259335311e-5);
-    const double nu_ma = Physics::RAD_FACTOR * (1.512151961904581e-4);
-    const double nu_mp = Physics::RAD_FACTOR * (1.2893925235125941e-6);
-    const double nu_ms = Physics::RAD_FACTOR * (6.128913003523574e-7);
-    const double alpha_o = 1.49619e+8;
-    const double epsilon = Physics::RAD_FACTOR * 23.4392911;
-    const double phi_o = Physics::RAD_FACTOR * 357.5256;
-    const double Omega_plus_w = Physics::RAD_FACTOR * 282.94;
-    const double PSRP = 4.56e-3;
-    const double p0 = 1.3;
-    const double omega_e = 8.5;
-    const double h = 7.292115e-5;
+    inline static constexpr double GMe = 3.986004407799724e+5;
+    inline static constexpr double GMo = 1.32712440018e+11;
+    inline static constexpr double GMm = 4.9028e+3;
+    inline static constexpr double Re = 6378.1363;
+    inline static constexpr double C20 = -4.84165371736e-4;
+    inline static constexpr double C22 = 2.43914352398e-6;
+    inline static constexpr double S22 = -1.40016683654e-6;
+    inline static constexpr double theta_g = Physics::RAD_FACTOR * 280.4606;
+    inline static constexpr double nu_e = Physics::RAD_FACTOR * (4.178074622024230e-3);
+    inline static constexpr double nu_o = Physics::RAD_FACTOR * (1.1407410259335311e-5);
+    inline static constexpr double nu_ma = Physics::RAD_FACTOR * (1.512151961904581e-4);
+    inline static constexpr double nu_mp = Physics::RAD_FACTOR * (1.2893925235125941e-6);
+    inline static constexpr double nu_ms = Physics::RAD_FACTOR * (6.128913003523574e-7);
+    inline static constexpr double alpha_o = 1.49619e+8;
+    inline static constexpr double epsilon = Physics::RAD_FACTOR * 23.4392911;
+    inline static constexpr double phi_o = Physics::RAD_FACTOR * 357.5256;
+    inline static constexpr double Omega_plus_w = Physics::RAD_FACTOR * 282.94;
+    inline static constexpr double PSRP = 4.56e-3;
+    inline static constexpr double p0 = 1.3;
+    inline static constexpr double omega_e = 8.5;
+    inline static constexpr double h = 7.292115e-5;
 
     //heyoka variables
-    std::array<heyoka::expression, 3> pos;
-    std::array<heyoka::expression, 3> vel;
-    heyoka::taylor_adaptive<double>* ta_total;
-    std::array<heyoka::taylor_adaptive<double>*,8> ta_components;
+    inline static std::array<heyoka::expression, 3> pos;
+    inline static std::array<heyoka::expression, 3> vel;
+    inline static heyoka::taylor_adaptive<double>* ta_total;
+    inline static std::array<heyoka::taylor_adaptive<double>*,8> ta_components;
 
     // won integrators
-    Integrator* i_total;
-    Acceleration::AccelerationAccumulator* aa_total;
-    std::array<Integrator*,8> i_components;
-    std::array<Acceleration::AccelerationAccumulator*,8> aa_components;
-    virtual void SetUp()
+    inline static Integrator* i_total;
+    inline static Acceleration::AccelerationAccumulator* aa_total;
+    inline static std::array<Integrator*,8> i_components;
+    inline static std::array<Acceleration::AccelerationAccumulator*,8> aa_components;
+    inline static void SetUpTestSuite()
     {
         //create heyoka variables
         pos = heyoka::make_vars("X", "Y", "Z");
@@ -240,7 +240,7 @@ protected:
         };
 
         // setup own integrator for all components
-        Debris::DebrisContainer* debris = new Debris::DebrisContainer;
+        auto* debris = new Debris::DebrisContainer;
         std::array<bool,8> config{true,true,true,true,true,true,true,true};
 
         aa_total = new Acceleration::AccelerationAccumulator;
