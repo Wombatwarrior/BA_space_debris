@@ -158,9 +158,9 @@ protected:
         auto dXdt = vel[0];
         auto dYdt = vel[1];
         auto dZdt = vel[2];
-        auto dVXdt = fKepX + fJ2X + fC22X + fS22X + fSunX + fMoonX + fSRPX;
-        auto dVYdt = fKepY + fJ2Y + fC22Y + fS22Y + fSunY + fMoonY + fSRPY;
-        auto dVZdt = fKepZ + fJ2Z + fC22Z + fS22Z + fSunZ + fMoonZ + fSRPZ;
+        auto dVXdt = fKepX + fJ2X + fC22X + fS22X + fSunX + fMoonX + fSRPX + fDragX;
+        auto dVYdt = fKepY + fJ2Y + fC22Y + fS22Y + fSunY + fMoonY + fSRPY + fDragY;
+        auto dVZdt = fKepZ + fJ2Z + fC22Z + fS22Z + fSunZ + fMoonZ + fSRPZ + fDragZ;
 
         // Initial conditions (ic) -  can be changed later
         auto x0 = -8509.601467747452261;
