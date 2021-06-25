@@ -163,12 +163,12 @@ protected:
         auto dVZdt = fKepZ + fJ2Z + fC22Z + fS22Z + fSunZ + fMoonZ + fSRPZ + fDragZ;
 
         // Initial conditions (ic) -  can be changed later
-        auto x0 = -8509.601467747452261;
-        auto y0 = 41462.967598908115178;
-        auto z0 = 4433.499739334900369;
-        auto vx0 = -2.976021793775544;
-        auto vy0 = -0.623108664781654;
-        auto vz0 = 0.235057994478775;
+        auto x0 = 0.;
+        auto y0 = 0.;
+        auto z0 = 0.;
+        auto vx0 = 0.;
+        auto vy0 = 0.;
+        auto vz0 = 0.;
 
         auto t0 = 0.0;
 
