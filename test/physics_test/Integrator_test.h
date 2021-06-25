@@ -240,68 +240,95 @@ protected:
         };
 
         // setup own integrator for all components
+        Debris::DebrisContainer debris = new Debris::DebrisContainer;
         std::array<bool,8> config{true,true,true,true,true,true,true,true};
 
         aa_total = new Acceleration::AccelerationAccumulator;
         aa_total->setConfig(config);
+        aa_total->setDebris(*debris);
         i_total = new Integrator;
         i_total->setAccumulator(*aa_total);
+        i_total->setDebris(*debris);
 
+        debris = new Debris::DebrisContainer;
         config = {false,false,false,false,false,false,false,false};
         aa_components[Acceleration::KEP] = new Acceleration::AccelerationAccumulator;
         config[Acceleration::KEP] = true;
         aa_components[Acceleration::KEP]->setConfig(config);
+        aa_components[Acceleration::KEP]->setDebris(debris);
         config[Acceleration::KEP] = false;
         i_components[Acceleration::KEP] = new Integrator;
         i_components[Acceleration::KEP]->setAccumulator(*aa_components[Acceleration::KEP]);
+        i_components[Acceleration::KEP]->setDebris(debris);
 
+        debris = new Debris::DebrisContainer;
         aa_components[Acceleration::J2] = new Acceleration::AccelerationAccumulator;
         config[Acceleration::J2] = true;
         aa_components[Acceleration::J2]->setConfig(config);
+        aa_components[Acceleration::J2]->setDebris(debris);
         config[Acceleration::J2] = false;
         i_components[Acceleration::J2] = new Integrator;
         i_components[Acceleration::J2]->setAccumulator(*aa_components[Acceleration::J2]);
+        i_components[Acceleration::J2]->setDebris(debris);
 
+        debris = new Debris::DebrisContainer;
         aa_components[Acceleration::C22] = new Acceleration::AccelerationAccumulator;
         config[Acceleration::C22] = true;
         aa_components[Acceleration::C22]->setConfig(config);
+        aa_components[Acceleration::C22]->setDebris(debris);
         config[Acceleration::C22] = false;
         i_components[Acceleration::C22] = new Integrator;
         i_components[Acceleration::C22]->setAccumulator(*aa_components[Acceleration::C22]);
+        i_components[Acceleration::C22]->setDebris(debris);
 
+        debris = new Debris::DebrisContainer;
         aa_components[Acceleration::S22] = new Acceleration::AccelerationAccumulator;
         config[Acceleration::S22] = true;
         aa_components[Acceleration::S22]->setConfig(config);
+        aa_components[Acceleration::S22]->setDebris(debris);
         config[Acceleration::S22] = false;
         i_components[Acceleration::S22] = new Integrator;
         i_components[Acceleration::S22]->setAccumulator(*aa_components[Acceleration::S22]);
+        i_components[Acceleration::S22]->setDebris(debris);
 
+        debris = new Debris::DebrisContainer;
         aa_components[Acceleration::LUN] = new Acceleration::AccelerationAccumulator;
         config[Acceleration::LUN] = true;
         aa_components[Acceleration::LUN]->setConfig(config);
+        aa_components[Acceleration::LUN]->setDebris(debris);
         config[Acceleration::LUN] = false;
         i_components[Acceleration::LUN] = new Integrator;
         i_components[Acceleration::LUN]->setAccumulator(*aa_components[Acceleration::LUN]);
+        i_components[Acceleration::LUN]->setDebris(debris);
 
+        debris = new Debris::DebrisContainer;
         aa_components[Acceleration::SOL] = new Acceleration::AccelerationAccumulator;
         config[Acceleration::SOL] = true;
         aa_components[Acceleration::SOL]->setConfig(config);
+        aa_components[Acceleration::SOL]->setDebris(debris);
         config[Acceleration::SOL] = false;
         i_components[Acceleration::SOL] = new Integrator;
         i_components[Acceleration::SOL]->setAccumulator(*aa_components[Acceleration::SOL]);
+        i_components[Acceleration::SOL]->setDebris(debris);
 
+        debris = new Debris::DebrisContainer;
         aa_components[Acceleration::SRP] = new Acceleration::AccelerationAccumulator;
         config[Acceleration::SRP] = true;
         aa_components[Acceleration::SRP]->setConfig(config);
+        aa_components[Acceleration::SRP]->setDebris(debris);
         config[Acceleration::SRP] = false;
         i_components[Acceleration::SRP] = new Integrator;
         i_components[Acceleration::SRP]->setAccumulator(*aa_components[Acceleration::SRP]);
+        i_components[Acceleration::SRP]->setDebris(debris);
 
+        debris = new Debris::DebrisContainer;
         aa_components[Acceleration::DRAG] = new Acceleration::AccelerationAccumulator;
         config[Acceleration::DRAG] = true;
         aa_components[Acceleration::DRAG]->setConfig(config);
+        aa_components[Acceleration::DRAG]->setDebris(debris);
         config[Acceleration::DRAG] = false;
         i_components[Acceleration::DRAG] = new Integrator;
         i_components[Acceleration::DRAG]->setAccumulator(*aa_components[Acceleration::DRAG]);
+        i_components[Acceleration::DRAG]->setDebris(debris);
     }
 };
