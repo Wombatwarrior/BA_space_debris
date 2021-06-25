@@ -29,6 +29,9 @@ protected:
     const double phi_o = Physics::RAD_FACTOR * 357.5256;
     const double Omega_plus_w = Physics::RAD_FACTOR * 282.94;
     const double PSRP = 4.56e-3;
+    const double p0 = 1.3;
+    const double omega_e = 8.5;
+    const double h = 7.292115e-5;
 
     //heyoka variables
     std::array<heyoka::expression, 3> pos;
@@ -77,8 +80,16 @@ protected:
         auto Ym = -std::sin(epsilon) * heyoka::sin(Bm) * rm + std::cos(epsilon) * heyoka::cos(Bm) * heyoka::sin(lambda_m) * rm;
         auto Zm = std::cos(epsilon) * heyoka::sin(Bm) * rm + heyoka::cos(Bm) * std::sin(epsilon) * heyoka::sin(lambda_m) * rm;
 
-        //Earth's Keplerian terms
+        // distance to earth center
         auto magR2 = heyoka::pow(pos[0], 2.) + heyoka::pow(pos[1], 2.) + heyoka::pow(pos[2], 2.);
+
+        // atmospheric drag
+        auto p = p0*heyoka::exp(-(magR2 - Re)/h );
+        auto v_rel_x = vel[0] + omega_e*pos[1];
+        auto v_rel_y = vel[1] - omega_e*pos[0];
+        auto v_rel_z = vel[2];
+
+        //Earth's Keplerian terms
         auto fKepX = -GMe * pos[0] / (heyoka::pow(magR2, (3. / 2)));
         auto fKepY = -GMe * pos[1] / (heyoka::pow(magR2, (3. / 2)));
         auto fKepZ = -GMe * pos[2] / (heyoka::pow(magR2, (3. / 2)));
@@ -138,6 +149,11 @@ protected:
         auto fSRPY = SRPterm * (pos[1] - Yo);
         auto fSRPZ = SRPterm * (pos[2] - Zo);
 
+        // Drag due to the earths atmosphere (BCINV is a heyoka parameter hy.par[1])
+        auto DragTerm = (heyoka::par[1] * p)/2.;
+        auto fDragX = DragTerm*heyoka::pow(v_rel_x,2.);
+        auto fDragY = DragTerm*heyoka::pow(v_rel_y,2.);
+        auto fDragZ = DragTerm*heyoka::pow(v_rel_z,2.);
         // EOM
         auto dXdt = vel[0];
         auto dYdt = vel[1];
@@ -216,7 +232,7 @@ protected:
                 heyoka::kw::compact_mode = true
         };
         ta_components[Acceleration::DRAG]= new heyoka::taylor_adaptive<double> {
-                { pos[0] = dXdt, pos[1] = dYdt, pos[2] = dZdt, vel[0] = dVXdt, vel[1] = dVYdt, vel[2] = dVZdt },
+                { pos[0] = dXdt, pos[1] = dYdt, pos[2] = dZdt, vel[0] = fDragX, vel[1] = fDragY, vel[2] = fDragZ },
                 { x0, y0, z0, vx0, vy0, vz0 },
                 heyoka::kw::time = t0,
                 heyoka::kw::tol = 1e-16,
