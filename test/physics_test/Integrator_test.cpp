@@ -338,16 +338,48 @@ TEST_F(CompareWithHeyokaTests, compareSRP)
 // compare calculated values of DragComponent
 TEST_F(CompareWithHeyokaTests, compareDrag)
 {
+    // time step in seconds
+    double delta_t = 0.1;
     // set some test debris values
     std::vector<Debris::Debris> ds;
     Debris::Debris d;
     for (int i = 0; i < 3; ++i){
         d.setPosition({3500.*(i+2),0,0});
         d.setVelocity({10.,0,0});
-        d.setBcInv(0.5);
         ds.push_back(d);
     }
-
+    // loop over the debris data and compare calculations
+    for (auto d : ds){
+        // setup integrators
+        i_components[Acceleration::DRAG]->getDebris().cleanDebrisVector();
+        i_components[Acceleration::DRAG]->getDebris().addDebris(d);
+        ta_components[Acceleration::DRAG]->get_state_data()[0] = d.getPosition()[0];
+        ta_components[Acceleration::DRAG]->get_state_data()[1] = d.getPosition()[1];
+        ta_components[Acceleration::DRAG]->get_state_data()[2] = d.getPosition()[2];
+        ta_components[Acceleration::DRAG]->get_state_data()[3] = d.getVelocity()[0];
+        ta_components[Acceleration::DRAG]->get_state_data()[4] = d.getVelocity()[1];
+        ta_components[Acceleration::DRAG]->get_state_data()[5] = d.getVelocity()[2];
+        // reset time values
+        i_components[Acceleration::DRAG]->setDeltaT(delta_t);
+        i_components[Acceleration::DRAG]->getAccumulator().setT(0.);
+        ta_components[Acceleration::DRAG]->set_time(0.);
+        // integrate time step
+        i_components[Acceleration::DRAG]->integrate();
+        ta_components[Acceleration::DRAG]->step(delta_t);
+        // compare result
+        std::array<double,3> pos_i = i_components[Acceleration::DRAG]->getDebris().getDebrisVector()[0].getPosition();
+        std::array<double,3> vel_i = i_components[Acceleration::DRAG]->getDebris().getDebrisVector()[0].getVelocity();
+        std::array<double,3> pos_ta{ta_components[Acceleration::DRAG]->get_state()[0],
+                                    ta_components[Acceleration::DRAG]->get_state()[1],
+                                    ta_components[Acceleration::DRAG]->get_state()[2]};
+        std::array<double,3> vel_ta{ta_components[Acceleration::DRAG]->get_state()[3],
+                                    ta_components[Acceleration::DRAG]->get_state()[4],
+                                    ta_components[Acceleration::DRAG]->get_state()[5]};
+        IOUtils::to_ostream(pos_i, std::cout, ",", {"position integrator[","]\n"});
+        IOUtils::to_ostream(pos_ta, std::cout, ",", {"position heyoka[","]\n"});
+        IOUtils::to_ostream(vel_i, std::cout, ",", {"velocity integrator[","]\n"});
+        IOUtils::to_ostream(vel_ta, std::cout, ",", {"velocity heyoka[","]\n"});
+    }
 }
 // compare calculated values of all Components
 TEST_F(CompareWithHeyokaTests, compareTotal)
