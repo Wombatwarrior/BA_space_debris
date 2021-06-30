@@ -175,7 +175,7 @@ protected:
         std::cout << "Compiling the Taylor integrator ... (this is done only once)" << std::endl;
 
         ta_total = new heyoka::taylor_adaptive<double> {
-            { pos[0] = dXdt, pos[1] = dYdt, pos[2] = dZdt, vel[0] = dVXdt, vel[1] = dVYdt, vel[2] = dVZdt },
+            { heyoka::prime(pos[0]) = dXdt, heyoka::prime(pos[1]) = dYdt, heyoka::prime(pos[2]) = dZdt, heyoka::prime(vel[0]) = dVXdt, heyoka::prime(vel[1]) = dVYdt, heyoka::prime(vel[2]) = dVZdt },
             { x0, y0, z0, vx0, vy0, vz0 },
             heyoka::kw::time = t0,
             heyoka::kw::tol = 1e-16,
@@ -183,56 +183,56 @@ protected:
         };
 
         ta_components[Acceleration::KEP]= new heyoka::taylor_adaptive<double> {
-                { pos[0] = dXdt, pos[1] = dYdt, pos[2] = dZdt, vel[0] = fKepX, vel[1] = fKepY, vel[2] = fKepZ },
+                { heyoka::prime(pos[0]) = dXdt, heyoka::prime(pos[1]) = dYdt, heyoka::prime(pos[2]) = dZdt, heyoka::prime(vel[0]) = fKepX, heyoka::prime(vel[1]) = fKepY, heyoka::prime(vel[2]) = fKepZ },
                 { x0, y0, z0, vx0, vy0, vz0 },
                 heyoka::kw::time = t0,
                 heyoka::kw::tol = 1e-16,
                 heyoka::kw::compact_mode = true
         };
         ta_components[Acceleration::J2]= new heyoka::taylor_adaptive<double> {
-                { pos[0] = dXdt, pos[1] = dYdt, pos[2] = dZdt, vel[0] = fJ2X, vel[1] = fJ2Y, vel[2] = fJ2Z },
+                { heyoka::prime(pos[0]) = dXdt, heyoka::prime(pos[1]) = dYdt, heyoka::prime(pos[2]) = dZdt, heyoka::prime(vel[0]) = fJ2X, heyoka::prime(vel[1]) = fJ2Y, heyoka::prime(vel[2]) = fJ2Z },
                 { x0, y0, z0, vx0, vy0, vz0 },
                 heyoka::kw::time = t0,
                 heyoka::kw::tol = 1e-16,
                 heyoka::kw::compact_mode = true
         };
         ta_components[Acceleration::C22]= new heyoka::taylor_adaptive<double> {
-                { pos[0] = dXdt, pos[1] = dYdt, pos[2] = dZdt, vel[0] = fC22X, vel[1] = fC22Y, vel[2] = fC22Z },
+                { heyoka::prime(pos[0]) = dXdt, heyoka::prime(pos[1]) = dYdt, heyoka::prime(pos[2]) = dZdt, heyoka::prime(vel[0]) = fC22X, heyoka::prime(vel[1]) = fC22Y, heyoka::prime(vel[2]) = fC22Z },
                 { x0, y0, z0, vx0, vy0, vz0 },
                 heyoka::kw::time = t0,
                 heyoka::kw::tol = 1e-16,
                 heyoka::kw::compact_mode = true
         };
         ta_components[Acceleration::S22]= new heyoka::taylor_adaptive<double> {
-                { pos[0] = dXdt, pos[1] = dYdt, pos[2] = dZdt, vel[0] = fS22X, vel[1] = fS22Y, vel[2] = fS22Z },
+                { heyoka::prime(pos[0]) = dXdt, heyoka::prime(pos[1]) = dYdt, heyoka::prime(pos[2]) = dZdt, heyoka::prime(vel[0]) = fS22X, heyoka::prime(vel[1]) = fS22Y, heyoka::prime(vel[2]) = fS22Z },
                 { x0, y0, z0, vx0, vy0, vz0 },
                 heyoka::kw::time = t0,
                 heyoka::kw::tol = 1e-16,
                 heyoka::kw::compact_mode = true
         };
         ta_components[Acceleration::SOL]= new heyoka::taylor_adaptive<double> {
-                { pos[0] = dXdt, pos[1] = dYdt, pos[2] = dZdt, vel[0] = fSunX, vel[1] = fSunY, vel[2] = fSunZ },
+                { heyoka::prime(pos[0]) = dXdt, heyoka::prime(pos[1]) = dYdt, heyoka::prime(pos[2]) = dZdt, heyoka::prime(vel[0]) = fSunX, heyoka::prime(vel[1]) = fSunY, heyoka::prime(vel[2]) = fSunZ },
                 { x0, y0, z0, vx0, vy0, vz0 },
                 heyoka::kw::time = t0,
                 heyoka::kw::tol = 1e-16,
                 heyoka::kw::compact_mode = true
         };
         ta_components[Acceleration::LUN]= new heyoka::taylor_adaptive<double> {
-                { pos[0] = dXdt, pos[1] = dYdt, pos[2] = dZdt, vel[0] = fMoonX, vel[1] = fMoonY, vel[2] = fMoonZ },
+                { heyoka::prime(pos[0]) = dXdt, heyoka::prime(pos[1]) = dYdt, heyoka::prime(pos[2]) = dZdt, heyoka::prime(vel[0]) = fMoonX, heyoka::prime(vel[1]) = fMoonY, heyoka::prime(vel[2]) = fMoonZ },
                 { x0, y0, z0, vx0, vy0, vz0 },
                 heyoka::kw::time = t0,
                 heyoka::kw::tol = 1e-16,
                 heyoka::kw::compact_mode = true
         };
         ta_components[Acceleration::SRP]= new heyoka::taylor_adaptive<double> {
-                { pos[0] = dXdt, pos[1] = dYdt, pos[2] = dZdt, vel[0] = fSRPX, vel[1] = fSRPY, vel[2] = fSRPZ },
+                { heyoka::prime(pos[0]) = dXdt, heyoka::prime(pos[1]) = dYdt, heyoka::prime(pos[2]) = dZdt, heyoka::prime(vel[0]) = fSRPX, heyoka::prime(vel[1]) = fSRPY, heyoka::prime(vel[2]) = fSRPZ },
                 { x0, y0, z0, vx0, vy0, vz0 },
                 heyoka::kw::time = t0,
                 heyoka::kw::tol = 1e-16,
                 heyoka::kw::compact_mode = true
         };
         ta_components[Acceleration::DRAG]= new heyoka::taylor_adaptive<double> {
-                { pos[0] = dXdt, pos[1] = dYdt, pos[2] = dZdt, vel[0] = fDragX, vel[1] = fDragY, vel[2] = fDragZ },
+                { heyoka::prime(pos[0]) = dXdt, heyoka::prime(pos[1]) = dYdt, heyoka::prime(pos[2]) = dZdt, heyoka::prime(vel[0]) = fDragX, heyoka::prime(vel[1]) = fDragY, heyoka::prime(vel[2]) = fDragZ },
                 { x0, y0, z0, vx0, vy0, vz0 },
                 heyoka::kw::time = t0,
                 heyoka::kw::tol = 1e-16,
