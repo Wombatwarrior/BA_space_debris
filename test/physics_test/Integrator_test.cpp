@@ -300,6 +300,7 @@ TEST_F(CompareWithHeyokaTests, compareSRP)
     for (int i = 0; i < 3; ++i){
         d.setPosition({3500.*(i+2),0,0});
         d.setVelocity({10.,0,0});
+        d.setAom(0.25);
         ds.push_back(d);
     }
     // loop over the debris data and compare calculations
@@ -313,6 +314,7 @@ TEST_F(CompareWithHeyokaTests, compareSRP)
         ta_components[Acceleration::SRP]->get_state_data()[3] = d.getVelocity()[0];
         ta_components[Acceleration::SRP]->get_state_data()[4] = d.getVelocity()[1];
         ta_components[Acceleration::SRP]->get_state_data()[5] = d.getVelocity()[2];
+        ta_components[Acceleration::SRP]->get_pars_data()[0] = d.getAom();
         // reset time values
         i_components[Acceleration::SRP]->setDeltaT(delta_t);
         i_components[Acceleration::SRP]->getAccumulator().setT(0.);
@@ -346,6 +348,7 @@ TEST_F(CompareWithHeyokaTests, compareDrag)
     for (int i = 0; i < 3; ++i){
         d.setPosition({3500.*(i+2),0,0});
         d.setVelocity({10.,0,0});
+        d.setBcInv(0.5);
         ds.push_back(d);
     }
     // loop over the debris data and compare calculations
@@ -359,6 +362,7 @@ TEST_F(CompareWithHeyokaTests, compareDrag)
         ta_components[Acceleration::DRAG]->get_state_data()[3] = d.getVelocity()[0];
         ta_components[Acceleration::DRAG]->get_state_data()[4] = d.getVelocity()[1];
         ta_components[Acceleration::DRAG]->get_state_data()[5] = d.getVelocity()[2];
+        ta_components[Acceleration::DRAG]->get_pars_data()[1] = d.getBcInv();
         // reset time values
         i_components[Acceleration::DRAG]->setDeltaT(delta_t);
         i_components[Acceleration::DRAG]->getAccumulator().setT(0.);
@@ -384,15 +388,50 @@ TEST_F(CompareWithHeyokaTests, compareDrag)
 // compare calculated values of all Components
 TEST_F(CompareWithHeyokaTests, compareTotal)
 {
+    // time step in seconds
+    double delta_t = 0.1;
     // set some test debris values
     std::vector<Debris::Debris> ds;
     Debris::Debris d;
     for (int i = 0; i < 3; ++i){
         d.setPosition({3500.*(i+2),0,0});
         d.setVelocity({10.,0,0});
-        d.setAom(0.5);
+        d.setAom(0.25);
         d.setBcInv(0.5);
         ds.push_back(d);
     }
-
+    // loop over the debris data and compare calculations
+    for (auto d : ds){
+        // setup integrators
+        i_total->getDebris().cleanDebrisVector();
+        i_total->getDebris().addDebris(d);
+        ta_total->get_state_data()[0] = d.getPosition()[0];
+        ta_total->get_state_data()[1] = d.getPosition()[1];
+        ta_total->get_state_data()[2] = d.getPosition()[2];
+        ta_total->get_state_data()[3] = d.getVelocity()[0];
+        ta_total->get_state_data()[4] = d.getVelocity()[1];
+        ta_total->get_state_data()[5] = d.getVelocity()[2];
+        ta_components[Acceleration::DRAG]->get_pars_data()[0] = d.getAom();
+        ta_components[Acceleration::DRAG]->get_pars_data()[1] = d.getBcInv();
+        // reset time values
+        i_total->setDeltaT(delta_t);
+        i_total->getAccumulator().setT(0.);
+        ta_total->set_time(0.);
+        // integrate time step
+        i_total->integrate();
+        ta_total->step(delta_t);
+        // compare result
+        std::array<double,3> pos_i = i_total->getDebris().getDebrisVector()[0].getPosition();
+        std::array<double,3> vel_i = i_total->getDebris().getDebrisVector()[0].getVelocity();
+        std::array<double,3> pos_ta{ta_total->get_state()[0],
+                                    ta_total->get_state()[1],
+                                    ta_total->get_state()[2]};
+        std::array<double,3> vel_ta{ta_total->get_state()[3],
+                                    ta_total->get_state()[4],
+                                    ta_total->get_state()[5]};
+        IOUtils::to_ostream(pos_i, std::cout, ",", {"position integrator[","]\n"});
+        IOUtils::to_ostream(pos_ta, std::cout, ",", {"position heyoka[","]\n"});
+        IOUtils::to_ostream(vel_i, std::cout, ",", {"velocity integrator[","]\n"});
+        IOUtils::to_ostream(vel_ta, std::cout, ",", {"velocity heyoka[","]\n"});
+    }
 }
