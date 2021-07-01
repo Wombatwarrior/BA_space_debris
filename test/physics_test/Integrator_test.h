@@ -33,6 +33,11 @@ protected:
     inline static constexpr double omega_e = 8.5;
     inline static constexpr double h = 7.292115e-5;
 
+    // delta t
+    inline static constexpr double delta_t = .1;
+    inline static constexpr double start_t = 0.;
+    inline static constexpr double end_t = 120.;
+
     //heyoka variables
     inline static std::array<heyoka::expression, 3> pos;
     inline static std::array<heyoka::expression, 3> vel;
@@ -46,6 +51,8 @@ protected:
     inline static std::array<Acceleration::AccelerationAccumulator*,8> aa_components;
     inline static void SetUpTestSuite()
     {
+        // set output accuracy
+        std::cout << std::setprecision(std::numeric_limits<double>::digits10 + 1);
         //create heyoka variables
         pos = heyoka::make_vars("X", "Y", "Z");
         vel = heyoka::make_vars("VX", "VY", "VZ");

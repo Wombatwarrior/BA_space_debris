@@ -16,18 +16,17 @@ TEST_F(CompareWithHeyokaTests, showTaylorIntegrator)
 
 // compare calculated values of KepComponent
 TEST_F(CompareWithHeyokaTests, compareKep) {
-    // time step in seconds
-    double delta_t = 0.1;
-    // set some test debris values and add them to the Integrators
+    std::cout << "\nKepler" << std::endl;
+    // set some test debris values
     std::vector<Debris::Debris> ds;
     Debris::Debris d;
     for (int i = 0; i < 3; ++i){
         d.setPosition({3500.*(i+2),0,0});
-        d.setVelocity({10.,0,0});
+        d.setVelocity({1.,0,0});
         ds.push_back(d);
     }
     // loop over the debris data and compare calculations
-    for (auto d : ds){
+    for (auto d : ds) {
         // setup integrators
         i_components[Acceleration::KEP]->getDebris().cleanDebrisVector();
         i_components[Acceleration::KEP]->getDebris().addDebris(d);
@@ -39,11 +38,14 @@ TEST_F(CompareWithHeyokaTests, compareKep) {
         ta_components[Acceleration::KEP]->get_state_data()[5] = d.getVelocity()[2];
         // reset time values
         i_components[Acceleration::KEP]->setDeltaT(delta_t);
-        i_components[Acceleration::KEP]->getAccumulator().setT(0.);
-        ta_components[Acceleration::KEP]->set_time(0.);
-        // integrate time step
-        i_components[Acceleration::KEP]->integrate();
-        ta_components[Acceleration::KEP]->step(delta_t);
+        i_components[Acceleration::KEP]->getAccumulator().setT(start_t);
+        ta_components[Acceleration::KEP]->set_time(start_t);
+        // integrate over time
+        for (double t = start_t; t <= end_t; t += delta_t){
+            // integrate time step
+            i_components[Acceleration::KEP]->integrate();
+            ta_components[Acceleration::KEP]->step(delta_t);
+        }
         // compare result
         std::array<double,3> pos_i = i_components[Acceleration::KEP]->getDebris().getDebrisVector()[0].getPosition();
         std::array<double,3> vel_i = i_components[Acceleration::KEP]->getDebris().getDebrisVector()[0].getVelocity();
@@ -55,21 +57,24 @@ TEST_F(CompareWithHeyokaTests, compareKep) {
                                     ta_components[Acceleration::KEP]->get_state()[5]};
         IOUtils::to_ostream(pos_i, std::cout, ",", {"position integrator[","]\n"});
         IOUtils::to_ostream(pos_ta, std::cout, ",", {"position heyoka[","]\n"});
+        IOUtils::to_ostream(std::array<double,1>{MathUtils::cosSimilarity(pos_ta,pos_i)},std::cout,"",{"cosine similarity: ","\n"});
+        IOUtils::to_ostream(std::array<double,1>{MathUtils::euclideanDistance(pos_ta,pos_i)},std::cout,"",{"euclidean distance: ","\n"});
         IOUtils::to_ostream(vel_i, std::cout, ",", {"velocity integrator[","]\n"});
         IOUtils::to_ostream(vel_ta, std::cout, ",", {"velocity heyoka[","]\n"});
+        IOUtils::to_ostream(std::array<double,1>{MathUtils::cosSimilarity(vel_ta,vel_i)},std::cout,"",{"cosine similarity: ","\n"});
+        IOUtils::to_ostream(std::array<double,1>{MathUtils::euclideanDistance(vel_ta,vel_i)},std::cout,"",{"euclidean distance: ","\n\n"});
     }
 }
 // compare calculated values of J2Component
 TEST_F(CompareWithHeyokaTests, compareJ2)
 {
-    // time step in seconds
-    double delta_t = 0.1;
+    std::cout << "\nJ2" << std::endl;
     // set some test debris values
     std::vector<Debris::Debris> ds;
     Debris::Debris d;
     for (int i = 0; i < 3; ++i){
         d.setPosition({3500.*(i+2),0,0});
-        d.setVelocity({10.,0,0});
+        d.setVelocity({1.,0,0});
         ds.push_back(d);
     }
     // loop over the debris data and compare calculations
@@ -85,11 +90,14 @@ TEST_F(CompareWithHeyokaTests, compareJ2)
         ta_components[Acceleration::J2]->get_state_data()[5] = d.getVelocity()[2];
         // reset time values
         i_components[Acceleration::J2]->setDeltaT(delta_t);
-        i_components[Acceleration::J2]->getAccumulator().setT(0.);
-        ta_components[Acceleration::J2]->set_time(0.);
-        // integrate time step
-        i_components[Acceleration::J2]->integrate();
-        ta_components[Acceleration::J2]->step(delta_t);
+        i_components[Acceleration::J2]->getAccumulator().setT(start_t);
+        ta_components[Acceleration::J2]->set_time(start_t);
+        // integrate over time
+        for (double t = start_t; t <= end_t; t += delta_t){
+            // integrate time step
+            i_components[Acceleration::J2]->integrate();
+            ta_components[Acceleration::J2]->step(delta_t);
+        }
         // compare result
         std::array<double,3> pos_i = i_components[Acceleration::J2]->getDebris().getDebrisVector()[0].getPosition();
         std::array<double,3> vel_i = i_components[Acceleration::J2]->getDebris().getDebrisVector()[0].getVelocity();
@@ -101,21 +109,24 @@ TEST_F(CompareWithHeyokaTests, compareJ2)
                                     ta_components[Acceleration::J2]->get_state()[5]};
         IOUtils::to_ostream(pos_i, std::cout, ",", {"position integrator[","]\n"});
         IOUtils::to_ostream(pos_ta, std::cout, ",", {"position heyoka[","]\n"});
+        IOUtils::to_ostream(std::array<double,1>{MathUtils::cosSimilarity(pos_ta,pos_i)},std::cout,"",{"cosine similarity: ","\n"});
+        IOUtils::to_ostream(std::array<double,1>{MathUtils::euclideanDistance(pos_ta,pos_i)},std::cout,"",{"euclidean distance: ","\n"});
         IOUtils::to_ostream(vel_i, std::cout, ",", {"velocity integrator[","]\n"});
         IOUtils::to_ostream(vel_ta, std::cout, ",", {"velocity heyoka[","]\n"});
+        IOUtils::to_ostream(std::array<double,1>{MathUtils::cosSimilarity(vel_ta,vel_i)},std::cout,"",{"cosine similarity: ","\n"});
+        IOUtils::to_ostream(std::array<double,1>{MathUtils::euclideanDistance(vel_ta,vel_i)},std::cout,"",{"euclidean distance: ","\n\n"});
     }
 }
 // compare calculated values of C22Component
 TEST_F(CompareWithHeyokaTests, compareC22)
 {
-    // time step in seconds
-    double delta_t = 0.1;
+    std::cout << "\nC22" << std::endl;
     // set some test debris values
     std::vector<Debris::Debris> ds;
     Debris::Debris d;
     for (int i = 0; i < 3; ++i){
         d.setPosition({3500.*(i+2),0,0});
-        d.setVelocity({10.,0,0});
+        d.setVelocity({1.,0,0});
         ds.push_back(d);
     }
     // loop over the debris data and compare calculations
@@ -131,8 +142,14 @@ TEST_F(CompareWithHeyokaTests, compareC22)
         ta_components[Acceleration::C22]->get_state_data()[5] = d.getVelocity()[2];
         // reset time values
         i_components[Acceleration::C22]->setDeltaT(delta_t);
-        i_components[Acceleration::C22]->getAccumulator().setT(0.);
-        ta_components[Acceleration::C22]->set_time(0.);
+        i_components[Acceleration::C22]->getAccumulator().setT(start_t);
+        ta_components[Acceleration::C22]->set_time(start_t);
+        // integrate over time
+        for (double t = start_t; t <= end_t; t += delta_t){
+            // integrate time step
+            i_components[Acceleration::C22]->integrate();
+            ta_components[Acceleration::C22]->step(delta_t);
+        }
         // integrate time step
         i_components[Acceleration::C22]->integrate();
         ta_components[Acceleration::C22]->step(delta_t);
@@ -147,21 +164,24 @@ TEST_F(CompareWithHeyokaTests, compareC22)
                                     ta_components[Acceleration::C22]->get_state()[5]};
         IOUtils::to_ostream(pos_i, std::cout, ",", {"position integrator[","]\n"});
         IOUtils::to_ostream(pos_ta, std::cout, ",", {"position heyoka[","]\n"});
+        IOUtils::to_ostream(std::array<double,1>{MathUtils::cosSimilarity(pos_ta,pos_i)},std::cout,"",{"cosine similarity: ","\n"});
+        IOUtils::to_ostream(std::array<double,1>{MathUtils::euclideanDistance(pos_ta,pos_i)},std::cout,"",{"euclidean distance: ","\n"});
         IOUtils::to_ostream(vel_i, std::cout, ",", {"velocity integrator[","]\n"});
         IOUtils::to_ostream(vel_ta, std::cout, ",", {"velocity heyoka[","]\n"});
+        IOUtils::to_ostream(std::array<double,1>{MathUtils::cosSimilarity(vel_ta,vel_i)},std::cout,"",{"cosine similarity: ","\n"});
+        IOUtils::to_ostream(std::array<double,1>{MathUtils::euclideanDistance(vel_ta,vel_i)},std::cout,"",{"euclidean distance: ","\n\n"});
     }
 }
 // compare calculated values of S22Component
 TEST_F(CompareWithHeyokaTests, compareS22)
 {
-    // time step in seconds
-    double delta_t = 0.1;
+    std::cout << "\nS22" << std::endl;
     // set some test debris values
     std::vector<Debris::Debris> ds;
     Debris::Debris d;
     for (int i = 0; i < 3; ++i){
         d.setPosition({3500.*(i+2),0,0});
-        d.setVelocity({10.,0,0});
+        d.setVelocity({1.,0,0});
         ds.push_back(d);
     }
     // loop over the debris data and compare calculations
@@ -177,8 +197,14 @@ TEST_F(CompareWithHeyokaTests, compareS22)
         ta_components[Acceleration::S22]->get_state_data()[5] = d.getVelocity()[2];
         // reset time values
         i_components[Acceleration::S22]->setDeltaT(delta_t);
-        i_components[Acceleration::S22]->getAccumulator().setT(0.);
-        ta_components[Acceleration::S22]->set_time(0.);
+        i_components[Acceleration::S22]->getAccumulator().setT(start_t);
+        ta_components[Acceleration::S22]->set_time(start_t);
+        // integrate over time
+        for (double t = start_t; t <= end_t; t += delta_t){
+            // integrate time step
+            i_components[Acceleration::S22]->integrate();
+            ta_components[Acceleration::S22]->step(delta_t);
+        }
         // integrate time step
         i_components[Acceleration::S22]->integrate();
         ta_components[Acceleration::S22]->step(delta_t);
@@ -193,21 +219,24 @@ TEST_F(CompareWithHeyokaTests, compareS22)
                                     ta_components[Acceleration::S22]->get_state()[5]};
         IOUtils::to_ostream(pos_i, std::cout, ",", {"position integrator[","]\n"});
         IOUtils::to_ostream(pos_ta, std::cout, ",", {"position heyoka[","]\n"});
+        IOUtils::to_ostream(std::array<double,1>{MathUtils::cosSimilarity(pos_ta,pos_i)},std::cout,"",{"cosine similarity: ","\n"});
+        IOUtils::to_ostream(std::array<double,1>{MathUtils::euclideanDistance(pos_ta,pos_i)},std::cout,"",{"euclidean distance: ","\n"});
         IOUtils::to_ostream(vel_i, std::cout, ",", {"velocity integrator[","]\n"});
         IOUtils::to_ostream(vel_ta, std::cout, ",", {"velocity heyoka[","]\n"});
+        IOUtils::to_ostream(std::array<double,1>{MathUtils::cosSimilarity(vel_ta,vel_i)},std::cout,"",{"cosine similarity: ","\n"});
+        IOUtils::to_ostream(std::array<double,1>{MathUtils::euclideanDistance(vel_ta,vel_i)},std::cout,"",{"euclidean distance: ","\n\n"});
     }
 }
 // compare calculated values of LunComponent
 TEST_F(CompareWithHeyokaTests, compareLun)
 {
-    // time step in seconds
-    double delta_t = 0.1;
+    std::cout << "\nLunar Tide" << std::endl;
     // set some test debris values
     std::vector<Debris::Debris> ds;
     Debris::Debris d;
     for (int i = 0; i < 3; ++i){
         d.setPosition({3500.*(i+2),0,0});
-        d.setVelocity({10.,0,0});
+        d.setVelocity({1.,0,0});
         ds.push_back(d);
     }
     // loop over the debris data and compare calculations
@@ -223,8 +252,14 @@ TEST_F(CompareWithHeyokaTests, compareLun)
         ta_components[Acceleration::LUN]->get_state_data()[5] = d.getVelocity()[2];
         // reset time values
         i_components[Acceleration::LUN]->setDeltaT(delta_t);
-        i_components[Acceleration::LUN]->getAccumulator().setT(0.);
-        ta_components[Acceleration::LUN]->set_time(0.);
+        i_components[Acceleration::LUN]->getAccumulator().setT(start_t);
+        ta_components[Acceleration::LUN]->set_time(start_t);
+        // integrate over time
+        for (double t = start_t; t <= end_t; t += delta_t){
+            // integrate time step
+            i_components[Acceleration::LUN]->integrate();
+            ta_components[Acceleration::LUN]->step(delta_t);
+        }
         // integrate time step
         i_components[Acceleration::LUN]->integrate();
         ta_components[Acceleration::LUN]->step(delta_t);
@@ -239,21 +274,24 @@ TEST_F(CompareWithHeyokaTests, compareLun)
                                     ta_components[Acceleration::LUN]->get_state()[5]};
         IOUtils::to_ostream(pos_i, std::cout, ",", {"position integrator[","]\n"});
         IOUtils::to_ostream(pos_ta, std::cout, ",", {"position heyoka[","]\n"});
+        IOUtils::to_ostream(std::array<double,1>{MathUtils::cosSimilarity(pos_ta,pos_i)},std::cout,"",{"cosine similarity: ","\n"});
+        IOUtils::to_ostream(std::array<double,1>{MathUtils::euclideanDistance(pos_ta,pos_i)},std::cout,"",{"euclidean distance: ","\n"});
         IOUtils::to_ostream(vel_i, std::cout, ",", {"velocity integrator[","]\n"});
         IOUtils::to_ostream(vel_ta, std::cout, ",", {"velocity heyoka[","]\n"});
+        IOUtils::to_ostream(std::array<double,1>{MathUtils::cosSimilarity(vel_ta,vel_i)},std::cout,"",{"cosine similarity: ","\n"});
+        IOUtils::to_ostream(std::array<double,1>{MathUtils::euclideanDistance(vel_ta,vel_i)},std::cout,"",{"euclidean distance: ","\n\n"});
     }
 }
 // compare calculated values of SolComponent
 TEST_F(CompareWithHeyokaTests, compareSol)
 {
-    // time step in seconds
-    double delta_t = 0.1;
+    std::cout << "\nSolar tide" << std::endl;
     // set some test debris values
     std::vector<Debris::Debris> ds;
     Debris::Debris d;
     for (int i = 0; i < 3; ++i){
         d.setPosition({3500.*(i+2),0,0});
-        d.setVelocity({10.,0,0});
+        d.setVelocity({1.,0,0});
         ds.push_back(d);
     }
     // loop over the debris data and compare calculations
@@ -269,8 +307,14 @@ TEST_F(CompareWithHeyokaTests, compareSol)
         ta_components[Acceleration::SOL]->get_state_data()[5] = d.getVelocity()[2];
         // reset time values
         i_components[Acceleration::SOL]->setDeltaT(delta_t);
-        i_components[Acceleration::SOL]->getAccumulator().setT(0.);
-        ta_components[Acceleration::SOL]->set_time(0.);
+        i_components[Acceleration::SOL]->getAccumulator().setT(start_t);
+        ta_components[Acceleration::SOL]->set_time(start_t);
+        // integrate over time
+        for (double t = start_t; t <= end_t; t += delta_t){
+            // integrate time step
+            i_components[Acceleration::SOL]->integrate();
+            ta_components[Acceleration::SOL]->propagate_for(delta_t);
+        }
         // integrate time step
         i_components[Acceleration::SOL]->integrate();
         ta_components[Acceleration::SOL]->step(delta_t);
@@ -285,21 +329,24 @@ TEST_F(CompareWithHeyokaTests, compareSol)
                                     ta_components[Acceleration::SOL]->get_state()[5]};
         IOUtils::to_ostream(pos_i, std::cout, ",", {"position integrator[","]\n"});
         IOUtils::to_ostream(pos_ta, std::cout, ",", {"position heyoka[","]\n"});
+        IOUtils::to_ostream(std::array<double,1>{MathUtils::cosSimilarity(pos_ta,pos_i)},std::cout,"",{"cosine similarity: ","\n"});
+        IOUtils::to_ostream(std::array<double,1>{MathUtils::euclideanDistance(pos_ta,pos_i)},std::cout,"",{"euclidean distance: ","\n"});
         IOUtils::to_ostream(vel_i, std::cout, ",", {"velocity integrator[","]\n"});
         IOUtils::to_ostream(vel_ta, std::cout, ",", {"velocity heyoka[","]\n"});
+        IOUtils::to_ostream(std::array<double,1>{MathUtils::cosSimilarity(vel_ta,vel_i)},std::cout,"",{"cosine similarity: ","\n"});
+        IOUtils::to_ostream(std::array<double,1>{MathUtils::euclideanDistance(vel_ta,vel_i)},std::cout,"",{"euclidean distance: ","\n\n"});
     }
 }
 // compare calculated values of SRPComponent
 TEST_F(CompareWithHeyokaTests, compareSRP)
 {
-    // time step in seconds
-    double delta_t = 0.1;
+    std::cout << "\nSolar Radiation Pressure" << std::endl;
     // set some test debris values
     std::vector<Debris::Debris> ds;
     Debris::Debris d;
     for (int i = 0; i < 3; ++i){
         d.setPosition({3500.*(i+2),0,0});
-        d.setVelocity({10.,0,0});
+        d.setVelocity({1.,0,0});
         d.setAom(0.25);
         ds.push_back(d);
     }
@@ -317,8 +364,14 @@ TEST_F(CompareWithHeyokaTests, compareSRP)
         ta_components[Acceleration::SRP]->get_pars_data()[0] = d.getAom();
         // reset time values
         i_components[Acceleration::SRP]->setDeltaT(delta_t);
-        i_components[Acceleration::SRP]->getAccumulator().setT(0.);
-        ta_components[Acceleration::SRP]->set_time(0.);
+        i_components[Acceleration::SRP]->getAccumulator().setT(start_t);
+        ta_components[Acceleration::SRP]->set_time(start_t);
+        // integrate over time
+        for (double t = start_t; t <= end_t; t += delta_t){
+            // integrate time step
+            i_components[Acceleration::SRP]->integrate();
+            ta_components[Acceleration::SRP]->step(delta_t);
+        }
         // integrate time step
         i_components[Acceleration::SRP]->integrate();
         ta_components[Acceleration::SRP]->step(delta_t);
@@ -333,21 +386,24 @@ TEST_F(CompareWithHeyokaTests, compareSRP)
                                     ta_components[Acceleration::SRP]->get_state()[5]};
         IOUtils::to_ostream(pos_i, std::cout, ",", {"position integrator[","]\n"});
         IOUtils::to_ostream(pos_ta, std::cout, ",", {"position heyoka[","]\n"});
+        IOUtils::to_ostream(std::array<double,1>{MathUtils::cosSimilarity(pos_ta,pos_i)},std::cout,"",{"cosine similarity: ","\n"});
+        IOUtils::to_ostream(std::array<double,1>{MathUtils::euclideanDistance(pos_ta,pos_i)},std::cout,"",{"euclidean distance: ","\n"});
         IOUtils::to_ostream(vel_i, std::cout, ",", {"velocity integrator[","]\n"});
         IOUtils::to_ostream(vel_ta, std::cout, ",", {"velocity heyoka[","]\n"});
+        IOUtils::to_ostream(std::array<double,1>{MathUtils::cosSimilarity(vel_ta,vel_i)},std::cout,"",{"cosine similarity: ","\n"});
+        IOUtils::to_ostream(std::array<double,1>{MathUtils::euclideanDistance(vel_ta,vel_i)},std::cout,"",{"euclidean distance: ","\n\n"});
     }
 }
 // compare calculated values of DragComponent
 TEST_F(CompareWithHeyokaTests, compareDrag)
 {
-    // time step in seconds
-    double delta_t = 0.1;
+    std::cout << "\nAtmospheric Drag" << std::endl;
     // set some test debris values
     std::vector<Debris::Debris> ds;
     Debris::Debris d;
     for (int i = 0; i < 3; ++i){
         d.setPosition({3500.*(i+2),0,0});
-        d.setVelocity({10.,0,0});
+        d.setVelocity({1.,0,0});
         d.setBcInv(0.5);
         ds.push_back(d);
     }
@@ -365,8 +421,14 @@ TEST_F(CompareWithHeyokaTests, compareDrag)
         ta_components[Acceleration::DRAG]->get_pars_data()[1] = d.getBcInv();
         // reset time values
         i_components[Acceleration::DRAG]->setDeltaT(delta_t);
-        i_components[Acceleration::DRAG]->getAccumulator().setT(0.);
-        ta_components[Acceleration::DRAG]->set_time(0.);
+        i_components[Acceleration::DRAG]->getAccumulator().setT(start_t);
+        ta_components[Acceleration::DRAG]->set_time(start_t);
+        // integrate over time
+        for (double t = start_t; t <= end_t; t += delta_t){
+            // integrate time step
+            i_components[Acceleration::DRAG]->integrate();
+            ta_components[Acceleration::DRAG]->step(delta_t);
+        }
         // integrate time step
         i_components[Acceleration::DRAG]->integrate();
         ta_components[Acceleration::DRAG]->step(delta_t);
@@ -381,21 +443,24 @@ TEST_F(CompareWithHeyokaTests, compareDrag)
                                     ta_components[Acceleration::DRAG]->get_state()[5]};
         IOUtils::to_ostream(pos_i, std::cout, ",", {"position integrator[","]\n"});
         IOUtils::to_ostream(pos_ta, std::cout, ",", {"position heyoka[","]\n"});
+        IOUtils::to_ostream(std::array<double,1>{MathUtils::cosSimilarity(pos_ta,pos_i)},std::cout,"",{"cosine similarity: ","\n"});
+        IOUtils::to_ostream(std::array<double,1>{MathUtils::euclideanDistance(pos_ta,pos_i)},std::cout,"",{"euclidean distance: ","\n"});
         IOUtils::to_ostream(vel_i, std::cout, ",", {"velocity integrator[","]\n"});
         IOUtils::to_ostream(vel_ta, std::cout, ",", {"velocity heyoka[","]\n"});
+        IOUtils::to_ostream(std::array<double,1>{MathUtils::cosSimilarity(vel_ta,vel_i)},std::cout,"",{"cosine similarity: ","\n"});
+        IOUtils::to_ostream(std::array<double,1>{MathUtils::euclideanDistance(vel_ta,vel_i)},std::cout,"",{"euclidean distance: ","\n\n"});
     }
 }
 // compare calculated values of all Components
 TEST_F(CompareWithHeyokaTests, compareTotal)
 {
-    // time step in seconds
-    double delta_t = 0.1;
+    std::cout << "\nAll Components" << std::endl;
     // set some test debris values
     std::vector<Debris::Debris> ds;
     Debris::Debris d;
     for (int i = 0; i < 3; ++i){
         d.setPosition({3500.*(i+2),0,0});
-        d.setVelocity({10.,0,0});
+        d.setVelocity({1.,0,0});
         d.setAom(0.25);
         d.setBcInv(0.5);
         ds.push_back(d);
@@ -411,12 +476,18 @@ TEST_F(CompareWithHeyokaTests, compareTotal)
         ta_total->get_state_data()[3] = d.getVelocity()[0];
         ta_total->get_state_data()[4] = d.getVelocity()[1];
         ta_total->get_state_data()[5] = d.getVelocity()[2];
-        ta_components[Acceleration::DRAG]->get_pars_data()[0] = d.getAom();
-        ta_components[Acceleration::DRAG]->get_pars_data()[1] = d.getBcInv();
+        ta_total->get_pars_data()[0] = d.getAom();
+        ta_total->get_pars_data()[1] = d.getBcInv();
         // reset time values
         i_total->setDeltaT(delta_t);
-        i_total->getAccumulator().setT(0.);
-        ta_total->set_time(0.);
+        i_total->getAccumulator().setT(start_t);
+        ta_total->set_time(start_t);
+        // integrate over time
+        for (double t = start_t; t <= end_t; t += delta_t){
+            // integrate time step
+            i_total->integrate();
+            ta_total->step(delta_t);
+        }
         // integrate time step
         i_total->integrate();
         ta_total->step(delta_t);
@@ -431,7 +502,11 @@ TEST_F(CompareWithHeyokaTests, compareTotal)
                                     ta_total->get_state()[5]};
         IOUtils::to_ostream(pos_i, std::cout, ",", {"position integrator[","]\n"});
         IOUtils::to_ostream(pos_ta, std::cout, ",", {"position heyoka[","]\n"});
+        IOUtils::to_ostream(std::array<double,1>{MathUtils::cosSimilarity(pos_ta,pos_i)},std::cout,"",{"cosine similarity: ","\n"});
+        IOUtils::to_ostream(std::array<double,1>{MathUtils::euclideanDistance(pos_ta,pos_i)},std::cout,"",{"euclidean distance: ","\n"});
         IOUtils::to_ostream(vel_i, std::cout, ",", {"velocity integrator[","]\n"});
         IOUtils::to_ostream(vel_ta, std::cout, ",", {"velocity heyoka[","]\n"});
+        IOUtils::to_ostream(std::array<double,1>{MathUtils::cosSimilarity(vel_ta,vel_i)},std::cout,"",{"cosine similarity: ","\n"});
+        IOUtils::to_ostream(std::array<double,1>{MathUtils::euclideanDistance(vel_ta,vel_i)},std::cout,"",{"euclidean distance: ","\n\n"});
     }
 }
