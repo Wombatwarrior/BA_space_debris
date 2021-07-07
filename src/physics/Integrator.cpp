@@ -10,6 +10,7 @@ Integrator::~Integrator() = default;
 
 void Integrator::integrate(bool write_time_step) const
 {
+    debris->shiftAcceleration();
     calculateAcceleration(write_time_step);
     calculatePosition();
     calculateVelocity();

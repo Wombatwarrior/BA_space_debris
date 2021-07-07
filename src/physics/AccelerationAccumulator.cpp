@@ -38,7 +38,6 @@ void AccelerationAccumulator::applyComponents() const
         s_term = std::sin((Physics::THETA_G + Physics::NU_EARTH * t) * Physics::RAD_FACTOR);
     }
 
-    debris->shiftAcceleration();
     for (auto& d : debris->getDebrisVector()){
         new_acc_total[0] = 0;
         new_acc_total[1] = 0;
@@ -113,7 +112,6 @@ void AccelerationAccumulator::applyAmdWriteComponents() const
         s_term = std::sin((Physics::THETA_G + Physics::NU_EARTH * t) * Physics::RAD_FACTOR);
     }
 
-    debris->shiftAcceleration();
     for (auto& d : debris->getDebrisVector()) {
         // start a new line o data for each particle
         file_output->writeAcc_start(t);
