@@ -2,7 +2,9 @@
 // Created by Oliver on 13.05.21.
 //
 
+
 #include "Integrator_test.h"
+#ifdef HEYOKA_IS_PRESENT
 #include <stdlib.h>
 #include <time.h>
 
@@ -576,3 +578,4 @@ TEST_F(CompareWithHeyokaTests, compareTotalRandom)
         IOUtils::to_ostream(std::array<double,1>{MathUtils::euclideanDistance(vel_ta,vel_i)},std::cout,"",{"euclidean distance: ","\n\n"});
     }
 }
+#endif

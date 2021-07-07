@@ -626,7 +626,7 @@ TEST_F(SolComponentTests, EquilavelnceWIthPreCalculatedTest)
 TEST_F(SolComponentTests, CompareSetupFunction)
 {
     double t = 0.1;
-    double abs_err = 1e-7;
+    double abs_err = 1e-6;
     for (int i = 0; i < 10; ++i) {
         const std::array<double, 6> params_1 = Acceleration::SolComponent::setUp(t * i);
         const std::array<double, 6> params_2 = calcSolParams(t * i);

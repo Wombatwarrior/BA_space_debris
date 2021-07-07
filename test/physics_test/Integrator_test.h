@@ -3,6 +3,7 @@
 //
 
 #pragma once
+#ifdef HEYOKA_IS_PRESENT
 #include "heyoka/heyoka.hpp"
 #include "physics/Constants.h"
 #include "physics/Integrator.h"
@@ -339,3 +340,4 @@ protected:
         i_components[Acceleration::DRAG]->setDebris(*debris);
     }
 };
+#endif
