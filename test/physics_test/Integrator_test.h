@@ -43,13 +43,13 @@ protected:
     inline static std::array<heyoka::expression, 3> pos;
     inline static std::array<heyoka::expression, 3> vel;
     inline static heyoka::taylor_adaptive<double>* ta_total;
-    inline static std::array<heyoka::taylor_adaptive<double>*,8> ta_components;
+    inline static std::array<heyoka::taylor_adaptive<double>*, 8> ta_components;
 
     // won integrators
     inline static Integrator* i_total;
     inline static Acceleration::AccelerationAccumulator* aa_total;
-    inline static std::array<Integrator*,8> i_components;
-    inline static std::array<Acceleration::AccelerationAccumulator*,8> aa_components;
+    inline static std::array<Integrator*, 8> i_components;
+    inline static std::array<Acceleration::AccelerationAccumulator*, 8> aa_components;
     inline static void SetUpTestSuite()
     {
         // set output accuracy
@@ -92,9 +92,9 @@ protected:
         auto magR2 = heyoka::pow(pos[0], 2.) + heyoka::pow(pos[1], 2.) + heyoka::pow(pos[2], 2.);
 
         // atmospheric drag
-        auto p = p0*heyoka::exp(-(magR2 - Re)/h );
-        auto v_rel_x = vel[0] + omega_e*pos[1];
-        auto v_rel_y = vel[1] - omega_e*pos[0];
+        auto p = p0 * heyoka::exp(-(magR2 - Re) / h);
+        auto v_rel_x = vel[0] + omega_e * pos[1];
+        auto v_rel_y = vel[1] - omega_e * pos[0];
         auto v_rel_z = vel[2];
 
         //Earth's Keplerian terms
@@ -158,10 +158,10 @@ protected:
         auto fSRPZ = SRPterm * (pos[2] - Zo);
 
         // Drag due to the earths atmosphere (BCINV is a heyoka parameter hy.par[1])
-        auto DragTerm = (heyoka::par[1] * p)/2.;
-        auto fDragX = DragTerm*heyoka::pow(v_rel_x,2.);
-        auto fDragY = DragTerm*heyoka::pow(v_rel_y,2.);
-        auto fDragZ = DragTerm*heyoka::pow(v_rel_z,2.);
+        auto DragTerm = (heyoka::par[1] * p) / 2.;
+        auto fDragX = DragTerm * heyoka::pow(v_rel_x, 2.);
+        auto fDragY = DragTerm * heyoka::pow(v_rel_y, 2.);
+        auto fDragZ = DragTerm * heyoka::pow(v_rel_z, 2.);
         // EOM
         auto dXdt = vel[0];
         auto dYdt = vel[1];
@@ -190,66 +190,66 @@ protected:
             heyoka::kw::compact_mode = true
         };
 
-        ta_components[Acceleration::KEP]= new heyoka::taylor_adaptive<double> {
-                { heyoka::prime(pos[0]) = dXdt, heyoka::prime(pos[1]) = dYdt, heyoka::prime(pos[2]) = dZdt, heyoka::prime(vel[0]) = fKepX, heyoka::prime(vel[1]) = fKepY, heyoka::prime(vel[2]) = fKepZ },
-                { x0, y0, z0, vx0, vy0, vz0 },
-                heyoka::kw::time = t0,
-                heyoka::kw::tol = 1e-16,
-                heyoka::kw::compact_mode = true
+        ta_components[Acceleration::KEP] = new heyoka::taylor_adaptive<double> {
+            { heyoka::prime(pos[0]) = dXdt, heyoka::prime(pos[1]) = dYdt, heyoka::prime(pos[2]) = dZdt, heyoka::prime(vel[0]) = fKepX, heyoka::prime(vel[1]) = fKepY, heyoka::prime(vel[2]) = fKepZ },
+            { x0, y0, z0, vx0, vy0, vz0 },
+            heyoka::kw::time = t0,
+            heyoka::kw::tol = 1e-16,
+            heyoka::kw::compact_mode = true
         };
-        ta_components[Acceleration::J2]= new heyoka::taylor_adaptive<double> {
-                { heyoka::prime(pos[0]) = dXdt, heyoka::prime(pos[1]) = dYdt, heyoka::prime(pos[2]) = dZdt, heyoka::prime(vel[0]) = fJ2X, heyoka::prime(vel[1]) = fJ2Y, heyoka::prime(vel[2]) = fJ2Z },
-                { x0, y0, z0, vx0, vy0, vz0 },
-                heyoka::kw::time = t0,
-                heyoka::kw::tol = 1e-16,
-                heyoka::kw::compact_mode = true
+        ta_components[Acceleration::J2] = new heyoka::taylor_adaptive<double> {
+            { heyoka::prime(pos[0]) = dXdt, heyoka::prime(pos[1]) = dYdt, heyoka::prime(pos[2]) = dZdt, heyoka::prime(vel[0]) = fJ2X, heyoka::prime(vel[1]) = fJ2Y, heyoka::prime(vel[2]) = fJ2Z },
+            { x0, y0, z0, vx0, vy0, vz0 },
+            heyoka::kw::time = t0,
+            heyoka::kw::tol = 1e-16,
+            heyoka::kw::compact_mode = true
         };
-        ta_components[Acceleration::C22]= new heyoka::taylor_adaptive<double> {
-                { heyoka::prime(pos[0]) = dXdt, heyoka::prime(pos[1]) = dYdt, heyoka::prime(pos[2]) = dZdt, heyoka::prime(vel[0]) = fC22X, heyoka::prime(vel[1]) = fC22Y, heyoka::prime(vel[2]) = fC22Z },
-                { x0, y0, z0, vx0, vy0, vz0 },
-                heyoka::kw::time = t0,
-                heyoka::kw::tol = 1e-16,
-                heyoka::kw::compact_mode = true
+        ta_components[Acceleration::C22] = new heyoka::taylor_adaptive<double> {
+            { heyoka::prime(pos[0]) = dXdt, heyoka::prime(pos[1]) = dYdt, heyoka::prime(pos[2]) = dZdt, heyoka::prime(vel[0]) = fC22X, heyoka::prime(vel[1]) = fC22Y, heyoka::prime(vel[2]) = fC22Z },
+            { x0, y0, z0, vx0, vy0, vz0 },
+            heyoka::kw::time = t0,
+            heyoka::kw::tol = 1e-16,
+            heyoka::kw::compact_mode = true
         };
-        ta_components[Acceleration::S22]= new heyoka::taylor_adaptive<double> {
-                { heyoka::prime(pos[0]) = dXdt, heyoka::prime(pos[1]) = dYdt, heyoka::prime(pos[2]) = dZdt, heyoka::prime(vel[0]) = fS22X, heyoka::prime(vel[1]) = fS22Y, heyoka::prime(vel[2]) = fS22Z },
-                { x0, y0, z0, vx0, vy0, vz0 },
-                heyoka::kw::time = t0,
-                heyoka::kw::tol = 1e-16,
-                heyoka::kw::compact_mode = true
+        ta_components[Acceleration::S22] = new heyoka::taylor_adaptive<double> {
+            { heyoka::prime(pos[0]) = dXdt, heyoka::prime(pos[1]) = dYdt, heyoka::prime(pos[2]) = dZdt, heyoka::prime(vel[0]) = fS22X, heyoka::prime(vel[1]) = fS22Y, heyoka::prime(vel[2]) = fS22Z },
+            { x0, y0, z0, vx0, vy0, vz0 },
+            heyoka::kw::time = t0,
+            heyoka::kw::tol = 1e-16,
+            heyoka::kw::compact_mode = true
         };
-        ta_components[Acceleration::SOL]= new heyoka::taylor_adaptive<double> {
-                { heyoka::prime(pos[0]) = dXdt, heyoka::prime(pos[1]) = dYdt, heyoka::prime(pos[2]) = dZdt, heyoka::prime(vel[0]) = fSunX, heyoka::prime(vel[1]) = fSunY, heyoka::prime(vel[2]) = fSunZ },
-                { x0, y0, z0, vx0, vy0, vz0 },
-                heyoka::kw::time = t0,
-                heyoka::kw::tol = 1e-16,
-                heyoka::kw::compact_mode = true
+        ta_components[Acceleration::SOL] = new heyoka::taylor_adaptive<double> {
+            { heyoka::prime(pos[0]) = dXdt, heyoka::prime(pos[1]) = dYdt, heyoka::prime(pos[2]) = dZdt, heyoka::prime(vel[0]) = fSunX, heyoka::prime(vel[1]) = fSunY, heyoka::prime(vel[2]) = fSunZ },
+            { x0, y0, z0, vx0, vy0, vz0 },
+            heyoka::kw::time = t0,
+            heyoka::kw::tol = 1e-16,
+            heyoka::kw::compact_mode = true
         };
-        ta_components[Acceleration::LUN]= new heyoka::taylor_adaptive<double> {
-                { heyoka::prime(pos[0]) = dXdt, heyoka::prime(pos[1]) = dYdt, heyoka::prime(pos[2]) = dZdt, heyoka::prime(vel[0]) = fMoonX, heyoka::prime(vel[1]) = fMoonY, heyoka::prime(vel[2]) = fMoonZ },
-                { x0, y0, z0, vx0, vy0, vz0 },
-                heyoka::kw::time = t0,
-                heyoka::kw::tol = 1e-16,
-                heyoka::kw::compact_mode = true
+        ta_components[Acceleration::LUN] = new heyoka::taylor_adaptive<double> {
+            { heyoka::prime(pos[0]) = dXdt, heyoka::prime(pos[1]) = dYdt, heyoka::prime(pos[2]) = dZdt, heyoka::prime(vel[0]) = fMoonX, heyoka::prime(vel[1]) = fMoonY, heyoka::prime(vel[2]) = fMoonZ },
+            { x0, y0, z0, vx0, vy0, vz0 },
+            heyoka::kw::time = t0,
+            heyoka::kw::tol = 1e-16,
+            heyoka::kw::compact_mode = true
         };
-        ta_components[Acceleration::SRP]= new heyoka::taylor_adaptive<double> {
-                { heyoka::prime(pos[0]) = dXdt, heyoka::prime(pos[1]) = dYdt, heyoka::prime(pos[2]) = dZdt, heyoka::prime(vel[0]) = fSRPX, heyoka::prime(vel[1]) = fSRPY, heyoka::prime(vel[2]) = fSRPZ },
-                { x0, y0, z0, vx0, vy0, vz0 },
-                heyoka::kw::time = t0,
-                heyoka::kw::tol = 1e-16,
-                heyoka::kw::compact_mode = true
+        ta_components[Acceleration::SRP] = new heyoka::taylor_adaptive<double> {
+            { heyoka::prime(pos[0]) = dXdt, heyoka::prime(pos[1]) = dYdt, heyoka::prime(pos[2]) = dZdt, heyoka::prime(vel[0]) = fSRPX, heyoka::prime(vel[1]) = fSRPY, heyoka::prime(vel[2]) = fSRPZ },
+            { x0, y0, z0, vx0, vy0, vz0 },
+            heyoka::kw::time = t0,
+            heyoka::kw::tol = 1e-16,
+            heyoka::kw::compact_mode = true
         };
-        ta_components[Acceleration::DRAG]= new heyoka::taylor_adaptive<double> {
-                { heyoka::prime(pos[0]) = dXdt, heyoka::prime(pos[1]) = dYdt, heyoka::prime(pos[2]) = dZdt, heyoka::prime(vel[0]) = fDragX, heyoka::prime(vel[1]) = fDragY, heyoka::prime(vel[2]) = fDragZ },
-                { x0, y0, z0, vx0, vy0, vz0 },
-                heyoka::kw::time = t0,
-                heyoka::kw::tol = 1e-16,
-                heyoka::kw::compact_mode = true
+        ta_components[Acceleration::DRAG] = new heyoka::taylor_adaptive<double> {
+            { heyoka::prime(pos[0]) = dXdt, heyoka::prime(pos[1]) = dYdt, heyoka::prime(pos[2]) = dZdt, heyoka::prime(vel[0]) = fDragX, heyoka::prime(vel[1]) = fDragY, heyoka::prime(vel[2]) = fDragZ },
+            { x0, y0, z0, vx0, vy0, vz0 },
+            heyoka::kw::time = t0,
+            heyoka::kw::tol = 1e-16,
+            heyoka::kw::compact_mode = true
         };
 
         // setup own integrator for all components
         auto* debris = new Debris::DebrisContainer;
-        std::array<bool,8> config{true,true,true,true,true,true,true,true};
+        std::array<bool, 8> config { true, true, true, true, true, true, true, true };
 
         aa_total = new Acceleration::AccelerationAccumulator;
         aa_total->setConfig(config);
@@ -259,7 +259,7 @@ protected:
         i_total->setDebris(*debris);
 
         debris = new Debris::DebrisContainer;
-        config = {false,false,false,false,false,false,false,false};
+        config = { false, false, false, false, false, false, false, false };
         aa_components[Acceleration::KEP] = new Acceleration::AccelerationAccumulator;
         config[Acceleration::KEP] = true;
         aa_components[Acceleration::KEP]->setConfig(config);

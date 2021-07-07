@@ -45,8 +45,8 @@ private:
 
     FileInput::Type input_file_type = FileInput::TXT; /**< Holds the type of the input file*/
     FileOutput::Type output_file_type = FileOutput::CSV; /**< Holds the type of the output file*/
-    std::filesystem::path input_file_path{}; /**< Path to the input file */
-    std::filesystem::path output_file_path{}; /**< Path to the main output file. USed to construct other output file paths */
+    std::filesystem::path input_file_path {}; /**< Path to the input file */
+    std::filesystem::path output_file_path {}; /**< Path to the main output file. USed to construct other output file paths */
 
 public:
     /**

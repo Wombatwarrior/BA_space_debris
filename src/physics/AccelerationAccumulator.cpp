@@ -21,12 +21,12 @@ void AccelerationAccumulator::applyComponents() const
     // are constant for this time step
     double c_term;
     double s_term;
-    std::array<double, 6> sun_params{};
+    std::array<double, 6> sun_params {};
     // setup only needed for SolComponent and SRPComponent
     if (config[SOL] || config[SRP]) {
         sun_params = SolComponent::setUp(t);
     }
-    std::array<double, 6> moon_params{};
+    std::array<double, 6> moon_params {};
     // setup only needed for LunComponent
     if (config[LUN]) {
         moon_params = LunComponent::setUp(t);
@@ -38,7 +38,7 @@ void AccelerationAccumulator::applyComponents() const
         s_term = std::sin((Physics::THETA_G + Physics::NU_EARTH * t) * Physics::RAD_FACTOR);
     }
 
-    for (auto& d : debris->getDebrisVector()){
+    for (auto& d : debris->getDebrisVector()) {
         new_acc_total[0] = 0;
         new_acc_total[1] = 0;
         new_acc_total[2] = 0;
@@ -95,12 +95,12 @@ void AccelerationAccumulator::applyAmdWriteComponents() const
     // are constant for this time step
     double c_term;
     double s_term;
-    std::array<double, 6> sun_params{};
+    std::array<double, 6> sun_params {};
     // setup only needed for SolComponent and SRPComponent
     if (config[SOL] || config[SRP]) {
         sun_params = SolComponent::setUp(t);
     }
-    std::array<double, 6> moon_params{};
+    std::array<double, 6> moon_params {};
     // setup only needed for LunComponent
     if (config[LUN]) {
         moon_params = LunComponent::setUp(t);

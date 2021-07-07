@@ -34,8 +34,8 @@ inline double euclideanDistance(T&& a, T&& b)
 {
     std::vector<double> connection;
     auto it_b = std::cbegin(b);
-    for(auto it_a = std::cbegin(a); it_a != std::cend(a); ++it_a){
-        connection.push_back(*it_a-*(it_b++));
+    for (auto it_a = std::cbegin(a); it_a != std::cend(a); ++it_a) {
+        connection.push_back(*it_a - *(it_b++));
     }
     return euclideanNorm(connection);
 }
@@ -54,6 +54,6 @@ inline double euclideanDistance(T&& a, T&& b)
 template <class T>
 inline double cosSimilarity(T&& a, T&& b)
 {
-    return std::inner_product(std::cbegin(a), std::cend(a), std::cbegin(b), 0.)/(euclideanNorm(a)*euclideanNorm(b));
+    return std::inner_product(std::cbegin(a), std::cend(a), std::cbegin(b), 0.) / (euclideanNorm(a) * euclideanNorm(b));
 }
 }

@@ -92,10 +92,12 @@ public:
 
 private:
     Debris::DebrisContainer*
-        debris = nullptr; /**< Reference to the Debris::DebrisContainer object holding the
+        debris
+        = nullptr; /**< Reference to the Debris::DebrisContainer object holding the
              Debris::Debris objects to integrate for*/
     Acceleration::AccelerationAccumulator*
-        accumulator = nullptr; /**< Reference to the Acceleration::AccelerationAccumulator
+        accumulator
+        = nullptr; /**< Reference to the Acceleration::AccelerationAccumulator
                    object to calculate acceleration for the current time
                    step*/
     double delta_t = 0; /**< Time step to Integrate over */

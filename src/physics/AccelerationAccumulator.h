@@ -56,7 +56,7 @@ public:
      *
      * creates ann AccelerationAccumulator object wit all value zero initialized
      */
-     AccelerationAccumulator();
+    AccelerationAccumulator();
     /**
      * @brief Constructor creates a new Acceleration::AcceleratorAccumulator
      * object
@@ -130,9 +130,10 @@ private:
      * - #Acceleration::SRP
      * - #Acceleration::DRAG
      */
-    std::array<bool, 8> config{};
+    std::array<bool, 8> config {};
     Debris::DebrisContainer*
-        debris = nullptr; /**< Reference to the Debris::DebrisContainer object holding the
+        debris
+        = nullptr; /**< Reference to the Debris::DebrisContainer object holding the
              Debris::Debris objects to apply acceleration to*/
     double t = 0; /**< current time*/
     FileOutput* file_output = nullptr; /**< used to write detailed output data during calculations */
@@ -143,7 +144,7 @@ public:
      * @return Value of #config
      */
     [[nodiscard]] const std::array<bool, 8>& getConfig() const;
-    std::array<bool, 8>& getConfig() ;
+    std::array<bool, 8>& getConfig();
 
     /**
      * @brief Setter function for #config

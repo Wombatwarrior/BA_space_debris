@@ -149,9 +149,10 @@ private:
     void readDebrisTXT();
 
     Debris::DebrisContainer*
-        debris = nullptr; /**< Reference to a Debris::DebrisContainer object to add
+        debris
+        = nullptr; /**< Reference to a Debris::DebrisContainer object to add
              Debris::Debris objects read from the input file*/
-    std::filesystem::path input_file_path{}; /**< Complete name of the input file containing
+    std::filesystem::path input_file_path {}; /**< Complete name of the input file containing
                                 the file extension*/
     Type input_file_type = TXT; /**< InputFile::Type of the input file*/
     double delta_t = 0; /**< Time step to use in the simulation*/
@@ -173,7 +174,7 @@ private:
      * - #Acceleration::SRP
      * - #Acceleration::DRAG
      */
-    std::array<bool, 8> acc_config{};
+    std::array<bool, 8> acc_config {};
 
 public:
     /**

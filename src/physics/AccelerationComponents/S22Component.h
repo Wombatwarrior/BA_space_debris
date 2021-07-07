@@ -7,24 +7,24 @@
 #include "../Constants.h"
 
 namespace Acceleration::S22Component {
-    namespace {
-        /**
+namespace {
+    /**
          * @brief Constant factor for the first S22 term
          *
          * @return
          * -5*std::sqrt(15)*Physics::GM_EARTH*Physics::R_EARTH*Physics::R_EARTH*Physics::S22
          */
-        inline constexpr double getFactor_fst();
+    inline constexpr double getFactor_fst();
 
-        /**
+    /**
          * @brief Constant factor for the second S22 term
          *
          * @return
          * std::sqrt(15)*Physics::GM_EARTH*Physics::R_EARTH*Physics::R_EARTH*Physics::S22
          */
-        inline constexpr double getFactor_snd();
-    } // namespace
-    /**
+    inline constexpr double getFactor_snd();
+} // namespace
+/**
      * @brief Calculates acceleration due to earth gravity. Taking in account the
      * earth is neither a point mass nor not a homogenous spherical mass
      *
@@ -36,9 +36,9 @@ namespace Acceleration::S22Component {
      * @param acc_total Reference to an 3D vector to accumulate the accelerations
      * for all applied Acceleration::AccelerationComponent.
      */
-    void apply(const Debris::Debris& d,
-        double c_term,
-        double s_term,
-        std::array<double, 3>& acc_s22,
-        std::array<double, 3>& acc_total);
+void apply(const Debris::Debris& d,
+    double c_term,
+    double s_term,
+    std::array<double, 3>& acc_s22,
+    std::array<double, 3>& acc_total);
 } // namespace Acceleration

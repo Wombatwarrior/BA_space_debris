@@ -7,9 +7,9 @@
 #include "../Constants.h"
 
 namespace Acceleration::DragComponent {
-    namespace {
-    }
-    /**
+namespace {
+}
+/**
      * @brief Calculates acceleration due to the friction between the object and
      * the earths atmosphere
      *
@@ -19,7 +19,7 @@ namespace Acceleration::DragComponent {
      * @param acc_total Reference to an 3D vector to accumulate the accelerations
      * for all applied Acceleration::AccelerationComponent.
      */
-    void apply(const Debris::Debris& d,
-        std::array<double, 3>& acc_drag,
-        std::array<double, 3>& acc_total);
+void apply(const Debris::Debris& d,
+    std::array<double, 3>& acc_drag,
+    std::array<double, 3>& acc_total);
 } // namespace Acceleration

@@ -21,7 +21,7 @@ void Integrator::integrate(bool write_time_step) const
 void Integrator::calculatePosition() const
 {
     double factor = delta_t * delta_t * 0.5;
-    std::array<double, 3> new_pos{};
+    std::array<double, 3> new_pos {};
     for (auto& d : debris->getDebrisVector()) {
         new_pos = d.getPosition();
         new_pos[0] = new_pos[0] + delta_t * d.getVelocity()[0] + factor * d.getAccT0()[0];
@@ -34,7 +34,7 @@ void Integrator::calculatePosition() const
 void Integrator::calculateVelocity() const
 {
     const double factor = delta_t * 0.5;
-    std::array<double, 3> new_velocity{};
+    std::array<double, 3> new_velocity {};
     for (auto& d : debris->getDebrisVector()) {
         new_velocity = d.getVelocity();
         new_velocity[0] = new_velocity[0] + factor * (d.getAccT0()[0] + d.getAccT1()[0]);

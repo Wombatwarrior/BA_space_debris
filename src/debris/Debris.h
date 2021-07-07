@@ -103,7 +103,7 @@ public:
      * @return 3D vector representation of the debris #position
      */
     [[nodiscard]] const std::array<double, 3>& getPosition() const;
-    std::array<double, 3>& getPosition() ;
+    std::array<double, 3>& getPosition();
 
     /**
      * @brief Setter function for #position vector
@@ -148,7 +148,7 @@ public:
      * @return 3D vector representation of the debris #acc_t1
      */
     [[nodiscard]] const std::array<double, 3>& getAccT1() const;
-     std::array<double, 3>& getAccT1() ;
+    std::array<double, 3>& getAccT1();
 
     /**
      * @brief Setter function for #acc_t1 vector
