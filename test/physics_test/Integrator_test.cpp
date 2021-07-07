@@ -3,6 +3,8 @@
 //
 
 #include "Integrator_test.h"
+#include <stdlib.h>
+#include <time.h>
 
 // setup taylor integrator and print it to check if the state etc. are correct
 TEST_F(CompareWithHeyokaTests, showTaylorIntegrator)
@@ -347,7 +349,7 @@ TEST_F(CompareWithHeyokaTests, compareSRP)
     for (int i = 0; i < 3; ++i){
         d.setPosition({3500.*(i+2),0,0});
         d.setVelocity({1.,0,0});
-        d.setAom(0.25);
+        d.setAom(0.5);
         ds.push_back(d);
     }
     // loop over the debris data and compare calculations
@@ -366,6 +368,7 @@ TEST_F(CompareWithHeyokaTests, compareSRP)
         i_components[Acceleration::SRP]->setDeltaT(delta_t);
         i_components[Acceleration::SRP]->getAccumulator().setT(start_t);
         ta_components[Acceleration::SRP]->set_time(start_t);
+        std::cout << *ta_components[Acceleration::SRP] << std::endl;
         // integrate over time
         for (double t = start_t; t <= end_t; t += delta_t){
             // integrate time step
@@ -461,7 +464,70 @@ TEST_F(CompareWithHeyokaTests, compareTotal)
     for (int i = 0; i < 3; ++i){
         d.setPosition({3500.*(i+2),0,0});
         d.setVelocity({1.,0,0});
-        d.setAom(0.25);
+        d.setAom(0.5);
+        d.setBcInv(0.5);
+        ds.push_back(d);
+    }
+    // loop over the debris data and compare calculations
+    for (auto d : ds){
+        // setup integrators
+        i_total->getDebris().cleanDebrisVector();
+        i_total->getDebris().addDebris(d);
+        ta_total->get_state_data()[0] = d.getPosition()[0];
+        ta_total->get_state_data()[1] = d.getPosition()[1];
+        ta_total->get_state_data()[2] = d.getPosition()[2];
+        ta_total->get_state_data()[3] = d.getVelocity()[0];
+        ta_total->get_state_data()[4] = d.getVelocity()[1];
+        ta_total->get_state_data()[5] = d.getVelocity()[2];
+        ta_total->get_pars_data()[0] = d.getAom();
+        ta_total->get_pars_data()[1] = d.getBcInv();
+        // reset time values
+        i_total->setDeltaT(delta_t);
+        i_total->getAccumulator().setT(start_t);
+        ta_total->set_time(start_t);
+        // integrate over time
+        for (double t = start_t; t <= end_t; t += delta_t){
+            // integrate time step
+            i_total->integrate();
+            ta_total->step(delta_t);
+        }
+        // integrate time step
+        i_total->integrate();
+        ta_total->step(delta_t);
+        // compare result
+        std::array<double,3> pos_i = i_total->getDebris().getDebrisVector()[0].getPosition();
+        std::array<double,3> vel_i = i_total->getDebris().getDebrisVector()[0].getVelocity();
+        std::array<double,3> pos_ta{ta_total->get_state()[0],
+                                    ta_total->get_state()[1],
+                                    ta_total->get_state()[2]};
+        std::array<double,3> vel_ta{ta_total->get_state()[3],
+                                    ta_total->get_state()[4],
+                                    ta_total->get_state()[5]};
+        IOUtils::to_ostream(pos_i, std::cout, ",", {"position integrator[","]\n"});
+        IOUtils::to_ostream(pos_ta, std::cout, ",", {"position heyoka[","]\n"});
+        IOUtils::to_ostream(std::array<double,1>{MathUtils::cosSimilarity(pos_ta,pos_i)},std::cout,"",{"cosine similarity: ","\n"});
+        IOUtils::to_ostream(std::array<double,1>{MathUtils::euclideanDistance(pos_ta,pos_i)},std::cout,"",{"euclidean distance: ","\n"});
+        IOUtils::to_ostream(vel_i, std::cout, ",", {"velocity integrator[","]\n"});
+        IOUtils::to_ostream(vel_ta, std::cout, ",", {"velocity heyoka[","]\n"});
+        IOUtils::to_ostream(std::array<double,1>{MathUtils::cosSimilarity(vel_ta,vel_i)},std::cout,"",{"cosine similarity: ","\n"});
+        IOUtils::to_ostream(std::array<double,1>{MathUtils::euclideanDistance(vel_ta,vel_i)},std::cout,"",{"euclidean distance: ","\n\n"});
+    }
+}
+// compare calculated values of all Components with random debris
+TEST_F(CompareWithHeyokaTests, compareTotalRandom)
+{
+    std::cout << "\nAll Components Random" << std::endl;
+    // random number generator
+    srand (time(NULL));
+    // set some test debris values
+    std::vector<Debris::Debris> ds;
+    Debris::Debris d;
+    for (int i = 0; i < 3; ++i){
+        // use values between 50 km above ground and 30000 km above that
+        d.setPosition({Physics::R_EARTH+50+(.5*(rand() % 60000)),Physics::R_EARTH+50+(.5*(rand() % 60000)),Physics::R_EARTH+50+(.5*(rand() % 60000))});
+        // use values between 0 and 50 km/s
+        d.setVelocity({0.1*(rand() % 500),0.1*(rand() % 500),0.1*(rand() % 500)});
+        d.setAom(0.5);
         d.setBcInv(0.5);
         ds.push_back(d);
     }
