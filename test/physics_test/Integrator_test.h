@@ -381,8 +381,8 @@ protected:
             { "cosine similarity: ", "\n" });
         IOUtils::to_ostream(std::array<double, 1> { MathUtils::euclideanDistance(vel_ta, vel_i) }, std::cout, "",
             { "euclidean distance: ", "\n" });
-        IOUtils::to_ostream(MathUtils::absoluteError(pos_i,pos_ta), std::cout, ",", { "absolute error[", "]\n" });
-        IOUtils::to_ostream(MathUtils::relativeError(pos_i,pos_ta), std::cout, ",", { "relative error[", "]\n" });
+        IOUtils::to_ostream(MathUtils::absoluteError(vel_i,vel_ta), std::cout, ",", { "absolute error[", "]\n" });
+        IOUtils::to_ostream(MathUtils::relativeError(vel_i,vel_ta), std::cout, ",", { "relative error[", "]\n" });
     }
 };
 #endif
