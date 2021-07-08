@@ -1,24 +1,16 @@
 # start time of the simulation
-start_t=1.0
+start_t=0.0
 # time step
-delta_t=0.01
+delta_t=0.1
 # end time of the simulation
-end_t=5400
+end_t=534
 # time interval to write output
-write_delta_t=60.0
+write_delta_t=0.1
 # test debris
-# position|velocity|acceleration_t0|acceleration_t1
+# position|velocity|acceleration_t0|acceleration_t1|aom|bc_inv
 # should be something similar to the ISS orbit in respect to orbit energy
-debris=7000,0,0|0,6,6|0,0,0|0,0,0|1.5|2.5
-debris=0,7000,0|6,0,6|0,0,0|0,0,0|1.5|2.5
-debris=0,0,7000|6,6,0|0,0,0|0,0,0|1.5|2.5
+debris=7000,0,0|1,0,0|0,0,0|0,0,0|2e-5|0.05
+debris=7000,0,0|1,0,0|0,0,0|0,0,0|2e-5|0.05
+debris=7000,0,0|1,0,0|0,0,0|0,0,0|2e-5|0.05
 # acceleration components to apply
 acc_config=1,1,1,1,1,1,1,1
-# tle data no comments after this
-TLE
-FENGYUN 1C
-1 25730U 99025A   21139.11229818  .00000925  00000-0  48993-3 0  9992
-2 25730  99.0537 161.4046 0015502 129.7128 266.5891 14.16213619134938
-FENGYUN 1C DEB
-1 29733U 99025X   21138.62020925  .00000778  00000-0  13930-2 0  9990
-2 29733  99.2330  73.7792 0583918  76.7127  43.5376 12.92165270675350
