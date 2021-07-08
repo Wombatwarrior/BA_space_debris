@@ -10,7 +10,5 @@ write_delta_t=0.1
 # position|velocity|acceleration_t0|acceleration_t1|aom|bc_inv
 # should be something similar to the ISS orbit in respect to orbit energy
 debris=7000,0,0|1,0,0|0,0,0|0,0,0|2e-5|0.05
-debris=7000,0,0|1,0,0|0,0,0|0,0,0|2e-5|0.05
-debris=7000,0,0|1,0,0|0,0,0|0,0,0|2e-5|0.05
 # acceleration components to apply
 acc_config=1,1,1,1,1,1,1,1

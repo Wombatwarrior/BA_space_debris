@@ -32,41 +32,45 @@ TEST_F(CompareWithHeyokaTests, compareKep)
     // loop over the debris data and compare calculations
     for (auto d : ds) {
         // setup integrators
-        i_components[Acceleration::KEP]->getDebris().cleanDebrisVector();
-        i_components[Acceleration::KEP]->getDebris().addDebris(d);
-        ta_components[Acceleration::KEP]->get_state_data()[0] = d.getPosition()[0];
-        ta_components[Acceleration::KEP]->get_state_data()[1] = d.getPosition()[1];
-        ta_components[Acceleration::KEP]->get_state_data()[2] = d.getPosition()[2];
-        ta_components[Acceleration::KEP]->get_state_data()[3] = d.getVelocity()[0];
-        ta_components[Acceleration::KEP]->get_state_data()[4] = d.getVelocity()[1];
-        ta_components[Acceleration::KEP]->get_state_data()[5] = d.getVelocity()[2];
-        // reset time values
-        i_components[Acceleration::KEP]->setDeltaT(delta_t);
-        i_components[Acceleration::KEP]->getAccumulator().setT(start_t);
-        ta_components[Acceleration::KEP]->set_time(start_t);
+        prepareRun(*i_components[Acceleration::KEP], *ta_components[Acceleration::KEP], d);
         // integrate over time
+        bool crash_i = false;
+        bool crash_ta = false;
         for (double t = start_t; t <= end_t; t += delta_t) {
             // integrate time step
-            i_components[Acceleration::KEP]->integrate();
-            ta_components[Acceleration::KEP]->propagate_for(delta_t);
+            if (!crash_i)
+                i_components[Acceleration::KEP]->integrate();
+            if (!crash_ta)
+                ta_components[Acceleration::KEP]->propagate_for(delta_t);
+            std::array<double, 3> pos_i = i_components[Acceleration::KEP]->getDebris().getDebrisVector()[0].getPosition();
+            std::array<double, 3> pos_ta { ta_components[Acceleration::KEP]->get_state()[0],
+                                           ta_components[Acceleration::KEP]->get_state()[1],
+                                           ta_components[Acceleration::KEP]->get_state()[2] };
+            if (MathUtils::euclideanNorm(pos_i) <= Physics::R_EARTH) {
+                if (!crash_i)
+                    std::cout << "integrator hit the ground at t=" << t << std::endl;
+                if (crash_ta == crash_i) {
+                    showErrors(*i_components[Acceleration::KEP], *ta_components[Acceleration::KEP]);
+                }
+                crash_i = true;
+                if (crash_ta && crash_i)
+                    break;
+            }
+            if (MathUtils::euclideanNorm(pos_ta) <= Physics::R_EARTH) {
+                if (!crash_ta)
+                    std::cout << "heyoka hit the ground at t=" << t << std::endl;
+                if (crash_ta == crash_i) {
+                    showErrors(*i_components[Acceleration::KEP], *ta_components[Acceleration::KEP]);
+                }
+                crash_ta = true;
+            }
+            if (crash_i && crash_ta)
+                break;
         }
-        // compare result
-        std::array<double, 3> pos_i = i_components[Acceleration::KEP]->getDebris().getDebrisVector()[0].getPosition();
-        std::array<double, 3> vel_i = i_components[Acceleration::KEP]->getDebris().getDebrisVector()[0].getVelocity();
-        std::array<double, 3> pos_ta { ta_components[Acceleration::KEP]->get_state()[0],
-            ta_components[Acceleration::KEP]->get_state()[1],
-            ta_components[Acceleration::KEP]->get_state()[2] };
-        std::array<double, 3> vel_ta { ta_components[Acceleration::KEP]->get_state()[3],
-            ta_components[Acceleration::KEP]->get_state()[4],
-            ta_components[Acceleration::KEP]->get_state()[5] };
-        IOUtils::to_ostream(pos_i, std::cout, ",", { "position integrator[", "]\n" });
-        IOUtils::to_ostream(pos_ta, std::cout, ",", { "position heyoka[", "]\n" });
-        IOUtils::to_ostream(std::array<double, 1> { MathUtils::cosSimilarity(pos_ta, pos_i) }, std::cout, "", { "cosine similarity: ", "\n" });
-        IOUtils::to_ostream(std::array<double, 1> { MathUtils::euclideanDistance(pos_ta, pos_i) }, std::cout, "", { "euclidean distance: ", "\n" });
-        IOUtils::to_ostream(vel_i, std::cout, ",", { "velocity integrator[", "]\n" });
-        IOUtils::to_ostream(vel_ta, std::cout, ",", { "velocity heyoka[", "]\n" });
-        IOUtils::to_ostream(std::array<double, 1> { MathUtils::cosSimilarity(vel_ta, vel_i) }, std::cout, "", { "cosine similarity: ", "\n" });
-        IOUtils::to_ostream(std::array<double, 1> { MathUtils::euclideanDistance(vel_ta, vel_i) }, std::cout, "", { "euclidean distance: ", "\n\n" });
+        if (!(crash_i || crash_ta)) 
+            // compare result
+            showErrors(*i_components[Acceleration::KEP], *ta_components[Acceleration::KEP]);
+        std::cout << std::endl;
     }
 }
 // compare calculated values of J2Component
@@ -84,42 +88,46 @@ TEST_F(CompareWithHeyokaTests, compareJ2)
     // loop over the debris data and compare calculations
     for (auto d : ds) {
         // setup integrators
-        i_components[Acceleration::J2]->getDebris().cleanDebrisVector();
-        i_components[Acceleration::J2]->getDebris().addDebris(d);
-        ta_components[Acceleration::J2]->get_state_data()[0] = d.getPosition()[0];
-        ta_components[Acceleration::J2]->get_state_data()[1] = d.getPosition()[1];
-        ta_components[Acceleration::J2]->get_state_data()[2] = d.getPosition()[2];
-        ta_components[Acceleration::J2]->get_state_data()[3] = d.getVelocity()[0];
-        ta_components[Acceleration::J2]->get_state_data()[4] = d.getVelocity()[1];
-        ta_components[Acceleration::J2]->get_state_data()[5] = d.getVelocity()[2];
-        // reset time values
-        i_components[Acceleration::J2]->setDeltaT(delta_t);
-        i_components[Acceleration::J2]->getAccumulator().setT(start_t);
-        ta_components[Acceleration::J2]->set_time(start_t);
+        prepareRun(*i_components[Acceleration::J2], *ta_components[Acceleration::J2], d);
         // integrate over time
+        bool crash_i = false;
+        bool crash_ta = false;
         for (double t = start_t; t <= end_t; t += delta_t) {
             // integrate time step
-            i_components[Acceleration::J2]->integrate();
-            ta_components[Acceleration::J2]->propagate_for(delta_t);
+            if (!crash_i)
+                i_components[Acceleration::J2]->integrate();
+            if (!crash_ta)
+                ta_components[Acceleration::J2]->propagate_for(delta_t);
+            std::array<double, 3> pos_i = i_components[Acceleration::J2]->getDebris().getDebrisVector()[0].getPosition();
+            std::array<double, 3> pos_ta { ta_components[Acceleration::J2]->get_state()[0],
+                                           ta_components[Acceleration::J2]->get_state()[1],
+                                           ta_components[Acceleration::J2]->get_state()[2] };
+            if (MathUtils::euclideanNorm(pos_i) <= Physics::R_EARTH) {
+                if (!crash_i)
+                    std::cout << "integrator hit the ground at t=" << t << std::endl;
+                if (crash_ta == crash_i) {
+                    showErrors(*i_components[Acceleration::J2], *ta_components[Acceleration::J2]);
+                }
+                crash_i = true;
+                if (crash_ta && crash_i)
+                    break;
+            }
+            if (MathUtils::euclideanNorm(pos_ta) <= Physics::R_EARTH) {
+                if (!crash_ta)
+                    std::cout << "heyoka hit the ground at t=" << t << std::endl;
+                if (crash_ta == crash_i) {
+                    showErrors(*i_components[Acceleration::J2], *ta_components[Acceleration::J2]);
+                }
+                crash_ta = true;
+            }
+            if (crash_i && crash_ta)
+                break;
         }
-        // compare result
-        std::array<double, 3> pos_i = i_components[Acceleration::J2]->getDebris().getDebrisVector()[0].getPosition();
-        std::array<double, 3> vel_i = i_components[Acceleration::J2]->getDebris().getDebrisVector()[0].getVelocity();
-        std::array<double, 3> pos_ta { ta_components[Acceleration::J2]->get_state()[0],
-            ta_components[Acceleration::J2]->get_state()[1],
-            ta_components[Acceleration::J2]->get_state()[2] };
-        std::array<double, 3> vel_ta { ta_components[Acceleration::J2]->get_state()[3],
-            ta_components[Acceleration::J2]->get_state()[4],
-            ta_components[Acceleration::J2]->get_state()[5] };
-        IOUtils::to_ostream(pos_i, std::cout, ",", { "position integrator[", "]\n" });
-        IOUtils::to_ostream(pos_ta, std::cout, ",", { "position heyoka[", "]\n" });
-        IOUtils::to_ostream(std::array<double, 1> { MathUtils::cosSimilarity(pos_ta, pos_i) }, std::cout, "", { "cosine similarity: ", "\n" });
-        IOUtils::to_ostream(std::array<double, 1> { MathUtils::euclideanDistance(pos_ta, pos_i) }, std::cout, "", { "euclidean distance: ", "\n" });
-        IOUtils::to_ostream(vel_i, std::cout, ",", { "velocity integrator[", "]\n" });
-        IOUtils::to_ostream(vel_ta, std::cout, ",", { "velocity heyoka[", "]\n" });
-        IOUtils::to_ostream(std::array<double, 1> { MathUtils::cosSimilarity(vel_ta, vel_i) }, std::cout, "", { "cosine similarity: ", "\n" });
-        IOUtils::to_ostream(std::array<double, 1> { MathUtils::euclideanDistance(vel_ta, vel_i) }, std::cout, "", { "euclidean distance: ", "\n\n" });
-    }
+        if (!(crash_i || crash_ta)) 
+            // compare result
+            showErrors(*i_components[Acceleration::J2], *ta_components[Acceleration::J2]);
+        std::cout << std::endl;
+        }
 }
 // compare calculated values of C22Component
 TEST_F(CompareWithHeyokaTests, compareC22)
@@ -136,42 +144,45 @@ TEST_F(CompareWithHeyokaTests, compareC22)
     // loop over the debris data and compare calculations
     for (auto d : ds) {
         // setup integrators
-        i_components[Acceleration::C22]->getDebris().cleanDebrisVector();
-        i_components[Acceleration::C22]->getDebris().addDebris(d);
-        ta_components[Acceleration::C22]->get_state_data()[0] = d.getPosition()[0];
-        ta_components[Acceleration::C22]->get_state_data()[1] = d.getPosition()[1];
-        ta_components[Acceleration::C22]->get_state_data()[2] = d.getPosition()[2];
-        ta_components[Acceleration::C22]->get_state_data()[3] = d.getVelocity()[0];
-        ta_components[Acceleration::C22]->get_state_data()[4] = d.getVelocity()[1];
-        ta_components[Acceleration::C22]->get_state_data()[5] = d.getVelocity()[2];
-        // reset time values
-        i_components[Acceleration::C22]->setDeltaT(delta_t);
-        i_components[Acceleration::C22]->getAccumulator().setT(start_t);
-        ta_components[Acceleration::C22]->set_time(start_t);
+        prepareRun(*i_components[Acceleration::C22], *ta_components[Acceleration::C22], d);
         // integrate over time
+        bool crash_i = false;
+        bool crash_ta = false;
         for (double t = start_t; t <= end_t; t += delta_t) {
             // integrate time step
-            i_components[Acceleration::C22]->integrate();
-            ta_components[Acceleration::C22]->propagate_for(delta_t);
+            if (!crash_i)
+                i_components[Acceleration::C22]->integrate();
+            if (!crash_ta)
+                ta_components[Acceleration::C22]->propagate_for(delta_t);
+            std::array<double, 3> pos_i = i_components[Acceleration::C22]->getDebris().getDebrisVector()[0].getPosition();
+            std::array<double, 3> pos_ta { ta_components[Acceleration::C22]->get_state()[0],
+                                           ta_components[Acceleration::C22]->get_state()[1],
+                                           ta_components[Acceleration::C22]->get_state()[2] };
+            if (MathUtils::euclideanNorm(pos_i) <= Physics::R_EARTH) {
+                if (!crash_i)
+                    std::cout << "integrator hit the ground at t=" << t << std::endl;
+                if (crash_ta == crash_i) {
+                    showErrors(*i_components[Acceleration::C22], *ta_components[Acceleration::C22]);
+                }
+                crash_i = true;
+                if (crash_ta && crash_i)
+                    break;
+            }
+            if (MathUtils::euclideanNorm(pos_ta) <= Physics::R_EARTH) {
+                if (!crash_ta)
+                    std::cout << "heyoka hit the ground at t=" << t << std::endl;
+                if (crash_ta == crash_i) {
+                    showErrors(*i_components[Acceleration::C22], *ta_components[Acceleration::C22]);
+                }
+                crash_ta = true;
+            }
+            if (crash_i && crash_ta)
+                break;
         }
-        // compare result
-        std::array<double, 3> pos_i = i_components[Acceleration::C22]->getDebris().getDebrisVector()[0].getPosition();
-        std::array<double, 3> vel_i = i_components[Acceleration::C22]->getDebris().getDebrisVector()[0].getVelocity();
-        std::array<double, 3> pos_ta { ta_components[Acceleration::C22]->get_state()[0],
-            ta_components[Acceleration::C22]->get_state()[1],
-            ta_components[Acceleration::C22]->get_state()[2] };
-        std::array<double, 3> vel_ta { ta_components[Acceleration::C22]->get_state()[3],
-            ta_components[Acceleration::C22]->get_state()[4],
-            ta_components[Acceleration::C22]->get_state()[5] };
-        IOUtils::to_ostream(pos_i, std::cout, ",", { "position integrator[", "]\n" });
-        IOUtils::to_ostream(pos_ta, std::cout, ",", { "position heyoka[", "]\n" });
-        IOUtils::to_ostream(std::array<double, 1> { MathUtils::cosSimilarity(pos_ta, pos_i) }, std::cout, "", { "cosine similarity: ", "\n" });
-        IOUtils::to_ostream(std::array<double, 1> { MathUtils::euclideanDistance(pos_ta, pos_i) }, std::cout, "", { "euclidean distance: ", "\n" });
-        IOUtils::to_ostream(vel_i, std::cout, ",", { "velocity integrator[", "]\n" });
-        IOUtils::to_ostream(vel_ta, std::cout, ",", { "velocity heyoka[", "]\n" });
-        IOUtils::to_ostream(std::array<double, 1> { MathUtils::cosSimilarity(vel_ta, vel_i) }, std::cout, "", { "cosine similarity: ", "\n" });
-        IOUtils::to_ostream(std::array<double, 1> { MathUtils::euclideanDistance(vel_ta, vel_i) }, std::cout, "", { "euclidean distance: ", "\n\n" });
-    }
+        if (!(crash_i || crash_ta)) 
+            // compare result
+            showErrors(*i_components[Acceleration::C22], *ta_components[Acceleration::C22]);
+        std::cout << std::endl;    }
 }
 // compare calculated values of S22Component
 TEST_F(CompareWithHeyokaTests, compareS22)
@@ -188,42 +199,45 @@ TEST_F(CompareWithHeyokaTests, compareS22)
     // loop over the debris data and compare calculations
     for (auto d : ds) {
         // setup integrators
-        i_components[Acceleration::S22]->getDebris().cleanDebrisVector();
-        i_components[Acceleration::S22]->getDebris().addDebris(d);
-        ta_components[Acceleration::S22]->get_state_data()[0] = d.getPosition()[0];
-        ta_components[Acceleration::S22]->get_state_data()[1] = d.getPosition()[1];
-        ta_components[Acceleration::S22]->get_state_data()[2] = d.getPosition()[2];
-        ta_components[Acceleration::S22]->get_state_data()[3] = d.getVelocity()[0];
-        ta_components[Acceleration::S22]->get_state_data()[4] = d.getVelocity()[1];
-        ta_components[Acceleration::S22]->get_state_data()[5] = d.getVelocity()[2];
-        // reset time values
-        i_components[Acceleration::S22]->setDeltaT(delta_t);
-        i_components[Acceleration::S22]->getAccumulator().setT(start_t);
-        ta_components[Acceleration::S22]->set_time(start_t);
+        prepareRun(*i_components[Acceleration::S22], *ta_components[Acceleration::S22], d);
         // integrate over time
+        bool crash_i = false;
+        bool crash_ta = false;
         for (double t = start_t; t <= end_t; t += delta_t) {
             // integrate time step
-            i_components[Acceleration::S22]->integrate();
-            ta_components[Acceleration::S22]->propagate_for(delta_t);
+            if (!crash_i)
+                i_components[Acceleration::S22]->integrate();
+            if (!crash_ta)
+                ta_components[Acceleration::S22]->propagate_for(delta_t);
+            std::array<double, 3> pos_i = i_components[Acceleration::S22]->getDebris().getDebrisVector()[0].getPosition();
+            std::array<double, 3> pos_ta { ta_components[Acceleration::S22]->get_state()[0],
+                                           ta_components[Acceleration::S22]->get_state()[1],
+                                           ta_components[Acceleration::S22]->get_state()[2] };
+            if (MathUtils::euclideanNorm(pos_i) <= Physics::R_EARTH) {
+                if (!crash_i)
+                    std::cout << "integrator hit the ground at t=" << t << std::endl;
+                if (crash_ta == crash_i) {
+                    showErrors(*i_components[Acceleration::S22], *ta_components[Acceleration::S22]);
+                }
+                crash_i = true;
+                if (crash_ta && crash_i)
+                    break;
+            }
+            if (MathUtils::euclideanNorm(pos_ta) <= Physics::R_EARTH) {
+                if (!crash_ta)
+                    std::cout << "heyoka hit the ground at t=" << t << std::endl;
+                if (crash_ta == crash_i) {
+                    showErrors(*i_components[Acceleration::S22], *ta_components[Acceleration::S22]);
+                }
+                crash_ta = true;
+            }
+            if (crash_i && crash_ta)
+                break;
         }
-        // compare result
-        std::array<double, 3> pos_i = i_components[Acceleration::S22]->getDebris().getDebrisVector()[0].getPosition();
-        std::array<double, 3> vel_i = i_components[Acceleration::S22]->getDebris().getDebrisVector()[0].getVelocity();
-        std::array<double, 3> pos_ta { ta_components[Acceleration::S22]->get_state()[0],
-            ta_components[Acceleration::S22]->get_state()[1],
-            ta_components[Acceleration::S22]->get_state()[2] };
-        std::array<double, 3> vel_ta { ta_components[Acceleration::S22]->get_state()[3],
-            ta_components[Acceleration::S22]->get_state()[4],
-            ta_components[Acceleration::S22]->get_state()[5] };
-        IOUtils::to_ostream(pos_i, std::cout, ",", { "position integrator[", "]\n" });
-        IOUtils::to_ostream(pos_ta, std::cout, ",", { "position heyoka[", "]\n" });
-        IOUtils::to_ostream(std::array<double, 1> { MathUtils::cosSimilarity(pos_ta, pos_i) }, std::cout, "", { "cosine similarity: ", "\n" });
-        IOUtils::to_ostream(std::array<double, 1> { MathUtils::euclideanDistance(pos_ta, pos_i) }, std::cout, "", { "euclidean distance: ", "\n" });
-        IOUtils::to_ostream(vel_i, std::cout, ",", { "velocity integrator[", "]\n" });
-        IOUtils::to_ostream(vel_ta, std::cout, ",", { "velocity heyoka[", "]\n" });
-        IOUtils::to_ostream(std::array<double, 1> { MathUtils::cosSimilarity(vel_ta, vel_i) }, std::cout, "", { "cosine similarity: ", "\n" });
-        IOUtils::to_ostream(std::array<double, 1> { MathUtils::euclideanDistance(vel_ta, vel_i) }, std::cout, "", { "euclidean distance: ", "\n\n" });
-    }
+        if (!(crash_i || crash_ta)) 
+            // compare result
+            showErrors(*i_components[Acceleration::S22], *ta_components[Acceleration::S22]);
+        std::cout << std::endl;    }
 }
 // compare calculated values of LunComponent
 TEST_F(CompareWithHeyokaTests, compareLun)
@@ -240,42 +254,45 @@ TEST_F(CompareWithHeyokaTests, compareLun)
     // loop over the debris data and compare calculations
     for (auto d : ds) {
         // setup integrators
-        i_components[Acceleration::LUN]->getDebris().cleanDebrisVector();
-        i_components[Acceleration::LUN]->getDebris().addDebris(d);
-        ta_components[Acceleration::LUN]->get_state_data()[0] = d.getPosition()[0];
-        ta_components[Acceleration::LUN]->get_state_data()[1] = d.getPosition()[1];
-        ta_components[Acceleration::LUN]->get_state_data()[2] = d.getPosition()[2];
-        ta_components[Acceleration::LUN]->get_state_data()[3] = d.getVelocity()[0];
-        ta_components[Acceleration::LUN]->get_state_data()[4] = d.getVelocity()[1];
-        ta_components[Acceleration::LUN]->get_state_data()[5] = d.getVelocity()[2];
-        // reset time values
-        i_components[Acceleration::LUN]->setDeltaT(delta_t);
-        i_components[Acceleration::LUN]->getAccumulator().setT(start_t);
-        ta_components[Acceleration::LUN]->set_time(start_t);
+        prepareRun(*i_components[Acceleration::LUN], *ta_components[Acceleration::LUN], d);
         // integrate over time
+        bool crash_i = false;
+        bool crash_ta = false;
         for (double t = start_t; t <= end_t; t += delta_t) {
             // integrate time step
-            i_components[Acceleration::LUN]->integrate();
-            ta_components[Acceleration::LUN]->propagate_for(delta_t);
+            if (!crash_i)
+                i_components[Acceleration::LUN]->integrate();
+            if (!crash_ta)
+                ta_components[Acceleration::LUN]->propagate_for(delta_t);
+            std::array<double, 3> pos_i = i_components[Acceleration::LUN]->getDebris().getDebrisVector()[0].getPosition();
+            std::array<double, 3> pos_ta { ta_components[Acceleration::LUN]->get_state()[0],
+                                           ta_components[Acceleration::LUN]->get_state()[1],
+                                           ta_components[Acceleration::LUN]->get_state()[2] };
+            if (MathUtils::euclideanNorm(pos_i) <= Physics::R_EARTH) {
+                if (!crash_i)
+                    std::cout << "integrator hit the ground at t=" << t << std::endl;
+                if (crash_ta == crash_i) {
+                    showErrors(*i_components[Acceleration::LUN], *ta_components[Acceleration::LUN]);
+                }
+                crash_i = true;
+                if (crash_ta && crash_i)
+                    break;
+            }
+            if (MathUtils::euclideanNorm(pos_ta) <= Physics::R_EARTH) {
+                if (!crash_ta)
+                    std::cout << "heyoka hit the ground at t=" << t << std::endl;
+                if (crash_ta == crash_i) {
+                    showErrors(*i_components[Acceleration::LUN], *ta_components[Acceleration::LUN]);
+                }
+                crash_ta = true;
+            }
+            if (crash_i && crash_ta)
+                break;
         }
-        // compare result
-        std::array<double, 3> pos_i = i_components[Acceleration::LUN]->getDebris().getDebrisVector()[0].getPosition();
-        std::array<double, 3> vel_i = i_components[Acceleration::LUN]->getDebris().getDebrisVector()[0].getVelocity();
-        std::array<double, 3> pos_ta { ta_components[Acceleration::LUN]->get_state()[0],
-            ta_components[Acceleration::LUN]->get_state()[1],
-            ta_components[Acceleration::LUN]->get_state()[2] };
-        std::array<double, 3> vel_ta { ta_components[Acceleration::LUN]->get_state()[3],
-            ta_components[Acceleration::LUN]->get_state()[4],
-            ta_components[Acceleration::LUN]->get_state()[5] };
-        IOUtils::to_ostream(pos_i, std::cout, ",", { "position integrator[", "]\n" });
-        IOUtils::to_ostream(pos_ta, std::cout, ",", { "position heyoka[", "]\n" });
-        IOUtils::to_ostream(std::array<double, 1> { MathUtils::cosSimilarity(pos_ta, pos_i) }, std::cout, "", { "cosine similarity: ", "\n" });
-        IOUtils::to_ostream(std::array<double, 1> { MathUtils::euclideanDistance(pos_ta, pos_i) }, std::cout, "", { "euclidean distance: ", "\n" });
-        IOUtils::to_ostream(vel_i, std::cout, ",", { "velocity integrator[", "]\n" });
-        IOUtils::to_ostream(vel_ta, std::cout, ",", { "velocity heyoka[", "]\n" });
-        IOUtils::to_ostream(std::array<double, 1> { MathUtils::cosSimilarity(vel_ta, vel_i) }, std::cout, "", { "cosine similarity: ", "\n" });
-        IOUtils::to_ostream(std::array<double, 1> { MathUtils::euclideanDistance(vel_ta, vel_i) }, std::cout, "", { "euclidean distance: ", "\n\n" });
-    }
+        if (!(crash_i || crash_ta)) 
+            // compare result
+            showErrors(*i_components[Acceleration::LUN], *ta_components[Acceleration::LUN]);
+        std::cout << std::endl;    }
 }
 // compare calculated values of SolComponent
 TEST_F(CompareWithHeyokaTests, compareSol)
@@ -292,42 +309,45 @@ TEST_F(CompareWithHeyokaTests, compareSol)
     // loop over the debris data and compare calculations
     for (auto d : ds) {
         // setup integrators
-        i_components[Acceleration::SOL]->getDebris().cleanDebrisVector();
-        i_components[Acceleration::SOL]->getDebris().addDebris(d);
-        ta_components[Acceleration::SOL]->get_state_data()[0] = d.getPosition()[0];
-        ta_components[Acceleration::SOL]->get_state_data()[1] = d.getPosition()[1];
-        ta_components[Acceleration::SOL]->get_state_data()[2] = d.getPosition()[2];
-        ta_components[Acceleration::SOL]->get_state_data()[3] = d.getVelocity()[0];
-        ta_components[Acceleration::SOL]->get_state_data()[4] = d.getVelocity()[1];
-        ta_components[Acceleration::SOL]->get_state_data()[5] = d.getVelocity()[2];
-        // reset time values
-        i_components[Acceleration::SOL]->setDeltaT(delta_t);
-        i_components[Acceleration::SOL]->getAccumulator().setT(start_t);
-        ta_components[Acceleration::SOL]->set_time(start_t);
+        prepareRun(*i_components[Acceleration::SOL], *ta_components[Acceleration::SOL], d);
         // integrate over time
+        bool crash_i = false;
+        bool crash_ta = false;
         for (double t = start_t; t <= end_t; t += delta_t) {
             // integrate time step
-            i_components[Acceleration::SOL]->integrate();
-            ta_components[Acceleration::SOL]->propagate_for(delta_t);
+            if (!crash_i)
+                i_components[Acceleration::SOL]->integrate();
+            if (!crash_ta)
+                ta_components[Acceleration::SOL]->propagate_for(delta_t);
+            std::array<double, 3> pos_i = i_components[Acceleration::SOL]->getDebris().getDebrisVector()[0].getPosition();
+            std::array<double, 3> pos_ta { ta_components[Acceleration::SOL]->get_state()[0],
+                                           ta_components[Acceleration::SOL]->get_state()[1],
+                                           ta_components[Acceleration::SOL]->get_state()[2] };
+            if (MathUtils::euclideanNorm(pos_i) <= Physics::R_EARTH) {
+                if (!crash_i)
+                    std::cout << "integrator hit the ground at t=" << t << std::endl;
+                if (crash_ta == crash_i) {
+                    showErrors(*i_components[Acceleration::SOL], *ta_components[Acceleration::SOL]);
+                }
+                crash_i = true;
+                if (crash_ta && crash_i)
+                    break;
+            }
+            if (MathUtils::euclideanNorm(pos_ta) <= Physics::R_EARTH) {
+                if (!crash_ta)
+                    std::cout << "heyoka hit the ground at t=" << t << std::endl;
+                if (crash_ta == crash_i) {
+                    showErrors(*i_components[Acceleration::SOL], *ta_components[Acceleration::SOL]);
+                }
+                crash_ta = true;
+            }
+            if (crash_i && crash_ta)
+                break;
         }
-        // compare result
-        std::array<double, 3> pos_i = i_components[Acceleration::SOL]->getDebris().getDebrisVector()[0].getPosition();
-        std::array<double, 3> vel_i = i_components[Acceleration::SOL]->getDebris().getDebrisVector()[0].getVelocity();
-        std::array<double, 3> pos_ta { ta_components[Acceleration::SOL]->get_state()[0],
-            ta_components[Acceleration::SOL]->get_state()[1],
-            ta_components[Acceleration::SOL]->get_state()[2] };
-        std::array<double, 3> vel_ta { ta_components[Acceleration::SOL]->get_state()[3],
-            ta_components[Acceleration::SOL]->get_state()[4],
-            ta_components[Acceleration::SOL]->get_state()[5] };
-        IOUtils::to_ostream(pos_i, std::cout, ",", { "position integrator[", "]\n" });
-        IOUtils::to_ostream(pos_ta, std::cout, ",", { "position heyoka[", "]\n" });
-        IOUtils::to_ostream(std::array<double, 1> { MathUtils::cosSimilarity(pos_ta, pos_i) }, std::cout, "", { "cosine similarity: ", "\n" });
-        IOUtils::to_ostream(std::array<double, 1> { MathUtils::euclideanDistance(pos_ta, pos_i) }, std::cout, "", { "euclidean distance: ", "\n" });
-        IOUtils::to_ostream(vel_i, std::cout, ",", { "velocity integrator[", "]\n" });
-        IOUtils::to_ostream(vel_ta, std::cout, ",", { "velocity heyoka[", "]\n" });
-        IOUtils::to_ostream(std::array<double, 1> { MathUtils::cosSimilarity(vel_ta, vel_i) }, std::cout, "", { "cosine similarity: ", "\n" });
-        IOUtils::to_ostream(std::array<double, 1> { MathUtils::euclideanDistance(vel_ta, vel_i) }, std::cout, "", { "euclidean distance: ", "\n\n" });
-    }
+        if (!(crash_i || crash_ta)) 
+            // compare result
+            showErrors(*i_components[Acceleration::SOL], *ta_components[Acceleration::SOL]);
+        std::cout << std::endl;    }
 }
 // compare calculated values of SRPComponent
 TEST_F(CompareWithHeyokaTests, compareSRP)
@@ -345,43 +365,45 @@ TEST_F(CompareWithHeyokaTests, compareSRP)
     // loop over the debris data and compare calculations
     for (auto d : ds) {
         // setup integrators
-        i_components[Acceleration::SRP]->getDebris().cleanDebrisVector();
-        i_components[Acceleration::SRP]->getDebris().addDebris(d);
-        ta_components[Acceleration::SRP]->get_state_data()[0] = d.getPosition()[0];
-        ta_components[Acceleration::SRP]->get_state_data()[1] = d.getPosition()[1];
-        ta_components[Acceleration::SRP]->get_state_data()[2] = d.getPosition()[2];
-        ta_components[Acceleration::SRP]->get_state_data()[3] = d.getVelocity()[0];
-        ta_components[Acceleration::SRP]->get_state_data()[4] = d.getVelocity()[1];
-        ta_components[Acceleration::SRP]->get_state_data()[5] = d.getVelocity()[2];
-        ta_components[Acceleration::SRP]->get_pars_data()[0] = d.getAom();
-        // reset time values
-        i_components[Acceleration::SRP]->setDeltaT(delta_t);
-        i_components[Acceleration::SRP]->getAccumulator().setT(start_t);
-        ta_components[Acceleration::SRP]->set_time(start_t);
+        prepareRun(*i_components[Acceleration::SRP], *ta_components[Acceleration::SRP], d);
         // integrate over time
+        bool crash_i = false;
+        bool crash_ta = false;
         for (double t = start_t; t <= end_t; t += delta_t) {
             // integrate time step
-            i_components[Acceleration::SRP]->integrate();
-            ta_components[Acceleration::SRP]->propagate_for(delta_t);
+            if (!crash_i)
+                i_components[Acceleration::SRP]->integrate();
+            if (!crash_ta)
+                ta_components[Acceleration::SRP]->propagate_for(delta_t);
+            std::array<double, 3> pos_i = i_components[Acceleration::SRP]->getDebris().getDebrisVector()[0].getPosition();
+            std::array<double, 3> pos_ta { ta_components[Acceleration::SRP]->get_state()[0],
+                                           ta_components[Acceleration::SRP]->get_state()[1],
+                                           ta_components[Acceleration::SRP]->get_state()[2] };
+            if (MathUtils::euclideanNorm(pos_i) <= Physics::R_EARTH) {
+                if (!crash_i)
+                    std::cout << "integrator hit the ground at t=" << t << std::endl;
+                if (crash_ta == crash_i) {
+                    showErrors(*i_components[Acceleration::SRP], *ta_components[Acceleration::SRP]);
+                }
+                crash_i = true;
+                if (crash_ta && crash_i)
+                    break;
+            }
+            if (MathUtils::euclideanNorm(pos_ta) <= Physics::R_EARTH) {
+                if (!crash_ta)
+                    std::cout << "heyoka hit the ground at t=" << t << std::endl;
+                if (crash_ta == crash_i) {
+                    showErrors(*i_components[Acceleration::SRP], *ta_components[Acceleration::SRP]);
+                }
+                crash_ta = true;
+            }
+            if (crash_i && crash_ta)
+                break;
         }
-        // compare result
-        std::array<double, 3> pos_i = i_components[Acceleration::SRP]->getDebris().getDebrisVector()[0].getPosition();
-        std::array<double, 3> vel_i = i_components[Acceleration::SRP]->getDebris().getDebrisVector()[0].getVelocity();
-        std::array<double, 3> pos_ta { ta_components[Acceleration::SRP]->get_state()[0],
-            ta_components[Acceleration::SRP]->get_state()[1],
-            ta_components[Acceleration::SRP]->get_state()[2] };
-        std::array<double, 3> vel_ta { ta_components[Acceleration::SRP]->get_state()[3],
-            ta_components[Acceleration::SRP]->get_state()[4],
-            ta_components[Acceleration::SRP]->get_state()[5] };
-        IOUtils::to_ostream(pos_i, std::cout, ",", { "position integrator[", "]\n" });
-        IOUtils::to_ostream(pos_ta, std::cout, ",", { "position heyoka[", "]\n" });
-        IOUtils::to_ostream(std::array<double, 1> { MathUtils::cosSimilarity(pos_ta, pos_i) }, std::cout, "", { "cosine similarity: ", "\n" });
-        IOUtils::to_ostream(std::array<double, 1> { MathUtils::euclideanDistance(pos_ta, pos_i) }, std::cout, "", { "euclidean distance: ", "\n" });
-        IOUtils::to_ostream(vel_i, std::cout, ",", { "velocity integrator[", "]\n" });
-        IOUtils::to_ostream(vel_ta, std::cout, ",", { "velocity heyoka[", "]\n" });
-        IOUtils::to_ostream(std::array<double, 1> { MathUtils::cosSimilarity(vel_ta, vel_i) }, std::cout, "", { "cosine similarity: ", "\n" });
-        IOUtils::to_ostream(std::array<double, 1> { MathUtils::euclideanDistance(vel_ta, vel_i) }, std::cout, "", { "euclidean distance: ", "\n\n" });
-    }
+        if (!(crash_i || crash_ta)) 
+            // compare result
+            showErrors(*i_components[Acceleration::SRP], *ta_components[Acceleration::SRP]);
+        std::cout << std::endl;    }
 }
 // compare calculated values of DragComponent
 TEST_F(CompareWithHeyokaTests, compareDrag)
@@ -391,51 +413,53 @@ TEST_F(CompareWithHeyokaTests, compareDrag)
     std::vector<Debris::Debris> ds;
     Debris::Debris d;
     for (int i = 0; i < 3; ++i) {
-        d.setPosition({ 3500. * (i + 2), 0, 0 });
-        d.setVelocity({ 1., 0, 0 });
+        d.setPosition({ (Physics::R_EARTH + ((i+1)*20)),0,0});
+        d.setVelocity({ 1., 1., 1. });
         d.setBcInv(0.05);
         ds.push_back(d);
     }
     // loop over the debris data and compare calculations
     for (auto d : ds) {
         // setup integrators
-        i_components[Acceleration::DRAG]->getDebris().cleanDebrisVector();
-        i_components[Acceleration::DRAG]->getDebris().addDebris(d);
-        ta_components[Acceleration::DRAG]->get_state_data()[0] = d.getPosition()[0];
-        ta_components[Acceleration::DRAG]->get_state_data()[1] = d.getPosition()[1];
-        ta_components[Acceleration::DRAG]->get_state_data()[2] = d.getPosition()[2];
-        ta_components[Acceleration::DRAG]->get_state_data()[3] = d.getVelocity()[0];
-        ta_components[Acceleration::DRAG]->get_state_data()[4] = d.getVelocity()[1];
-        ta_components[Acceleration::DRAG]->get_state_data()[5] = d.getVelocity()[2];
-        ta_components[Acceleration::DRAG]->get_pars_data()[1] = d.getBcInv();
-        // reset time values
-        i_components[Acceleration::DRAG]->setDeltaT(delta_t);
-        i_components[Acceleration::DRAG]->getAccumulator().setT(start_t);
-        ta_components[Acceleration::DRAG]->set_time(start_t);
+        prepareRun(*i_components[Acceleration::DRAG], *ta_components[Acceleration::DRAG], d);
         // integrate over time
+        bool crash_i = false;
+        bool crash_ta = false;
         for (double t = start_t; t <= end_t; t += delta_t) {
             // integrate time step
-            i_components[Acceleration::DRAG]->integrate();
-            ta_components[Acceleration::DRAG]->propagate_for(delta_t);
+            if (!crash_i)
+                i_components[Acceleration::DRAG]->integrate();
+            if (!crash_ta)
+                ta_components[Acceleration::DRAG]->propagate_for(delta_t);
+            std::array<double, 3> pos_i = i_components[Acceleration::DRAG]->getDebris().getDebrisVector()[0].getPosition();
+            std::array<double, 3> pos_ta { ta_components[Acceleration::DRAG]->get_state()[0],
+                                           ta_components[Acceleration::DRAG]->get_state()[1],
+                                           ta_components[Acceleration::DRAG]->get_state()[2] };
+            if (MathUtils::euclideanNorm(pos_i) <= Physics::R_EARTH) {
+                if (!crash_i)
+                    std::cout << "integrator hit the ground at t=" << t << std::endl;
+                if (crash_ta == crash_i) {
+                    showErrors(*i_components[Acceleration::DRAG], *ta_components[Acceleration::DRAG]);
+                }
+                crash_i = true;
+                if (crash_ta && crash_i)
+                    break;
+            }
+            if (MathUtils::euclideanNorm(pos_ta) <= Physics::R_EARTH) {
+                if (!crash_ta)
+                    std::cout << "heyoka hit the ground at t=" << t << std::endl;
+                if (crash_ta == crash_i) {
+                    showErrors(*i_components[Acceleration::DRAG], *ta_components[Acceleration::DRAG]);
+                }
+                crash_ta = true;
+            }
+            if (crash_i && crash_ta)
+                break;
         }
-        // compare result
-        std::array<double, 3> pos_i = i_components[Acceleration::DRAG]->getDebris().getDebrisVector()[0].getPosition();
-        std::array<double, 3> vel_i = i_components[Acceleration::DRAG]->getDebris().getDebrisVector()[0].getVelocity();
-        std::array<double, 3> pos_ta { ta_components[Acceleration::DRAG]->get_state()[0],
-            ta_components[Acceleration::DRAG]->get_state()[1],
-            ta_components[Acceleration::DRAG]->get_state()[2] };
-        std::array<double, 3> vel_ta { ta_components[Acceleration::DRAG]->get_state()[3],
-            ta_components[Acceleration::DRAG]->get_state()[4],
-            ta_components[Acceleration::DRAG]->get_state()[5] };
-        IOUtils::to_ostream(pos_i, std::cout, ",", { "position integrator[", "]\n" });
-        IOUtils::to_ostream(pos_ta, std::cout, ",", { "position heyoka[", "]\n" });
-        IOUtils::to_ostream(std::array<double, 1> { MathUtils::cosSimilarity(pos_ta, pos_i) }, std::cout, "", { "cosine similarity: ", "\n" });
-        IOUtils::to_ostream(std::array<double, 1> { MathUtils::euclideanDistance(pos_ta, pos_i) }, std::cout, "", { "euclidean distance: ", "\n" });
-        IOUtils::to_ostream(vel_i, std::cout, ",", { "velocity integrator[", "]\n" });
-        IOUtils::to_ostream(vel_ta, std::cout, ",", { "velocity heyoka[", "]\n" });
-        IOUtils::to_ostream(std::array<double, 1> { MathUtils::cosSimilarity(vel_ta, vel_i) }, std::cout, "", { "cosine similarity: ", "\n" });
-        IOUtils::to_ostream(std::array<double, 1> { MathUtils::euclideanDistance(vel_ta, vel_i) }, std::cout, "", { "euclidean distance: ", "\n\n" });
-    }
+        if (!(crash_i || crash_ta)) 
+            // compare result
+            showErrors(*i_components[Acceleration::DRAG], *ta_components[Acceleration::DRAG]);
+        std::cout << std::endl;    }
 }
 // compare calculated values of all Components
 TEST_F(CompareWithHeyokaTests, compareTotal)
@@ -454,44 +478,45 @@ TEST_F(CompareWithHeyokaTests, compareTotal)
     // loop over the debris data and compare calculations
     for (auto d : ds) {
         // setup integrators
-        i_total->getDebris().cleanDebrisVector();
-        i_total->getDebris().addDebris(d);
-        ta_total->get_state_data()[0] = d.getPosition()[0];
-        ta_total->get_state_data()[1] = d.getPosition()[1];
-        ta_total->get_state_data()[2] = d.getPosition()[2];
-        ta_total->get_state_data()[3] = d.getVelocity()[0];
-        ta_total->get_state_data()[4] = d.getVelocity()[1];
-        ta_total->get_state_data()[5] = d.getVelocity()[2];
-        ta_total->get_pars_data()[0] = d.getAom();
-        ta_total->get_pars_data()[1] = d.getBcInv();
-        // reset time values
-        i_total->setDeltaT(delta_t);
-        i_total->getAccumulator().setT(start_t);
-        ta_total->set_time(start_t);
+        prepareRun(*i_total, *ta_total, d);
         // integrate over time
+        bool crash_i = false;
+        bool crash_ta = false;
         for (double t = start_t; t <= end_t; t += delta_t) {
             // integrate time step
-            i_total->integrate();
-            ta_total->propagate_for(delta_t);
+            if (!crash_i)
+                i_total->integrate();
+            if (!crash_ta)
+                ta_total->propagate_for(delta_t);
+            std::array<double, 3> pos_i = i_total->getDebris().getDebrisVector()[0].getPosition();
+            std::array<double, 3> pos_ta { ta_total->get_state()[0],
+                ta_total->get_state()[1],
+                ta_total->get_state()[2] };
+            if (MathUtils::euclideanNorm(pos_i) <= Physics::R_EARTH) {
+                if (!crash_i)
+                    std::cout << "integrator hit the ground at t=" << t << std::endl;
+                if (crash_ta == crash_i) {
+                    showErrors(*i_total, *ta_total);
+                }
+                crash_i = true;
+                if (crash_ta && crash_i)
+                    break;
+            }
+            if (MathUtils::euclideanNorm(pos_ta) <= Physics::R_EARTH) {
+                if (!crash_ta)
+                    std::cout << "heyoka hit the ground at t=" << t << std::endl;
+                if (crash_ta == crash_i) {
+                    showErrors(*i_total, *ta_total);
+                }
+                crash_ta = true;
+            }
+            if (crash_i && crash_ta)
+                break;
         }
-        // compare result
-        std::array<double, 3> pos_i = i_total->getDebris().getDebrisVector()[0].getPosition();
-        std::array<double, 3> vel_i = i_total->getDebris().getDebrisVector()[0].getVelocity();
-        std::array<double, 3> pos_ta { ta_total->get_state()[0],
-            ta_total->get_state()[1],
-            ta_total->get_state()[2] };
-        std::array<double, 3> vel_ta { ta_total->get_state()[3],
-            ta_total->get_state()[4],
-            ta_total->get_state()[5] };
-        IOUtils::to_ostream(pos_i, std::cout, ",", { "position integrator[", "]\n" });
-        IOUtils::to_ostream(pos_ta, std::cout, ",", { "position heyoka[", "]\n" });
-        IOUtils::to_ostream(std::array<double, 1> { MathUtils::cosSimilarity(pos_ta, pos_i) }, std::cout, "", { "cosine similarity: ", "\n" });
-        IOUtils::to_ostream(std::array<double, 1> { MathUtils::euclideanDistance(pos_ta, pos_i) }, std::cout, "", { "euclidean distance: ", "\n" });
-        IOUtils::to_ostream(vel_i, std::cout, ",", { "velocity integrator[", "]\n" });
-        IOUtils::to_ostream(vel_ta, std::cout, ",", { "velocity heyoka[", "]\n" });
-        IOUtils::to_ostream(std::array<double, 1> { MathUtils::cosSimilarity(vel_ta, vel_i) }, std::cout, "", { "cosine similarity: ", "\n" });
-        IOUtils::to_ostream(std::array<double, 1> { MathUtils::euclideanDistance(vel_ta, vel_i) }, std::cout, "", { "euclidean distance: ", "\n\n" });
-    }
+        if (!(crash_i || crash_ta)) 
+            // compare result
+            showErrors(*i_total, *ta_total);
+        std::cout << std::endl;    }
 }
 // compare calculated values of all Components with random debris
 TEST_F(CompareWithHeyokaTests, compareTotalRandom)
@@ -516,43 +541,44 @@ TEST_F(CompareWithHeyokaTests, compareTotalRandom)
     // loop over the debris data and compare calculations
     for (auto d : ds) {
         // setup integrators
-        i_total->getDebris().cleanDebrisVector();
-        i_total->getDebris().addDebris(d);
-        ta_total->get_state_data()[0] = d.getPosition()[0];
-        ta_total->get_state_data()[1] = d.getPosition()[1];
-        ta_total->get_state_data()[2] = d.getPosition()[2];
-        ta_total->get_state_data()[3] = d.getVelocity()[0];
-        ta_total->get_state_data()[4] = d.getVelocity()[1];
-        ta_total->get_state_data()[5] = d.getVelocity()[2];
-        ta_total->get_pars_data()[0] = d.getAom();
-        ta_total->get_pars_data()[1] = d.getBcInv();
-        // reset time values
-        i_total->setDeltaT(delta_t);
-        i_total->getAccumulator().setT(start_t);
-        ta_total->set_time(start_t);
+        prepareRun(*i_total, *ta_total, d);
         // integrate over time
+        bool crash_i = false;
+        bool crash_ta = false;
         for (double t = start_t; t <= end_t; t += delta_t) {
             // integrate time step
-            i_total->integrate();
-            ta_total->propagate_for(delta_t);
+            if (!crash_i)
+                i_total->integrate();
+            if (!crash_ta)
+                ta_total->propagate_for(delta_t);
+            std::array<double, 3> pos_i = i_total->getDebris().getDebrisVector()[0].getPosition();
+            std::array<double, 3> pos_ta { ta_total->get_state()[0],
+                                           ta_total->get_state()[1],
+                                           ta_total->get_state()[2] };
+            if (MathUtils::euclideanNorm(pos_i) <= Physics::R_EARTH) {
+                if (!crash_i)
+                    std::cout << "integrator hit the ground at t=" << t << std::endl;
+                if (crash_ta == crash_i) {
+                    showErrors(*i_total, *ta_total);
+                }
+                crash_i = true;
+                if (crash_ta && crash_i)
+                    break;
+            }
+            if (MathUtils::euclideanNorm(pos_ta) <= Physics::R_EARTH) {
+                if (!crash_ta)
+                    std::cout << "heyoka hit the ground at t=" << t << std::endl;
+                if (crash_ta == crash_i) {
+                    showErrors(*i_total, *ta_total);
+                }
+                crash_ta = true;
+            }
+            if (crash_i && crash_ta)
+                break;
         }
-        // compare result
-        std::array<double, 3> pos_i = i_total->getDebris().getDebrisVector()[0].getPosition();
-        std::array<double, 3> vel_i = i_total->getDebris().getDebrisVector()[0].getVelocity();
-        std::array<double, 3> pos_ta { ta_total->get_state()[0],
-            ta_total->get_state()[1],
-            ta_total->get_state()[2] };
-        std::array<double, 3> vel_ta { ta_total->get_state()[3],
-            ta_total->get_state()[4],
-            ta_total->get_state()[5] };
-        IOUtils::to_ostream(pos_i, std::cout, ",", { "position integrator[", "]\n" });
-        IOUtils::to_ostream(pos_ta, std::cout, ",", { "position heyoka[", "]\n" });
-        IOUtils::to_ostream(std::array<double, 1> { MathUtils::cosSimilarity(pos_ta, pos_i) }, std::cout, "", { "cosine similarity: ", "\n" });
-        IOUtils::to_ostream(std::array<double, 1> { MathUtils::euclideanDistance(pos_ta, pos_i) }, std::cout, "", { "euclidean distance: ", "\n" });
-        IOUtils::to_ostream(vel_i, std::cout, ",", { "velocity integrator[", "]\n" });
-        IOUtils::to_ostream(vel_ta, std::cout, ",", { "velocity heyoka[", "]\n" });
-        IOUtils::to_ostream(std::array<double, 1> { MathUtils::cosSimilarity(vel_ta, vel_i) }, std::cout, "", { "cosine similarity: ", "\n" });
-        IOUtils::to_ostream(std::array<double, 1> { MathUtils::euclideanDistance(vel_ta, vel_i) }, std::cout, "", { "euclidean distance: ", "\n\n" });
-    }
+        if (!(crash_i || crash_ta)) 
+            // compare result
+            showErrors(*i_total, *ta_total);
+        std::cout << std::endl;    }
 }
 #endif
