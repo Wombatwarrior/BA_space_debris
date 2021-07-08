@@ -54,7 +54,7 @@ public:
     /**
      * @brief Default constructor
      *
-     * creates ann AccelerationAccumulator object wit all value zero initialized
+     * creates ann AccelerationAccumulator object with all values initialized to zero
      */
     AccelerationAccumulator();
     /**
