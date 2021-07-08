@@ -48,7 +48,7 @@ TEST_F(CompareWithHeyokaTests, compareKep)
         for (double t = start_t; t <= end_t; t += delta_t) {
             // integrate time step
             i_components[Acceleration::KEP]->integrate();
-            ta_components[Acceleration::KEP]->step(delta_t);
+            ta_components[Acceleration::KEP]->propagate_for(delta_t);
         }
         // compare result
         std::array<double, 3> pos_i = i_components[Acceleration::KEP]->getDebris().getDebrisVector()[0].getPosition();
@@ -100,7 +100,7 @@ TEST_F(CompareWithHeyokaTests, compareJ2)
         for (double t = start_t; t <= end_t; t += delta_t) {
             // integrate time step
             i_components[Acceleration::J2]->integrate();
-            ta_components[Acceleration::J2]->step(delta_t);
+            ta_components[Acceleration::J2]->propagate_for(delta_t);
         }
         // compare result
         std::array<double, 3> pos_i = i_components[Acceleration::J2]->getDebris().getDebrisVector()[0].getPosition();
@@ -152,11 +152,8 @@ TEST_F(CompareWithHeyokaTests, compareC22)
         for (double t = start_t; t <= end_t; t += delta_t) {
             // integrate time step
             i_components[Acceleration::C22]->integrate();
-            ta_components[Acceleration::C22]->step(delta_t);
+            ta_components[Acceleration::C22]->propagate_for(delta_t);
         }
-        // integrate time step
-        i_components[Acceleration::C22]->integrate();
-        ta_components[Acceleration::C22]->step(delta_t);
         // compare result
         std::array<double, 3> pos_i = i_components[Acceleration::C22]->getDebris().getDebrisVector()[0].getPosition();
         std::array<double, 3> vel_i = i_components[Acceleration::C22]->getDebris().getDebrisVector()[0].getVelocity();
@@ -207,11 +204,8 @@ TEST_F(CompareWithHeyokaTests, compareS22)
         for (double t = start_t; t <= end_t; t += delta_t) {
             // integrate time step
             i_components[Acceleration::S22]->integrate();
-            ta_components[Acceleration::S22]->step(delta_t);
+            ta_components[Acceleration::S22]->propagate_for(delta_t);
         }
-        // integrate time step
-        i_components[Acceleration::S22]->integrate();
-        ta_components[Acceleration::S22]->step(delta_t);
         // compare result
         std::array<double, 3> pos_i = i_components[Acceleration::S22]->getDebris().getDebrisVector()[0].getPosition();
         std::array<double, 3> vel_i = i_components[Acceleration::S22]->getDebris().getDebrisVector()[0].getVelocity();
@@ -262,11 +256,8 @@ TEST_F(CompareWithHeyokaTests, compareLun)
         for (double t = start_t; t <= end_t; t += delta_t) {
             // integrate time step
             i_components[Acceleration::LUN]->integrate();
-            ta_components[Acceleration::LUN]->step(delta_t);
+            ta_components[Acceleration::LUN]->propagate_for(delta_t);
         }
-        // integrate time step
-        i_components[Acceleration::LUN]->integrate();
-        ta_components[Acceleration::LUN]->step(delta_t);
         // compare result
         std::array<double, 3> pos_i = i_components[Acceleration::LUN]->getDebris().getDebrisVector()[0].getPosition();
         std::array<double, 3> vel_i = i_components[Acceleration::LUN]->getDebris().getDebrisVector()[0].getVelocity();
@@ -319,9 +310,6 @@ TEST_F(CompareWithHeyokaTests, compareSol)
             i_components[Acceleration::SOL]->integrate();
             ta_components[Acceleration::SOL]->propagate_for(delta_t);
         }
-        // integrate time step
-        i_components[Acceleration::SOL]->integrate();
-        ta_components[Acceleration::SOL]->step(delta_t);
         // compare result
         std::array<double, 3> pos_i = i_components[Acceleration::SOL]->getDebris().getDebrisVector()[0].getPosition();
         std::array<double, 3> vel_i = i_components[Acceleration::SOL]->getDebris().getDebrisVector()[0].getVelocity();
@@ -351,7 +339,7 @@ TEST_F(CompareWithHeyokaTests, compareSRP)
     for (int i = 0; i < 3; ++i) {
         d.setPosition({ 3500. * (i + 2), 0, 0 });
         d.setVelocity({ 1., 0, 0 });
-        d.setAom(0.5);
+        d.setAom(2e-5);
         ds.push_back(d);
     }
     // loop over the debris data and compare calculations
@@ -370,16 +358,12 @@ TEST_F(CompareWithHeyokaTests, compareSRP)
         i_components[Acceleration::SRP]->setDeltaT(delta_t);
         i_components[Acceleration::SRP]->getAccumulator().setT(start_t);
         ta_components[Acceleration::SRP]->set_time(start_t);
-        std::cout << *ta_components[Acceleration::SRP] << std::endl;
         // integrate over time
         for (double t = start_t; t <= end_t; t += delta_t) {
             // integrate time step
             i_components[Acceleration::SRP]->integrate();
-            ta_components[Acceleration::SRP]->step(delta_t);
+            ta_components[Acceleration::SRP]->propagate_for(delta_t);
         }
-        // integrate time step
-        i_components[Acceleration::SRP]->integrate();
-        ta_components[Acceleration::SRP]->step(delta_t);
         // compare result
         std::array<double, 3> pos_i = i_components[Acceleration::SRP]->getDebris().getDebrisVector()[0].getPosition();
         std::array<double, 3> vel_i = i_components[Acceleration::SRP]->getDebris().getDebrisVector()[0].getVelocity();
@@ -409,7 +393,7 @@ TEST_F(CompareWithHeyokaTests, compareDrag)
     for (int i = 0; i < 3; ++i) {
         d.setPosition({ 3500. * (i + 2), 0, 0 });
         d.setVelocity({ 1., 0, 0 });
-        d.setBcInv(0.5);
+        d.setBcInv(0.05);
         ds.push_back(d);
     }
     // loop over the debris data and compare calculations
@@ -432,11 +416,8 @@ TEST_F(CompareWithHeyokaTests, compareDrag)
         for (double t = start_t; t <= end_t; t += delta_t) {
             // integrate time step
             i_components[Acceleration::DRAG]->integrate();
-            ta_components[Acceleration::DRAG]->step(delta_t);
+            ta_components[Acceleration::DRAG]->propagate_for(delta_t);
         }
-        // integrate time step
-        i_components[Acceleration::DRAG]->integrate();
-        ta_components[Acceleration::DRAG]->step(delta_t);
         // compare result
         std::array<double, 3> pos_i = i_components[Acceleration::DRAG]->getDebris().getDebrisVector()[0].getPosition();
         std::array<double, 3> vel_i = i_components[Acceleration::DRAG]->getDebris().getDebrisVector()[0].getVelocity();
@@ -464,10 +445,10 @@ TEST_F(CompareWithHeyokaTests, compareTotal)
     std::vector<Debris::Debris> ds;
     Debris::Debris d;
     for (int i = 0; i < 3; ++i) {
-        d.setPosition({ 3500. * (i + 2), 0, 0 });
+        d.setPosition({ 0. * (i + 2), 3501, 3500 });
         d.setVelocity({ 1., 0, 0 });
-        d.setAom(0.5);
-        d.setBcInv(0.5);
+        d.setAom(2e-5);
+        d.setBcInv(0.05);
         ds.push_back(d);
     }
     // loop over the debris data and compare calculations
@@ -491,11 +472,8 @@ TEST_F(CompareWithHeyokaTests, compareTotal)
         for (double t = start_t; t <= end_t; t += delta_t) {
             // integrate time step
             i_total->integrate();
-            ta_total->step(delta_t);
+            ta_total->propagate_for(delta_t);
         }
-        // integrate time step
-        i_total->integrate();
-        ta_total->step(delta_t);
         // compare result
         std::array<double, 3> pos_i = i_total->getDebris().getDebrisVector()[0].getPosition();
         std::array<double, 3> vel_i = i_total->getDebris().getDebrisVector()[0].getVelocity();
@@ -529,8 +507,8 @@ TEST_F(CompareWithHeyokaTests, compareTotalRandom)
         d.setPosition({ Physics::R_EARTH + 50 + (.5 * (rand() % 60000)), Physics::R_EARTH + 50 + (.5 * (rand() % 60000)), Physics::R_EARTH + 50 + (.5 * (rand() % 60000)) });
         // use values between 0 and 50 km/s
         d.setVelocity({ 0.1 * (rand() % 500), 0.1 * (rand() % 500), 0.1 * (rand() % 500) });
-        d.setAom(0.5);
-        d.setBcInv(0.5);
+        d.setAom(2e-5);
+        d.setBcInv(0.05);
         ds.push_back(d);
     }
     // loop over the debris data and compare calculations
@@ -554,11 +532,8 @@ TEST_F(CompareWithHeyokaTests, compareTotalRandom)
         for (double t = start_t; t <= end_t; t += delta_t) {
             // integrate time step
             i_total->integrate();
-            ta_total->step(delta_t);
+            ta_total->propagate_for(delta_t);
         }
-        // integrate time step
-        i_total->integrate();
-        ta_total->step(delta_t);
         // compare result
         std::array<double, 3> pos_i = i_total->getDebris().getDebrisVector()[0].getPosition();
         std::array<double, 3> vel_i = i_total->getDebris().getDebrisVector()[0].getVelocity();
