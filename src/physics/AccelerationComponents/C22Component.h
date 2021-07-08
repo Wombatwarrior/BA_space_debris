@@ -14,7 +14,7 @@ namespace {
          * @return
          * (5*std::sqrt(15)*Physics::GM_EARTH*Physics::R_EARTH*Physics::R_EARTH*Physics::C22)/2
          */
-    inline constexpr double getFactor_fst();
+    inline constexpr double getFactor_first();
 
     /**
          * @brief Constant factor for the second C22 term

@@ -7,7 +7,7 @@
 namespace Acceleration::C22Component {
 namespace {
     // Eq 13
-    inline constexpr double getFactor_fst()
+    inline constexpr double getFactor_first()
     {
         return 2.5 * getFactor_snd();
     }
@@ -31,7 +31,7 @@ void apply(const Debris::Debris& d,
     double x2 = x * x;
     double y2 = y * y;
     // EQ 17
-    const double n = getFactor_fst() * (y2 - x2);
+    const double n = getFactor_first() * (y2 - x2);
     // x2 = (x^2 + y^2 + z^2)
     x2 = x2 + y2 + z * z;
     // x2y2z2 = (x^2 + y^2 + z^2)

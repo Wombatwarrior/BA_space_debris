@@ -17,7 +17,7 @@ namespace {
         return getFactor() * Physics::C_22;
     }
     // EQ 13
-    inline constexpr double getFactorC22_fst()
+    inline constexpr double getFactorC22_first()
     {
         return getFactorC22_snd() * 2.5;
     }
@@ -27,7 +27,7 @@ namespace {
         return getFactor() * Physics::S_22;
     }
     // EQ 14
-    inline constexpr double getFactorS22_fst()
+    inline constexpr double getFactorS22_first()
     {
         return getFactorS22_snd() * -5;
     }
@@ -45,7 +45,7 @@ void apply(const Debris::Debris& d,
     const double z = acc_c22s22[2];
     // c22
     // EQ 17
-    double n = getFactorC22_fst() * (y * y - x * x);
+    double n = getFactorC22_first() * (y * y - x * x);
     // pow_3 = (x^2 + y^2 + z^2)
     double pow_3 = x * x + y * y + z * z;
     // pow_1 = (x^2 + y^2 + z^2)
@@ -68,7 +68,7 @@ void apply(const Debris::Debris& d,
     acc_c22s22[2] = ((n * z) * d1);
     // s22
     // EQ 17
-    n = getFactorS22_fst() * x * y;
+    n = getFactorS22_first() * x * y;
     // EQ 19
     f_x = ((n * x) * d1) + ((getFactorS22_snd() * y) * d2);
     f_y = ((n * y) * d1) + ((getFactorS22_snd() * x) * d2);

@@ -31,7 +31,7 @@ namespace {
          * @return
          * (5*std::sqrt(15)*Physics::GM_EARTH*Physics::R_EARTH*Physics::R_EARTH*Physics::C22)/2
          */
-    inline constexpr double getFactorC22_fst();
+    inline constexpr double getFactorC22_first();
 
     /**
          * @brief Constant factor for the second S22 term
@@ -47,7 +47,7 @@ namespace {
          * @return
          * -5*std::sqrt(15)*Physics::GM_EARTH*Physics::R_EARTH*Physics::R_EARTH*Physics::S22
          */
-    inline constexpr double getFactorS22_fst();
+    inline constexpr double getFactorS22_first();
 } // namespace
 /**
      * @brief Calculates acceleration due to earth gravity. Taking in account the

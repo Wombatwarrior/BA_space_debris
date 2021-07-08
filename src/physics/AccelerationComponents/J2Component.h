@@ -14,7 +14,7 @@ namespace {
          * @return
          * (std::sqrt(5)*Physics::GM_EARTH*Physics::R_EARTH*Physics::R_EARTH*Physics::C20)/2
          */
-    inline constexpr double getFactor_fst();
+    inline constexpr double getFactor_first();
 } // namespace
 /**
      * @brief Calculates acceleration due to earth gravity. Taking in account the
