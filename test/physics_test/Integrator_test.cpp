@@ -445,7 +445,7 @@ TEST_F(CompareWithHeyokaTests, compareTotal)
     std::vector<Debris::Debris> ds;
     Debris::Debris d;
     for (int i = 0; i < 3; ++i) {
-        d.setPosition({ 0. * (i + 2), 3501, 3500 });
+        d.setPosition({ 3500. * (i + 2), 0, 0 });
         d.setVelocity({ 1., 0, 0 });
         d.setAom(2e-5);
         d.setBcInv(0.05);
@@ -498,7 +498,9 @@ TEST_F(CompareWithHeyokaTests, compareTotalRandom)
 {
     std::cout << "\nAll Components Random" << std::endl;
     // random number generator
-    srand(time(NULL));
+    auto seed = time(NULL);
+    srand(seed);
+    std::cout << "Seed: " << seed << std::endl;
     // set some test debris values
     std::vector<Debris::Debris> ds;
     Debris::Debris d;

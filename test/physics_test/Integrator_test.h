@@ -37,7 +37,7 @@ protected:
     // delta t
     inline static double delta_t = .1;
     inline static constexpr double start_t = 0.;
-    inline static constexpr double end_t = 100;
+    inline static constexpr double end_t = 534;
 
     //heyoka variables
     inline static std::array<heyoka::expression, 3> pos;
