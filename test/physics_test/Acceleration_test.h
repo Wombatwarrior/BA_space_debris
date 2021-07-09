@@ -670,7 +670,7 @@ protected:
 
     void calcSRP(Debris::Debris& d, double t, std::array<double, 3>& acc_srp)
     {
-        double p = 4.56e-6;
+        double p = 4.56e-3;
         double a = 1.49619e+8;
         double as = 149.619;
         double phis0 = 357.5256;
