@@ -742,7 +742,7 @@ TEST_F(SRPComponentTests, CalculationEquivalenceTest)
         }
 
         // result is identical
-        double abs_err = 1e-19;
+        double abs_err = 1e-16;
         for (int i = 0; i < debris->getDebrisVector().size(); ++i) {
             EXPECT_NEAR(accelerations_1[i][0], accelerations_2[i][0], abs_err);
             EXPECT_NEAR(accelerations_1[i][1], accelerations_2[i][1], abs_err);
