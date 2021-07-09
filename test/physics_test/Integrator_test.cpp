@@ -366,6 +366,8 @@ TEST_F(CompareWithHeyokaTests, compareSRP)
     for (auto d : ds) {
         // setup integrators
         prepareRun(*i_components[Acceleration::SRP], *ta_components[Acceleration::SRP], d);
+        // set heyoka parameters
+        ta_components[Acceleration::SRP]->get_pars_data()[0] = d.getAom();
         // integrate over time
         bool crash_i = false;
         bool crash_ta = false;
@@ -422,6 +424,8 @@ TEST_F(CompareWithHeyokaTests, compareDrag)
     for (auto d : ds) {
         // setup integrators
         prepareRun(*i_components[Acceleration::DRAG], *ta_components[Acceleration::DRAG], d);
+        // set heyoka parameters
+        ta_components[Acceleration::DRAG]->get_pars_data()[1] = d.getBcInv();
         // integrate over time
         bool crash_i = false;
         bool crash_ta = false;
@@ -479,6 +483,9 @@ TEST_F(CompareWithHeyokaTests, compareTotal)
     for (auto d : ds) {
         // setup integrators
         prepareRun(*i_total, *ta_total, d);
+        // set heyoka parameters
+        ta_total->get_pars_data()[0] = d.getAom();
+        ta_total->get_pars_data()[1] = d.getBcInv();
         // integrate over time
         bool crash_i = false;
         bool crash_ta = false;
@@ -542,6 +549,9 @@ TEST_F(CompareWithHeyokaTests, compareTotalRandom)
     for (auto d : ds) {
         // setup integrators
         prepareRun(*i_total, *ta_total, d);
+        // set heyoka parameters
+        ta_total->get_pars_data()[0] = d.getAom();
+        ta_total->get_pars_data()[1] = d.getBcInv();
         // integrate over time
         bool crash_i = false;
         bool crash_ta = false;
