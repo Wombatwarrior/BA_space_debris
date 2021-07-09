@@ -361,27 +361,27 @@ protected:
         std::array<double, 3> pos_i = i.getDebris().getDebrisVector()[0].getPosition();
         std::array<double, 3> vel_i = i.getDebris().getDebrisVector()[0].getVelocity();
         std::array<double, 3> pos_ta { ta.get_state()[0],
-                                       ta.get_state()[1],
-                                       ta.get_state()[2] };
+            ta.get_state()[1],
+            ta.get_state()[2] };
         std::array<double, 3> vel_ta { ta.get_state()[3],
-                                       ta.get_state()[4],
-                                       ta.get_state()[5] };
+            ta.get_state()[4],
+            ta.get_state()[5] };
         IOUtils::to_ostream(pos_i, std::cout, ",", { "position integrator[", "]\n" });
         IOUtils::to_ostream(pos_ta, std::cout, ",", { "position heyoka[", "]\n" });
         IOUtils::to_ostream(std::array<double, 1> { MathUtils::cosSimilarity(pos_ta, pos_i) }, std::cout, "",
             { "cosine similarity: ", "\n" });
         IOUtils::to_ostream(std::array<double, 1> { MathUtils::euclideanDistance(pos_ta, pos_i) }, std::cout, "",
             { "euclidean distance: ", "\n" });
-        IOUtils::to_ostream(MathUtils::absoluteError(pos_i,pos_ta), std::cout, ",", { "absolute error[", "]\n" });
-        IOUtils::to_ostream(MathUtils::relativeError(pos_i,pos_ta), std::cout, ",", { "relative error[", "]\n" });
+        IOUtils::to_ostream(MathUtils::absoluteError(pos_i, pos_ta), std::cout, ",", { "absolute error[", "]\n" });
+        IOUtils::to_ostream(MathUtils::relativeError(pos_i, pos_ta), std::cout, ",", { "relative error[", "]\n" });
         IOUtils::to_ostream(vel_i, std::cout, ",", { "velocity integrator[", "]\n" });
         IOUtils::to_ostream(vel_ta, std::cout, ",", { "velocity heyoka[", "]\n" });
         IOUtils::to_ostream(std::array<double, 1> { MathUtils::cosSimilarity(vel_ta, vel_i) }, std::cout, "",
             { "cosine similarity: ", "\n" });
         IOUtils::to_ostream(std::array<double, 1> { MathUtils::euclideanDistance(vel_ta, vel_i) }, std::cout, "",
             { "euclidean distance: ", "\n" });
-        IOUtils::to_ostream(MathUtils::absoluteError(vel_i,vel_ta), std::cout, ",", { "absolute error[", "]\n" });
-        IOUtils::to_ostream(MathUtils::relativeError(vel_i,vel_ta), std::cout, ",", { "relative error[", "]\n" });
+        IOUtils::to_ostream(MathUtils::absoluteError(vel_i, vel_ta), std::cout, ",", { "absolute error[", "]\n" });
+        IOUtils::to_ostream(MathUtils::relativeError(vel_i, vel_ta), std::cout, ",", { "relative error[", "]\n" });
     }
 };
 #endif

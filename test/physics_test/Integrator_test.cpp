@@ -39,8 +39,8 @@ TEST_F(CompareWithHeyokaTests, compareKep)
         for (double t = start_t; t <= end_t; t += delta_t) {
             std::array<double, 3> pos_i = i_components[Acceleration::KEP]->getDebris().getDebrisVector()[0].getPosition();
             std::array<double, 3> pos_ta { ta_components[Acceleration::KEP]->get_state()[0],
-                                           ta_components[Acceleration::KEP]->get_state()[1],
-                                           ta_components[Acceleration::KEP]->get_state()[2] };
+                ta_components[Acceleration::KEP]->get_state()[1],
+                ta_components[Acceleration::KEP]->get_state()[2] };
             if (MathUtils::euclideanNorm(pos_i) <= Physics::R_EARTH) {
                 if (!crash_i)
                     std::cout << "integrator hit the ground at t=" << t << std::endl;
@@ -67,7 +67,7 @@ TEST_F(CompareWithHeyokaTests, compareKep)
             if (!crash_ta)
                 ta_components[Acceleration::KEP]->propagate_for(delta_t);
         }
-        if (!(crash_i || crash_ta)) 
+        if (!(crash_i || crash_ta))
             // compare result
             showErrors(*i_components[Acceleration::KEP], *ta_components[Acceleration::KEP]);
         std::cout << std::endl;
@@ -95,8 +95,8 @@ TEST_F(CompareWithHeyokaTests, compareJ2)
         for (double t = start_t; t <= end_t; t += delta_t) {
             std::array<double, 3> pos_i = i_components[Acceleration::J2]->getDebris().getDebrisVector()[0].getPosition();
             std::array<double, 3> pos_ta { ta_components[Acceleration::J2]->get_state()[0],
-                                           ta_components[Acceleration::J2]->get_state()[1],
-                                           ta_components[Acceleration::J2]->get_state()[2] };
+                ta_components[Acceleration::J2]->get_state()[1],
+                ta_components[Acceleration::J2]->get_state()[2] };
             if (MathUtils::euclideanNorm(pos_i) <= Physics::R_EARTH) {
                 if (!crash_i)
                     std::cout << "integrator hit the ground at t=" << t << std::endl;
@@ -123,11 +123,11 @@ TEST_F(CompareWithHeyokaTests, compareJ2)
             if (!crash_ta)
                 ta_components[Acceleration::J2]->propagate_for(delta_t);
         }
-        if (!(crash_i || crash_ta)) 
+        if (!(crash_i || crash_ta))
             // compare result
             showErrors(*i_components[Acceleration::J2], *ta_components[Acceleration::J2]);
         std::cout << std::endl;
-        }
+    }
 }
 // compare calculated values of C22Component
 TEST_F(CompareWithHeyokaTests, compareC22)
@@ -151,8 +151,8 @@ TEST_F(CompareWithHeyokaTests, compareC22)
         for (double t = start_t; t <= end_t; t += delta_t) {
             std::array<double, 3> pos_i = i_components[Acceleration::C22]->getDebris().getDebrisVector()[0].getPosition();
             std::array<double, 3> pos_ta { ta_components[Acceleration::C22]->get_state()[0],
-                                           ta_components[Acceleration::C22]->get_state()[1],
-                                           ta_components[Acceleration::C22]->get_state()[2] };
+                ta_components[Acceleration::C22]->get_state()[1],
+                ta_components[Acceleration::C22]->get_state()[2] };
             if (MathUtils::euclideanNorm(pos_i) <= Physics::R_EARTH) {
                 if (!crash_i)
                     std::cout << "integrator hit the ground at t=" << t << std::endl;
@@ -182,7 +182,8 @@ TEST_F(CompareWithHeyokaTests, compareC22)
         if (!(crash_i || crash_ta))
             // compare result
             showErrors(*i_components[Acceleration::C22], *ta_components[Acceleration::C22]);
-        std::cout << std::endl;    }
+        std::cout << std::endl;
+    }
 }
 // compare calculated values of S22Component
 TEST_F(CompareWithHeyokaTests, compareS22)
@@ -206,8 +207,8 @@ TEST_F(CompareWithHeyokaTests, compareS22)
         for (double t = start_t; t <= end_t; t += delta_t) {
             std::array<double, 3> pos_i = i_components[Acceleration::S22]->getDebris().getDebrisVector()[0].getPosition();
             std::array<double, 3> pos_ta { ta_components[Acceleration::S22]->get_state()[0],
-                                           ta_components[Acceleration::S22]->get_state()[1],
-                                           ta_components[Acceleration::S22]->get_state()[2] };
+                ta_components[Acceleration::S22]->get_state()[1],
+                ta_components[Acceleration::S22]->get_state()[2] };
             if (MathUtils::euclideanNorm(pos_i) <= Physics::R_EARTH) {
                 if (!crash_i)
                     std::cout << "integrator hit the ground at t=" << t << std::endl;
@@ -234,10 +235,11 @@ TEST_F(CompareWithHeyokaTests, compareS22)
             if (!crash_ta)
                 ta_components[Acceleration::S22]->propagate_for(delta_t);
         }
-        if (!(crash_i || crash_ta)) 
+        if (!(crash_i || crash_ta))
             // compare result
             showErrors(*i_components[Acceleration::S22], *ta_components[Acceleration::S22]);
-        std::cout << std::endl;    }
+        std::cout << std::endl;
+    }
 }
 // compare calculated values of LunComponent
 TEST_F(CompareWithHeyokaTests, compareLun)
@@ -261,8 +263,8 @@ TEST_F(CompareWithHeyokaTests, compareLun)
         for (double t = start_t; t <= end_t; t += delta_t) {
             std::array<double, 3> pos_i = i_components[Acceleration::LUN]->getDebris().getDebrisVector()[0].getPosition();
             std::array<double, 3> pos_ta { ta_components[Acceleration::LUN]->get_state()[0],
-                                           ta_components[Acceleration::LUN]->get_state()[1],
-                                           ta_components[Acceleration::LUN]->get_state()[2] };
+                ta_components[Acceleration::LUN]->get_state()[1],
+                ta_components[Acceleration::LUN]->get_state()[2] };
             if (MathUtils::euclideanNorm(pos_i) <= Physics::R_EARTH) {
                 if (!crash_i)
                     std::cout << "integrator hit the ground at t=" << t << std::endl;
@@ -289,10 +291,11 @@ TEST_F(CompareWithHeyokaTests, compareLun)
             if (!crash_ta)
                 ta_components[Acceleration::LUN]->propagate_for(delta_t);
         }
-        if (!(crash_i || crash_ta)) 
+        if (!(crash_i || crash_ta))
             // compare result
             showErrors(*i_components[Acceleration::LUN], *ta_components[Acceleration::LUN]);
-        std::cout << std::endl;    }
+        std::cout << std::endl;
+    }
 }
 // compare calculated values of SolComponent
 TEST_F(CompareWithHeyokaTests, compareSol)
@@ -316,8 +319,8 @@ TEST_F(CompareWithHeyokaTests, compareSol)
         for (double t = start_t; t <= end_t; t += delta_t) {
             std::array<double, 3> pos_i = i_components[Acceleration::SOL]->getDebris().getDebrisVector()[0].getPosition();
             std::array<double, 3> pos_ta { ta_components[Acceleration::SOL]->get_state()[0],
-                                           ta_components[Acceleration::SOL]->get_state()[1],
-                                           ta_components[Acceleration::SOL]->get_state()[2] };
+                ta_components[Acceleration::SOL]->get_state()[1],
+                ta_components[Acceleration::SOL]->get_state()[2] };
             if (MathUtils::euclideanNorm(pos_i) <= Physics::R_EARTH) {
                 if (!crash_i)
                     std::cout << "integrator hit the ground at t=" << t << std::endl;
@@ -344,10 +347,11 @@ TEST_F(CompareWithHeyokaTests, compareSol)
             if (!crash_ta)
                 ta_components[Acceleration::SOL]->propagate_for(delta_t);
         }
-        if (!(crash_i || crash_ta)) 
+        if (!(crash_i || crash_ta))
             // compare result
             showErrors(*i_components[Acceleration::SOL], *ta_components[Acceleration::SOL]);
-        std::cout << std::endl;    }
+        std::cout << std::endl;
+    }
 }
 // compare calculated values of SRPComponent
 TEST_F(CompareWithHeyokaTests, compareSRP)
@@ -374,8 +378,8 @@ TEST_F(CompareWithHeyokaTests, compareSRP)
         for (double t = start_t; t <= end_t; t += delta_t) {
             std::array<double, 3> pos_i = i_components[Acceleration::SRP]->getDebris().getDebrisVector()[0].getPosition();
             std::array<double, 3> pos_ta { ta_components[Acceleration::SRP]->get_state()[0],
-                                           ta_components[Acceleration::SRP]->get_state()[1],
-                                           ta_components[Acceleration::SRP]->get_state()[2] };
+                ta_components[Acceleration::SRP]->get_state()[1],
+                ta_components[Acceleration::SRP]->get_state()[2] };
             if (MathUtils::euclideanNorm(pos_i) <= Physics::R_EARTH) {
                 if (!crash_i)
                     std::cout << "integrator hit the ground at t=" << t << std::endl;
@@ -402,10 +406,11 @@ TEST_F(CompareWithHeyokaTests, compareSRP)
             if (!crash_ta)
                 ta_components[Acceleration::SRP]->propagate_for(delta_t);
         }
-        if (!(crash_i || crash_ta)) 
+        if (!(crash_i || crash_ta))
             // compare result
             showErrors(*i_components[Acceleration::SRP], *ta_components[Acceleration::SRP]);
-        std::cout << std::endl;    }
+        std::cout << std::endl;
+    }
 }
 // compare calculated values of DragComponent
 TEST_F(CompareWithHeyokaTests, compareDrag)
@@ -415,7 +420,7 @@ TEST_F(CompareWithHeyokaTests, compareDrag)
     std::vector<Debris::Debris> ds;
     Debris::Debris d;
     for (int i = 0; i < 3; ++i) {
-        d.setPosition({ (Physics::R_EARTH + ((i+1)*20)),0,0});
+        d.setPosition({ (Physics::R_EARTH + ((i + 1) * 20)), 0, 0 });
         d.setVelocity({ 1., 1., 1. });
         d.setBcInv(0.05);
         ds.push_back(d);
@@ -432,8 +437,8 @@ TEST_F(CompareWithHeyokaTests, compareDrag)
         for (double t = start_t; t <= end_t; t += delta_t) {
             std::array<double, 3> pos_i = i_components[Acceleration::DRAG]->getDebris().getDebrisVector()[0].getPosition();
             std::array<double, 3> pos_ta { ta_components[Acceleration::DRAG]->get_state()[0],
-                                           ta_components[Acceleration::DRAG]->get_state()[1],
-                                           ta_components[Acceleration::DRAG]->get_state()[2] };
+                ta_components[Acceleration::DRAG]->get_state()[1],
+                ta_components[Acceleration::DRAG]->get_state()[2] };
             if (MathUtils::euclideanNorm(pos_i) <= Physics::R_EARTH) {
                 if (!crash_i)
                     std::cout << "integrator hit the ground at t=" << t << std::endl;
@@ -460,10 +465,11 @@ TEST_F(CompareWithHeyokaTests, compareDrag)
             if (!crash_ta)
                 ta_components[Acceleration::DRAG]->propagate_for(delta_t);
         }
-        if (!(crash_i || crash_ta)) 
+        if (!(crash_i || crash_ta))
             // compare result
             showErrors(*i_components[Acceleration::DRAG], *ta_components[Acceleration::DRAG]);
-        std::cout << std::endl;    }
+        std::cout << std::endl;
+    }
 }
 // compare calculated values of all Components
 TEST_F(CompareWithHeyokaTests, compareTotal)
@@ -520,10 +526,11 @@ TEST_F(CompareWithHeyokaTests, compareTotal)
             if (!crash_ta)
                 ta_total->propagate_for(delta_t);
         }
-        if (!(crash_i || crash_ta)) 
+        if (!(crash_i || crash_ta))
             // compare result
             showErrors(*i_total, *ta_total);
-        std::cout << std::endl;    }
+        std::cout << std::endl;
+    }
 }
 // compare calculated values of all Components with random debris
 TEST_F(CompareWithHeyokaTests, compareTotalRandom)
@@ -558,8 +565,8 @@ TEST_F(CompareWithHeyokaTests, compareTotalRandom)
         for (double t = start_t; t <= end_t; t += delta_t) {
             std::array<double, 3> pos_i = i_total->getDebris().getDebrisVector()[0].getPosition();
             std::array<double, 3> pos_ta { ta_total->get_state()[0],
-                                           ta_total->get_state()[1],
-                                           ta_total->get_state()[2] };
+                ta_total->get_state()[1],
+                ta_total->get_state()[2] };
             if (MathUtils::euclideanNorm(pos_i) <= Physics::R_EARTH) {
                 if (!crash_i)
                     std::cout << "integrator hit the ground at t=" << t << std::endl;
@@ -586,9 +593,10 @@ TEST_F(CompareWithHeyokaTests, compareTotalRandom)
             if (!crash_ta)
                 ta_total->propagate_for(delta_t);
         }
-        if (!(crash_i || crash_ta)) 
+        if (!(crash_i || crash_ta))
             // compare result
             showErrors(*i_total, *ta_total);
-        std::cout << std::endl;    }
+        std::cout << std::endl;
+    }
 }
 #endif
