@@ -40,12 +40,13 @@ protected:
     inline static constexpr double end_t = 1000;
 
     //heyoka variables
-    inline static std::array<heyoka::expression, 3> pos;
-    inline static std::array<heyoka::expression, 3> vel;
     inline static heyoka::taylor_adaptive<double>* ta_total;
     inline static std::array<heyoka::taylor_adaptive<double>*, 8> ta_components;
 
-    // won integrators
+    //heyoka integrator to extract single components
+    inline static heyoka::taylor_adaptive<double>* ta_split;
+
+    // own integrators
     inline static Integrator* i_total;
     inline static Acceleration::AccelerationAccumulator* aa_total;
     inline static std::array<Integrator*, 8> i_components;
@@ -53,8 +54,8 @@ protected:
     inline static void SetUpTestSuite()
     {
         //create heyoka variables
-        pos = heyoka::make_vars("X", "Y", "Z");
-        vel = heyoka::make_vars("VX", "VY", "VZ");
+        std::array<heyoka::expression, 3> pos = heyoka::make_vars("X", "Y", "Z");
+        std::array<heyoka::expression, 3> vel = heyoka::make_vars("VX", "VY", "VZ");
 
         //Sun's position
         auto lo = phi_o + nu_o * heyoka::time;
@@ -183,11 +184,90 @@ protected:
         std::cout << "Compiling the Taylor integrator ... (this is done only once)" << std::endl;
 
         ta_total = new heyoka::taylor_adaptive<double> {
-            { heyoka::prime(pos[0]) = dXdt, heyoka::prime(pos[1]) = dYdt, heyoka::prime(pos[2]) = dZdt, heyoka::prime(vel[0]) = dVXdt, heyoka::prime(vel[1]) = dVYdt, heyoka::prime(vel[2]) = dVZdt },
-            { x0, y0, z0, vx0, vy0, vz0 },
-            heyoka::kw::time = t0,
-            heyoka::kw::tol = 1e-16,
-            heyoka::kw::compact_mode = true
+                { heyoka::prime(pos[0]) = dXdt, heyoka::prime(pos[1]) = dYdt, heyoka::prime(pos[2]) = dZdt, heyoka::prime(vel[0]) = dVXdt, heyoka::prime(vel[1]) = dVYdt, heyoka::prime(vel[2]) = dVZdt },
+                { x0, y0, z0, vx0, vy0, vz0 },
+                heyoka::kw::time = t0,
+                heyoka::kw::tol = 1e-16,
+                  heyoka::kw::compact_mode = true
+        };
+
+        // calculates components separately
+
+        std::array<heyoka::expression, 3> vel_kep = heyoka::make_vars("dXdtKepX", "dXdtKepY", "dXdtKepZ");
+        auto vel_kep_x0 = 0.;
+        auto vel_kep_y0 = 0.;
+        auto vel_kep_z0 = 0.;
+
+        std::array<heyoka::expression, 3> vel_j2 = heyoka::make_vars("dXdtJ2X", "dXdtJ2Y", "dXdtJ2Z");
+        auto vel_j2_x0 = 0.;
+        auto vel_j2_y0 = 0.;
+        auto vel_j2_z0 = 0.;
+
+        std::array<heyoka::expression, 3> vel_c22 = heyoka::make_vars("dXdtC22X", "dXdtC22Y", "dXdtC22Z");
+        auto vel_c22_x0 = 0.;
+        auto vel_c22_y0 = 0.;
+        auto vel_c22_z0 = 0.;
+
+        std::array<heyoka::expression, 3> vel_s22 = heyoka::make_vars("dXdtS22X", "dXdtS22Y", "dXdtS22Z");
+        auto vel_s22_x0 = 0.;
+        auto vel_s22_y0 = 0.;
+        auto vel_s22_z0 = 0.;
+
+        std::array<heyoka::expression, 3> vel_sun = heyoka::make_vars("dXdtSunX", "dXdtSunY", "dXdtSunZ");
+        auto vel_sun_x0 = 0.;
+        auto vel_sun_y0 = 0.;
+        auto vel_sun_z0 = 0.;
+
+        std::array<heyoka::expression, 3> vel_lun = heyoka::make_vars("dXdtLunX", "dXdtLunY", "dXdtLunZ");
+        auto vel_lun_x0 = 0.;
+        auto vel_lun_y0 = 0.;
+        auto vel_lun_z0 = 0.;
+
+        std::array<heyoka::expression, 3> vel_srp = heyoka::make_vars("dXdtSRPX", "dXdtSRPY", "dXdtSRPZ");
+        auto vel_srp_x0 = 0.;
+        auto vel_srp_y0 = 0.;
+        auto vel_srp_z0 = 0.;
+
+        std::array<heyoka::expression, 3> vel_drag = heyoka::make_vars("dXdtDragX", "dXdtDragY", "dXdtDragZ");
+        auto vel_drag_x0 = 0.;
+        auto vel_drag_y0 = 0.;
+        auto vel_drag_z0 = 0.;
+
+
+
+        auto dXXdt_split = vel_kep[0] + vel_j2[0] + vel_c22[0] + vel_s22[0] + vel_sun[0] + vel_lun[0] + vel_srp[0] + vel_drag[0];
+        auto dXYdt_split = vel_kep[1] + vel_j2[1] + vel_c22[1] + vel_s22[1] + vel_sun[1] + vel_lun[1] + vel_srp[1] + vel_drag[1];
+        auto dXZdt_split = vel_kep[2] + vel_j2[2] + vel_c22[2] + vel_s22[2] + vel_sun[2] + vel_lun[2] + vel_srp[2] + vel_drag[2];
+
+        auto v_rel_x_split = dXXdt_split + omega_e * pos[1];
+        auto v_rel_y_split = dXYdt_split - omega_e * pos[0];
+        auto v_rel_z_split = dXZdt_split;
+        auto fDragX_split = -DragTerm * heyoka::pow(v_rel_x_split, 2.);
+        auto fDragY_split = -DragTerm * heyoka::pow(v_rel_y_split, 2.);
+        auto fDragZ_split = -DragTerm * heyoka::pow(v_rel_z_split, 2.);
+
+        ta_split = new heyoka::taylor_adaptive<double> {
+                { heyoka::prime(pos[0]) = dXXdt_split, heyoka::prime(pos[1]) = dXYdt_split, heyoka::prime(pos[2]) = dXZdt_split,
+                  heyoka::prime(vel_kep[0]) = fKepX, heyoka::prime(vel_kep[1]) = fKepY, heyoka::prime(vel_kep[2]) = fKepZ,
+                  heyoka::prime(vel_j2[0]) = fJ2X, heyoka::prime(vel_j2[1]) = fJ2Y, heyoka::prime(vel_j2[2]) = fJ2Z,
+                  heyoka::prime(vel_c22[0]) = fC22X, heyoka::prime(vel_c22[1]) = fC22Y, heyoka::prime(vel_c22[2]) = fC22Z,
+                  heyoka::prime(vel_s22[0]) = fS22X, heyoka::prime(vel_s22[1]) = fS22Y, heyoka::prime(vel_s22[2]) = fS22Z,
+                  heyoka::prime(vel_sun[0]) = fSunX, heyoka::prime(vel_sun[1]) = fSunY, heyoka::prime(vel_sun[2]) = fSunZ,
+                  heyoka::prime(vel_lun[0]) = fMoonX, heyoka::prime( vel_lun[1]) = fMoonY, heyoka::prime( vel_lun[2]) = fMoonZ,
+                  heyoka::prime(vel_srp[0]) = fSRPX, heyoka::prime( vel_srp[1]) = fSRPY, heyoka::prime( vel_srp[2]) = fSRPZ,
+                  heyoka::prime(vel_drag[0]) = fDragX_split, heyoka::prime( vel_drag[1]) = fDragY_split, heyoka::prime(vel_drag[2]) = fDragZ_split },
+                { x0, y0, z0,
+                  vel_kep_x0, vel_kep_y0, vel_kep_z0,
+                  vel_j2_x0, vel_j2_y0, vel_j2_z0,
+                  vel_c22_x0, vel_c22_y0, vel_c22_z0,
+                  vel_s22_x0, vel_s22_y0, vel_s22_z0,
+                  vel_sun_x0, vel_sun_y0, vel_sun_z0,
+                  vel_lun_x0, vel_lun_y0, vel_lun_z0,
+                  vel_srp_x0, vel_srp_y0, vel_srp_z0,
+                  vel_drag_x0, vel_drag_y0, vel_drag_z0},
+                heyoka::kw::time = t0,
+                heyoka::kw::tol = 1e-16,
+                heyoka::kw::compact_mode = true
         };
 
         ta_components[Acceleration::KEP] = new heyoka::taylor_adaptive<double> {

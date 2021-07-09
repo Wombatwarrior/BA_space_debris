@@ -15,6 +15,8 @@ TEST_F(CompareWithHeyokaTests, showTaylorIntegrator)
     for (int i = 0; i < 8; ++i) {
         std::cout << *ta_components[i] << std::endl;
     }
+
+    std::cout << *ta_split << std::endl;
 }
 
 // compare calculated values of KepComponent
