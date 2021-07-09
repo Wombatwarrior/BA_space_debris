@@ -52,8 +52,6 @@ protected:
     inline static std::array<Acceleration::AccelerationAccumulator*, 8> aa_components;
     inline static void SetUpTestSuite()
     {
-        // set output accuracy
-        std::cout << std::setprecision(std::numeric_limits<double>::digits10 + 1);
         //create heyoka variables
         pos = heyoka::make_vars("X", "Y", "Z");
         vel = heyoka::make_vars("VX", "VY", "VZ");
@@ -90,12 +88,6 @@ protected:
 
         // distance to earth center
         auto magR2 = heyoka::pow(pos[0], 2.) + heyoka::pow(pos[1], 2.) + heyoka::pow(pos[2], 2.);
-
-        // atmospheric drag
-        auto p = p0 * heyoka::exp(-(magR2 - Re) / h);
-        auto v_rel_x = vel[0] + omega_e * pos[1];
-        auto v_rel_y = vel[1] - omega_e * pos[0];
-        auto v_rel_z = vel[2];
 
         //Earth's Keplerian terms
         auto fKepX = -GMe * pos[0] / (heyoka::pow(magR2, (3. / 2)));
@@ -157,11 +149,16 @@ protected:
         auto fSRPY = SRPterm * (pos[1] - Yo);
         auto fSRPZ = SRPterm * (pos[2] - Zo);
 
+        // atmospheric drag
+        auto p = p0 * heyoka::exp(-(heyoka::sqrt(magR2) - Re) / h);
+        auto v_rel_x = vel[0] + omega_e * pos[1];
+        auto v_rel_y = vel[1] - omega_e * pos[0];
+        auto v_rel_z = vel[2];
         // Drag due to the earths atmosphere (BCINV is a heyoka parameter hy.par[1])
         auto DragTerm = (heyoka::par[1] * p) / 2.;
-        auto fDragX = DragTerm * heyoka::pow(v_rel_x, 2.);
-        auto fDragY = DragTerm * heyoka::pow(v_rel_y, 2.);
-        auto fDragZ = DragTerm * heyoka::pow(v_rel_z, 2.);
+        auto fDragX = -DragTerm * heyoka::pow(v_rel_x, 2.);
+        auto fDragY = -DragTerm * heyoka::pow(v_rel_y, 2.);
+        auto fDragZ = -DragTerm * heyoka::pow(v_rel_z, 2.);
         // EOM
         auto dXdt = vel[0];
         auto dYdt = vel[1];
@@ -169,6 +166,9 @@ protected:
         auto dVXdt = fKepX + fJ2X + fC22X + fS22X + fSunX + fMoonX + fSRPX + fDragX;
         auto dVYdt = fKepY + fJ2Y + fC22Y + fS22Y + fSunY + fMoonY + fSRPY + fDragY;
         auto dVZdt = fKepZ + fJ2Z + fC22Z + fS22Z + fSunZ + fMoonZ + fSRPZ + fDragZ;
+
+        // set output accuracy
+        std::cout << std::setprecision(std::numeric_limits<double>::digits10 + 1);
 
         // Initial conditions (ic) -  can be changed later
         auto x0 = 0.;
@@ -374,7 +374,6 @@ protected:
             { "euclidean distance: ", "\n" });
         IOUtils::to_ostream(MathUtils::absoluteError(pos_i,pos_ta), std::cout, ",", { "absolute error[", "]\n" });
         IOUtils::to_ostream(MathUtils::relativeError(pos_i,pos_ta), std::cout, ",", { "relative error[", "]\n" });
-        IOUtils::to_ostream(pos_ta, std::cout, ",", { "position heyoka[", "]\n" });
         IOUtils::to_ostream(vel_i, std::cout, ",", { "velocity integrator[", "]\n" });
         IOUtils::to_ostream(vel_ta, std::cout, ",", { "velocity heyoka[", "]\n" });
         IOUtils::to_ostream(std::array<double, 1> { MathUtils::cosSimilarity(vel_ta, vel_i) }, std::cout, "",
