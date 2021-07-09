@@ -26,7 +26,7 @@ TEST_F(CompareWithHeyokaTests, compareKep)
     Debris::Debris d;
     for (int i = 0; i < 3; ++i) {
         d.setPosition({ 3500. * (i + 2), 0, 0 });
-        d.setVelocity({ 1., 0, 0 });
+        d.setVelocity({ 0, 0, 0 });
         ds.push_back(d);
     }
     // loop over the debris data and compare calculations
@@ -82,7 +82,7 @@ TEST_F(CompareWithHeyokaTests, compareJ2)
     Debris::Debris d;
     for (int i = 0; i < 3; ++i) {
         d.setPosition({ 3500. * (i + 2), 0, 0 });
-        d.setVelocity({ 1., 0, 0 });
+        d.setVelocity({ 0, 0, 0 });
         ds.push_back(d);
     }
     // loop over the debris data and compare calculations
@@ -138,7 +138,7 @@ TEST_F(CompareWithHeyokaTests, compareC22)
     Debris::Debris d;
     for (int i = 0; i < 3; ++i) {
         d.setPosition({ 3500. * (i + 2), 0, 0 });
-        d.setVelocity({ 1., 0, 0 });
+        d.setVelocity({ 0, 0, 0 });
         ds.push_back(d);
     }
     // loop over the debris data and compare calculations
@@ -193,7 +193,7 @@ TEST_F(CompareWithHeyokaTests, compareS22)
     Debris::Debris d;
     for (int i = 0; i < 3; ++i) {
         d.setPosition({ 3500. * (i + 2), 0, 0 });
-        d.setVelocity({ 1., 0, 0 });
+        d.setVelocity({ 0, 0, 0 });
         ds.push_back(d);
     }
     // loop over the debris data and compare calculations
@@ -248,7 +248,7 @@ TEST_F(CompareWithHeyokaTests, compareLun)
     Debris::Debris d;
     for (int i = 0; i < 3; ++i) {
         d.setPosition({ 3500. * (i + 2), 0, 0 });
-        d.setVelocity({ 1., 0, 0 });
+        d.setVelocity({ 0, 0, 0 });
         ds.push_back(d);
     }
     // loop over the debris data and compare calculations
@@ -303,7 +303,7 @@ TEST_F(CompareWithHeyokaTests, compareSol)
     Debris::Debris d;
     for (int i = 0; i < 3; ++i) {
         d.setPosition({ 3500. * (i + 2), 0, 0 });
-        d.setVelocity({ 1., 0, 0 });
+        d.setVelocity({ 0, 0, 0 });
         ds.push_back(d);
     }
     // loop over the debris data and compare calculations
@@ -358,7 +358,7 @@ TEST_F(CompareWithHeyokaTests, compareSRP)
     Debris::Debris d;
     for (int i = 0; i < 3; ++i) {
         d.setPosition({ 3500. * (i + 2), 0, 0 });
-        d.setVelocity({ 1., 0, 0 });
+        d.setVelocity({ 0, 0, 0 });
         d.setAom(2e-5);
         ds.push_back(d);
     }

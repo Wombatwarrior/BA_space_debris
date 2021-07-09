@@ -35,7 +35,7 @@ protected:
     inline static constexpr double h = 8.5;
 
     // delta t
-    inline static double delta_t = .01;
+    inline static double delta_t = .001;
     inline static constexpr double start_t = 0.;
     inline static constexpr double end_t = 1000;
 
