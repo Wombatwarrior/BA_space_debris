@@ -601,4 +601,69 @@ TEST_F(CompareWithHeyokaTests, compareTotalRandom)
         std::cout << std::endl;
     }
 }
+// compare calculated values of all Components between the two complete heyoka integrators
+TEST_F(CompareWithHeyokaTests, compareComleteHeyokas)
+{
+    std::cout << "\nCompare heyokas" << std::endl;
+    // set some test debris values
+    std::vector<Debris::Debris> ds;
+    Debris::Debris d;
+    for (int i = 0; i < 3; ++i) {
+        d.setPosition({ 3500. * (i + 2), 0, 0 });
+        d.setVelocity({ 1., 0, 0 });
+        d.setAom(2e-5);
+        d.setBcInv(0.05);
+        ds.push_back(d);
+    }
+    // loop over the debris data and compare calculations
+    for (auto d : ds) {
+        // setup integrators
+        prepareRun(*ta_split, *ta_total, d);
+        // set heyoka parameters
+        ta_total->get_pars_data()[0] = d.getAom();
+        ta_total->get_pars_data()[1] = d.getBcInv();
+        ta_split->get_pars_data()[0] = d.getAom();
+        ta_split->get_pars_data()[1] = d.getBcInv();
+        // integrate over time
+        bool crash_split = false;
+        bool crash_total = false;
+        for (double t = start_t; t <= end_t; t += delta_t) {
+            std::array<double, 3> pos_split { ta_split->get_state()[0],
+                                              ta_split->get_state()[1],
+                                              ta_split->get_state()[2] };
+            std::array<double, 3> pos_total { ta_total->get_state()[0],
+                                           ta_total->get_state()[1],
+                                           ta_total->get_state()[2] };
+            if (MathUtils::euclideanNorm(pos_split) <= Physics::R_EARTH) {
+                if (!crash_split)
+                    std::cout << "split hit the ground at t=" << t << std::endl;
+                if (crash_total == crash_split) {
+                    showErrors(*ta_split, *ta_total);
+                }
+                crash_split = true;
+                if (crash_total && crash_split)
+                    break;
+            }
+            if (MathUtils::euclideanNorm(pos_total) <= Physics::R_EARTH) {
+                if (!crash_total)
+                    std::cout << "total hit the ground at t=" << t << std::endl;
+                if (crash_total == crash_split) {
+                    showErrors(*ta_split, *ta_total);
+                }
+                crash_total = true;
+            }
+            if (crash_split && crash_total)
+                break;
+            // integrate time step
+            if (!crash_split)
+                ta_split->propagate_for(delta_t);
+            if (!crash_total)
+                ta_total->propagate_for(delta_t);
+        }
+        if (!(crash_split || crash_total))
+            // compare result
+            showErrors(*ta_split, *ta_total);
+        std::cout << std::endl;
+    }
+}
 #endif
