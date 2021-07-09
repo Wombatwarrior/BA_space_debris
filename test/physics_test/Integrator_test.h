@@ -184,11 +184,11 @@ protected:
         std::cout << "Compiling the Taylor integrator ... (this is done only once)" << std::endl;
 
         ta_total = new heyoka::taylor_adaptive<double> {
-                { heyoka::prime(pos[0]) = dXdt, heyoka::prime(pos[1]) = dYdt, heyoka::prime(pos[2]) = dZdt, heyoka::prime(vel[0]) = dVXdt, heyoka::prime(vel[1]) = dVYdt, heyoka::prime(vel[2]) = dVZdt },
-                { x0, y0, z0, vx0, vy0, vz0 },
-                heyoka::kw::time = t0,
-                heyoka::kw::tol = 1e-16,
-                  heyoka::kw::compact_mode = true
+            { heyoka::prime(pos[0]) = dXdt, heyoka::prime(pos[1]) = dYdt, heyoka::prime(pos[2]) = dZdt, heyoka::prime(vel[0]) = dVXdt, heyoka::prime(vel[1]) = dVYdt, heyoka::prime(vel[2]) = dVZdt },
+            { x0, y0, z0, vx0, vy0, vz0 },
+            heyoka::kw::time = t0,
+            heyoka::kw::tol = 1e-16,
+            heyoka::kw::compact_mode = true
         };
 
         // calculates components separately
@@ -233,8 +233,6 @@ protected:
         auto vel_drag_y0 = 0.;
         auto vel_drag_z0 = 0.;
 
-
-
         auto dXXdt_split = vel_kep[0] + vel_j2[0] + vel_c22[0] + vel_s22[0] + vel_sun[0] + vel_lun[0] + vel_srp[0] + vel_drag[0];
         auto dXYdt_split = vel_kep[1] + vel_j2[1] + vel_c22[1] + vel_s22[1] + vel_sun[1] + vel_lun[1] + vel_srp[1] + vel_drag[1];
         auto dXZdt_split = vel_kep[2] + vel_j2[2] + vel_c22[2] + vel_s22[2] + vel_sun[2] + vel_lun[2] + vel_srp[2] + vel_drag[2];
@@ -247,27 +245,27 @@ protected:
         auto fDragZ_split = -DragTerm * heyoka::pow(v_rel_z_split, 2.);
 
         ta_split = new heyoka::taylor_adaptive<double> {
-                { heyoka::prime(pos[0]) = dXXdt_split, heyoka::prime(pos[1]) = dXYdt_split, heyoka::prime(pos[2]) = dXZdt_split,
-                  heyoka::prime(vel_kep[0]) = fKepX, heyoka::prime(vel_kep[1]) = fKepY, heyoka::prime(vel_kep[2]) = fKepZ,
-                  heyoka::prime(vel_j2[0]) = fJ2X, heyoka::prime(vel_j2[1]) = fJ2Y, heyoka::prime(vel_j2[2]) = fJ2Z,
-                  heyoka::prime(vel_c22[0]) = fC22X, heyoka::prime(vel_c22[1]) = fC22Y, heyoka::prime(vel_c22[2]) = fC22Z,
-                  heyoka::prime(vel_s22[0]) = fS22X, heyoka::prime(vel_s22[1]) = fS22Y, heyoka::prime(vel_s22[2]) = fS22Z,
-                  heyoka::prime(vel_sun[0]) = fSunX, heyoka::prime(vel_sun[1]) = fSunY, heyoka::prime(vel_sun[2]) = fSunZ,
-                  heyoka::prime(vel_lun[0]) = fMoonX, heyoka::prime( vel_lun[1]) = fMoonY, heyoka::prime( vel_lun[2]) = fMoonZ,
-                  heyoka::prime(vel_srp[0]) = fSRPX, heyoka::prime( vel_srp[1]) = fSRPY, heyoka::prime( vel_srp[2]) = fSRPZ,
-                  heyoka::prime(vel_drag[0]) = fDragX_split, heyoka::prime( vel_drag[1]) = fDragY_split, heyoka::prime(vel_drag[2]) = fDragZ_split },
-                { x0, y0, z0,
-                  vel_kep_x0, vel_kep_y0, vel_kep_z0,
-                  vel_j2_x0, vel_j2_y0, vel_j2_z0,
-                  vel_c22_x0, vel_c22_y0, vel_c22_z0,
-                  vel_s22_x0, vel_s22_y0, vel_s22_z0,
-                  vel_sun_x0, vel_sun_y0, vel_sun_z0,
-                  vel_lun_x0, vel_lun_y0, vel_lun_z0,
-                  vel_srp_x0, vel_srp_y0, vel_srp_z0,
-                  vel_drag_x0, vel_drag_y0, vel_drag_z0},
-                heyoka::kw::time = t0,
-                heyoka::kw::tol = 1e-16,
-                heyoka::kw::compact_mode = true
+            { heyoka::prime(pos[0]) = dXXdt_split, heyoka::prime(pos[1]) = dXYdt_split, heyoka::prime(pos[2]) = dXZdt_split,
+                heyoka::prime(vel_kep[0]) = fKepX, heyoka::prime(vel_kep[1]) = fKepY, heyoka::prime(vel_kep[2]) = fKepZ,
+                heyoka::prime(vel_j2[0]) = fJ2X, heyoka::prime(vel_j2[1]) = fJ2Y, heyoka::prime(vel_j2[2]) = fJ2Z,
+                heyoka::prime(vel_c22[0]) = fC22X, heyoka::prime(vel_c22[1]) = fC22Y, heyoka::prime(vel_c22[2]) = fC22Z,
+                heyoka::prime(vel_s22[0]) = fS22X, heyoka::prime(vel_s22[1]) = fS22Y, heyoka::prime(vel_s22[2]) = fS22Z,
+                heyoka::prime(vel_sun[0]) = fSunX, heyoka::prime(vel_sun[1]) = fSunY, heyoka::prime(vel_sun[2]) = fSunZ,
+                heyoka::prime(vel_lun[0]) = fMoonX, heyoka::prime(vel_lun[1]) = fMoonY, heyoka::prime(vel_lun[2]) = fMoonZ,
+                heyoka::prime(vel_srp[0]) = fSRPX, heyoka::prime(vel_srp[1]) = fSRPY, heyoka::prime(vel_srp[2]) = fSRPZ,
+                heyoka::prime(vel_drag[0]) = fDragX_split, heyoka::prime(vel_drag[1]) = fDragY_split, heyoka::prime(vel_drag[2]) = fDragZ_split },
+            { x0, y0, z0,
+                vel_kep_x0, vel_kep_y0, vel_kep_z0,
+                vel_j2_x0, vel_j2_y0, vel_j2_z0,
+                vel_c22_x0, vel_c22_y0, vel_c22_z0,
+                vel_s22_x0, vel_s22_y0, vel_s22_z0,
+                vel_sun_x0, vel_sun_y0, vel_sun_z0,
+                vel_lun_x0, vel_lun_y0, vel_lun_z0,
+                vel_srp_x0, vel_srp_y0, vel_srp_z0,
+                vel_drag_x0, vel_drag_y0, vel_drag_z0 },
+            heyoka::kw::time = t0,
+            heyoka::kw::tol = 1e-16,
+            heyoka::kw::compact_mode = true
         };
 
         ta_components[Acceleration::KEP] = new heyoka::taylor_adaptive<double> {
@@ -441,36 +439,36 @@ protected:
         std::array<double, 3> pos_i = i.getDebris().getDebrisVector()[0].getPosition();
         std::array<double, 3> vel_i = i.getDebris().getDebrisVector()[0].getVelocity();
         std::array<double, 3> pos_ta { ta.get_state()[0],
-                                       ta.get_state()[1],
-                                       ta.get_state()[2] };
+            ta.get_state()[1],
+            ta.get_state()[2] };
         std::array<double, 3> vel_ta { ta.get_state()[3],
-                                       ta.get_state()[4],
-                                       ta.get_state()[5] };
+            ta.get_state()[4],
+            ta.get_state()[5] };
         IOUtils::to_ostream(pos_i, std::cout, ",", { "position integrator[", "]\n" });
         IOUtils::to_ostream(pos_ta, std::cout, ",", { "position heyoka[", "]\n" });
         IOUtils::to_ostream(std::array<double, 1> { MathUtils::cosSimilarity(pos_ta, pos_i) }, std::cout, "",
-                            { "cosine similarity: ", "\n" });
+            { "cosine similarity: ", "\n" });
         IOUtils::to_ostream(std::array<double, 1> { MathUtils::euclideanDistance(pos_ta, pos_i) }, std::cout, "",
-                            { "euclidean distance: ", "\n" });
+            { "euclidean distance: ", "\n" });
         IOUtils::to_ostream(MathUtils::absoluteError(pos_i, pos_ta), std::cout, ",", { "absolute error[", "]\n" });
         IOUtils::to_ostream(MathUtils::relativeError(pos_i, pos_ta), std::cout, ",", { "relative error[", "]\n" });
         IOUtils::to_ostream(vel_i, std::cout, ",", { "velocity integrator[", "]\n" });
         IOUtils::to_ostream(vel_ta, std::cout, ",", { "velocity heyoka[", "]\n" });
         IOUtils::to_ostream(std::array<double, 1> { MathUtils::cosSimilarity(vel_ta, vel_i) }, std::cout, "",
-                            { "cosine similarity: ", "\n" });
+            { "cosine similarity: ", "\n" });
         IOUtils::to_ostream(std::array<double, 1> { MathUtils::euclideanDistance(vel_ta, vel_i) }, std::cout, "",
-                            { "euclidean distance: ", "\n" });
+            { "euclidean distance: ", "\n" });
         IOUtils::to_ostream(MathUtils::absoluteError(vel_i, vel_ta), std::cout, ",", { "absolute error[", "]\n" });
         IOUtils::to_ostream(MathUtils::relativeError(vel_i, vel_ta), std::cout, ",", { "relative error[", "]\n" });
     }
 
-    void prepareRun( heyoka::taylor_adaptive<double>& split, heyoka::taylor_adaptive<double>& total, Debris::Debris& d)
+    void prepareRun(heyoka::taylor_adaptive<double>& split, heyoka::taylor_adaptive<double>& total, Debris::Debris& d)
     {
         split.get_state_data()[0] = d.getPosition()[0];
         split.get_state_data()[1] = d.getPosition()[1];
         split.get_state_data()[2] = d.getPosition()[2];
         // we allways start with 0 velosity
-        for (int i = 3; i < split.get_state().size();++i){
+        for (int i = 3; i < split.get_state().size(); ++i) {
             split.get_state_data()[i] = 0;
         }
         total.get_state_data()[0] = d.getPosition()[0];
@@ -486,38 +484,38 @@ protected:
 
     void showErrors(heyoka::taylor_adaptive<double>& split, heyoka::taylor_adaptive<double>& total)
     {
-        std::array<double, 3> pos_split{ split.get_state()[0],
-                                         split.get_state()[1],
-                                         split.get_state()[2] };
-        std::array<double, 3> vel_split{};
+        std::array<double, 3> pos_split { split.get_state()[0],
+            split.get_state()[1],
+            split.get_state()[2] };
+        std::array<double, 3> vel_split {};
         // combine all components
-        for (int i = 3; i < split.get_state().size();i+=3){
-            vel_split[0]+=split.get_state_data()[i];
-            vel_split[1]+=split.get_state_data()[i+1];
-            vel_split[2]+=split.get_state_data()[i+2];
+        for (int i = 3; i < split.get_state().size(); i += 3) {
+            vel_split[0] += split.get_state_data()[i];
+            vel_split[1] += split.get_state_data()[i + 1];
+            vel_split[2] += split.get_state_data()[i + 2];
         }
         std::array<double, 3> pos_ta { total.get_state()[0],
-                                       total.get_state()[1],
-                                       total.get_state()[2] };
+            total.get_state()[1],
+            total.get_state()[2] };
         std::array<double, 3> vel_ta { total.get_state()[3],
-                                       total.get_state()[4],
-                                       total.get_state()[5] };
-        IOUtils::to_ostream(pos_split, std::cout, ",", {"position integrator[", "]\n" });
+            total.get_state()[4],
+            total.get_state()[5] };
+        IOUtils::to_ostream(pos_split, std::cout, ",", { "position integrator[", "]\n" });
         IOUtils::to_ostream(pos_ta, std::cout, ",", { "position heyoka[", "]\n" });
         IOUtils::to_ostream(std::array<double, 1> { MathUtils::cosSimilarity(pos_ta, pos_split) }, std::cout, "",
-                            { "cosine similarity: ", "\n" });
+            { "cosine similarity: ", "\n" });
         IOUtils::to_ostream(std::array<double, 1> { MathUtils::euclideanDistance(pos_ta, pos_split) }, std::cout, "",
-                            { "euclidean distance: ", "\n" });
-        IOUtils::to_ostream(MathUtils::absoluteError(pos_split, pos_ta), std::cout, ",", {"absolute error[", "]\n" });
-        IOUtils::to_ostream(MathUtils::relativeError(pos_split, pos_ta), std::cout, ",", {"relative error[", "]\n" });
-        IOUtils::to_ostream(vel_split, std::cout, ",", {"velocity integrator[", "]\n" });
+            { "euclidean distance: ", "\n" });
+        IOUtils::to_ostream(MathUtils::absoluteError(pos_split, pos_ta), std::cout, ",", { "absolute error[", "]\n" });
+        IOUtils::to_ostream(MathUtils::relativeError(pos_split, pos_ta), std::cout, ",", { "relative error[", "]\n" });
+        IOUtils::to_ostream(vel_split, std::cout, ",", { "velocity integrator[", "]\n" });
         IOUtils::to_ostream(vel_ta, std::cout, ",", { "velocity heyoka[", "]\n" });
         IOUtils::to_ostream(std::array<double, 1> { MathUtils::cosSimilarity(vel_ta, vel_split) }, std::cout, "",
-                            { "cosine similarity: ", "\n" });
+            { "cosine similarity: ", "\n" });
         IOUtils::to_ostream(std::array<double, 1> { MathUtils::euclideanDistance(vel_ta, vel_split) }, std::cout, "",
-                            { "euclidean distance: ", "\n" });
-        IOUtils::to_ostream(MathUtils::absoluteError(vel_split, vel_ta), std::cout, ",", {"absolute error[", "]\n" });
-        IOUtils::to_ostream(MathUtils::relativeError(vel_split, vel_ta), std::cout, ",", {"relative error[", "]\n" });
+            { "euclidean distance: ", "\n" });
+        IOUtils::to_ostream(MathUtils::absoluteError(vel_split, vel_ta), std::cout, ",", { "absolute error[", "]\n" });
+        IOUtils::to_ostream(MathUtils::relativeError(vel_split, vel_ta), std::cout, ",", { "relative error[", "]\n" });
     }
 };
 #endif

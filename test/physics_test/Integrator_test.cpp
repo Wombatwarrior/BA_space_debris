@@ -629,11 +629,11 @@ TEST_F(CompareWithHeyokaTests, compareComleteHeyokas)
         bool crash_total = false;
         for (double t = start_t; t <= end_t; t += delta_t) {
             std::array<double, 3> pos_split { ta_split->get_state()[0],
-                                              ta_split->get_state()[1],
-                                              ta_split->get_state()[2] };
+                ta_split->get_state()[1],
+                ta_split->get_state()[2] };
             std::array<double, 3> pos_total { ta_total->get_state()[0],
-                                           ta_total->get_state()[1],
-                                           ta_total->get_state()[2] };
+                ta_total->get_state()[1],
+                ta_total->get_state()[2] };
             if (MathUtils::euclideanNorm(pos_split) <= Physics::R_EARTH) {
                 if (!crash_split)
                     std::cout << "split hit the ground at t=" << t << std::endl;
