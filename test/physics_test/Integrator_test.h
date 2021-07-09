@@ -35,7 +35,7 @@ protected:
     inline static constexpr double h = 8.5;
 
     // delta t
-    inline static double delta_t = .001;
+    inline static double delta_t = .1;
     inline static constexpr double start_t = 0.;
     inline static constexpr double end_t = 1000;
 
@@ -233,9 +233,9 @@ protected:
         auto vel_drag_y0 = 0.;
         auto vel_drag_z0 = 0.;
 
-        auto dXXdt_split = vel_kep[0] + vel_j2[0] + vel_c22[0] + vel_s22[0] + vel_sun[0] + vel_lun[0] + vel_srp[0] + vel_drag[0];
-        auto dXYdt_split = vel_kep[1] + vel_j2[1] + vel_c22[1] + vel_s22[1] + vel_sun[1] + vel_lun[1] + vel_srp[1] + vel_drag[1];
-        auto dXZdt_split = vel_kep[2] + vel_j2[2] + vel_c22[2] + vel_s22[2] + vel_sun[2] + vel_lun[2] + vel_srp[2] + vel_drag[2];
+        auto dXXdt_split = vel[0] + vel_kep[0] + vel_j2[0] + vel_c22[0] + vel_s22[0] + vel_sun[0] + vel_lun[0] + vel_srp[0] + vel_drag[0];
+        auto dXYdt_split = vel[1] + vel_kep[1] + vel_j2[1] + vel_c22[1] + vel_s22[1] + vel_sun[1] + vel_lun[1] + vel_srp[1] + vel_drag[1];
+        auto dXZdt_split = vel[2] + vel_kep[2] + vel_j2[2] + vel_c22[2] + vel_s22[2] + vel_sun[2] + vel_lun[2] + vel_srp[2] + vel_drag[2];
 
         auto v_rel_x_split = dXXdt_split + omega_e * pos[1];
         auto v_rel_y_split = dXYdt_split - omega_e * pos[0];
@@ -246,6 +246,7 @@ protected:
 
         ta_split = new heyoka::taylor_adaptive<double> {
             { heyoka::prime(pos[0]) = dXXdt_split, heyoka::prime(pos[1]) = dXYdt_split, heyoka::prime(pos[2]) = dXZdt_split,
+                heyoka::prime(vel[0]) = heyoka::expression(0.), heyoka::prime(vel[1]) = heyoka::expression(0.), heyoka::prime(vel[2]) = heyoka::expression(0.),
                 heyoka::prime(vel_kep[0]) = fKepX, heyoka::prime(vel_kep[1]) = fKepY, heyoka::prime(vel_kep[2]) = fKepZ,
                 heyoka::prime(vel_j2[0]) = fJ2X, heyoka::prime(vel_j2[1]) = fJ2Y, heyoka::prime(vel_j2[2]) = fJ2Z,
                 heyoka::prime(vel_c22[0]) = fC22X, heyoka::prime(vel_c22[1]) = fC22Y, heyoka::prime(vel_c22[2]) = fC22Z,
@@ -255,6 +256,7 @@ protected:
                 heyoka::prime(vel_srp[0]) = fSRPX, heyoka::prime(vel_srp[1]) = fSRPY, heyoka::prime(vel_srp[2]) = fSRPZ,
                 heyoka::prime(vel_drag[0]) = fDragX_split, heyoka::prime(vel_drag[1]) = fDragY_split, heyoka::prime(vel_drag[2]) = fDragZ_split },
             { x0, y0, z0,
+                vx0, vy0, vz0,
                 vel_kep_x0, vel_kep_y0, vel_kep_z0,
                 vel_j2_x0, vel_j2_y0, vel_j2_z0,
                 vel_c22_x0, vel_c22_y0, vel_c22_z0,
@@ -467,16 +469,19 @@ protected:
         split.get_state_data()[0] = d.getPosition()[0];
         split.get_state_data()[1] = d.getPosition()[1];
         split.get_state_data()[2] = d.getPosition()[2];
-        // we allways start with 0 velosity
-        for (int i = 3; i < split.get_state().size(); ++i) {
+        split.get_state_data()[3] = d.getVelocity()[0];
+        split.get_state_data()[4] = d.getVelocity()[1];
+        split.get_state_data()[5] = d.getVelocity()[2];
+        // we allways start with 0 velocity
+        for (int i = 6; i < split.get_state().size(); ++i) {
             split.get_state_data()[i] = 0;
         }
         total.get_state_data()[0] = d.getPosition()[0];
         total.get_state_data()[1] = d.getPosition()[1];
         total.get_state_data()[2] = d.getPosition()[2];
-        total.get_state_data()[3] = 0;
-        total.get_state_data()[4] = 0;
-        total.get_state_data()[5] = 0;
+        total.get_state_data()[3] = d.getVelocity()[0];
+        total.get_state_data()[4] = d.getVelocity()[1];
+        total.get_state_data()[5] = d.getVelocity()[2];
         // reset time values
         split.set_time(start_t);
         total.set_time(start_t);
