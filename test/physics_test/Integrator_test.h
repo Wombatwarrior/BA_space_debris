@@ -441,27 +441,83 @@ protected:
         std::array<double, 3> pos_i = i.getDebris().getDebrisVector()[0].getPosition();
         std::array<double, 3> vel_i = i.getDebris().getDebrisVector()[0].getVelocity();
         std::array<double, 3> pos_ta { ta.get_state()[0],
-            ta.get_state()[1],
-            ta.get_state()[2] };
+                                       ta.get_state()[1],
+                                       ta.get_state()[2] };
         std::array<double, 3> vel_ta { ta.get_state()[3],
-            ta.get_state()[4],
-            ta.get_state()[5] };
+                                       ta.get_state()[4],
+                                       ta.get_state()[5] };
         IOUtils::to_ostream(pos_i, std::cout, ",", { "position integrator[", "]\n" });
         IOUtils::to_ostream(pos_ta, std::cout, ",", { "position heyoka[", "]\n" });
         IOUtils::to_ostream(std::array<double, 1> { MathUtils::cosSimilarity(pos_ta, pos_i) }, std::cout, "",
-            { "cosine similarity: ", "\n" });
+                            { "cosine similarity: ", "\n" });
         IOUtils::to_ostream(std::array<double, 1> { MathUtils::euclideanDistance(pos_ta, pos_i) }, std::cout, "",
-            { "euclidean distance: ", "\n" });
+                            { "euclidean distance: ", "\n" });
         IOUtils::to_ostream(MathUtils::absoluteError(pos_i, pos_ta), std::cout, ",", { "absolute error[", "]\n" });
         IOUtils::to_ostream(MathUtils::relativeError(pos_i, pos_ta), std::cout, ",", { "relative error[", "]\n" });
         IOUtils::to_ostream(vel_i, std::cout, ",", { "velocity integrator[", "]\n" });
         IOUtils::to_ostream(vel_ta, std::cout, ",", { "velocity heyoka[", "]\n" });
         IOUtils::to_ostream(std::array<double, 1> { MathUtils::cosSimilarity(vel_ta, vel_i) }, std::cout, "",
-            { "cosine similarity: ", "\n" });
+                            { "cosine similarity: ", "\n" });
         IOUtils::to_ostream(std::array<double, 1> { MathUtils::euclideanDistance(vel_ta, vel_i) }, std::cout, "",
-            { "euclidean distance: ", "\n" });
+                            { "euclidean distance: ", "\n" });
         IOUtils::to_ostream(MathUtils::absoluteError(vel_i, vel_ta), std::cout, ",", { "absolute error[", "]\n" });
         IOUtils::to_ostream(MathUtils::relativeError(vel_i, vel_ta), std::cout, ",", { "relative error[", "]\n" });
+    }
+
+    void prepareRun( heyoka::taylor_adaptive<double>& split, heyoka::taylor_adaptive<double>& total, Debris::Debris& d)
+    {
+        split.get_state_data()[0] = d.getPosition()[0];
+        split.get_state_data()[1] = d.getPosition()[1];
+        split.get_state_data()[2] = d.getPosition()[2];
+        // we allways start with 0 velosity
+        for (int i = 3; i < split.get_state().size();++i){
+            split.get_state_data()[i] = 0;
+        }
+        total.get_state_data()[0] = d.getPosition()[0];
+        total.get_state_data()[1] = d.getPosition()[1];
+        total.get_state_data()[2] = d.getPosition()[2];
+        total.get_state_data()[3] = 0;
+        total.get_state_data()[4] = 0;
+        total.get_state_data()[5] = 0;
+        // reset time values
+        split.set_time(start_t);
+        total.set_time(start_t);
+    }
+
+    void showErrors(heyoka::taylor_adaptive<double>& split, heyoka::taylor_adaptive<double>& total)
+    {
+        std::array<double, 3> pos_split{ split.get_state()[0],
+                                         split.get_state()[1],
+                                         split.get_state()[2] };
+        std::array<double, 3> vel_split{};
+        // combine all components
+        for (int i = 3; i < split.get_state().size();i+=3){
+            vel_split[0]+=split.get_state_data()[i];
+            vel_split[1]+=split.get_state_data()[i+1];
+            vel_split[2]+=split.get_state_data()[i+2];
+        }
+        std::array<double, 3> pos_ta { total.get_state()[0],
+                                       total.get_state()[1],
+                                       total.get_state()[2] };
+        std::array<double, 3> vel_ta { total.get_state()[3],
+                                       total.get_state()[4],
+                                       total.get_state()[5] };
+        IOUtils::to_ostream(pos_split, std::cout, ",", {"position integrator[", "]\n" });
+        IOUtils::to_ostream(pos_ta, std::cout, ",", { "position heyoka[", "]\n" });
+        IOUtils::to_ostream(std::array<double, 1> { MathUtils::cosSimilarity(pos_ta, pos_split) }, std::cout, "",
+                            { "cosine similarity: ", "\n" });
+        IOUtils::to_ostream(std::array<double, 1> { MathUtils::euclideanDistance(pos_ta, pos_split) }, std::cout, "",
+                            { "euclidean distance: ", "\n" });
+        IOUtils::to_ostream(MathUtils::absoluteError(pos_split, pos_ta), std::cout, ",", {"absolute error[", "]\n" });
+        IOUtils::to_ostream(MathUtils::relativeError(pos_split, pos_ta), std::cout, ",", {"relative error[", "]\n" });
+        IOUtils::to_ostream(vel_split, std::cout, ",", {"velocity integrator[", "]\n" });
+        IOUtils::to_ostream(vel_ta, std::cout, ",", { "velocity heyoka[", "]\n" });
+        IOUtils::to_ostream(std::array<double, 1> { MathUtils::cosSimilarity(vel_ta, vel_split) }, std::cout, "",
+                            { "cosine similarity: ", "\n" });
+        IOUtils::to_ostream(std::array<double, 1> { MathUtils::euclideanDistance(vel_ta, vel_split) }, std::cout, "",
+                            { "euclidean distance: ", "\n" });
+        IOUtils::to_ostream(MathUtils::absoluteError(vel_split, vel_ta), std::cout, ",", {"absolute error[", "]\n" });
+        IOUtils::to_ostream(MathUtils::relativeError(vel_split, vel_ta), std::cout, ",", {"relative error[", "]\n" });
     }
 };
 #endif
