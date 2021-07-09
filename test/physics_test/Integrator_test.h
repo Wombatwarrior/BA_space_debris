@@ -29,10 +29,10 @@ protected:
     inline static constexpr double epsilon = Physics::RAD_FACTOR * 23.4392911;
     inline static constexpr double phi_o = Physics::RAD_FACTOR * 357.5256;
     inline static constexpr double Omega_plus_w = Physics::RAD_FACTOR * 282.94;
-    inline static constexpr double PSRP = 4.56e-6;
+    inline static constexpr double PSRP = 4.56e-3;
     inline static constexpr double p0 = 1.3;
-    inline static constexpr double omega_e = 8.5;
-    inline static constexpr double h = 7.292115e-5;
+    inline static constexpr double omega_e = 7.292115e-5;
+    inline static constexpr double h = 8.5;
 
     // delta t
     inline static double delta_t = .01;

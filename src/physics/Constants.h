@@ -151,7 +151,7 @@ inline constexpr double PHI_SUN_0 = 357.5256;
  * Used in:
  * - Acceleration::SRPComponent
  */
-inline constexpr double P_SRP = 4.56e-6;
+inline constexpr double P_SRP = 4.56e-3;
 /**
  * @brief sum of longitude of Ascending node and argument of periapsis elements
  *
