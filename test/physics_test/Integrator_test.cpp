@@ -482,7 +482,7 @@ TEST_F(CompareWithHeyokaTests, compareTotal)
     Debris::Debris d;
     for (int i = 0; i < 3; ++i) {
         d.setPosition({ 3500. * (i + 2), 0, 0 });
-        d.setVelocity({ 1., 0, 0 });
+        d.setVelocity({ 5., 5., 5. });
         d.setAom(2e-5);
         d.setBcInv(0.05);
         ds.push_back(d);
@@ -548,8 +548,8 @@ TEST_F(CompareWithHeyokaTests, compareTotalRandom)
     for (int i = 0; i < 3; ++i) {
         // use values between 50 km above ground and 30000 km above that
         d.setPosition({ Physics::R_EARTH + 50 + (.5 * (rand() % 60000)), Physics::R_EARTH + 50 + (.5 * (rand() % 60000)), Physics::R_EARTH + 50 + (.5 * (rand() % 60000)) });
-        // use values between 0 and 50 km/s
-        d.setVelocity({ 0.1 * (rand() % 500), 0.1 * (rand() % 500), 0.1 * (rand() % 500) });
+        // use values between 0 and 5 km/s
+        d.setVelocity({ 0.05 * (rand() % 100), 0.05 * (rand() % 100), 0.05 * (rand() % 100) });
         d.setAom(2e-5);
         d.setBcInv(0.05);
         ds.push_back(d);
@@ -610,7 +610,7 @@ TEST_F(CompareWithHeyokaTests, compareComleteHeyokas)
     Debris::Debris d;
     for (int i = 0; i < 3; ++i) {
         d.setPosition({ 3500. * (i + 2), 0, 0 });
-        d.setVelocity({ 1., 0, 0 });
+        d.setVelocity({ 5., 5., 5. });
         d.setAom(2e-5);
         d.setBcInv(0.05);
         ds.push_back(d);
@@ -664,6 +664,57 @@ TEST_F(CompareWithHeyokaTests, compareComleteHeyokas)
             // compare result
             showErrors(*ta_split, *ta_total);
         std::cout << std::endl;
+    }
+}
+
+
+// compare calculation time of all Components with random debris
+TEST_F(CompareWithHeyokaTests, compareTotalRuntimeRandom)
+{
+    std::cout << "\nAll Components Runtime" << std::endl;
+    // random number generator
+    auto seed = time(NULL);
+    srand(seed);
+    std::cout << "Seed: " << seed << std::endl << std::endl;
+    // set some test debris values
+    std::vector<Debris::Debris> ds;
+    Debris::Debris d;
+    for (int i = 0; i < 3; ++i) {
+        // use values between 50 km above ground and 30000 km above that
+        d.setPosition({ Physics::R_EARTH + 50 + (.5 * (rand() % 60000)), Physics::R_EARTH + 50 + (.5 * (rand() % 60000)), Physics::R_EARTH + 50 + (.5 * (rand() % 60000)) });
+        // use values between 0 and 5 km/s
+        d.setVelocity({ 0.05 * (rand() % 100), 0.05 * (rand() % 100), 0.05 * (rand() % 100) });
+        d.setAom(2e-5);
+        d.setBcInv(0.05);
+        ds.push_back(d);
+    }
+    // loop over the debris data and compare calculations
+    for (auto d : ds) {
+        // setup integrators
+        prepareRun(*i_total, *ta_total, d);
+        // set heyoka parameters
+        ta_total->get_pars_data()[0] = d.getAom();
+        ta_total->get_pars_data()[1] = d.getBcInv();
+        // integrate over time
+        // own integrator
+        auto i_t1 = std::chrono::high_resolution_clock::now();
+        for (double t = start_t; t <= end_t; t += delta_t) {
+            i_total->integrate();
+        }
+        auto i_t2 = std::chrono::high_resolution_clock::now();
+        auto i_ms_int = duration_cast<std::chrono::milliseconds>(i_t2 - i_t1);
+
+        // heyoka integrator
+        auto ta_t1 = std::chrono::high_resolution_clock::now();
+        for (double t = start_t; t <= end_t; t += delta_t) {
+            ta_total->propagate_for(delta_t);
+        }
+        auto ta_t2 = std::chrono::high_resolution_clock::now();
+        auto ta_ms_int = duration_cast<std::chrono::milliseconds>(ta_t2 - ta_t1);
+
+        std::cout << "Integrator runtime: " << i_ms_int.count() << " ms" << std::endl;
+        std::cout << "Heyoka runtime: " << ta_ms_int.count() << " ms" << std::endl;
+        std::cout << "Time difference: " << i_ms_int.count() - ta_ms_int.count() << " ms\n" << std::endl;
     }
 }
 #endif

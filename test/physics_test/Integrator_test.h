@@ -37,7 +37,7 @@ protected:
     // delta t
     inline static double delta_t = .1;
     inline static constexpr double start_t = 0.;
-    inline static constexpr double end_t = 1000;
+    inline static constexpr double end_t = 10000;
 
     //heyoka variables
     inline static heyoka::taylor_adaptive<double>* ta_total;
