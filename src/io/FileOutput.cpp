@@ -40,7 +40,7 @@ FileOutput::FileOutput(Debris::DebrisContainer& debris_arg,
         out << "acc_t1 x,";
         out << "acc_t1 y,";
         out << "acc_t1 z,";
-        out << "acc_t1 norm\n";
+        out << "acc_t1 norm" << std::endl;
 
         // column names for the accelerations
         acc_out << "index,";
@@ -69,7 +69,7 @@ FileOutput::FileOutput(Debris::DebrisContainer& debris_arg,
         if (acc_config[Acceleration::DRAG]) {
             acc_out << "acc_drag x,acc_drag y,acc_drag z,acc_drag norm,";
         }
-        acc_out << "acc_total x,acc_total y,acc_total z,acc_total norm\n";
+        acc_out << "acc_total x,acc_total y,acc_total z,acc_total norm" << std::endl;
     }
 }
 
