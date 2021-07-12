@@ -37,7 +37,7 @@ protected:
     // delta t
     inline static double delta_t = .1;
     inline static constexpr double start_t = 0.;
-    inline static constexpr double end_t = 10000;
+    inline static constexpr double end_t = 1000;
 
     //heyoka variables
     inline static heyoka::taylor_adaptive<double>* ta_total;
@@ -51,6 +51,13 @@ protected:
     inline static Acceleration::AccelerationAccumulator* aa_total;
     inline static std::array<Integrator*, 8> i_components;
     inline static std::array<Acceleration::AccelerationAccumulator*, 8> aa_components;
+    // output files
+    inline static std::array<std::ofstream*,8> ta_components_out;
+    inline static std::array<FileOutput *,8> i_components_out;
+    inline static std::ofstream* ta_total_out;
+    inline static FileOutput* i_total_out;
+    inline static std::ofstream* ta_split_out;
+
     inline static void SetUpTestSuite()
     {
         //create heyoka variables
@@ -331,93 +338,66 @@ protected:
         auto* debris = new Debris::DebrisContainer;
         std::array<bool, 8> config { true, true, true, true, true, true, true, true };
 
-        aa_total = new Acceleration::AccelerationAccumulator;
-        aa_total->setConfig(config);
-        aa_total->setDebris(*debris);
-        i_total = new Integrator;
-        i_total->setAccumulator(*aa_total);
-        i_total->setDebris(*debris);
+        i_total_out = new FileOutput(*debris, std::filesystem::path("integrator_total_acc.csv"), FileOutput::CSV, config);
+        aa_total = new Acceleration::AccelerationAccumulator(config, *debris, start_t, *i_total_out);
+        i_total = new Integrator(*debris, *aa_total, delta_t);
 
         debris = new Debris::DebrisContainer;
         config = { false, false, false, false, false, false, false, false };
-        aa_components[Acceleration::KEP] = new Acceleration::AccelerationAccumulator;
         config[Acceleration::KEP] = true;
-        aa_components[Acceleration::KEP]->setConfig(config);
-        aa_components[Acceleration::KEP]->setDebris(*debris);
+        i_components_out[Acceleration::KEP] = new FileOutput(*debris, std::filesystem::path("integrator_kep_acc.csv"), FileOutput::CSV, config);
+        aa_components[Acceleration::KEP] = new Acceleration::AccelerationAccumulator(config, *debris, start_t, *i_components_out[Acceleration::KEP]);
+        i_components[Acceleration::KEP] = new Integrator(*debris, *aa_components[Acceleration::KEP], delta_t);
         config[Acceleration::KEP] = false;
-        i_components[Acceleration::KEP] = new Integrator;
-        i_components[Acceleration::KEP]->setAccumulator(*aa_components[Acceleration::KEP]);
-        i_components[Acceleration::KEP]->setDebris(*debris);
 
         debris = new Debris::DebrisContainer;
-        aa_components[Acceleration::J2] = new Acceleration::AccelerationAccumulator;
         config[Acceleration::J2] = true;
-        aa_components[Acceleration::J2]->setConfig(config);
-        aa_components[Acceleration::J2]->setDebris(*debris);
+        i_components_out[Acceleration::J2] = new FileOutput(*debris, std::filesystem::path("integrator_kep_acc.csv"), FileOutput::CSV, config);
+        aa_components[Acceleration::J2] = new Acceleration::AccelerationAccumulator(config, *debris, start_t, *i_components_out[Acceleration::J2]);
+        i_components[Acceleration::J2] = new Integrator(*debris, *aa_components[Acceleration::J2], delta_t);
         config[Acceleration::J2] = false;
-        i_components[Acceleration::J2] = new Integrator;
-        i_components[Acceleration::J2]->setAccumulator(*aa_components[Acceleration::J2]);
-        i_components[Acceleration::J2]->setDebris(*debris);
 
         debris = new Debris::DebrisContainer;
-        aa_components[Acceleration::C22] = new Acceleration::AccelerationAccumulator;
         config[Acceleration::C22] = true;
-        aa_components[Acceleration::C22]->setConfig(config);
-        aa_components[Acceleration::C22]->setDebris(*debris);
+        i_components_out[Acceleration::C22] = new FileOutput(*debris, std::filesystem::path("integrator_kep_acc.csv"), FileOutput::CSV, config);
+        aa_components[Acceleration::C22] = new Acceleration::AccelerationAccumulator(config, *debris, start_t, *i_components_out[Acceleration::C22]);
+        i_components[Acceleration::C22] = new Integrator(*debris, *aa_components[Acceleration::C22], delta_t);
         config[Acceleration::C22] = false;
-        i_components[Acceleration::C22] = new Integrator;
-        i_components[Acceleration::C22]->setAccumulator(*aa_components[Acceleration::C22]);
-        i_components[Acceleration::C22]->setDebris(*debris);
 
         debris = new Debris::DebrisContainer;
-        aa_components[Acceleration::S22] = new Acceleration::AccelerationAccumulator;
         config[Acceleration::S22] = true;
-        aa_components[Acceleration::S22]->setConfig(config);
-        aa_components[Acceleration::S22]->setDebris(*debris);
+        i_components_out[Acceleration::S22] = new FileOutput(*debris, std::filesystem::path("integrator_kep_acc.csv"), FileOutput::CSV, config);
+        aa_components[Acceleration::S22] = new Acceleration::AccelerationAccumulator(config, *debris, start_t, *i_components_out[Acceleration::S22]);
+        i_components[Acceleration::S22] = new Integrator(*debris, *aa_components[Acceleration::S22], delta_t);
         config[Acceleration::S22] = false;
-        i_components[Acceleration::S22] = new Integrator;
-        i_components[Acceleration::S22]->setAccumulator(*aa_components[Acceleration::S22]);
-        i_components[Acceleration::S22]->setDebris(*debris);
 
         debris = new Debris::DebrisContainer;
-        aa_components[Acceleration::LUN] = new Acceleration::AccelerationAccumulator;
         config[Acceleration::LUN] = true;
-        aa_components[Acceleration::LUN]->setConfig(config);
-        aa_components[Acceleration::LUN]->setDebris(*debris);
+        i_components_out[Acceleration::LUN] = new FileOutput(*debris, std::filesystem::path("integrator_kep_acc.csv"), FileOutput::CSV, config);
+        aa_components[Acceleration::LUN] = new Acceleration::AccelerationAccumulator(config, *debris, start_t, *i_components_out[Acceleration::LUN]);
+        i_components[Acceleration::LUN] = new Integrator(*debris, *aa_components[Acceleration::LUN], delta_t);
         config[Acceleration::LUN] = false;
-        i_components[Acceleration::LUN] = new Integrator;
-        i_components[Acceleration::LUN]->setAccumulator(*aa_components[Acceleration::LUN]);
-        i_components[Acceleration::LUN]->setDebris(*debris);
 
         debris = new Debris::DebrisContainer;
-        aa_components[Acceleration::SOL] = new Acceleration::AccelerationAccumulator;
         config[Acceleration::SOL] = true;
-        aa_components[Acceleration::SOL]->setConfig(config);
-        aa_components[Acceleration::SOL]->setDebris(*debris);
+        i_components_out[Acceleration::SOL] = new FileOutput(*debris, std::filesystem::path("integrator_kep_acc.csv"), FileOutput::CSV, config);
+        aa_components[Acceleration::SOL] = new Acceleration::AccelerationAccumulator(config, *debris, start_t, *i_components_out[Acceleration::SOL]);
+        i_components[Acceleration::SOL] = new Integrator(*debris, *aa_components[Acceleration::SOL], delta_t);
         config[Acceleration::SOL] = false;
-        i_components[Acceleration::SOL] = new Integrator;
-        i_components[Acceleration::SOL]->setAccumulator(*aa_components[Acceleration::SOL]);
-        i_components[Acceleration::SOL]->setDebris(*debris);
 
         debris = new Debris::DebrisContainer;
-        aa_components[Acceleration::SRP] = new Acceleration::AccelerationAccumulator;
         config[Acceleration::SRP] = true;
-        aa_components[Acceleration::SRP]->setConfig(config);
-        aa_components[Acceleration::SRP]->setDebris(*debris);
+        i_components_out[Acceleration::SRP] = new FileOutput(*debris, std::filesystem::path("integrator_kep_acc.csv"), FileOutput::CSV, config);
+        aa_components[Acceleration::SRP] = new Acceleration::AccelerationAccumulator(config, *debris, start_t, *i_components_out[Acceleration::SRP]);
+        i_components[Acceleration::SRP] = new Integrator(*debris, *aa_components[Acceleration::SRP], delta_t);
         config[Acceleration::SRP] = false;
-        i_components[Acceleration::SRP] = new Integrator;
-        i_components[Acceleration::SRP]->setAccumulator(*aa_components[Acceleration::SRP]);
-        i_components[Acceleration::SRP]->setDebris(*debris);
 
         debris = new Debris::DebrisContainer;
-        aa_components[Acceleration::DRAG] = new Acceleration::AccelerationAccumulator;
         config[Acceleration::DRAG] = true;
-        aa_components[Acceleration::DRAG]->setConfig(config);
-        aa_components[Acceleration::DRAG]->setDebris(*debris);
+        i_components_out[Acceleration::DRAG] = new FileOutput(*debris, std::filesystem::path("integrator_kep_acc.csv"), FileOutput::CSV, config);
+        aa_components[Acceleration::DRAG] = new Acceleration::AccelerationAccumulator(config, *debris, start_t, *i_components_out[Acceleration::DRAG]);
+        i_components[Acceleration::DRAG] = new Integrator(*debris, *aa_components[Acceleration::DRAG], delta_t);
         config[Acceleration::DRAG] = false;
-        i_components[Acceleration::DRAG] = new Integrator;
-        i_components[Acceleration::DRAG]->setAccumulator(*aa_components[Acceleration::DRAG]);
-        i_components[Acceleration::DRAG]->setDebris(*debris);
     }
 
     void prepareRun(Integrator& i, heyoka::taylor_adaptive<double>& ta, Debris::Debris& d)
@@ -521,6 +501,10 @@ protected:
             { "euclidean distance: ", "\n" });
         IOUtils::to_ostream(MathUtils::absoluteError(vel_split, vel_ta), std::cout, ",", { "absolute error[", "]\n" });
         IOUtils::to_ostream(MathUtils::relativeError(vel_split, vel_ta), std::cout, ",", { "relative error[", "]\n" });
+    }
+
+    void writeSplitHeyokaState(){
+
     }
 };
 #endif
