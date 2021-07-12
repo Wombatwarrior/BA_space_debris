@@ -99,7 +99,7 @@ inline std::vector<double> absoluteError(T&& m, T&& r)
     std::vector<double> error;
     auto it_r = std::cbegin(r);
     for (auto it_m = std::cbegin(m); it_m != std::cend(m); ++it_m) {
-        error.push_back(*it_m - *(it_r++));
+        error.push_back(std::abs(*it_m - *(it_r++)));
     }
     return error;
 }
