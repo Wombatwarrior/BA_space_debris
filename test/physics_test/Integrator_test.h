@@ -60,6 +60,9 @@ protected:
 
     inline static void SetUpTestSuite()
     {
+        //timestamp to create new data folder for each run
+        auto time_stamp = time(NULL);
+        std::filesystem::create_directory(std::filesystem::path(std::to_string(time_stamp)));
         //create heyoka variables
         std::array<heyoka::expression, 3> pos = heyoka::make_vars("X", "Y", "Z");
         std::array<heyoka::expression, 3> vel = heyoka::make_vars("VX", "VY", "VZ");
@@ -197,6 +200,10 @@ protected:
             heyoka::kw::tol = 1e-16,
             heyoka::kw::compact_mode = true
         };
+        // prepare output file
+        ta_total_out = new std::ofstream(std::to_string(time_stamp) + "/heyoka_total.csv");
+        *ta_total_out << std::setprecision(std::numeric_limits<double>::digits10 + 1);
+        *ta_total_out << "index,time,position x,position y,position z,position norm,velocity x, velocity y,velocityy z,velocity norm" << std::endl;
 
         // calculates components separately
 
@@ -276,6 +283,10 @@ protected:
             heyoka::kw::tol = 1e-16,
             heyoka::kw::compact_mode = true
         };
+        // prepare output file
+        ta_split_out = new std::ofstream(std::to_string(time_stamp) + "/heyoka_split.csv");
+        *ta_split_out << std::setprecision(std::numeric_limits<double>::digits10 + 1);
+        *ta_split_out << "index,time,position x,position y,position z,position norm,vel_kep x,vel_kep y,vel_kep z,vel_kep norm,vel_j2 x,vel_j2 y,vel_j2 z,vel_j2 norm,vel_c22 x,vel_c22 y,vel_c22 z,vel_c22 norm,vel_s22 x,vel_s22 y,vel_s22 z,vel_s22 norm,vel_sol x,vel_sol y,vel_sol z,vel_sol norm,vel_lun x,vel_lun y,vel_lun z,vel_lun norm,vel_srp x,vel_srp y,vel_srp z,vel_srp norm,vel_drag x,vel_drag y,vel_drag z,vel_drag norm,vel_total x,vel_total y,vel_total z,vel_total norm" << std::endl;
 
         ta_components[Acceleration::KEP] = new heyoka::taylor_adaptive<double> {
             { heyoka::prime(pos[0]) = dXdt, heyoka::prime(pos[1]) = dYdt, heyoka::prime(pos[2]) = dZdt, heyoka::prime(vel[0]) = fKepX, heyoka::prime(vel[1]) = fKepY, heyoka::prime(vel[2]) = fKepZ },
@@ -284,6 +295,11 @@ protected:
             heyoka::kw::tol = 1e-16,
             heyoka::kw::compact_mode = true
         };
+        // prepare output file
+        ta_components_out[Acceleration::KEP] = new std::ofstream(std::to_string(time_stamp) + "/heyoka_kep.csv");
+        *ta_components_out[Acceleration::KEP] << std::setprecision(std::numeric_limits<double>::digits10 + 1);
+        *ta_components_out[Acceleration::KEP] << "index,time,position x,position y,position z,position norm,vel_kep x,vel_kep y,vel_kep z,vel_kep norm" << std::endl;
+
         ta_components[Acceleration::J2] = new heyoka::taylor_adaptive<double> {
             { heyoka::prime(pos[0]) = dXdt, heyoka::prime(pos[1]) = dYdt, heyoka::prime(pos[2]) = dZdt, heyoka::prime(vel[0]) = fJ2X, heyoka::prime(vel[1]) = fJ2Y, heyoka::prime(vel[2]) = fJ2Z },
             { x0, y0, z0, vx0, vy0, vz0 },
@@ -291,6 +307,11 @@ protected:
             heyoka::kw::tol = 1e-16,
             heyoka::kw::compact_mode = true
         };
+        // prepare output file
+        ta_components_out[Acceleration::J2] = new std::ofstream(std::to_string(time_stamp) + "/heyoka_j2.csv");
+        *ta_components_out[Acceleration::J2] << std::setprecision(std::numeric_limits<double>::digits10 + 1);
+        *ta_components_out[Acceleration::J2] << "index,time,position x,position y,position z,position norm,vel_j2 x,vel_j2 y,vel_j2 z,vel_j2 norm" << std::endl;
+
         ta_components[Acceleration::C22] = new heyoka::taylor_adaptive<double> {
             { heyoka::prime(pos[0]) = dXdt, heyoka::prime(pos[1]) = dYdt, heyoka::prime(pos[2]) = dZdt, heyoka::prime(vel[0]) = fC22X, heyoka::prime(vel[1]) = fC22Y, heyoka::prime(vel[2]) = fC22Z },
             { x0, y0, z0, vx0, vy0, vz0 },
@@ -298,6 +319,11 @@ protected:
             heyoka::kw::tol = 1e-16,
             heyoka::kw::compact_mode = true
         };
+        // prepare output file
+        ta_components_out[Acceleration::C22] = new std::ofstream(std::to_string(time_stamp) + "/heyoka_c22.csv");
+        *ta_components_out[Acceleration::C22] << std::setprecision(std::numeric_limits<double>::digits10 + 1);
+        *ta_components_out[Acceleration::C22] << "index,time,position x,position y,position z,position norm,vel_c22 x,vel_c22 y,vel_c22 z,vel_c22 norm" << std::endl;
+
         ta_components[Acceleration::S22] = new heyoka::taylor_adaptive<double> {
             { heyoka::prime(pos[0]) = dXdt, heyoka::prime(pos[1]) = dYdt, heyoka::prime(pos[2]) = dZdt, heyoka::prime(vel[0]) = fS22X, heyoka::prime(vel[1]) = fS22Y, heyoka::prime(vel[2]) = fS22Z },
             { x0, y0, z0, vx0, vy0, vz0 },
@@ -305,6 +331,11 @@ protected:
             heyoka::kw::tol = 1e-16,
             heyoka::kw::compact_mode = true
         };
+        // prepare output file
+        ta_components_out[Acceleration::S22] = new std::ofstream(std::to_string(time_stamp) + "/heyoka_s22.csv");
+        *ta_components_out[Acceleration::S22] << std::setprecision(std::numeric_limits<double>::digits10 + 1);
+        *ta_components_out[Acceleration::S22] << "index,time,position x,position y,position z,position norm,vel_s22 x,vel_s22 y,vel_s22 z,vel_s22 norm" << std::endl;
+
         ta_components[Acceleration::SOL] = new heyoka::taylor_adaptive<double> {
             { heyoka::prime(pos[0]) = dXdt, heyoka::prime(pos[1]) = dYdt, heyoka::prime(pos[2]) = dZdt, heyoka::prime(vel[0]) = fSunX, heyoka::prime(vel[1]) = fSunY, heyoka::prime(vel[2]) = fSunZ },
             { x0, y0, z0, vx0, vy0, vz0 },
@@ -312,6 +343,11 @@ protected:
             heyoka::kw::tol = 1e-16,
             heyoka::kw::compact_mode = true
         };
+        // prepare output file
+        ta_components_out[Acceleration::SOL] = new std::ofstream(std::to_string(time_stamp) + "/heyoka_sol.csv");
+        *ta_components_out[Acceleration::SOL] << std::setprecision(std::numeric_limits<double>::digits10 + 1);
+        *ta_components_out[Acceleration::SOL]<< "index,time,position x,position y,position z,position norm,vel_sol x,vel_sol y,vel_sol z,vel_sol norm" << std::endl;
+
         ta_components[Acceleration::LUN] = new heyoka::taylor_adaptive<double> {
             { heyoka::prime(pos[0]) = dXdt, heyoka::prime(pos[1]) = dYdt, heyoka::prime(pos[2]) = dZdt, heyoka::prime(vel[0]) = fMoonX, heyoka::prime(vel[1]) = fMoonY, heyoka::prime(vel[2]) = fMoonZ },
             { x0, y0, z0, vx0, vy0, vz0 },
@@ -319,6 +355,11 @@ protected:
             heyoka::kw::tol = 1e-16,
             heyoka::kw::compact_mode = true
         };
+        // prepare output file
+        ta_components_out[Acceleration::LUN] = new std::ofstream(std::to_string(time_stamp) + "/heyoka_lun.csv");
+        *ta_components_out[Acceleration::LUN] << std::setprecision(std::numeric_limits<double>::digits10 + 1);
+        *ta_components_out[Acceleration::LUN] << "index,time,position x,position y,position z,position norm,vel_lun x,vel_lun y,vel_lun z,vel_lun norm" << std::endl;
+
         ta_components[Acceleration::SRP] = new heyoka::taylor_adaptive<double> {
             { heyoka::prime(pos[0]) = dXdt, heyoka::prime(pos[1]) = dYdt, heyoka::prime(pos[2]) = dZdt, heyoka::prime(vel[0]) = fSRPX, heyoka::prime(vel[1]) = fSRPY, heyoka::prime(vel[2]) = fSRPZ },
             { x0, y0, z0, vx0, vy0, vz0 },
@@ -326,6 +367,11 @@ protected:
             heyoka::kw::tol = 1e-16,
             heyoka::kw::compact_mode = true
         };
+        // prepare output file
+        ta_components_out[Acceleration::SRP] = new std::ofstream(std::to_string(time_stamp) + "/heyoka_srp.csv");
+        *ta_components_out[Acceleration::SRP] << std::setprecision(std::numeric_limits<double>::digits10 + 1);
+        *ta_components_out[Acceleration::SRP] << "index,time,position x,position y,position z,position norm,vel_srp x,vel_srp y,vel_srp z,vel_srp norm" << std::endl;
+
         ta_components[Acceleration::DRAG] = new heyoka::taylor_adaptive<double> {
             { heyoka::prime(pos[0]) = dXdt, heyoka::prime(pos[1]) = dYdt, heyoka::prime(pos[2]) = dZdt, heyoka::prime(vel[0]) = fDragX, heyoka::prime(vel[1]) = fDragY, heyoka::prime(vel[2]) = fDragZ },
             { x0, y0, z0, vx0, vy0, vz0 },
@@ -333,68 +379,73 @@ protected:
             heyoka::kw::tol = 1e-16,
             heyoka::kw::compact_mode = true
         };
+        // prepare output file
+        ta_components_out[Acceleration::DRAG] = new std::ofstream(std::to_string(time_stamp) + "/heyoka_drag.csv");
+        *ta_components_out[Acceleration::DRAG] << std::setprecision(std::numeric_limits<double>::digits10 + 1);
+        *ta_components_out[Acceleration::DRAG] << "index,time,position x,position y,position z,position norm,vel_drag x,vel_drag y,vel_drag z,vel_drag norm" << std::endl;
 
+        std::cout << std::to_string(time_stamp) + "/heyoka_drag.csv" << std::endl;
         // setup own integrator for all components
         auto* debris = new Debris::DebrisContainer;
         std::array<bool, 8> config { true, true, true, true, true, true, true, true };
 
-        i_total_out = new FileOutput(*debris, std::filesystem::path("integrator_total_acc.csv"), FileOutput::CSV, config);
+        i_total_out = new FileOutput(*debris, std::filesystem::path(std::to_string(time_stamp) + "/integrator_total.csv"), FileOutput::CSV, config);
         aa_total = new Acceleration::AccelerationAccumulator(config, *debris, start_t, *i_total_out);
         i_total = new Integrator(*debris, *aa_total, delta_t);
 
         debris = new Debris::DebrisContainer;
         config = { false, false, false, false, false, false, false, false };
         config[Acceleration::KEP] = true;
-        i_components_out[Acceleration::KEP] = new FileOutput(*debris, std::filesystem::path("integrator_kep_acc.csv"), FileOutput::CSV, config);
+        i_components_out[Acceleration::KEP] = new FileOutput(*debris, std::filesystem::path(std::to_string(time_stamp) + "/integrator_kep.csv"), FileOutput::CSV, config);
         aa_components[Acceleration::KEP] = new Acceleration::AccelerationAccumulator(config, *debris, start_t, *i_components_out[Acceleration::KEP]);
         i_components[Acceleration::KEP] = new Integrator(*debris, *aa_components[Acceleration::KEP], delta_t);
         config[Acceleration::KEP] = false;
 
         debris = new Debris::DebrisContainer;
         config[Acceleration::J2] = true;
-        i_components_out[Acceleration::J2] = new FileOutput(*debris, std::filesystem::path("integrator_kep_acc.csv"), FileOutput::CSV, config);
+        i_components_out[Acceleration::J2] = new FileOutput(*debris, std::filesystem::path(std::to_string(time_stamp) + "/integrator_j2.csv"), FileOutput::CSV, config);
         aa_components[Acceleration::J2] = new Acceleration::AccelerationAccumulator(config, *debris, start_t, *i_components_out[Acceleration::J2]);
         i_components[Acceleration::J2] = new Integrator(*debris, *aa_components[Acceleration::J2], delta_t);
         config[Acceleration::J2] = false;
 
         debris = new Debris::DebrisContainer;
         config[Acceleration::C22] = true;
-        i_components_out[Acceleration::C22] = new FileOutput(*debris, std::filesystem::path("integrator_kep_acc.csv"), FileOutput::CSV, config);
+        i_components_out[Acceleration::C22] = new FileOutput(*debris, std::filesystem::path(std::to_string(time_stamp) + "/integrator_c22.csv"), FileOutput::CSV, config);
         aa_components[Acceleration::C22] = new Acceleration::AccelerationAccumulator(config, *debris, start_t, *i_components_out[Acceleration::C22]);
         i_components[Acceleration::C22] = new Integrator(*debris, *aa_components[Acceleration::C22], delta_t);
         config[Acceleration::C22] = false;
 
         debris = new Debris::DebrisContainer;
         config[Acceleration::S22] = true;
-        i_components_out[Acceleration::S22] = new FileOutput(*debris, std::filesystem::path("integrator_kep_acc.csv"), FileOutput::CSV, config);
+        i_components_out[Acceleration::S22] = new FileOutput(*debris, std::filesystem::path(std::to_string(time_stamp) + "/integrator_s22.csv"), FileOutput::CSV, config);
         aa_components[Acceleration::S22] = new Acceleration::AccelerationAccumulator(config, *debris, start_t, *i_components_out[Acceleration::S22]);
         i_components[Acceleration::S22] = new Integrator(*debris, *aa_components[Acceleration::S22], delta_t);
         config[Acceleration::S22] = false;
 
         debris = new Debris::DebrisContainer;
         config[Acceleration::LUN] = true;
-        i_components_out[Acceleration::LUN] = new FileOutput(*debris, std::filesystem::path("integrator_kep_acc.csv"), FileOutput::CSV, config);
+        i_components_out[Acceleration::LUN] = new FileOutput(*debris, std::filesystem::path(std::to_string(time_stamp) + "/integrator_lun.csv"), FileOutput::CSV, config);
         aa_components[Acceleration::LUN] = new Acceleration::AccelerationAccumulator(config, *debris, start_t, *i_components_out[Acceleration::LUN]);
         i_components[Acceleration::LUN] = new Integrator(*debris, *aa_components[Acceleration::LUN], delta_t);
         config[Acceleration::LUN] = false;
 
         debris = new Debris::DebrisContainer;
         config[Acceleration::SOL] = true;
-        i_components_out[Acceleration::SOL] = new FileOutput(*debris, std::filesystem::path("integrator_kep_acc.csv"), FileOutput::CSV, config);
+        i_components_out[Acceleration::SOL] = new FileOutput(*debris, std::filesystem::path(std::to_string(time_stamp) + "/integrator_sol.csv"), FileOutput::CSV, config);
         aa_components[Acceleration::SOL] = new Acceleration::AccelerationAccumulator(config, *debris, start_t, *i_components_out[Acceleration::SOL]);
         i_components[Acceleration::SOL] = new Integrator(*debris, *aa_components[Acceleration::SOL], delta_t);
         config[Acceleration::SOL] = false;
 
         debris = new Debris::DebrisContainer;
         config[Acceleration::SRP] = true;
-        i_components_out[Acceleration::SRP] = new FileOutput(*debris, std::filesystem::path("integrator_kep_acc.csv"), FileOutput::CSV, config);
+        i_components_out[Acceleration::SRP] = new FileOutput(*debris, std::filesystem::path(std::to_string(time_stamp) + "/integrator_srp.csv"), FileOutput::CSV, config);
         aa_components[Acceleration::SRP] = new Acceleration::AccelerationAccumulator(config, *debris, start_t, *i_components_out[Acceleration::SRP]);
         i_components[Acceleration::SRP] = new Integrator(*debris, *aa_components[Acceleration::SRP], delta_t);
         config[Acceleration::SRP] = false;
 
         debris = new Debris::DebrisContainer;
         config[Acceleration::DRAG] = true;
-        i_components_out[Acceleration::DRAG] = new FileOutput(*debris, std::filesystem::path("integrator_kep_acc.csv"), FileOutput::CSV, config);
+        i_components_out[Acceleration::DRAG] = new FileOutput(*debris, std::filesystem::path(std::to_string(time_stamp) + "/integrator_drag.csv"), FileOutput::CSV, config);
         aa_components[Acceleration::DRAG] = new Acceleration::AccelerationAccumulator(config, *debris, start_t, *i_components_out[Acceleration::DRAG]);
         i_components[Acceleration::DRAG] = new Integrator(*debris, *aa_components[Acceleration::DRAG], delta_t);
         config[Acceleration::DRAG] = false;
@@ -501,6 +552,10 @@ protected:
             { "euclidean distance: ", "\n" });
         IOUtils::to_ostream(MathUtils::absoluteError(vel_split, vel_ta), std::cout, ",", { "absolute error[", "]\n" });
         IOUtils::to_ostream(MathUtils::relativeError(vel_split, vel_ta), std::cout, ",", { "relative error[", "]\n" });
+    }
+
+    void writeHeyokaState(heyoka::taylor_adaptive<double>& ta){
+
     }
 
     void writeSplitHeyokaState(){
