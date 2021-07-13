@@ -8,10 +8,10 @@
 #include <array>
 #include <numeric>
 
-#include "AccelerationComponents/include.h"
 #include "Constants.h"
 #include "debris/DebrisContainer.h"
 #include "io/FileOutput.h"
+#include "satellitePropagator/physics/AccelerationComponents/include.h"
 
 /**
  * @namespace Acceleration

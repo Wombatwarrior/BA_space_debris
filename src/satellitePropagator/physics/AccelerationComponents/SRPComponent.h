@@ -3,10 +3,19 @@
 //
 
 #pragma once
-#include "../../debris/Debris.h"
-#include "../Constants.h"
+#include "SolComponent.h"
+#include "debris/Debris.h"
+#include "satellitePropagator/physics/Constants.h"
 
-namespace Acceleration::SolComponent {
+namespace Acceleration::SRPComponent {
+namespace {
+    /**
+         * @brief Constant factor
+         *
+         * @return Physics::
+         */
+    inline constexpr double getFactor();
+}
 /**
      * @brief Precalculates values needed for Acceleration::SolComponent::apply()
      *
@@ -17,21 +26,22 @@ namespace Acceleration::SolComponent {
      * [X_sun,Y_sun,Z_sun,X_sun/||POS_sunY||,Y_sun/||POS_sun||,Z_sun/||POS_sun||]
      */
 std::array<double, 6> setUp(double t);
+
 /**
-     * @brief Calculates acceleration due to tidal forces caused by the sun
+     * @brief Calculates acceleration due to pressure of the suns radiation
      *
      * @param d Reference to the Debris::Debris object to apply the acceleration to
-     * @param d_ref Acceleration::SRPComponent::apply() can use this value to avoid calculations per particle
+     * @param d_srp 1/(sqrt((X-X_sun)^2+(Y-Y_sun)^2+(Z-Z_sun)^2)^3)
      * @param sun_params 6D array with precalculated values: [X_sun, Y_sun, Z_sun,
      * X_sun/||POS_sun||, Y_sun/||POS_sun||, Z_sun/||POS_sun||]
-     * @param acc_sol Reference to an 3D vector to write the result for this
+     * @param acc_srp Reference to an 3D vector to write the result for this
      * Acceleration::AccelerationComponent.
      * @param acc_total Reference to an 3D vector to accumulate the accelerations
      * for all applied Acceleration::AccelerationComponent.
      */
 void apply(const Debris::Debris& d,
-    double& d_ref,
+    double d_srp,
     const std::array<double, 6>& sun_params,
-    std::array<double, 3>& acc_sol,
+    std::array<double, 3>& acc_srp,
     std::array<double, 3>& acc_total);
 } // namespace Acceleration

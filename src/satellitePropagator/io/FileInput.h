@@ -8,7 +8,7 @@
 #include <string>
 #include <utility>
 
-#include "../debris/DebrisContainer.h"
+#include "debris/DebrisContainer.h"
 
 /**
  * @class FileInput

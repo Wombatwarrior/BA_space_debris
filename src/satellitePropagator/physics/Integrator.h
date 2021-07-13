@@ -3,7 +3,7 @@
 //
 
 #pragma once
-#include "../physics/AccelerationAccumulator.h"
+#include "AccelerationAccumulator.h"
 #include "debris/AccelerationUpdate.h"
 
 /**

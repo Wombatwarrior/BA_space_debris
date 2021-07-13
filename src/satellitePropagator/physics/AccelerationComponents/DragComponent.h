@@ -3,8 +3,8 @@
 //
 
 #pragma once
-#include "../../debris/Debris.h"
-#include "../Constants.h"
+#include "debris/Debris.h"
+#include "satellitePropagator/physics/Constants.h"
 
 namespace Acceleration::DragComponent {
 namespace {

@@ -12,9 +12,9 @@
 // project imports
 #include <memory>
 
-#include "debris/include.h"
-#include "io/include.h"
-#include "physics/include.h"
+#include "satellitePropagator/debris/include.h"
+#include "satellitePropagator/io/include.h"
+#include "satellitePropagator/physics/include.h"
 
 log4cxx::LoggerPtr logger;
 
