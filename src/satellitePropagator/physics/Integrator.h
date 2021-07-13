@@ -3,8 +3,8 @@
 //
 
 #pragma once
-#include "../physics/AccelerationAccumulator.h"
-#include "debris/AccelerationUpdate.h"
+#include "AccelerationAccumulator.h"
+#include "satellitePropagator/debris/AccelerationUpdate.h"
 
 /**
  * @class Integrator

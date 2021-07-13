@@ -6,9 +6,9 @@
 #include <chrono>
 #include <iostream>
 
-#include "../../src/debris/include.h"
-#include "../../src/io/include.h"
-#include "../../src/physics/include.h"
+#include "satellitePropagator/debris/include.h"
+#include "satellitePropagator/io/include.h"
+#include "satellitePropagator/physics/include.h"
 #include "gtest/gtest.h"
 
 class KepComponentTests : public ::testing::Test {

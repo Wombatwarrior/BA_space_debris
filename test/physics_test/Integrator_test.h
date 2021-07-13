@@ -5,8 +5,8 @@
 #pragma once
 #ifdef HEYOKA_IS_PRESENT
 #include "heyoka/heyoka.hpp"
-#include "physics/Constants.h"
-#include "physics/Integrator.h"
+#include "satellitePropagator/physics/Constants.h"
+#include "satellitePropagator/physics/Integrator.h"
 #include "gtest/gtest.h"
 
 class CompareWithHeyokaTests : public ::testing::Test {

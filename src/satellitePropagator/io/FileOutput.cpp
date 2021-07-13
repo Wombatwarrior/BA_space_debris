@@ -3,7 +3,7 @@
 //
 
 #include "FileOutput.h"
-#include "physics/AccelerationAccumulator.h"
+#include "satellitePropagator/physics/AccelerationAccumulator.h"
 
 FileOutput::FileOutput(Debris::DebrisContainer& debris_arg,
     std::filesystem::path output_file_path_arg,

@@ -5,7 +5,7 @@
 #pragma once
 #include <cmath>
 
-#include "utils/MathUtils.h"
+#include "satellitePropagator/utils/MathUtils.h"
 #include <array>
 #include <memory>
 #include <numeric>
