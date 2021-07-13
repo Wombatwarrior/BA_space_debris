@@ -42,7 +42,7 @@ void initSimulation(int argc, char** argv)
     }
     // if something went wrong with the command line parsing
     catch (std::invalid_argument& e) {
-        LOG4CXX_FATAL(logger, e.what())
+        LOG4CXX_FATAL(logger, e.what());
         exit(1);
     }
 }
@@ -51,7 +51,7 @@ void runSimulation()
 {
     double current_time = file_input->getStartT();
     for (auto& d : debris->getDebrisVector()) {
-        LOG4CXX_INFO(logger, d.toString())
+        LOG4CXX_INFO(logger, d.toString());
     }
     int iteration = 0;
     double time_till_write = file_input->getWriteDeltaT();
@@ -61,7 +61,7 @@ void runSimulation()
         iteration++;
         if (iteration % 3000 == 0) {
             for (auto& d : debris->getDebrisVector()) {
-                LOG4CXX_DEBUG(logger, iteration << d.toString())
+                LOG4CXX_DEBUG(logger, iteration << d.toString());
             }
         }
         time_till_write -= file_input->getDeltaT();
@@ -77,6 +77,6 @@ void runSimulation()
     // save end configuration
     file_output->writeDebrisData(file_input->getEndT());
     for (auto& d : debris->getDebrisVector()) {
-        LOG4CXX_INFO(logger, d.toString())
+        LOG4CXX_INFO(logger, d.toString());
     }
 }
