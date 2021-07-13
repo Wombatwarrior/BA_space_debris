@@ -35,9 +35,9 @@ void initSimulation(int argc, char** argv)
             command_line->getInputFileType());
         file_output = std::make_shared<FileOutput>(*debris, command_line->getOutputFilePath(),
             command_line->getOutputFileType(), file_input->getAccConfig());
-        accumulator = std::make_shared<Acceleration::AccelerationAccumulator>(
+        accumulator = std::make_shared<Acceleration::AccelerationAccumulator<Debris::DebrisContainer>>(
             file_input->getAccConfig(), *debris, file_input->getStartT(), *file_output);
-        integrator = std::make_shared<Integrator>(*debris, *accumulator,
+        integrator = std::make_shared<Integrator<Debris::DebrisContainer>>(*debris, *accumulator,
             file_input->getDeltaT());
     }
     // if something went wrong with the command line parsing
