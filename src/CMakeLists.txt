@@ -12,7 +12,7 @@ add_library(${BINARY}_lib STATIC ${SOURCES})
 
 target_include_directories(${BINARY}_lib
                            PUBLIC
-                           src
+                           .
 )
 
 add_executable(${BINARY} debris_sim.cpp)
