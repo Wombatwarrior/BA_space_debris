@@ -1,3 +1,12 @@
+# make doc_doxygen optional if someone does not have / like doxygen
+option(DebrisSim_BUILD_TARGET_DOC "Create \"make doc_doxygen\" target (requires Doxygen)" OFF)
+
+# do nothing if nothing should be done
+if (NOT DebrisSim_BUILD_TARGET_DOC)
+   return()
+endif ()
+
+
 if (CMAKE_BUILD_TYPE STREQUAL "Release")
     find_package(Doxygen)
     if (DOXYGEN_FOUND)
