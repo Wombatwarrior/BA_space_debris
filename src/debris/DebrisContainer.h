@@ -28,6 +28,23 @@ public:
      */
     virtual ~DebrisContainer();
 
+    auto begin(){
+        return debris_vector.begin();
+    }
+
+    auto end(){
+        return debris_vector.end();
+    }
+
+    const auto cbegin() const {
+        return debris_vector.cbegin();
+    }
+
+    const auto cend() const {
+        return debris_vector.cend();
+    }
+
+
     /**
      * @brief Adds a Debris object to the #debris_vector
      *
@@ -45,14 +62,6 @@ public:
      *
      */
     void cleanDebrisVector();
-
-    /**
-     * @brief Move the acceleration values of the Debris objects by one time step
-     *
-     * Sets the new Debris::acc_t0 value to be the old Debris::acc_t1 value.
-     * Sets the new Debris::acc_t1 value to be a zero vector
-     */
-    void shiftAcceleration();
 
 private:
     std::vector<Debris> debris_vector; /**< std::vector holding the Debris objects

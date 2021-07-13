@@ -18,15 +18,6 @@ void DebrisContainer::cleanDebrisVector()
     debris_vector.clear();
 }
 
-void DebrisContainer::shiftAcceleration()
-{
-    std::array<double, 3> new_acc { 0, 0, 0 };
-    for (auto& d : debris_vector) {
-        d.setAccT0(d.getAccT1());
-        d.setAccT1(new_acc);
-    }
-}
-
 const std::vector<Debris>& DebrisContainer::getDebrisVector() const
 {
     return debris_vector;

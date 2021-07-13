@@ -702,7 +702,7 @@ TEST_F(CompareWithHeyokaTests, compareTotalRuntimeRandom)
             i_total->integrate();
         }
         auto i_t2 = std::chrono::high_resolution_clock::now();
-        auto i_ms_int = duration_cast<std::chrono::milliseconds>(i_t2 - i_t1);
+        auto i_ms_int = std::chrono::duration_cast<std::chrono::milliseconds>(i_t2 - i_t1);
 
         // heyoka integrator
         auto ta_t1 = std::chrono::high_resolution_clock::now();
@@ -710,7 +710,7 @@ TEST_F(CompareWithHeyokaTests, compareTotalRuntimeRandom)
             ta_total->propagate_for(delta_t);
         }
         auto ta_t2 = std::chrono::high_resolution_clock::now();
-        auto ta_ms_int = duration_cast<std::chrono::milliseconds>(ta_t2 - ta_t1);
+        auto ta_ms_int = std::chrono::duration_cast<std::chrono::milliseconds>(ta_t2 - ta_t1);
 
         std::cout << "Integrator runtime: " << i_ms_int.count() << " ms" << std::endl;
         std::cout << "Heyoka runtime: " << ta_ms_int.count() << " ms" << std::endl;
