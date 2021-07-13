@@ -7,6 +7,8 @@ include_directories(src)
 
 set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug;Release")
 
+enable_testing()
+
 set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 set (PROJECT_BINARY debris_sim)
 add_subdirectory(src)

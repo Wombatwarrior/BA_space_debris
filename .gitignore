@@ -12,3 +12,4 @@ _deps
 build
 Cmake-*
 .cache
+_acc.csv

@@ -8,6 +8,9 @@ add_executable(${BINARY} ${TEST_SOURCES})
 
 add_test(NAME ${BINARY} COMMAND ${BINARY})
 
+include(GoogleTest)
+gtest_discover_tests(${BINARY})
+
 find_package(heyoka)
 if(heyoka_FOUND)
     target_link_libraries(${BINARY} PUBLIC ${PROJECT_BINARY}_lib gtest heyoka::heyoka)
