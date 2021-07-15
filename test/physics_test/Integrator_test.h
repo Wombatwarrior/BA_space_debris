@@ -57,6 +57,9 @@ protected:
     inline static std::ofstream* ta_total_out;
     inline static FileOutput* i_total_out;
     inline static std::ofstream* ta_split_out;
+    inline static std::array<int,8> ta_components_line{};
+    inline static int ta_total_line = 0;
+    inline static int ta_split_line = 0;
 
     inline static void SetUpTestSuite()
     {
