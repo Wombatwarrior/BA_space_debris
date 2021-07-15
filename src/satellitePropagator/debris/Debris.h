@@ -184,5 +184,6 @@ public:
      * @param bcInv New value of#bc_inv
      */
     void setBcInv(double bcInv);
+
 };
 } // namespace Debris

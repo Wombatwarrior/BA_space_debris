@@ -618,7 +618,7 @@ TEST_F(CompareWithHeyokaTests, compareComleteHeyokas)
     // loop over the debris data and compare calculations
     for (auto d : ds) {
         // setup integrators
-        prepareRun(*ta_split, *ta_total, d);
+        prepareRun<Debris::Debris>(*ta_split, *ta_total, d);
         // set heyoka parameters
         ta_total->get_pars_data()[0] = d.getAom();
         ta_total->get_pars_data()[1] = d.getBcInv();
