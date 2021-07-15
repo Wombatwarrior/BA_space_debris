@@ -102,7 +102,7 @@ void FileOutput::writeDebrisCSV(double t)
         out << ',' << d.getAccT0Norm() << ',';
         IOUtils::to_ostream(d.getAccT1(), out);
         out << ',' << d.getAccT1Norm();
-sue        out << std::endl;
+        out << std::endl;
     }
 }
 
