@@ -16,11 +16,11 @@
 * @brief Enumerates the possible file types used for output
 */
 namespace OutputFile {
-    enum Type {
-        TXT, /**< File with .txt extension. Lines are in the format
+enum Type {
+    TXT, /**< File with .txt extension. Lines are in the format
     "<token>=<value>" and lines starting with "#" are ignored*/
-        CSV /**< output data into a .csv file */
-    };
+    CSV /**< output data into a .csv file */
+};
 }
 
 /**
@@ -28,7 +28,7 @@ namespace OutputFile {
  *
  * @brief Writes output data to a file
  */
-template<class Container, class D>
+template <class Container, class D>
 class FileOutput {
 public:
     /**
@@ -176,18 +176,17 @@ public:
     void setAccOutputFilePath(const std::filesystem::path& accOutputFilePath);
 };
 
-
-template<class Container, class D>
+template <class Container, class D>
 FileOutput<Container, D>::FileOutput(Container& debris_arg,
-                                     std::filesystem::path output_file_path_arg,
-                                     OutputFile::Type output_file_type_arg,
-                                     std::array<bool, 8>& acc_config)
-        : debris(&debris_arg)
-        , output_file_path(output_file_path_arg)
-        , output_file_type(output_file_type_arg)
-        , out(output_file_path)
-        , acc_output_file_path(output_file_path_arg.replace_extension().concat("_acc.csv"))
-        , acc_out(acc_output_file_path)
+    std::filesystem::path output_file_path_arg,
+    OutputFile::Type output_file_type_arg,
+    std::array<bool, 8>& acc_config)
+    : debris(&debris_arg)
+    , output_file_path(output_file_path_arg)
+    , output_file_type(output_file_type_arg)
+    , out(output_file_path)
+    , acc_output_file_path(output_file_path_arg.replace_extension().concat("_acc.csv"))
+    , acc_out(acc_output_file_path)
 {
     out << std::setprecision(std::numeric_limits<double>::digits10 + 1);
     acc_out << std::setprecision(std::numeric_limits<double>::digits10 + 1);
@@ -246,25 +245,25 @@ FileOutput<Container, D>::FileOutput(Container& debris_arg,
     }
 }
 
-template<class Container, class D>
+template <class Container, class D>
 FileOutput<Container, D>::~FileOutput() = default;
 
-template<class Container, class D>
+template <class Container, class D>
 void FileOutput<Container, D>::writeDebrisData(double t)
 {
     switch (output_file_type) {
-        case OutputFile::TXT:
-            writeDebrisTXT(t);
-            break;
-        case OutputFile::CSV:
-            writeDebrisCSV(t);
-            break;
-        default:
-            break;
+    case OutputFile::TXT:
+        writeDebrisTXT(t);
+        break;
+    case OutputFile::CSV:
+        writeDebrisCSV(t);
+        break;
+    default:
+        break;
     }
 }
 
-template<class Container, class D>
+template <class Container, class D>
 void FileOutput<Container, D>::writeDebrisCSV(double t)
 {
     for (auto d : debris->getDebrisVector()) {
@@ -282,94 +281,94 @@ void FileOutput<Container, D>::writeDebrisCSV(double t)
     }
 }
 
-template<class Container, class D>
+template <class Container, class D>
 void FileOutput<Container, D>::writeDebrisTXT(double t)
 {
     // NOT IMPLEMENTED YET
 }
 
-template<class Container, class D>
+template <class Container, class D>
 void FileOutput<Container, D>::writeAcc_start(double t)
 {
     acc_out << acc_row_count++ << ',';
     acc_out << t << ',';
 }
 
-template<class Container, class D>
+template <class Container, class D>
 void FileOutput<Container, D>::writeAcc_value(const std::array<double, 3>& vec)
 {
     IOUtils::to_ostream(vec, acc_out);
     acc_out << "," << MathUtils::euclideanNorm(vec) << ",";
 }
 
-template<class Container, class D>
+template <class Container, class D>
 void FileOutput<Container, D>::writeAcc_end(const std::array<double, 3>& vec)
 {
     IOUtils::to_ostream(vec, acc_out);
     acc_out << "," << MathUtils::euclideanNorm(vec) << "\n";
 }
 
-template<class Container, class D>
+template <class Container, class D>
 const Container& FileOutput<Container, D>::getDebris() const
 {
     return *debris;
 }
 
-template<class Container, class D>
+template <class Container, class D>
 Container& FileOutput<Container, D>::getDebris()
 {
     return *debris;
 }
 
-template<class Container, class D>
+template <class Container, class D>
 void FileOutput<Container, D>::setDebris(Container& debris)
 {
     FileOutput<Container, D>::debris = &debris;
 }
 
-template<class Container, class D>
+template <class Container, class D>
 const std::filesystem::path& FileOutput<Container, D>::getOutputFilePath() const
 {
     return output_file_path;
 }
 
-template<class Container, class D>
+template <class Container, class D>
 std::filesystem::path& FileOutput<Container, D>::getOutputFilePath()
 {
     return output_file_path;
 }
 
-template<class Container, class D>
+template <class Container, class D>
 void FileOutput<Container, D>::setOutputFilePath(const std::filesystem::path& outputFilePath)
 {
     output_file_path = outputFilePath;
 }
 
-template<class Container, class D>
+template <class Container, class D>
 OutputFile::Type FileOutput<Container, D>::getOutputFileType() const
 {
     return output_file_type;
 }
 
-template<class Container, class D>
+template <class Container, class D>
 void FileOutput<Container, D>::setOutputFileType(OutputFile::Type outputFileType)
 {
     output_file_type = outputFileType;
 }
 
-template<class Container, class D>
+template <class Container, class D>
 const std::filesystem::path& FileOutput<Container, D>::getAccOutputFilePath() const
 {
     return acc_output_file_path;
 }
 
-template<class Container, class D>
+template <class Container, class D>
 std::filesystem::path& FileOutput<Container, D>::getAccOutputFilePath()
 {
     return acc_output_file_path;
 }
 
-template<class Container, class D>
+template <class Container, class D>
 void FileOutput<Container, D>::setAccOutputFilePath(const std::filesystem::path& accOutputFilePath)
 {
     acc_output_file_path = accOutputFilePath;

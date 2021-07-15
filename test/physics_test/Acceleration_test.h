@@ -69,7 +69,7 @@ protected:
             -(1 / (std::sqrt(3) * 3000000)) * Physics::GM_EARTH,
             -(1 / (std::sqrt(3) * 3000000)) * Physics::GM_EARTH };
     }
-    template<class D>
+    template <class D>
     void calcKep(D& d, std::array<double, 3>& acc_kep)
     {
         double gme = 3.986004407799724e+5;
@@ -134,7 +134,7 @@ protected:
         };
     }
 
-    template<class D>
+    template <class D>
     void calcJ2(D& d, std::array<double, 3>& acc_j2)
     {
         double gme = 3.986004407799724e+5;
@@ -195,7 +195,7 @@ protected:
         pre_calculated[8] = { 0, 0, 0 };
     }
 
-    template<class D>
+    template <class D>
     void calcC22(D& d, double t, std::array<double, 3>& acc_c22)
     {
         double gme = 3.986004407799724e+5;
@@ -265,7 +265,7 @@ protected:
         pre_calculated[8] = { 0, 0, 0 };
     }
 
-    template<class D>
+    template <class D>
     void calcS22(D& d, double t, std::array<double, 3>& acc_s22)
     {
         double pi = std::acos(-1);
@@ -459,7 +459,7 @@ protected:
         return moon_params;
     }
 
-    template<class D>
+    template <class D>
     void calcLun(D& d, double t, std::array<double, 3>& acc_lun)
     {
         double gmm = 4.9028e+3;
@@ -580,7 +580,7 @@ protected:
         pre_calculated[8] = { 0, 0, 0 };
     }
 
-    template<class D>
+    template <class D>
     void calcSol(D& d, double t, std::array<double, 3>& acc_sol)
     {
         double gms = 1.32712440018e+11;
@@ -673,7 +673,7 @@ protected:
         pre_calculated[8] = { 0, 0, 0 };
     }
 
-    template<class D>
+    template <class D>
     void calcSRP(D& d, double t, std::array<double, 3>& acc_srp)
     {
         double p = 4.56e-3;
@@ -740,7 +740,7 @@ protected:
             debris->addDebris(d);
         }
     }
-    template<class D>
+    template <class D>
     void calcDrag(D& d, std::array<double, 3>& acc_drag)
     {
         double re = 6378.1363;

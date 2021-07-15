@@ -16,19 +16,19 @@
  * @brief Enumerates the possible file types used for input
  */
 namespace InputFile {
-    enum Type {
-        TXT, /**< File with .txt extension. Lines are in the format
+enum Type {
+    TXT, /**< File with .txt extension. Lines are in the format
         "<token>=<value>" and lines starting with "#" are ignored. Debris
         data is represented in TLE format as block at the end of the file
         after the line "TLE"*/
-    };
+};
 }
 /**
  * @class FileInput
  *
  * @brief Reads input data from a file
  */
-template<class Container, class D>
+template <class Container, class D>
 class FileInput {
 public:
     /**
@@ -295,23 +295,22 @@ public:
     void setAccConfig(const std::array<bool, 8>& accConfig);
 };
 
-template<class Container, class D>
+template <class Container, class D>
 FileInput<Container, D>::~FileInput() = default;
 
-template<class Container, class D>
+template <class Container, class D>
 void FileInput<Container, D>::readDebrisData()
 {
     switch (input_file_type) {
-        case InputFile::TXT:
-            readDebrisTXT();
-            break;
+    case InputFile::TXT:
+        readDebrisTXT();
+        break;
     }
 }
 
-template<class Container, class D>
+template <class Container, class D>
 struct FileInput<Container, D>::TxtLineContent FileInput<Container, D>::tokenizeLine(
-        const std::string& line)
-{
+    const std::string& line) {
     TxtLineContent l;
     auto split_pos = line.find('=');
     l.token = line.substr(0, split_pos);
@@ -319,7 +318,7 @@ struct FileInput<Container, D>::TxtLineContent FileInput<Container, D>::tokenize
     return l;
 }
 
-template<class Container, class D>
+template <class Container, class D>
 void FileInput<Container, D>::setDebrisValues(D& d, const std::string& line)
 {
     auto position_split_pos = line.find('|');
@@ -368,7 +367,7 @@ void FileInput<Container, D>::setDebrisValues(D& d, const std::string& line)
     d.setBcInv(stod(bc_inv_str));
 }
 
-template<class Container, class D>
+template <class Container, class D>
 void FileInput<Container, D>::setConfigValues(const std::string& line)
 {
     std::stringstream ss(line);
@@ -380,7 +379,7 @@ void FileInput<Container, D>::setConfigValues(const std::string& line)
     }
 }
 
-template<class Container, class D>
+template <class Container, class D>
 void FileInput<Container, D>::readDebrisTXT()
 {
     std::ifstream input_file(input_file_path);
@@ -417,115 +416,115 @@ void FileInput<Container, D>::readDebrisTXT()
     }
 }
 
-template<class Container, class D>
+template <class Container, class D>
 const Debris::DebrisContainer<D>& FileInput<Container, D>::getDebris() const
 {
     return *debris;
 }
 
-template<class Container, class D>
+template <class Container, class D>
 Debris::DebrisContainer<D>& FileInput<Container, D>::getDebris()
 {
     return *debris;
 }
 
-template<class Container, class D>
+template <class Container, class D>
 void FileInput<Container, D>::setDebris(Debris::DebrisContainer<D>& debris)
 {
     FileInput<Container, D>::debris = &debris;
 }
 
-template<class Container, class D>
+template <class Container, class D>
 const std::filesystem::path& FileInput<Container, D>::getInputFilePath() const
 {
     return input_file_path;
 }
 
-template<class Container, class D>
+template <class Container, class D>
 std::filesystem::path& FileInput<Container, D>::getInputFilePath()
 {
     return input_file_path;
 }
 
-template<class Container, class D>
+template <class Container, class D>
 void FileInput<Container, D>::setInputFilePath(const std::filesystem::path& inputFilePath)
 {
     input_file_path = inputFilePath;
 }
 
-template<class Container, class D>
+template <class Container, class D>
 InputFile::Type FileInput<Container, D>::getInputFileType() const
 {
     return input_file_type;
 }
 
-template<class Container, class D>
+template <class Container, class D>
 void FileInput<Container, D>::setInputFileType(InputFile::Type inputFileType)
 {
     input_file_type = inputFileType;
 }
 
-template<class Container, class D>
+template <class Container, class D>
 double FileInput<Container, D>::getDeltaT() const
 {
     return delta_t;
 }
 
-template<class Container, class D>
+template <class Container, class D>
 void FileInput<Container, D>::setDeltaT(double deltaT)
 {
     delta_t = deltaT;
 }
 
-template<class Container, class D>
+template <class Container, class D>
 double FileInput<Container, D>::getWriteDeltaT() const
 {
     return write_delta_t;
 }
 
-template<class Container, class D>
+template <class Container, class D>
 void FileInput<Container, D>::setWriteDeltaT(double writeDeltaT)
 {
     write_delta_t = writeDeltaT;
 }
 
-template<class Container, class D>
+template <class Container, class D>
 double FileInput<Container, D>::getStartT() const
 {
     return start_t;
 }
 
-template<class Container, class D>
+template <class Container, class D>
 void FileInput<Container, D>::setStartT(double startT)
 {
     start_t = startT;
 }
 
-template<class Container, class D>
+template <class Container, class D>
 double FileInput<Container, D>::getEndT() const
 {
     return end_t;
 }
 
-template<class Container, class D>
+template <class Container, class D>
 void FileInput<Container, D>::setEndT(double endT)
 {
     end_t = endT;
 }
 
-template<class Container, class D>
+template <class Container, class D>
 const std::array<bool, 8>& FileInput<Container, D>::getAccConfig() const
 {
     return acc_config;
 }
 
-template<class Container, class D>
+template <class Container, class D>
 std::array<bool, 8>& FileInput<Container, D>::getAccConfig()
 {
     return acc_config;
 }
 
-template<class Container, class D>
+template <class Container, class D>
 void FileInput<Container, D>::setAccConfig(const std::array<bool, 8>& accConfig)
 {
     acc_config = accConfig;

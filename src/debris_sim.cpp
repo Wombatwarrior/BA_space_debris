@@ -31,13 +31,13 @@ void initSimulation(int argc, char** argv)
     try {
         command_line = std::make_shared<CommandLineInput<Debris::Debris>>(argc, argv);
         debris = std::make_shared<Debris::DebrisContainer<Debris::Debris>>();
-        file_input = std::make_shared<FileInput<Debris::DebrisContainer<Debris::Debris>,Debris::Debris>>(*debris, command_line->getInputFilePath(),
+        file_input = std::make_shared<FileInput<Debris::DebrisContainer<Debris::Debris>, Debris::Debris>>(*debris, command_line->getInputFilePath(),
             command_line->getInputFileType());
-        file_output = std::make_shared<FileOutput<Debris::DebrisContainer<Debris::Debris>,Debris::Debris>>(*debris, command_line->getOutputFilePath(),
+        file_output = std::make_shared<FileOutput<Debris::DebrisContainer<Debris::Debris>, Debris::Debris>>(*debris, command_line->getOutputFilePath(),
             command_line->getOutputFileType(), file_input->getAccConfig());
-        accumulator = std::make_shared<Acceleration::AccelerationAccumulator<Debris::DebrisContainer<Debris::Debris>,Debris::Debris>>(
+        accumulator = std::make_shared<Acceleration::AccelerationAccumulator<Debris::DebrisContainer<Debris::Debris>, Debris::Debris>>(
             file_input->getAccConfig(), *debris, file_input->getStartT(), *file_output);
-        integrator = std::make_shared<Integrator<Debris::DebrisContainer<Debris::Debris>,Debris::Debris>>(*debris, *accumulator,
+        integrator = std::make_shared<Integrator<Debris::DebrisContainer<Debris::Debris>, Debris::Debris>>(*debris, *accumulator,
             file_input->getDeltaT());
     }
     // if something went wrong with the command line parsing

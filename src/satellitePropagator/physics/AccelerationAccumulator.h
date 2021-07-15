@@ -29,7 +29,7 @@ namespace Acceleration {
  * @brief Accumulates all accelerations of the
  * Acceleration::AccelerationComponent specified by the #config vector
  */
-template <class Container,class D>
+template <class Container, class D>
 class AccelerationAccumulator {
 public:
     /**
@@ -186,7 +186,7 @@ public:
 // equations. for reference
 namespace Acceleration {
 
-template <class Container,class D>
+template <class Container, class D>
 AccelerationAccumulator<Container, D>::AccelerationAccumulator() = default;
 
 template <class Container, class D>
@@ -219,7 +219,7 @@ void AccelerationAccumulator<Container, D>::applyComponents() const
         s_term = std::sin((Physics::THETA_G + Physics::NU_EARTH * t) * Physics::RAD_FACTOR);
     }
 
-    for (auto &d : *debris) {
+    for (auto& d : *debris) {
         new_acc_total[0] = 0;
         new_acc_total[1] = 0;
         new_acc_total[2] = 0;
@@ -294,7 +294,7 @@ void AccelerationAccumulator<Container, D>::applyAmdWriteComponents() const
         s_term = std::sin((Physics::THETA_G + Physics::NU_EARTH * t) * Physics::RAD_FACTOR);
     }
 
-    for (auto &d : *debris) {
+    for (auto& d : *debris) {
         // start a new line o data for each particle
         file_output->writeAcc_start(t);
         new_acc_total[0] = 0;

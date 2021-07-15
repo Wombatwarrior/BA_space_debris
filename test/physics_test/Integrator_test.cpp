@@ -667,7 +667,6 @@ TEST_F(CompareWithHeyokaTests, compareComleteHeyokas)
     }
 }
 
-
 // compare calculation time of all Components with random debris
 TEST_F(CompareWithHeyokaTests, compareTotalRuntimeRandom)
 {
@@ -675,7 +674,8 @@ TEST_F(CompareWithHeyokaTests, compareTotalRuntimeRandom)
     // random number generator
     auto seed = time(NULL);
     srand(seed);
-    std::cout << "Seed: " << seed << std::endl << std::endl;
+    std::cout << "Seed: " << seed << std::endl
+              << std::endl;
     // set some test debris values
     std::vector<Debris::Debris> ds;
     Debris::Debris d;
@@ -714,7 +714,8 @@ TEST_F(CompareWithHeyokaTests, compareTotalRuntimeRandom)
 
         std::cout << "Integrator runtime: " << i_ms_int.count() << " ms" << std::endl;
         std::cout << "Heyoka runtime: " << ta_ms_int.count() << " ms" << std::endl;
-        std::cout << "Time difference: " << i_ms_int.count() - ta_ms_int.count() << " ms\n" << std::endl;
+        std::cout << "Time difference: " << i_ms_int.count() - ta_ms_int.count() << " ms\n"
+                  << std::endl;
     }
 }
 #endif

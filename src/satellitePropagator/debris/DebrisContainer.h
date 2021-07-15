@@ -11,7 +11,7 @@ namespace Debris {
  * @class DebrisContainer
  * @brief Holds a vector of Debris objects
  */
-template<class D>
+template <class D>
 class DebrisContainer {
 public:
     /**
@@ -29,22 +29,25 @@ public:
      */
     virtual ~DebrisContainer();
 
-    auto begin(){
+    auto begin()
+    {
         return debris_vector.begin();
     }
 
-    auto end(){
+    auto end()
+    {
         return debris_vector.end();
     }
 
-    const auto cbegin() const {
+    const auto cbegin() const
+    {
         return debris_vector.cbegin();
     }
 
-    const auto cend() const {
+    const auto cend() const
+    {
         return debris_vector.cend();
     }
-
 
     /**
      * @brief Adds a Debris object to the #debris_vector
@@ -83,39 +86,39 @@ public:
      */
     void setDebrisVector(std::vector<D>& debrisVector);
 };
-    template<class D>
-    DebrisContainer<D>::DebrisContainer() = default;
+template <class D>
+DebrisContainer<D>::DebrisContainer() = default;
 
-    template<class D>
-    DebrisContainer<D>::~DebrisContainer() = default;
+template <class D>
+DebrisContainer<D>::~DebrisContainer() = default;
 
-    template <class D>
-    void DebrisContainer<D>::addDebris(const D& debris)
-    {
-        debris_vector.push_back(debris);
-    }
+template <class D>
+void DebrisContainer<D>::addDebris(const D& debris)
+{
+    debris_vector.push_back(debris);
+}
 
-    template<class D>
-    void DebrisContainer<D>::cleanDebrisVector()
-    {
-        debris_vector.clear();
-    }
+template <class D>
+void DebrisContainer<D>::cleanDebrisVector()
+{
+    debris_vector.clear();
+}
 
-    template <class D>
-    const std::vector<D>& DebrisContainer<D>::getDebrisVector() const
-    {
-        return debris_vector;
-    }
+template <class D>
+const std::vector<D>& DebrisContainer<D>::getDebrisVector() const
+{
+    return debris_vector;
+}
 
-    template <class D>
-    std::vector<D>& DebrisContainer<D>::getDebrisVector()
-    {
-        return debris_vector;
-    }
+template <class D>
+std::vector<D>& DebrisContainer<D>::getDebrisVector()
+{
+    return debris_vector;
+}
 
-    template <class D>
-    void DebrisContainer<D>::setDebrisVector(std::vector<D>& debrisVector)
-    {
-        debris_vector = debrisVector;
-    }
+template <class D>
+void DebrisContainer<D>::setDebrisVector(std::vector<D>& debrisVector)
+{
+    debris_vector = debrisVector;
+}
 } // namespace Debris
