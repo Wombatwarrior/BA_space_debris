@@ -576,7 +576,32 @@ protected:
     }
 
     void writeSplitHeyokaState(){
+        // one array that holds position and all velocity components in the order x,y,z,norm
+        std::vector<double> output_vector;
+        for(int i = 0; i < ta_split->get_state().size() / 3; ++i){
+            // add x,y,z
+            output_vector.push_back(ta_split->get_state()[3*i]);
+            output_vector.push_back(ta_split->get_state()[3*i + 1]);
+            output_vector.push_back(ta_split->get_state()[3*i + 2]);
+            output_vector.push_back(MathUtils::euclideanNorm(std::array<double,3>{ta_split->get_state()[3*i], ta_split->get_state()[3*i + 1], ta_split->get_state()[3*i + 2]}));
+        }
+        std::array<double, 3> vel_split {};
+        // combine all components
+        for (int i = 3; i < ta_split->get_state().size(); i += 3) {
+            vel_split[0] += ta_split->get_state_data()[i];
+            vel_split[1] += ta_split->get_state_data()[i + 1];
+            vel_split[2] += ta_split->get_state_data()[i + 2];
+        }
+        output_vector.push_back(vel_split[0]);
+        output_vector.push_back(vel_split[1]);
+        output_vector.push_back(vel_split[2]);
+        output_vector.push_back(MathUtils::euclideanNorm(vel_split));
 
+        // output
+        *ta_split_out << ta_split_line++ << ',';
+        *ta_split_out << ta_split->get_time() << ',';
+        IOUtils::to_ostream(output_vector, *ta_split_out);
+        *ta_split_out << std::endl;
     }
 };
 #endif
