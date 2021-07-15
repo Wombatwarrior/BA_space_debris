@@ -102,7 +102,7 @@ void FileOutput::writeDebrisCSV(double t)
         out << ',' << d.getAccT0Norm() << ',';
         IOUtils::to_ostream(d.getAccT1(), out);
         out << ',' << d.getAccT1Norm();
-        out << '\n';
+sue        out << std::endl;
     }
 }
 
@@ -126,7 +126,7 @@ void FileOutput::writeAcc_value(const std::array<double, 3>& vec)
 void FileOutput::writeAcc_end(const std::array<double, 3>& vec)
 {
     IOUtils::to_ostream(vec, acc_out);
-    acc_out << "," << MathUtils::euclideanNorm(vec) << "\n";
+    acc_out << "," << MathUtils::euclideanNorm(vec) << std::endl;
 }
 
 const Debris::DebrisContainer& FileOutput::getDebris() const
