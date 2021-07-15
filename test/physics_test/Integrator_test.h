@@ -557,7 +557,21 @@ protected:
         IOUtils::to_ostream(MathUtils::relativeError(vel_split, vel_ta), std::cout, ",", { "relative error[", "]\n" });
     }
 
-    void writeHeyokaState(heyoka::taylor_adaptive<double>& ta){
+    void writeHeyokaState(Acceleration::AccelerationComponent type){
+        // one array that holds position and all velocity components in the order x,y,z,norm
+        std::vector<double> output_vector;
+        for(int i = 0; i < ta_components[type]->get_state().size() % 3; ++i){
+            // add x,y,z
+            output_vector.push_back(ta_components[type]->get_state()[i]);
+            output_vector.push_back(ta_components[type]->get_state()[i+1]);
+            output_vector.push_back(ta_components[type]->get_state()[i+2]);
+            output_vector.push_back(MathUtils::euclideanNorm(std::array<double,3>{ta_components[type]->get_state()[i], ta_components[type]->get_state()[i + 1], ta_components[type]->get_state()[i + 2]}));
+        }
+        // output
+        *ta_components_out[type] << ta_components_line[type]++ << ',';
+        *ta_components_out[type] << ta_components[type]->get_time() << ',';
+        IOUtils::to_ostream(output_vector, *ta_components_out[type]);
+        *ta_components_out[type] << std::endl;
 
     }
 
