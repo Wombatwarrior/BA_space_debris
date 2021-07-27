@@ -3,8 +3,6 @@ cmake_minimum_required(VERSION 3.10)
 project(BA_space_debris)
 set(CMAKE_CXX_STANDARD 17)
 
-include_directories(src)
-
 set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug;Release")
 
 enable_testing()
