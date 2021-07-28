@@ -2,6 +2,7 @@
 // Created by Oliver on 07.06.21.
 //
 
+#pragma once
 #include <array>
 #include <cmath>
 #include <numeric>
