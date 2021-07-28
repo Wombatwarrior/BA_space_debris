@@ -29,7 +29,7 @@ void initLogger()
 void initSimulation(int argc, char** argv)
 {
     try {
-        command_line = std::make_shared<CommandLineInput<Debris::Debris>>(argc, argv);
+        command_line = std::make_shared<CommandLineInput>(argc, argv);
         container = std::make_shared<Debris::DebrisContainer<Debris::Debris>>();
         file_input = std::make_shared<FileInput<Debris::DebrisContainer<Debris::Debris>>>(*container, command_line->getInputFilePath(),
             command_line->getInputFileType());

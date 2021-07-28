@@ -13,7 +13,6 @@
  *
  * @brief Parses input/output files from command line arguments
  */
-template <class D>
 class CommandLineInput {
 public:
     /**
@@ -108,17 +107,17 @@ public:
     void setOutputFilePath(const std::filesystem::path& outputFilePath);
 };
 
-template <class D>
-CommandLineInput<D>::CommandLineInput(int argc, char** argv)
+
+CommandLineInput::CommandLineInput(int argc, char** argv)
 {
     parseCommandLine(argc, argv);
 }
 
-template <class D>
-CommandLineInput<D>::~CommandLineInput() = default;
 
-template <class D>
-void CommandLineInput<D>::parseCommandLine(int argc, char** argv)
+CommandLineInput::~CommandLineInput() = default;
+
+
+void CommandLineInput::parseCommandLine(int argc, char** argv)
 {
     if (argc > 1) {
         input_file_path = std::filesystem::path(argv[1]);
@@ -180,56 +179,56 @@ void CommandLineInput<D>::parseCommandLine(int argc, char** argv)
     }
 }
 
-template <class D>
-InputFile::Type CommandLineInput<D>::getInputFileType() const
+
+InputFile::Type CommandLineInput::getInputFileType() const
 {
     return input_file_type;
 }
 
-template <class D>
-void CommandLineInput<D>::setInputFileType(InputFile::Type inputFileType)
+
+void CommandLineInput::setInputFileType(InputFile::Type inputFileType)
 {
     input_file_type = inputFileType;
 }
 
-template <class D>
-OutputFile::Type CommandLineInput<D>::getOutputFileType() const
+
+OutputFile::Type CommandLineInput::getOutputFileType() const
 {
     return output_file_type;
 }
 
-template <class D>
-void CommandLineInput<D>::setOutputFileType(OutputFile::Type outputFileType)
+
+void CommandLineInput::setOutputFileType(OutputFile::Type outputFileType)
 {
     output_file_type = outputFileType;
 }
 
-template <class D>
-std::filesystem::path& CommandLineInput<D>::getInputFilePath()
+
+std::filesystem::path& CommandLineInput::getInputFilePath()
 {
     return input_file_path;
 }
 
-template <class D>
-void CommandLineInput<D>::setInputFilePath(const std::filesystem::path& inputFilePath)
+
+void CommandLineInput::setInputFilePath(const std::filesystem::path& inputFilePath)
 {
     input_file_path = inputFilePath;
 }
 
-template <class D>
-const std::filesystem::path& CommandLineInput<D>::getOutputFilePath() const
+
+const std::filesystem::path& CommandLineInput::getOutputFilePath() const
 {
     return output_file_path;
 }
 
-template <class D>
-std::filesystem::path& CommandLineInput<D>::getOutputFilePath()
+
+std::filesystem::path& CommandLineInput::getOutputFilePath()
 {
     return output_file_path;
 }
 
-template <class D>
-void CommandLineInput<D>::setOutputFilePath(const std::filesystem::path& outputFilePath)
+
+void CommandLineInput::setOutputFilePath(const std::filesystem::path& outputFilePath)
 {
     output_file_path = outputFilePath;
 }
