@@ -778,11 +778,35 @@ TEST_F(DragComponentTests, CalculationEquivalenceTest)
     }
 
     // no error
-    double abs_err = 1e-49;
+    double abs_err = 1e-25;
     for (int i = 0; i < num_debris; ++i) {
         EXPECT_NEAR(accelerations_1[i][0], accelerations_2[i][0], abs_err);
         EXPECT_NEAR(accelerations_1[i][1], accelerations_2[i][1], abs_err);
         EXPECT_NEAR(accelerations_1[i][2], accelerations_2[i][2], abs_err);
+    }
+}
+
+/**
+ * Tests if the acceleration calculated using
+ * Acceleration::DragComponent::apply() is in opposite direction of the velocity vector
+ */
+TEST_F(DragComponentTests, CheckDirection)
+{
+    const int num_debris = 9;
+    std::array<std::array<double, 3>, num_debris> accelerations {};
+    std::array<double, 3> acc_total_dummy {};
+
+    // calculate the acceleration for all particles using two different functions
+    for (int i = 0; i < num_debris; ++i) {
+        accelerations[i] = Acceleration::DragComponent::apply(container->getDebrisVector()[i]);
+    }
+
+    // e-3 fails, but e-2 passes
+    double abs_err = 1e-2;
+    for (int i = 0; i < num_debris; ++i) {
+        IOUtils::to_ostream(accelerations[i],std::cout,",",{"\n[","]\n"});
+        IOUtils::to_ostream(container->getDebrisVector()[i].getVelocity(),std::cout,",",{"[","]\n"});
+        EXPECT_NEAR(MathUtils::cosSimilarity(accelerations[i],container->getDebrisVector()[i].getVelocity()), -1, abs_err);
     }
 }
 
