@@ -54,28 +54,28 @@ public:
      *
      * @return Value of #input_file_type
      */
-    [[nodiscard]] typename InputFile::Type getInputFileType() const;
+    [[nodiscard]] InputFile::Type getInputFileType() const;
 
     /**
      * @brief Setter function for #input_file_type
      *
      * @param inputFileType New value of #input_file_type
      */
-    void setInputFileType(typename InputFile::Type inputFileType);
+    void setInputFileType(InputFile::Type inputFileType);
 
     /**
      * @brief Getter function for #output_file_type
      *
      * @return Value of #output_file_type
      */
-    [[nodiscard]] typename OutputFile::Type getOutputFileType() const;
+    [[nodiscard]] OutputFile::Type getOutputFileType() const;
 
     /**
      * @brief Setter function for #output_file_type
      *
      * @param outputFileType New value of #output_file_type
      */
-    void setOutputFileType(typename OutputFile::Type outputFileType);
+    void setOutputFileType(OutputFile::Type outputFileType);
 
     /**
      * @brief Getter function for #input_file_path
