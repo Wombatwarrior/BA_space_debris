@@ -29,7 +29,7 @@ namespace Acceleration {
  * @brief Accumulates all accelerations of the
  * Acceleration::AccelerationComponent specified by the #config vector
  */
-template <class Container, class D>
+template <class Container>
 class AccelerationAccumulator {
 public:
     /**
@@ -53,7 +53,7 @@ public:
     AccelerationAccumulator(const std::array<bool, 8>& config_arg,
         Container& container,
         double t_arg,
-        FileOutput<Container, D>& file_output_arg)
+        FileOutput<Container>& file_output_arg)
         : config(config_arg)
         , container(&container)
         , t(t_arg)
@@ -117,7 +117,7 @@ private:
         = nullptr; /**< Reference to the Container object holding the
              Debris::Debris objects to apply acceleration to*/
     double t = 0; /**< current time*/
-    FileOutput<Container, D>* file_output = nullptr; /**< used to write detailed output data during calculations */
+    FileOutput<Container>* file_output = nullptr; /**< used to write detailed output data during calculations */
 public:
     /**
      * @brief Getter function for #config
@@ -168,15 +168,15 @@ public:
      *
      * @return Value of #file_output
      */
-    [[nodiscard]] const FileOutput<Container, D>& getFileOutput() const;
-    FileOutput<Container, D>& getFileOutput();
+    [[nodiscard]] const FileOutput<Container>& getFileOutput() const;
+    FileOutput<Container>& getFileOutput();
 
     /**
      * @brief Setter function for #file_output
      *
      * @param fileOutput New value of #file_output
      */
-    void setFileOutput(FileOutput<Container, D>& fileOutput);
+    void setFileOutput(FileOutput<Container>& fileOutput);
 };
 } // namespace Acceleration
 
@@ -186,14 +186,14 @@ public:
 // equations. for reference
 namespace Acceleration {
 
-template <class Container, class D>
-AccelerationAccumulator<Container, D>::AccelerationAccumulator() = default;
+template <class Container>
+AccelerationAccumulator<Container>::AccelerationAccumulator() = default;
 
-template <class Container, class D>
-AccelerationAccumulator<Container, D>::~AccelerationAccumulator() = default;
+template <class Container>
+AccelerationAccumulator<Container>::~AccelerationAccumulator() = default;
 
-template <class Container, class D>
-void AccelerationAccumulator<Container, D>::applyComponents() const
+template <class Container>
+void AccelerationAccumulator<Container>::applyComponents() const
 {
     // will be modified by the apply functions
     std::array<double, 3> new_acc_total { 0, 0, 0 };
@@ -267,8 +267,8 @@ void AccelerationAccumulator<Container, D>::applyComponents() const
     }
 }
 
-template <class Container, class D>
-void AccelerationAccumulator<Container, D>::applyAmdWriteComponents() const
+template <class Container>
+void AccelerationAccumulator<Container>::applyAmdWriteComponents() const
 {
     // will be modified by the apply functions
     std::array<double, 3> new_acc_total { 0, 0, 0 };
@@ -343,66 +343,66 @@ void AccelerationAccumulator<Container, D>::applyAmdWriteComponents() const
     }
 }
 
-template <class Container, class D>
-const std::array<bool, 8>& AccelerationAccumulator<Container, D>::getConfig() const
+template <class Container>
+const std::array<bool, 8>& AccelerationAccumulator<Container>::getConfig() const
 {
     return config;
 }
 
-template <class Container, class D>
-std::array<bool, 8>& AccelerationAccumulator<Container, D>::getConfig()
+template <class Container>
+std::array<bool, 8>& AccelerationAccumulator<Container>::getConfig()
 {
     return config;
 }
-template <class Container, class D>
-void AccelerationAccumulator<Container, D>::setConfig(const std::array<bool, 8>& config)
+template <class Container>
+void AccelerationAccumulator<Container>::setConfig(const std::array<bool, 8>& config)
 {
-    AccelerationAccumulator<Container, D>::config = config;
+    AccelerationAccumulator<Container>::config = config;
 }
 
-template <class Container, class D>
-const Container& AccelerationAccumulator<Container, D>::getContainer() const
+template <class Container>
+const Container& AccelerationAccumulator<Container>::getContainer() const
 {
     return *container;
 }
 
-template <class Container, class D>
-Container& AccelerationAccumulator<Container, D>::getContainer()
+template <class Container>
+Container& AccelerationAccumulator<Container>::getContainer()
 {
     return *container;
 }
-template <class Container, class D>
-void AccelerationAccumulator<Container, D>::setContainer(Container& container)
+template <class Container>
+void AccelerationAccumulator<Container>::setContainer(Container& container)
 {
-    AccelerationAccumulator<Container, D>::container = &container;
+    AccelerationAccumulator<Container>::container = &container;
 }
 
-template <class Container, class D>
-double AccelerationAccumulator<Container, D>::getT() const
+template <class Container>
+double AccelerationAccumulator<Container>::getT() const
 {
     return t;
 }
 
-template <class Container, class D>
-void AccelerationAccumulator<Container, D>::setT(double t)
+template <class Container>
+void AccelerationAccumulator<Container>::setT(double t)
 {
-    AccelerationAccumulator<Container, D>::t = t;
+    AccelerationAccumulator<Container>::t = t;
 }
 
-template <class Container, class D>
-const FileOutput<Container, D>& AccelerationAccumulator<Container, D>::getFileOutput() const
-{
-    return *file_output;
-}
-
-template <class Container, class D>
-FileOutput<Container, D>& AccelerationAccumulator<Container, D>::getFileOutput()
+template <class Container>
+const FileOutput<Container>& AccelerationAccumulator<Container>::getFileOutput() const
 {
     return *file_output;
 }
 
-template <class Container, class D>
-void AccelerationAccumulator<Container, D>::setFileOutput(FileOutput<Container, D>& fileOutput)
+template <class Container>
+FileOutput<Container>& AccelerationAccumulator<Container>::getFileOutput()
+{
+    return *file_output;
+}
+
+template <class Container>
+void AccelerationAccumulator<Container>::setFileOutput(FileOutput<Container>& fileOutput)
 {
     file_output = &fileOutput;
 }

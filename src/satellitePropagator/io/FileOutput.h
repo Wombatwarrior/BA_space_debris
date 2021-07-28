@@ -28,7 +28,7 @@ enum Type {
  *
  * @brief Writes output data to a file
  */
-template <class Container, class D>
+template <class Container>
 class FileOutput {
 public:
     /**
@@ -176,8 +176,8 @@ public:
     void setAccOutputFilePath(const std::filesystem::path& accOutputFilePath);
 };
 
-template <class Container, class D>
-FileOutput<Container, D>::FileOutput(Container& container_arg,
+template <class Container>
+FileOutput<Container>::FileOutput(Container& container_arg,
     std::filesystem::path output_file_path_arg,
     OutputFile::Type output_file_type_arg,
     std::array<bool, 8>& acc_config)
@@ -245,11 +245,11 @@ FileOutput<Container, D>::FileOutput(Container& container_arg,
     }
 }
 
-template <class Container, class D>
-FileOutput<Container, D>::~FileOutput() = default;
+template <class Container>
+FileOutput<Container>::~FileOutput() = default;
 
-template <class Container, class D>
-void FileOutput<Container, D>::writeDebrisData(double t)
+template <class Container>
+void FileOutput<Container>::writeDebrisData(double t)
 {
     switch (output_file_type) {
     case OutputFile::TXT:
@@ -263,8 +263,8 @@ void FileOutput<Container, D>::writeDebrisData(double t)
     }
 }
 
-template <class Container, class D>
-void FileOutput<Container, D>::writeDebrisCSV(double t)
+template <class Container>
+void FileOutput<Container>::writeDebrisCSV(double t)
 {
     for (auto d : container->getDebrisVector()) {
         out << row_count++ << ',';
@@ -281,95 +281,95 @@ void FileOutput<Container, D>::writeDebrisCSV(double t)
     }
 }
 
-template <class Container, class D>
-void FileOutput<Container, D>::writeDebrisTXT(double t)
+template <class Container>
+void FileOutput<Container>::writeDebrisTXT(double t)
 {
     // NOT IMPLEMENTED YET
 }
 
-template <class Container, class D>
-void FileOutput<Container, D>::writeAcc_start(double t)
+template <class Container>
+void FileOutput<Container>::writeAcc_start(double t)
 {
     acc_out << acc_row_count++ << ',';
     acc_out << t << ',';
 }
 
-template <class Container, class D>
-void FileOutput<Container, D>::writeAcc_value(const std::array<double, 3>& vec)
+template <class Container>
+void FileOutput<Container>::writeAcc_value(const std::array<double, 3>& vec)
 {
     IOUtils::to_ostream(vec, acc_out);
     acc_out << "," << MathUtils::euclideanNorm(vec) << ",";
 }
 
-template <class Container, class D>
-void FileOutput<Container, D>::writeAcc_end(const std::array<double, 3>& vec)
+template <class Container>
+void FileOutput<Container>::writeAcc_end(const std::array<double, 3>& vec)
 {
     IOUtils::to_ostream(vec, acc_out);
     acc_out << "," << MathUtils::euclideanNorm(vec) << "\n";
 }
 
-template <class Container, class D>
-const Container& FileOutput<Container, D>::getContainer() const
+template <class Container>
+const Container& FileOutput<Container>::getContainer() const
 {
     return *container;
 }
 
-template <class Container, class D>
-Container& FileOutput<Container, D>::getContainer()
+template <class Container>
+Container& FileOutput<Container>::getContainer()
 {
     return *container;
 }
 
-template <class Container, class D>
-void FileOutput<Container, D>::setContainer(Container& container)
+template <class Container>
+void FileOutput<Container>::setContainer(Container& container)
 {
-    FileOutput<Container, D>::container = &container;
+    FileOutput<Container>::container = &container;
 }
 
-template <class Container, class D>
-const std::filesystem::path& FileOutput<Container, D>::getOutputFilePath() const
-{
-    return output_file_path;
-}
-
-template <class Container, class D>
-std::filesystem::path& FileOutput<Container, D>::getOutputFilePath()
+template <class Container>
+const std::filesystem::path& FileOutput<Container>::getOutputFilePath() const
 {
     return output_file_path;
 }
 
-template <class Container, class D>
-void FileOutput<Container, D>::setOutputFilePath(const std::filesystem::path& outputFilePath)
+template <class Container>
+std::filesystem::path& FileOutput<Container>::getOutputFilePath()
+{
+    return output_file_path;
+}
+
+template <class Container>
+void FileOutput<Container>::setOutputFilePath(const std::filesystem::path& outputFilePath)
 {
     output_file_path = outputFilePath;
 }
 
-template <class Container, class D>
-OutputFile::Type FileOutput<Container, D>::getOutputFileType() const
+template <class Container>
+OutputFile::Type FileOutput<Container>::getOutputFileType() const
 {
     return output_file_type;
 }
 
-template <class Container, class D>
-void FileOutput<Container, D>::setOutputFileType(OutputFile::Type outputFileType)
+template <class Container>
+void FileOutput<Container>::setOutputFileType(OutputFile::Type outputFileType)
 {
     output_file_type = outputFileType;
 }
 
-template <class Container, class D>
-const std::filesystem::path& FileOutput<Container, D>::getAccOutputFilePath() const
+template <class Container>
+const std::filesystem::path& FileOutput<Container>::getAccOutputFilePath() const
 {
     return acc_output_file_path;
 }
 
-template <class Container, class D>
-std::filesystem::path& FileOutput<Container, D>::getAccOutputFilePath()
+template <class Container>
+std::filesystem::path& FileOutput<Container>::getAccOutputFilePath()
 {
     return acc_output_file_path;
 }
 
-template <class Container, class D>
-void FileOutput<Container, D>::setAccOutputFilePath(const std::filesystem::path& accOutputFilePath)
+template <class Container>
+void FileOutput<Container>::setAccOutputFilePath(const std::filesystem::path& accOutputFilePath)
 {
     acc_output_file_path = accOutputFilePath;
 }

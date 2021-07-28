@@ -14,6 +14,7 @@ namespace Debris {
 template <class D>
 class DebrisContainer {
 public:
+    using Particle_t = D; /**< Type D of the Particles **/
     /**
      * @brief Default constructor
      *
