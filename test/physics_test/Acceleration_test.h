@@ -724,18 +724,22 @@ protected:
         for (int i = 0; i < 3; ++i) {
             for (int j = 0; j < 3; ++j) {
                 std::array<double, 3> pos { 0, 0, 0 };
-                pos[j] = (i + 2) * 3.5e3;
+                std::array<double, 3> vel { 4, 4, 4 };
+                pos[j] = Physics::R_EARTH + (i + 2) * 100;
                 d.setPosition(pos);
+                d.setVelocity(vel);
                 d.setBcInv(i * j + 0.1);
                 container->addDebris(d);
             }
         }
         for (int i = 0; i < 3; ++i) {
             std::array<double, 3> pos { 0, 0, 0 };
+            std::array<double, 3> vel { 4, 4, 4 };
             pos[i] = 5000;
             pos[(i + 1) % 3] = 4321;
             pos[(i + 2) % 3] = 3210;
             d.setPosition(pos);
+            d.setVelocity(vel);
             d.setBcInv(i + 0.1);
             container->addDebris(d);
         }
