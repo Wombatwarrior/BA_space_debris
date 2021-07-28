@@ -21,15 +21,15 @@ TEST_F(KepComponentTests, RadialSymmetryTest)
     // accelerations[3]
     for (int i = 0; i < 3; ++i) {
         accelerations[i] = Acceleration::KepComponent::apply(container->getDebrisVector()[i]);
-        accelerations[3][0]+=accelerations[i][0];
-        accelerations[3][1]+=accelerations[i][1];
-        accelerations[3][2]+=accelerations[i][2];
+        accelerations[3][0] += accelerations[i][0];
+        accelerations[3][1] += accelerations[i][1];
+        accelerations[3][2] += accelerations[i][2];
     }
     for (int i = 3; i < 6; ++i) {
         accelerations[i + 1] = Acceleration::KepComponent::apply(container->getDebrisVector()[i]);
-        accelerations[7][0]+=accelerations[i+1][0];
-        accelerations[7][1]+=accelerations[i+1][1];
-        accelerations[7][2]+=accelerations[i+1][2];
+        accelerations[7][0] += accelerations[i + 1][0];
+        accelerations[7][1] += accelerations[i + 1][1];
+        accelerations[7][2] += accelerations[i + 1][2];
     }
 
     // only one axis non zero
@@ -188,7 +188,7 @@ TEST_F(C22ComponentTests, CalculationEquivalenceTest)
 
     // calculate the acceleration for all particles using two different functions
     for (int i = 0; i < num_debris; ++i) {
-        accelerations_1[i] = Acceleration::C22Component::apply(container->getDebrisVector()[i], c_term,  s_term);
+        accelerations_1[i] = Acceleration::C22Component::apply(container->getDebrisVector()[i], c_term, s_term);
         calcC22(container->getDebrisVector()[i], t, accelerations_2[i]);
     }
 

@@ -107,15 +107,12 @@ public:
     void setOutputFilePath(const std::filesystem::path& outputFilePath);
 };
 
-
 CommandLineInput::CommandLineInput(int argc, char** argv)
 {
     parseCommandLine(argc, argv);
 }
 
-
 CommandLineInput::~CommandLineInput() = default;
-
 
 void CommandLineInput::parseCommandLine(int argc, char** argv)
 {
@@ -179,54 +176,45 @@ void CommandLineInput::parseCommandLine(int argc, char** argv)
     }
 }
 
-
 InputFile::Type CommandLineInput::getInputFileType() const
 {
     return input_file_type;
 }
-
 
 void CommandLineInput::setInputFileType(InputFile::Type inputFileType)
 {
     input_file_type = inputFileType;
 }
 
-
 OutputFile::Type CommandLineInput::getOutputFileType() const
 {
     return output_file_type;
 }
-
 
 void CommandLineInput::setOutputFileType(OutputFile::Type outputFileType)
 {
     output_file_type = outputFileType;
 }
 
-
 std::filesystem::path& CommandLineInput::getInputFilePath()
 {
     return input_file_path;
 }
-
 
 void CommandLineInput::setInputFilePath(const std::filesystem::path& inputFilePath)
 {
     input_file_path = inputFilePath;
 }
 
-
 const std::filesystem::path& CommandLineInput::getOutputFilePath() const
 {
     return output_file_path;
 }
 
-
 std::filesystem::path& CommandLineInput::getOutputFilePath()
 {
     return output_file_path;
 }
-
 
 void CommandLineInput::setOutputFilePath(const std::filesystem::path& outputFilePath)
 {
