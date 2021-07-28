@@ -43,20 +43,16 @@ std::array<double, 6> setUp(double t);
      * for all applied Acceleration::AccelerationComponent.
      */
 template <class D>
-void apply(const D& d,
+auto apply(const D& d,
     double d_srp,
-    const std::array<double, 6>& sun_params,
-    std::array<double, 3>& acc_srp,
-    std::array<double, 3>& acc_total);
+    const std::array<double, 6>& sun_params);
 
 template <class D>
-void apply(const D& d,
+auto apply(const D& d,
     double d_srp,
-    const std::array<double, 6>& sun_params,
-    std::array<double, 3>& acc_srp,
-    std::array<double, 3>& acc_total)
+    const std::array<double, 6>& sun_params)
 {
-    acc_srp = d.getPosition();
+    auto acc_srp = d.getPosition();
     acc_srp[0] -= sun_params[0];
     acc_srp[1] -= sun_params[1];
     acc_srp[2] -= sun_params[2];
@@ -69,8 +65,6 @@ void apply(const D& d,
     acc_srp[0] = d.getAom() * (getFactor() * d_srp * acc_srp[0]);
     acc_srp[1] = d.getAom() * (getFactor() * d_srp * acc_srp[1]);
     acc_srp[2] = d.getAom() * (getFactor() * d_srp * acc_srp[2]);
-    acc_total[0] += acc_srp[0];
-    acc_total[1] += acc_srp[1];
-    acc_total[2] += acc_srp[2];
+    return acc_srp;
 }
 } // namespace Acceleration

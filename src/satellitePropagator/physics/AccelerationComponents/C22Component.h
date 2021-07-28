@@ -37,11 +37,9 @@ namespace {
      * for all applied Acceleration::AccelerationComponent.
      */
 template <class D>
-void apply(const D& d,
+auto apply(const D& d,
     double c_term,
-    double s_term,
-    std::array<double, 3>& acc_c22,
-    std::array<double, 3>& acc_total);
+    double s_term);
 
 namespace {
     // Eq 13
@@ -56,13 +54,11 @@ namespace {
     }
 } // namespace
 template <class D>
-void apply(const D& d,
+auto apply(const D& d,
     double c_term,
-    double s_term,
-    std::array<double, 3>& acc_c22,
-    std::array<double, 3>& acc_total)
+    double s_term)
 {
-    acc_c22 = d.getPosition();
+    auto acc_c22 = d.getPosition();
     // EQ 16
     const double x = acc_c22[0] * c_term + acc_c22[1] * s_term;
     const double y = -acc_c22[0] * s_term + acc_c22[1] * c_term;
@@ -95,8 +91,6 @@ void apply(const D& d,
     acc_c22[0] = x2 * c_term - y2 * s_term;
     acc_c22[1] = x2 * s_term + y2 * c_term;
     acc_c22[2] = (n * z) * d1;
-    acc_total[0] += acc_c22[0];
-    acc_total[1] += acc_c22[1];
-    acc_total[2] += acc_c22[2];
+    return acc_c22;
 }
 } // namespace Acceleration

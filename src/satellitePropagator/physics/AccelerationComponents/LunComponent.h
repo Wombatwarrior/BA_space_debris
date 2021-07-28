@@ -29,18 +29,14 @@ std::array<double, 6> setUp(double t);
      * for all applied Acceleration::AccelerationComponent.
      */
 template <class D>
-void apply(const D& d,
-    const std::array<double, 6>& moon_params,
-    std::array<double, 3>& acc_lun,
-    std::array<double, 3>& acc_total);
+auto apply(const D& d,
+    const std::array<double, 6>& moon_params);
 
 template <class D>
-void apply(const D& d,
-    const std::array<double, 6>& moon_params,
-    std::array<double, 3>& acc_lun,
-    std::array<double, 3>& acc_total)
+auto apply(const D& d,
+    const std::array<double, 6>& moon_params)
 {
-    acc_lun = d.getPosition();
+    auto acc_lun = d.getPosition();
     acc_lun[0] -= moon_params[0];
     acc_lun[1] -= moon_params[1];
     acc_lun[2] -= moon_params[2];
@@ -51,8 +47,6 @@ void apply(const D& d,
     acc_lun[0] = -Physics::GM_MOON * (acc_lun[0] * d1 + moon_params[3]);
     acc_lun[1] = -Physics::GM_MOON * (acc_lun[1] * d1 + moon_params[4]);
     acc_lun[2] = -Physics::GM_MOON * (acc_lun[2] * d1 + moon_params[5]);
-    acc_total[0] += acc_lun[0];
-    acc_total[1] += acc_lun[1];
-    acc_total[2] += acc_lun[2];
+    return acc_lun;
 }
 } // namespace Acceleration

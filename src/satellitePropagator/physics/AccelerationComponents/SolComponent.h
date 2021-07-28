@@ -30,19 +30,15 @@ std::array<double, 6> setUp(double t);
      * for all applied Acceleration::AccelerationComponent.
      */
 template <class D>
-void apply(const D& d,
+auto apply(const D& d,
     double& d_ref,
-    const std::array<double, 6>& sun_params,
-    std::array<double, 3>& acc_sol,
-    std::array<double, 3>& acc_total);
+    const std::array<double, 6>& sun_params);
 template <class D>
-void apply(const D& d,
+auto apply(const D& d,
     double& d_ref,
-    const std::array<double, 6>& sun_params,
-    std::array<double, 3>& acc_sol,
-    std::array<double, 3>& acc_total)
+    const std::array<double, 6>& sun_params)
 {
-    acc_sol = d.getPosition();
+    auto acc_sol = d.getPosition();
     acc_sol[0] -= sun_params[0];
     acc_sol[1] -= sun_params[1];
     acc_sol[2] -= sun_params[2];
@@ -53,8 +49,6 @@ void apply(const D& d,
     acc_sol[0] = -Physics::GM_SUN * (acc_sol[0] * d_ref + sun_params[3]);
     acc_sol[1] = -Physics::GM_SUN * (acc_sol[1] * d_ref + sun_params[4]);
     acc_sol[2] = -Physics::GM_SUN * (acc_sol[2] * d_ref + sun_params[5]);
-    acc_total[0] += acc_sol[0];
-    acc_total[1] += acc_sol[1];
-    acc_total[2] += acc_sol[2];
+    return acc_sol;
 }
 } // namespace Acceleration

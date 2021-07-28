@@ -27,9 +27,7 @@ namespace {
      * for all applied Acceleration::AccelerationComponent.
      */
 template <class D>
-void apply(const D& d,
-    std::array<double, 3>& acc_j2,
-    std::array<double, 3>& acc_total);
+auto apply(const D& d);
 
 namespace {
     // Eq 6
@@ -39,11 +37,9 @@ namespace {
     }
 } // namespace
 template <class D>
-void apply(const D& d,
-    std::array<double, 3>& acc_j2,
-    std::array<double, 3>& acc_total)
+auto apply(const D& d)
 {
-    acc_j2 = d.getPosition();
+    auto acc_j2 = d.getPosition();
     const double x2y2z2 = std::inner_product(acc_j2.cbegin(), acc_j2.cend(), acc_j2.cbegin(), 0.0);
     // Eq 7
     const double divisor_1 = getFactor_first() / std::sqrt(x2y2z2);
@@ -58,9 +54,7 @@ void apply(const D& d,
     acc_j2[1] *= factor_snd;
     factor_snd = 9 * divisor_2 - z2_15;
     acc_j2[2] *= factor_snd;
-    acc_total[0] += acc_j2[0];
-    acc_total[1] += acc_j2[1];
-    acc_total[2] += acc_j2[2];
+    return acc_j2;
 }
 
 } // namespace Acceleration
