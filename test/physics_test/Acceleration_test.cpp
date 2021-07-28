@@ -804,11 +804,40 @@ TEST_F(DragComponentTests, CheckDirection)
     // e-3 fails, but e-2 passes
     double abs_err = 1e-2;
     for (int i = 0; i < num_debris; ++i) {
-        IOUtils::to_ostream(accelerations[i],std::cout,",",{"\n[","]\n"});
-        IOUtils::to_ostream(container->getDebrisVector()[i].getVelocity(),std::cout,",",{"[","]\n"});
         EXPECT_NEAR(MathUtils::cosSimilarity(accelerations[i],container->getDebrisVector()[i].getVelocity()), -1, abs_err);
     }
 }
+
+/**
+ * Tests if the length magnitude of the acceleration calculated using
+ * Acceleration::DragComponent::apply() is quadratic to the magnitude of the velocity vector
+ */
+TEST_F(DragComponentTests, CheckQuadraticToVelocity)
+{
+    const int num_debris = 9;
+    std::array<std::array<double, 3>, num_debris> v1_accelerations {};
+    std::array<std::array<double, 3>, num_debris> v2_accelerations {};
+    std::array<std::array<double, 3>, num_debris> v4_accelerations {};
+    std::array<double, 3> acc_total_dummy {};
+
+    // calculate the acceleration for all particles using two different functions
+    for (int i = 0; i < num_debris; ++i) {
+        Debris::Debris d = Debris::Debris(container->getDebrisVector()[i]);
+        v1_accelerations[i] = Acceleration::DragComponent::apply(d);
+        d.setVelocity({d.getVelocity()[0]*2,d.getVelocity()[1]*2,d.getVelocity()[2]*2});
+        v2_accelerations[i] = Acceleration::DragComponent::apply(d);
+        d.setVelocity({d.getVelocity()[0]*2,d.getVelocity()[1]*2,d.getVelocity()[2]*2});
+        v4_accelerations[i] = Acceleration::DragComponent::apply(d);
+    }
+
+    // e-11 fails, but e-10 passes
+    double abs_err = 1e-10;
+    for (int i = 0; i < num_debris; ++i) {
+        EXPECT_NEAR(MathUtils::euclideanNorm(v4_accelerations[i]),MathUtils::euclideanNorm(v2_accelerations[i])*4,abs_err);
+        EXPECT_NEAR(MathUtils::euclideanNorm(v2_accelerations[i]),MathUtils::euclideanNorm(v1_accelerations[i])*4,abs_err);
+    }
+}
+
 
 /**
  * Tests if the acceleration calculated using
