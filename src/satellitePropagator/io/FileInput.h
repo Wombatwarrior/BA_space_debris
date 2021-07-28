@@ -321,19 +321,28 @@ struct FileInput<Container>::TxtLineContent FileInput<Container>::tokenizeLine(
 template <class Container>
 void FileInput<Container>::setDebrisValues(typename Container::Particle_t& d, const std::string& line)
 {
+    // input line format: position|velocity|acc_t0|acc_t1|aom|bc_inc
+    // index after position
     auto position_split_pos = line.find('|');
+    // index after velocity
     auto velocity_split_pos = line.find('|', position_split_pos + 1);
+    // index after acc_t0
     auto acc_split_pos = line.find('|', velocity_split_pos + 1);
+    // index after acc_t1
     auto aom_split_pos = line.find('|', acc_split_pos + 1);
+    // index after aom
     auto bc_inv_split_pos = line.find('|', aom_split_pos + 1);
+    // get substrings representing the single values
     std::string position_str = line.substr(0, position_split_pos);
     std::string velocity_str = line.substr(position_split_pos + 1, velocity_split_pos);
     std::string acc_t0_str = line.substr(velocity_split_pos + 1, acc_split_pos);
     std::string acc_t1_str = line.substr(acc_split_pos + 1, aom_split_pos);
     std::string aom_str = line.substr(aom_split_pos + 1, bc_inv_split_pos);
     std::string bc_inv_str = line.substr(bc_inv_split_pos + 1);
+    // used to parse vectors from the strings
     std::array<double, 3> vec {};
 
+    // split position_str into x,y,z and set debris value
     auto x_split_pos = position_str.find(',');
     auto y_split_pos = position_str.find(',', x_split_pos + 1);
     vec[0] = stod(position_str.substr(0, x_split_pos));
@@ -341,6 +350,7 @@ void FileInput<Container>::setDebrisValues(typename Container::Particle_t& d, co
     vec[2] = stod(position_str.substr(y_split_pos + 1));
     d.setPosition(vec);
 
+    // split velocity_str into x,y,z and set debris value
     x_split_pos = velocity_str.find(',');
     y_split_pos = velocity_str.find(',', x_split_pos + 1);
     vec[0] = stod(velocity_str.substr(0, x_split_pos));
@@ -348,6 +358,7 @@ void FileInput<Container>::setDebrisValues(typename Container::Particle_t& d, co
     vec[2] = stod(velocity_str.substr(y_split_pos + 1));
     d.setVelocity(vec);
 
+    // split acc_t0_str into x,y,z and set debris value
     x_split_pos = acc_t0_str.find(',');
     y_split_pos = acc_t0_str.find(',', x_split_pos + 1);
     vec[0] = stod(acc_t0_str.substr(0, x_split_pos));
@@ -355,6 +366,7 @@ void FileInput<Container>::setDebrisValues(typename Container::Particle_t& d, co
     vec[2] = stod(acc_t0_str.substr(y_split_pos + 1));
     d.setAccT0(vec);
 
+    // split acc_t1_str into x,y,z and set debris value
     x_split_pos = acc_t1_str.find(',');
     y_split_pos = acc_t1_str.find(',', x_split_pos + 1);
     vec[0] = stod(acc_t1_str.substr(0, x_split_pos));
@@ -362,8 +374,10 @@ void FileInput<Container>::setDebrisValues(typename Container::Particle_t& d, co
     vec[2] = stod(acc_t1_str.substr(y_split_pos + 1));
     d.setAccT1(vec);
 
+    // parse aom value and set debris value
     d.setAom(stod(aom_str));
 
+    // parse bc_inv value and set debris value
     d.setBcInv(stod(bc_inv_str));
 }
 
