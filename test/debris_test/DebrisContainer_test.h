@@ -164,9 +164,9 @@ protected:
     {
         char *argv[] ={
                 (char*)"test",
-                (char*)"../test_files/dummy_debris_test_input.txt",
+                (char*)"test_files/dummy_debris_test_input.txt",
                 (char*)"-o",
-                (char*)"../test_files/dummy_debris_test_output.csv",
+                (char*)"test_files/dummy_debris_test_output.csv",
                 nullptr
         };
         command_line = std::make_shared<CommandLineInput>(4, argv);

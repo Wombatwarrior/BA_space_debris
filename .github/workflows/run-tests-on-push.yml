@@ -12,5 +12,4 @@ jobs:
       - run: cd build
       - run: cmake .. .
       - run: cmake --build . --target debris_sim_test
-      - run: ls
       - run: ./debris_sim_test
