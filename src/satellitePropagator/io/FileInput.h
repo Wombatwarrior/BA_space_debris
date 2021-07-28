@@ -399,7 +399,7 @@ void FileInput<Container>::readDebrisTXT()
     std::ifstream input_file(input_file_path);
     std::string line;
     struct TxtLineContent line_content;
-    Debris::Debris d;
+    typename Container::Particle_t d;
     if (input_file.is_open()) {
         while (std::getline(input_file, line)) {
             if (line.empty() or line[0] == '#') {
