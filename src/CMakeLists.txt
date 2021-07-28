@@ -15,11 +15,14 @@ target_include_directories(${BINARY}_lib
                            .
 )
 
-add_executable(${BINARY} debris_sim.cpp)
+option(DebrisSim_Simulation "Build the simulation executable" ON)
+if(DebrisSim_Simulation)
+    add_executable(${BINARY} debris_sim.cpp)
 
-target_link_libraries(${BINARY}
-        # stuff that is used in headers and source files
-        PRIVATE
-        ${BINARY}_lib
-        log4cxx
-)
+    target_link_libraries(${BINARY}
+            # stuff that is used in headers and source files
+            PRIVATE
+            ${BINARY}_lib
+            log4cxx
+    )
+endif()
