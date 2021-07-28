@@ -10,8 +10,10 @@ TEST_F(GenericDebrisTests, RunSimulationWithDummyDebris)
     double current_time = file_input->getStartT();
     int iteration = 0;
     double time_till_write = file_input->getWriteDeltaT();
-    // write starting conditions
-    file_output->writeDebrisData(file_input->getStartT());
+    std::cout << "Starting simulation" << std::endl;
+    for (auto& d : container->getDebrisVector()) {
+        std::cout << d.toString() << std::endl;
+    }
     while (current_time <= file_input->getEndT()) {
         iteration++;
         time_till_write -= file_input->getDeltaT();
@@ -24,7 +26,9 @@ TEST_F(GenericDebrisTests, RunSimulationWithDummyDebris)
         }
         current_time += file_input->getDeltaT();
     }
-    // save end configuration
-    file_output->writeDebrisData(file_input->getEndT());
+    std::cout << "Simulation completed" << std::endl;
+    for (auto& d : container->getDebrisVector()) {
+        std::cout << d.toString() << std::endl;
+    }
 }
 
