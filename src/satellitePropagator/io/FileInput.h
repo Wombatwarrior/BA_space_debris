@@ -37,16 +37,16 @@ public:
      * Constructor reads in the data from the given input file of the given
      * InputFileType and safes the result in the private member variables.
      *
-     * @param debris_arg Reference to the Debris:DebrisContainer object to add
+     * @param container_arg Reference to the Debris:DebrisContainer object to add
      * Debris::Debris objects to
      * @param input_file_path_arg Complete name of the input file to read data
      * from
      * @param input_file_type_arg InputFileType of the input file
      */
-    FileInput(Container& debris_arg,
+    FileInput(Container& container_arg,
         std::filesystem::path input_file_path_arg,
         InputFile::Type input_file_type_arg)
-        : debris(&debris_arg)
+        : container(&container_arg)
         , input_file_path(std::move(input_file_path_arg))
         , input_file_type(input_file_type_arg)
     {
@@ -151,7 +151,7 @@ private:
     void readDebrisTXT();
 
     Debris::DebrisContainer<D>*
-        debris
+        container
         = nullptr; /**< Reference to a Debris::DebrisContainer object to add
              Debris::Debris objects read from the input file*/
     std::filesystem::path input_file_path {}; /**< Complete name of the input file containing
@@ -180,19 +180,19 @@ private:
 
 public:
     /**
-     * @brief Getter function for #debris
+     * @brief Getter function for #container
      *
-     * @return Value of #debris
+     * @return Value of #container
      */
-    [[nodiscard]] const Debris::DebrisContainer<D>& getDebris() const;
-    Debris::DebrisContainer<D>& getDebris();
+    [[nodiscard]] const Debris::DebrisContainer<D>& getContainer() const;
+    Debris::DebrisContainer<D>& getContainer();
 
     /**
-     * @brief Setter function for #debris
+     * @brief Setter function for #container
      *
-     * @param debris New value of #debris
+     * @param container New value of #container
      */
-    void setDebris(Debris::DebrisContainer<D>& debris);
+    void setContainer(Debris::DebrisContainer<D>& container);
 
     /**
      * @brief Getter function for #input_file_path
@@ -408,7 +408,7 @@ void FileInput<Container, D>::readDebrisTXT()
                 setConfigValues(line_content.value);
             } else if (line_content.token == "debris") {
                 setDebrisValues(d, line_content.value);
-                debris->addDebris(d);
+                container->addDebris(d);
             } else {
                 // unknown token
             }
@@ -417,21 +417,21 @@ void FileInput<Container, D>::readDebrisTXT()
 }
 
 template <class Container, class D>
-const Debris::DebrisContainer<D>& FileInput<Container, D>::getDebris() const
+const Debris::DebrisContainer<D>& FileInput<Container, D>::getContainer() const
 {
-    return *debris;
+    return *container;
 }
 
 template <class Container, class D>
-Debris::DebrisContainer<D>& FileInput<Container, D>::getDebris()
+Debris::DebrisContainer<D>& FileInput<Container, D>::getContainer()
 {
-    return *debris;
+    return *container;
 }
 
 template <class Container, class D>
-void FileInput<Container, D>::setDebris(Debris::DebrisContainer<D>& debris)
+void FileInput<Container, D>::setContainer(Debris::DebrisContainer<D>& container)
 {
-    FileInput<Container, D>::debris = &debris;
+    FileInput<Container, D>::container = &container;
 }
 
 template <class Container, class D>

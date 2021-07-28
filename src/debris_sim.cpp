@@ -30,14 +30,14 @@ void initSimulation(int argc, char** argv)
 {
     try {
         command_line = std::make_shared<CommandLineInput<Debris::Debris>>(argc, argv);
-        debris = std::make_shared<Debris::DebrisContainer<Debris::Debris>>();
-        file_input = std::make_shared<FileInput<Debris::DebrisContainer<Debris::Debris>, Debris::Debris>>(*debris, command_line->getInputFilePath(),
+        container = std::make_shared<Debris::DebrisContainer<Debris::Debris>>();
+        file_input = std::make_shared<FileInput<Debris::DebrisContainer<Debris::Debris>, Debris::Debris>>(*container, command_line->getInputFilePath(),
             command_line->getInputFileType());
-        file_output = std::make_shared<FileOutput<Debris::DebrisContainer<Debris::Debris>, Debris::Debris>>(*debris, command_line->getOutputFilePath(),
+        file_output = std::make_shared<FileOutput<Debris::DebrisContainer<Debris::Debris>, Debris::Debris>>(*container, command_line->getOutputFilePath(),
             command_line->getOutputFileType(), file_input->getAccConfig());
         accumulator = std::make_shared<Acceleration::AccelerationAccumulator<Debris::DebrisContainer<Debris::Debris>, Debris::Debris>>(
-            file_input->getAccConfig(), *debris, file_input->getStartT(), *file_output);
-        integrator = std::make_shared<Integrator<Debris::DebrisContainer<Debris::Debris>, Debris::Debris>>(*debris, *accumulator,
+            file_input->getAccConfig(), *container, file_input->getStartT(), *file_output);
+        integrator = std::make_shared<Integrator<Debris::DebrisContainer<Debris::Debris>, Debris::Debris>>(*container, *accumulator,
             file_input->getDeltaT());
     }
     // if something went wrong with the command line parsing
@@ -50,7 +50,7 @@ void initSimulation(int argc, char** argv)
 void runSimulation()
 {
     double current_time = file_input->getStartT();
-    for (auto& d : debris->getDebrisVector()) {
+    for (auto& d : container->getDebrisVector()) {
         LOG4CXX_INFO(logger, d.toString());
     }
     int iteration = 0;
@@ -60,7 +60,7 @@ void runSimulation()
     while (current_time <= file_input->getEndT()) {
         iteration++;
         if (iteration % 3000 == 0) {
-            for (auto& d : debris->getDebrisVector()) {
+            for (auto& d : container->getDebrisVector()) {
                 LOG4CXX_DEBUG(logger, iteration << d.toString());
             }
         }
@@ -76,7 +76,7 @@ void runSimulation()
     }
     // save end configuration
     file_output->writeDebrisData(file_input->getEndT());
-    for (auto& d : debris->getDebrisVector()) {
+    for (auto& d : container->getDebrisVector()) {
         LOG4CXX_INFO(logger, d.toString());
     }
 }

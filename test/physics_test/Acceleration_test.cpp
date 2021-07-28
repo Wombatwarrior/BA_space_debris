@@ -20,11 +20,11 @@ TEST_F(KepComponentTests, RadialSymmetryTest)
     // calculate the acceleration for all particles and accumulate the results in
     // accelerations[3]
     for (int i = 0; i < 3; ++i) {
-        Acceleration::KepComponent::apply(debris->getDebrisVector()[i],
+        Acceleration::KepComponent::apply(container->getDebrisVector()[i],
             accelerations[i], accelerations[3]);
     }
     for (int i = 3; i < 6; ++i) {
-        Acceleration::KepComponent::apply(debris->getDebrisVector()[i],
+        Acceleration::KepComponent::apply(container->getDebrisVector()[i],
             accelerations[i + 1], accelerations[7]);
     }
 
@@ -77,9 +77,9 @@ TEST_F(KepComponentTests, CalculationEquivalenceTest)
 
     // calculate the acceleration for all particles using two different functions
     for (int i = 0; i < num_debris; ++i) {
-        Acceleration::KepComponent::apply(debris->getDebrisVector()[i],
+        Acceleration::KepComponent::apply(container->getDebrisVector()[i],
             accelerations_1[i], acc_total_dummy);
-        calcKep(debris->getDebrisVector()[i], accelerations_2[i]);
+        calcKep(container->getDebrisVector()[i], accelerations_2[i]);
     }
 
     // e-17 fails, but e-16 passes
@@ -104,7 +104,7 @@ TEST_F(KepComponentTests, EquilavelnceWIthPreCalculatedTest)
 
     // calculate the acceleration for all particles using two different functions
     for (int i = 6; i < 6 + num_debris; ++i) {
-        Acceleration::KepComponent::apply(debris->getDebrisVector()[i],
+        Acceleration::KepComponent::apply(container->getDebrisVector()[i],
             accelerations[i - 6], acc_total_dummy);
     }
 
@@ -131,9 +131,9 @@ TEST_F(J2ComponentTests, CalculationEquivalenceTest)
 
     // calculate the acceleration for all particles using two different functions
     for (int i = 0; i < num_debris; ++i) {
-        Acceleration::J2Component::apply(debris->getDebrisVector()[i],
+        Acceleration::J2Component::apply(container->getDebrisVector()[i],
             accelerations_1[i], acc_total_dummy);
-        calcJ2(debris->getDebrisVector()[i], accelerations_2[i]);
+        calcJ2(container->getDebrisVector()[i], accelerations_2[i]);
     }
 
     // 10e-20 fails, but e-19 passes
@@ -158,7 +158,7 @@ TEST_F(J2ComponentTests, EquilavelnceWIthPreCalculatedTest)
 
     // calculate the acceleration for all particles using two different functions
     for (int i = 0; i < num_debris; ++i) {
-        Acceleration::J2Component::apply(debris->getDebrisVector()[i],
+        Acceleration::J2Component::apply(container->getDebrisVector()[i],
             accelerations[i], acc_total_dummy);
     }
 
@@ -188,10 +188,10 @@ TEST_F(C22ComponentTests, CalculationEquivalenceTest)
 
     // calculate the acceleration for all particles using two different functions
     for (int i = 0; i < num_debris; ++i) {
-        Acceleration::C22Component::apply(debris->getDebrisVector()[i], c_term,
+        Acceleration::C22Component::apply(container->getDebrisVector()[i], c_term,
             s_term, accelerations_1[i],
             acc_total_dummy);
-        calcC22(debris->getDebrisVector()[i], t, accelerations_2[i]);
+        calcC22(container->getDebrisVector()[i], t, accelerations_2[i]);
     }
 
     // e-23 fails, but e-22 passes
@@ -219,7 +219,7 @@ TEST_F(C22ComponentTests, EquilavelnceWIthPreCalculatedTest)
 
     // calculate the acceleration for all particles using two different functions
     for (int i = 0; i < num_debris; ++i) {
-        Acceleration::C22Component::apply(debris->getDebrisVector()[i], c_term,
+        Acceleration::C22Component::apply(container->getDebrisVector()[i], c_term,
             s_term, accelerations[i],
             acc_total_dummy);
     }
@@ -250,10 +250,10 @@ TEST_F(S22ComponentTests, CalculationEquivalenceTest)
 
     // calculate the acceleration for all particles using two different functions
     for (int i = 0; i < num_debris; ++i) {
-        Acceleration::S22Component::apply(debris->getDebrisVector()[i], c_term,
+        Acceleration::S22Component::apply(container->getDebrisVector()[i], c_term,
             s_term, accelerations_1[i],
             acc_total_dummy);
-        calcS22(debris->getDebrisVector()[i], t, accelerations_2[i]);
+        calcS22(container->getDebrisVector()[i], t, accelerations_2[i]);
     }
 
     // e-23 fails, but e-22 passes
@@ -281,7 +281,7 @@ TEST_F(S22ComponentTests, EquilavelnceWIthPreCalculatedTest)
 
     // calculate the acceleration for all particles using two different functions
     for (int i = 0; i < num_debris; ++i) {
-        Acceleration::S22Component::apply(debris->getDebrisVector()[i], c_term,
+        Acceleration::S22Component::apply(container->getDebrisVector()[i], c_term,
             s_term, accelerations[i],
             acc_total_dummy);
     }
@@ -314,10 +314,10 @@ TEST_F(LunComponentTests, CalculationEquivalenceTest)
         // calculate the acceleration for all particles using two different
         // functions
         for (int i = 0; i < num_debris; ++i) {
-            Acceleration::LunComponent::apply(debris->getDebrisVector()[i],
+            Acceleration::LunComponent::apply(container->getDebrisVector()[i],
                 moon_params, accelerations_1[i],
                 acc_total_dummy);
-            calcLun(debris->getDebrisVector()[i], t * j, accelerations_2[i]);
+            calcLun(container->getDebrisVector()[i], t * j, accelerations_2[i]);
         }
 
         // 10e-20 fails, but e-19 passes
@@ -345,7 +345,7 @@ TEST_F(LunComponentTests, EquilavelnceWIthPreCalculatedTest)
 
     // calculate the acceleration for all particles using two different functions
     for (int i = 0; i < num_debris; ++i) {
-        Acceleration::LunComponent::apply(debris->getDebrisVector()[i], moon_params,
+        Acceleration::LunComponent::apply(container->getDebrisVector()[i], moon_params,
             accelerations[i], acc_total_dummy);
     }
 
@@ -576,11 +576,11 @@ TEST_F(SolComponentTests, CalculationEquivalenceTest)
         // calculate the acceleration for all particles using two different
         // functions
         for (int i = 0; i < num_debris; ++i) {
-            Acceleration::SolComponent::apply(debris->getDebrisVector()[i],
+            Acceleration::SolComponent::apply(container->getDebrisVector()[i],
                 d_ref,
                 sun_params, accelerations_1[i],
                 acc_total_dummy);
-            calcSol(debris->getDebrisVector()[i], t * j, accelerations_2[i]);
+            calcSol(container->getDebrisVector()[i], t * j, accelerations_2[i]);
         }
 
         // 10e-20 fails, but e-19 passes
@@ -606,7 +606,7 @@ TEST_F(SolComponentTests, EquilavelnceWIthPreCalculatedTest)
 
     // calculate the acceleration for all particles using two different functions
     for (int i = 0; i < num_debris; ++i) {
-        Acceleration::J2Component::apply(debris->getDebrisVector()[i],
+        Acceleration::J2Component::apply(container->getDebrisVector()[i],
             accelerations[i], acc_total_dummy);
     }
 
@@ -657,11 +657,11 @@ TEST_F(SolComponentTests, CompareAfterSetupCalculations)
         // calculate the acceleration for all particles using two different
         // functions
         for (int i = 0; i < num_debris; ++i) {
-            Acceleration::SolComponent::apply(debris->getDebrisVector()[i],
+            Acceleration::SolComponent::apply(container->getDebrisVector()[i],
                 d_ref,
                 sun_params, accelerations_1[i],
                 acc_total_dummy);
-            calcSol(debris->getDebrisVector()[i], t * j, accelerations_2[i]);
+            calcSol(container->getDebrisVector()[i], t * j, accelerations_2[i]);
         }
 
         // 10e-20 fails, but e-19 passes
@@ -693,13 +693,13 @@ TEST_F(C22S22ComponentTests, CalculationEquivalenceTest)
 
     // calculate the acceleration for all particles using two different functions
     for (int i = 0; i < num_debris; ++i) {
-        Acceleration::C22Component::apply(debris->getDebrisVector()[i], c_term,
+        Acceleration::C22Component::apply(container->getDebrisVector()[i], c_term,
             s_term, accelerations_1[i],
             acc_total_dummy);
-        Acceleration::S22Component::apply(debris->getDebrisVector()[i], c_term,
+        Acceleration::S22Component::apply(container->getDebrisVector()[i], c_term,
             s_term, accelerations_2[i],
             acc_total_dummy);
-        Acceleration::C22S22Component::apply(debris->getDebrisVector()[i], c_term,
+        Acceleration::C22S22Component::apply(container->getDebrisVector()[i], c_term,
             s_term, accelerations_3[i],
             acc_total_dummy);
     }
@@ -733,17 +733,17 @@ TEST_F(SRPComponentTests, CalculationEquivalenceTest)
         std::array<double, 6> sun_params = Acceleration::SRPComponent::setUp(t * j);
         // calculate the acceleration for all particles using two different
         // functions
-        for (int i = 0; i < debris->getDebrisVector().size(); ++i) {
-            Acceleration::SRPComponent::apply(debris->getDebrisVector()[i],
+        for (int i = 0; i < container->getDebrisVector().size(); ++i) {
+            Acceleration::SRPComponent::apply(container->getDebrisVector()[i],
                 d_ref,
                 sun_params, accelerations_1[i],
                 acc_total_dummy);
-            calcSRP(debris->getDebrisVector()[i], t * j, accelerations_2[i]);
+            calcSRP(container->getDebrisVector()[i], t * j, accelerations_2[i]);
         }
 
         // result is identical
         double abs_err = 1e-16;
-        for (int i = 0; i < debris->getDebrisVector().size(); ++i) {
+        for (int i = 0; i < container->getDebrisVector().size(); ++i) {
             EXPECT_NEAR(accelerations_1[i][0], accelerations_2[i][0], abs_err);
             EXPECT_NEAR(accelerations_1[i][1], accelerations_2[i][1], abs_err);
             EXPECT_NEAR(accelerations_1[i][2], accelerations_2[i][2], abs_err);
@@ -763,8 +763,8 @@ TEST_F(SRPComponentTests, EquilavelnceWIthPreCalculatedTest)
     std::array<double, 3> acc_total_dummy {};
 
     // calculate the acceleration for all particles using two different functions
-    for (int i = 0; i < debris->getDebrisVector().size(); ++i) {
-        Acceleration::J2Component::apply(debris->getDebrisVector()[i],
+    for (int i = 0; i < container->getDebrisVector().size(); ++i) {
+        Acceleration::J2Component::apply(container->getDebrisVector()[i],
             accelerations[i], acc_total_dummy);
     }
 
@@ -791,9 +791,9 @@ TEST_F(DragComponentTests, CalculationEquivalenceTest)
 
     // calculate the acceleration for all particles using two different functions
     for (int i = 0; i < num_debris; ++i) {
-        Acceleration::DragComponent::apply(debris->getDebrisVector()[i],
+        Acceleration::DragComponent::apply(container->getDebrisVector()[i],
             accelerations_1[i], acc_total_dummy);
-        calcDrag(debris->getDebrisVector()[i], accelerations_2[i]);
+        calcDrag(container->getDebrisVector()[i], accelerations_2[i]);
     }
 
     // no error
@@ -818,7 +818,7 @@ TEST_F(DragComponentTests, EquilavelnceWIthPreCalculatedTest)
 
     // calculate the acceleration for all particles using two different functions
     for (int i = 0; i < num_debris; ++i) {
-        Acceleration::DragComponent::apply(debris->getDebrisVector()[i],
+        Acceleration::DragComponent::apply(container->getDebrisVector()[i],
             accelerations[i], acc_total_dummy);
     }
 

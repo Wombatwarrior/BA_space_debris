@@ -386,76 +386,76 @@ protected:
 
         std::cout << std::to_string(time_stamp) + "/heyoka_drag.csv" << std::endl;
         // setup own integrator for all components
-        auto* debris = new Debris::DebrisContainer<Debris::Debris>;
+        auto* container = new Debris::DebrisContainer<Debris::Debris>;
         std::array<bool, 8> config { true, true, true, true, true, true, true, true };
 
-        i_total_out = new FileOutput<Debris::DebrisContainer<Debris::Debris>, Debris::Debris>(*debris, std::filesystem::path(std::to_string(time_stamp) + "/integrator_total.csv"), OutputFile::Type::CSV, config);
-        aa_total = new Acceleration::AccelerationAccumulator<Debris::DebrisContainer<Debris::Debris>, Debris::Debris>(config, *debris, start_t, *i_total_out);
-        i_total = new Integrator<Debris::DebrisContainer<Debris::Debris>, Debris::Debris>(*debris, *aa_total, delta_t);
+        i_total_out = new FileOutput<Debris::DebrisContainer<Debris::Debris>, Debris::Debris>(*container, std::filesystem::path(std::to_string(time_stamp) + "/integrator_total.csv"), OutputFile::Type::CSV, config);
+        aa_total = new Acceleration::AccelerationAccumulator<Debris::DebrisContainer<Debris::Debris>, Debris::Debris>(config, *container, start_t, *i_total_out);
+        i_total = new Integrator<Debris::DebrisContainer<Debris::Debris>, Debris::Debris>(*container, *aa_total, delta_t);
 
-        debris = new Debris::DebrisContainer<Debris::Debris>;
+        container = new Debris::DebrisContainer<Debris::Debris>;
         config = { false, false, false, false, false, false, false, false };
         config[Acceleration::KEP] = true;
-        i_components_out[Acceleration::KEP] = new FileOutput<Debris::DebrisContainer<Debris::Debris>, Debris::Debris>(*debris, std::filesystem::path(std::to_string(time_stamp) + "/integrator_kep.csv"), OutputFile::Type::CSV, config);
-        aa_components[Acceleration::KEP] = new Acceleration::AccelerationAccumulator<Debris::DebrisContainer<Debris::Debris>, Debris::Debris>(config, *debris, start_t, *i_components_out[Acceleration::KEP]);
-        i_components[Acceleration::KEP] = new Integrator<Debris::DebrisContainer<Debris::Debris>, Debris::Debris>(*debris, *aa_components[Acceleration::KEP], delta_t);
+        i_components_out[Acceleration::KEP] = new FileOutput<Debris::DebrisContainer<Debris::Debris>, Debris::Debris>(*container, std::filesystem::path(std::to_string(time_stamp) + "/integrator_kep.csv"), OutputFile::Type::CSV, config);
+        aa_components[Acceleration::KEP] = new Acceleration::AccelerationAccumulator<Debris::DebrisContainer<Debris::Debris>, Debris::Debris>(config, *container, start_t, *i_components_out[Acceleration::KEP]);
+        i_components[Acceleration::KEP] = new Integrator<Debris::DebrisContainer<Debris::Debris>, Debris::Debris>(*container, *aa_components[Acceleration::KEP], delta_t);
         config[Acceleration::KEP] = false;
 
-        debris = new Debris::DebrisContainer<Debris::Debris>;
+        container = new Debris::DebrisContainer<Debris::Debris>;
         config[Acceleration::J2] = true;
-        i_components_out[Acceleration::J2] = new FileOutput<Debris::DebrisContainer<Debris::Debris>, Debris::Debris>(*debris, std::filesystem::path(std::to_string(time_stamp) + "/integrator_j2.csv"), OutputFile::Type::CSV, config);
-        aa_components[Acceleration::J2] = new Acceleration::AccelerationAccumulator<Debris::DebrisContainer<Debris::Debris>, Debris::Debris>(config, *debris, start_t, *i_components_out[Acceleration::J2]);
-        i_components[Acceleration::J2] = new Integrator<Debris::DebrisContainer<Debris::Debris>, Debris::Debris>(*debris, *aa_components[Acceleration::J2], delta_t);
+        i_components_out[Acceleration::J2] = new FileOutput<Debris::DebrisContainer<Debris::Debris>, Debris::Debris>(*container, std::filesystem::path(std::to_string(time_stamp) + "/integrator_j2.csv"), OutputFile::Type::CSV, config);
+        aa_components[Acceleration::J2] = new Acceleration::AccelerationAccumulator<Debris::DebrisContainer<Debris::Debris>, Debris::Debris>(config, *container, start_t, *i_components_out[Acceleration::J2]);
+        i_components[Acceleration::J2] = new Integrator<Debris::DebrisContainer<Debris::Debris>, Debris::Debris>(*container, *aa_components[Acceleration::J2], delta_t);
         config[Acceleration::J2] = false;
 
-        debris = new Debris::DebrisContainer<Debris::Debris>;
+        container = new Debris::DebrisContainer<Debris::Debris>;
         config[Acceleration::C22] = true;
-        i_components_out[Acceleration::C22] = new FileOutput<Debris::DebrisContainer<Debris::Debris>, Debris::Debris>(*debris, std::filesystem::path(std::to_string(time_stamp) + "/integrator_c22.csv"), OutputFile::Type::CSV, config);
-        aa_components[Acceleration::C22] = new Acceleration::AccelerationAccumulator<Debris::DebrisContainer<Debris::Debris>, Debris::Debris>(config, *debris, start_t, *i_components_out[Acceleration::C22]);
-        i_components[Acceleration::C22] = new Integrator<Debris::DebrisContainer<Debris::Debris>, Debris::Debris>(*debris, *aa_components[Acceleration::C22], delta_t);
+        i_components_out[Acceleration::C22] = new FileOutput<Debris::DebrisContainer<Debris::Debris>, Debris::Debris>(*container, std::filesystem::path(std::to_string(time_stamp) + "/integrator_c22.csv"), OutputFile::Type::CSV, config);
+        aa_components[Acceleration::C22] = new Acceleration::AccelerationAccumulator<Debris::DebrisContainer<Debris::Debris>, Debris::Debris>(config, *container, start_t, *i_components_out[Acceleration::C22]);
+        i_components[Acceleration::C22] = new Integrator<Debris::DebrisContainer<Debris::Debris>, Debris::Debris>(*container, *aa_components[Acceleration::C22], delta_t);
         config[Acceleration::C22] = false;
 
-        debris = new Debris::DebrisContainer<Debris::Debris>;
+        container = new Debris::DebrisContainer<Debris::Debris>;
         config[Acceleration::S22] = true;
-        i_components_out[Acceleration::S22] = new FileOutput<Debris::DebrisContainer<Debris::Debris>, Debris::Debris>(*debris, std::filesystem::path(std::to_string(time_stamp) + "/integrator_s22.csv"), OutputFile::Type::CSV, config);
-        aa_components[Acceleration::S22] = new Acceleration::AccelerationAccumulator<Debris::DebrisContainer<Debris::Debris>, Debris::Debris>(config, *debris, start_t, *i_components_out[Acceleration::S22]);
-        i_components[Acceleration::S22] = new Integrator<Debris::DebrisContainer<Debris::Debris>, Debris::Debris>(*debris, *aa_components[Acceleration::S22], delta_t);
+        i_components_out[Acceleration::S22] = new FileOutput<Debris::DebrisContainer<Debris::Debris>, Debris::Debris>(*container, std::filesystem::path(std::to_string(time_stamp) + "/integrator_s22.csv"), OutputFile::Type::CSV, config);
+        aa_components[Acceleration::S22] = new Acceleration::AccelerationAccumulator<Debris::DebrisContainer<Debris::Debris>, Debris::Debris>(config, *container, start_t, *i_components_out[Acceleration::S22]);
+        i_components[Acceleration::S22] = new Integrator<Debris::DebrisContainer<Debris::Debris>, Debris::Debris>(*container, *aa_components[Acceleration::S22], delta_t);
         config[Acceleration::S22] = false;
 
-        debris = new Debris::DebrisContainer<Debris::Debris>;
+        container = new Debris::DebrisContainer<Debris::Debris>;
         config[Acceleration::LUN] = true;
-        i_components_out[Acceleration::LUN] = new FileOutput<Debris::DebrisContainer<Debris::Debris>, Debris::Debris>(*debris, std::filesystem::path(std::to_string(time_stamp) + "/integrator_lun.csv"), OutputFile::Type::CSV, config);
-        aa_components[Acceleration::LUN] = new Acceleration::AccelerationAccumulator<Debris::DebrisContainer<Debris::Debris>, Debris::Debris>(config, *debris, start_t, *i_components_out[Acceleration::LUN]);
-        i_components[Acceleration::LUN] = new Integrator<Debris::DebrisContainer<Debris::Debris>, Debris::Debris>(*debris, *aa_components[Acceleration::LUN], delta_t);
+        i_components_out[Acceleration::LUN] = new FileOutput<Debris::DebrisContainer<Debris::Debris>, Debris::Debris>(*container, std::filesystem::path(std::to_string(time_stamp) + "/integrator_lun.csv"), OutputFile::Type::CSV, config);
+        aa_components[Acceleration::LUN] = new Acceleration::AccelerationAccumulator<Debris::DebrisContainer<Debris::Debris>, Debris::Debris>(config, *container, start_t, *i_components_out[Acceleration::LUN]);
+        i_components[Acceleration::LUN] = new Integrator<Debris::DebrisContainer<Debris::Debris>, Debris::Debris>(*container, *aa_components[Acceleration::LUN], delta_t);
         config[Acceleration::LUN] = false;
 
-        debris = new Debris::DebrisContainer<Debris::Debris>;
+        container = new Debris::DebrisContainer<Debris::Debris>;
         config[Acceleration::SOL] = true;
-        i_components_out[Acceleration::SOL] = new FileOutput<Debris::DebrisContainer<Debris::Debris>, Debris::Debris>(*debris, std::filesystem::path(std::to_string(time_stamp) + "/integrator_sol.csv"), OutputFile::Type::CSV, config);
-        aa_components[Acceleration::SOL] = new Acceleration::AccelerationAccumulator<Debris::DebrisContainer<Debris::Debris>, Debris::Debris>(config, *debris, start_t, *i_components_out[Acceleration::SOL]);
-        i_components[Acceleration::SOL] = new Integrator<Debris::DebrisContainer<Debris::Debris>, Debris::Debris>(*debris, *aa_components[Acceleration::SOL], delta_t);
+        i_components_out[Acceleration::SOL] = new FileOutput<Debris::DebrisContainer<Debris::Debris>, Debris::Debris>(*container, std::filesystem::path(std::to_string(time_stamp) + "/integrator_sol.csv"), OutputFile::Type::CSV, config);
+        aa_components[Acceleration::SOL] = new Acceleration::AccelerationAccumulator<Debris::DebrisContainer<Debris::Debris>, Debris::Debris>(config, *container, start_t, *i_components_out[Acceleration::SOL]);
+        i_components[Acceleration::SOL] = new Integrator<Debris::DebrisContainer<Debris::Debris>, Debris::Debris>(*container, *aa_components[Acceleration::SOL], delta_t);
         config[Acceleration::SOL] = false;
 
-        debris = new Debris::DebrisContainer<Debris::Debris>;
+        container = new Debris::DebrisContainer<Debris::Debris>;
         config[Acceleration::SRP] = true;
-        i_components_out[Acceleration::SRP] = new FileOutput<Debris::DebrisContainer<Debris::Debris>, Debris::Debris>(*debris, std::filesystem::path(std::to_string(time_stamp) + "/integrator_srp.csv"), OutputFile::Type::CSV, config);
-        aa_components[Acceleration::SRP] = new Acceleration::AccelerationAccumulator<Debris::DebrisContainer<Debris::Debris>, Debris::Debris>(config, *debris, start_t, *i_components_out[Acceleration::SRP]);
-        i_components[Acceleration::SRP] = new Integrator<Debris::DebrisContainer<Debris::Debris>, Debris::Debris>(*debris, *aa_components[Acceleration::SRP], delta_t);
+        i_components_out[Acceleration::SRP] = new FileOutput<Debris::DebrisContainer<Debris::Debris>, Debris::Debris>(*container, std::filesystem::path(std::to_string(time_stamp) + "/integrator_srp.csv"), OutputFile::Type::CSV, config);
+        aa_components[Acceleration::SRP] = new Acceleration::AccelerationAccumulator<Debris::DebrisContainer<Debris::Debris>, Debris::Debris>(config, *container, start_t, *i_components_out[Acceleration::SRP]);
+        i_components[Acceleration::SRP] = new Integrator<Debris::DebrisContainer<Debris::Debris>, Debris::Debris>(*container, *aa_components[Acceleration::SRP], delta_t);
         config[Acceleration::SRP] = false;
 
-        debris = new Debris::DebrisContainer<Debris::Debris>;
+        container = new Debris::DebrisContainer<Debris::Debris>;
         config[Acceleration::DRAG] = true;
-        i_components_out[Acceleration::DRAG] = new FileOutput<Debris::DebrisContainer<Debris::Debris>, Debris::Debris>(*debris, std::filesystem::path(std::to_string(time_stamp) + "/integrator_drag.csv"), OutputFile::Type::CSV, config);
-        aa_components[Acceleration::DRAG] = new Acceleration::AccelerationAccumulator<Debris::DebrisContainer<Debris::Debris>, Debris::Debris>(config, *debris, start_t, *i_components_out[Acceleration::DRAG]);
-        i_components[Acceleration::DRAG] = new Integrator<Debris::DebrisContainer<Debris::Debris>, Debris::Debris>(*debris, *aa_components[Acceleration::DRAG], delta_t);
+        i_components_out[Acceleration::DRAG] = new FileOutput<Debris::DebrisContainer<Debris::Debris>, Debris::Debris>(*container, std::filesystem::path(std::to_string(time_stamp) + "/integrator_drag.csv"), OutputFile::Type::CSV, config);
+        aa_components[Acceleration::DRAG] = new Acceleration::AccelerationAccumulator<Debris::DebrisContainer<Debris::Debris>, Debris::Debris>(config, *container, start_t, *i_components_out[Acceleration::DRAG]);
+        i_components[Acceleration::DRAG] = new Integrator<Debris::DebrisContainer<Debris::Debris>, Debris::Debris>(*container, *aa_components[Acceleration::DRAG], delta_t);
         config[Acceleration::DRAG] = false;
     }
 
     template <class Container, class D>
     void prepareRun(Integrator<Container, D>& i, heyoka::taylor_adaptive<double>& ta, D& d)
     {
-        i.getDebris().cleanDebrisVector();
-        i.getDebris().addDebris(d);
+        i.getContainer().cleanDebrisVector();
+        i.getContainer().addDebris(d);
         ta.get_state_data()[0] = d.getPosition()[0];
         ta.get_state_data()[1] = d.getPosition()[1];
         ta.get_state_data()[2] = d.getPosition()[2];
@@ -470,8 +470,8 @@ protected:
 
     void showErrors(Integrator<Debris::DebrisContainer<Debris::Debris>, Debris::Debris>& i, heyoka::taylor_adaptive<double>& ta)
     {
-        std::array<double, 3> pos_i = i.getDebris().getDebrisVector()[0].getPosition();
-        std::array<double, 3> vel_i = i.getDebris().getDebrisVector()[0].getVelocity();
+        std::array<double, 3> pos_i = i.getContainer().getDebrisVector()[0].getPosition();
+        std::array<double, 3> vel_i = i.getContainer().getDebrisVector()[0].getVelocity();
         std::array<double, 3> pos_ta { ta.get_state()[0],
             ta.get_state()[1],
             ta.get_state()[2] };

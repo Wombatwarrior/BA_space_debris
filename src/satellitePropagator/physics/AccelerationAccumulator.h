@@ -55,7 +55,7 @@ public:
         double t_arg,
         FileOutput<Container, D>& file_output_arg)
         : config(config_arg)
-        , debris(&container)
+        , container(&container)
         , t(t_arg)
         , file_output(&file_output_arg) {};
 
@@ -70,7 +70,7 @@ public:
      * @brief Applies all Acceleration::AccelerationComponent specified by
      * #config
      *
-     * Loops over all Debris::Debris objects in #debris.
+     * Loops over all Debris::Debris objects in #container.
      * Checks if the corresponding flag in the #config vector is set to true and
      * calls the apply() functions. Sets the #Debris::Debris::acc_t1 value of
      * every Debris::Debris object.
@@ -113,7 +113,7 @@ private:
      */
     std::array<bool, 8> config {};
     Container*
-        debris
+        container
         = nullptr; /**< Reference to the Container object holding the
              Debris::Debris objects to apply acceleration to*/
     double t = 0; /**< current time*/
@@ -135,19 +135,19 @@ public:
     void setConfig(const std::array<bool, 8>& config);
 
     /**
-     * @brief Getter function for #debris
+     * @brief Getter function for #container
      *
-     * @return Value of #debris
+     * @return Value of #container
      */
-    [[nodiscard]] const Container& getDebris() const;
-    Container& getDebris();
+    [[nodiscard]] const Container& getContainer() const;
+    Container& getContainer();
 
     /**
-     * @brief Setter function for #debris
+     * @brief Setter function for #container
      *
-     * @param debris New value of #debris
+     * @param container New value of #container
      */
-    void setDebris(Container& debris);
+    void setContainer(Container& container);
 
     /**
      * @brief Getter function for #t
@@ -219,7 +219,7 @@ void AccelerationAccumulator<Container, D>::applyComponents() const
         s_term = std::sin((Physics::THETA_G + Physics::NU_EARTH * t) * Physics::RAD_FACTOR);
     }
 
-    for (auto& d : *debris) {
+    for (auto& d : *container) {
         new_acc_total[0] = 0;
         new_acc_total[1] = 0;
         new_acc_total[2] = 0;
@@ -294,7 +294,7 @@ void AccelerationAccumulator<Container, D>::applyAmdWriteComponents() const
         s_term = std::sin((Physics::THETA_G + Physics::NU_EARTH * t) * Physics::RAD_FACTOR);
     }
 
-    for (auto& d : *debris) {
+    for (auto& d : *container) {
         // start a new line o data for each particle
         file_output->writeAcc_start(t);
         new_acc_total[0] = 0;
@@ -361,20 +361,20 @@ void AccelerationAccumulator<Container, D>::setConfig(const std::array<bool, 8>&
 }
 
 template <class Container, class D>
-const Container& AccelerationAccumulator<Container, D>::getDebris() const
+const Container& AccelerationAccumulator<Container, D>::getContainer() const
 {
-    return *debris;
+    return *container;
 }
 
 template <class Container, class D>
-Container& AccelerationAccumulator<Container, D>::getDebris()
+Container& AccelerationAccumulator<Container, D>::getContainer()
 {
-    return *debris;
+    return *container;
 }
 template <class Container, class D>
-void AccelerationAccumulator<Container, D>::setDebris(Container& debris)
+void AccelerationAccumulator<Container, D>::setContainer(Container& container)
 {
-    AccelerationAccumulator<Container, D>::debris = &debris;
+    AccelerationAccumulator<Container, D>::container = &container;
 }
 
 template <class Container, class D>

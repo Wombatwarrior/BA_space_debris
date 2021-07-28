@@ -34,17 +34,17 @@ public:
     /**
      * @brief Creates new FileOutput object
      *
-     * Constructor sets #debris, #output_file_path amd #output_file_type private
+     * Constructor sets #container, #output_file_path amd #output_file_type private
      * member variables.
      *
-     * @param debris_arg Reference to the Debris:DebrisContainer object to take
+     * @param container_arg Reference to the Debris:DebrisContainer object to take
      * Debris::Debris objects data from
      * @param output_file_path_arg Path to the main output file to write data
      * to
      * @param output_file_type_arg OutputFileType of the output file
      * @param acc_config Configuration vector for acceleration output
      */
-    FileOutput(Container& debris_arg,
+    FileOutput(Container& container_arg,
         std::filesystem::path output_file_path_arg,
         OutputFile::Type output_file_type_arg,
         std::array<bool, 8>& acc_config);
@@ -106,7 +106,7 @@ private:
     void writeDebrisCSV(double t);
 
     Container*
-        debris; /**< Reference to a Debris::DebrisContainer object to add
+        container; /**< Reference to a Debris::DebrisContainer object to add
              Debris::Debris objects read from the input file*/
     std::filesystem::path output_file_path; /**< Path to the main output file*/
     OutputFile::Type output_file_type = OutputFile::CSV; /**< OutputFileType of the output file*/
@@ -117,19 +117,19 @@ private:
     double acc_row_count = 0; /**< keeps track of the row number for indexing the lines of the acceleration data*/
 public:
     /**
-     * @brief Getter function for #debris
+     * @brief Getter function for #container
      *
-     * @return Value of #debris
+     * @return Value of #container
      */
-    const Container& getDebris() const;
-    Container& getDebris();
+    const Container& getContainer() const;
+    Container& getContainer();
 
     /**
-     * @brief Setter function for #debris
+     * @brief Setter function for #container
      *
-     * @param debris New value of #debris
+     * @param container New value of #container
      */
-    void setDebris(Container& debris);
+    void setContainer(Container& container);
 
     /**
      * @brief Getter function for #output_file_path
@@ -177,11 +177,11 @@ public:
 };
 
 template <class Container, class D>
-FileOutput<Container, D>::FileOutput(Container& debris_arg,
+FileOutput<Container, D>::FileOutput(Container& container_arg,
     std::filesystem::path output_file_path_arg,
     OutputFile::Type output_file_type_arg,
     std::array<bool, 8>& acc_config)
-    : debris(&debris_arg)
+    : container(&container_arg)
     , output_file_path(output_file_path_arg)
     , output_file_type(output_file_type_arg)
     , out(output_file_path)
@@ -266,7 +266,7 @@ void FileOutput<Container, D>::writeDebrisData(double t)
 template <class Container, class D>
 void FileOutput<Container, D>::writeDebrisCSV(double t)
 {
-    for (auto d : debris->getDebrisVector()) {
+    for (auto d : container->getDebrisVector()) {
         out << row_count++ << ',';
         out << t << ',';
         IOUtils::to_ostream(d.getPosition(), out);
@@ -309,21 +309,21 @@ void FileOutput<Container, D>::writeAcc_end(const std::array<double, 3>& vec)
 }
 
 template <class Container, class D>
-const Container& FileOutput<Container, D>::getDebris() const
+const Container& FileOutput<Container, D>::getContainer() const
 {
-    return *debris;
+    return *container;
 }
 
 template <class Container, class D>
-Container& FileOutput<Container, D>::getDebris()
+Container& FileOutput<Container, D>::getContainer()
 {
-    return *debris;
+    return *container;
 }
 
 template <class Container, class D>
-void FileOutput<Container, D>::setDebris(Container& debris)
+void FileOutput<Container, D>::setContainer(Container& container)
 {
-    FileOutput<Container, D>::debris = &debris;
+    FileOutput<Container, D>::container = &container;
 }
 
 template <class Container, class D>
