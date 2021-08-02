@@ -28,8 +28,31 @@ std::array<double, 6> setUp(double t);
      * @param acc_total Reference to an 3D vector to accumulate the accelerations
      * for all applied Acceleration::AccelerationComponent.
      */
-void apply(const Debris::Debris& d,
+template <class D>
+void apply(const D& d,
     const std::array<double, 6>& moon_params,
     std::array<double, 3>& acc_lun,
     std::array<double, 3>& acc_total);
+
+template <class D>
+void apply(const D& d,
+    const std::array<double, 6>& moon_params,
+    std::array<double, 3>& acc_lun,
+    std::array<double, 3>& acc_total)
+{
+    acc_lun = d.getPosition();
+    acc_lun[0] -= moon_params[0];
+    acc_lun[1] -= moon_params[1];
+    acc_lun[2] -= moon_params[2];
+    // Eq 45
+    double d1 = std::inner_product(acc_lun.begin(), acc_lun.end(), acc_lun.begin(), 0.);
+    d1 = 1 / std::sqrt(d1 * d1 * d1);
+    // Eq 46
+    acc_lun[0] = -Physics::GM_MOON * (acc_lun[0] * d1 + moon_params[3]);
+    acc_lun[1] = -Physics::GM_MOON * (acc_lun[1] * d1 + moon_params[4]);
+    acc_lun[2] = -Physics::GM_MOON * (acc_lun[2] * d1 + moon_params[5]);
+    acc_total[0] += acc_lun[0];
+    acc_total[1] += acc_lun[1];
+    acc_total[2] += acc_lun[2];
+}
 } // namespace Acceleration

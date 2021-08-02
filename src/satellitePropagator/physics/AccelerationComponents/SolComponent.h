@@ -29,9 +29,32 @@ std::array<double, 6> setUp(double t);
      * @param acc_total Reference to an 3D vector to accumulate the accelerations
      * for all applied Acceleration::AccelerationComponent.
      */
-void apply(const Debris::Debris& d,
+template <class D>
+void apply(const D& d,
     double& d_ref,
     const std::array<double, 6>& sun_params,
     std::array<double, 3>& acc_sol,
     std::array<double, 3>& acc_total);
+template <class D>
+void apply(const D& d,
+    double& d_ref,
+    const std::array<double, 6>& sun_params,
+    std::array<double, 3>& acc_sol,
+    std::array<double, 3>& acc_total)
+{
+    acc_sol = d.getPosition();
+    acc_sol[0] -= sun_params[0];
+    acc_sol[1] -= sun_params[1];
+    acc_sol[2] -= sun_params[2];
+    // Eq 29
+    d_ref = std::inner_product(acc_sol.begin(), acc_sol.end(), acc_sol.begin(), .0);
+    d_ref = 1 / std::sqrt(d_ref * d_ref * d_ref);
+    // Eq 30
+    acc_sol[0] = -Physics::GM_SUN * (acc_sol[0] * d_ref + sun_params[3]);
+    acc_sol[1] = -Physics::GM_SUN * (acc_sol[1] * d_ref + sun_params[4]);
+    acc_sol[2] = -Physics::GM_SUN * (acc_sol[2] * d_ref + sun_params[5]);
+    acc_total[0] += acc_sol[0];
+    acc_total[1] += acc_sol[1];
+    acc_total[2] += acc_sol[2];
+}
 } // namespace Acceleration

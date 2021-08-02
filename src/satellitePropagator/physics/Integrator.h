@@ -11,7 +11,7 @@
  *
  * @brief Calculates status of Debris::Debris objects for next time step
  */
-template <class Container>
+template <class Container, class D>
 class Integrator {
 public:
     /**
@@ -33,7 +33,7 @@ public:
      * @param delta_t_arg Time step to Integrate over
      */
     Integrator(Container& container,
-        Acceleration::AccelerationAccumulator<Container>& accumulator_arg,
+        Acceleration::AccelerationAccumulator<Container, D>& accumulator_arg,
         double delta_t_arg)
         : debris(&container)
         , accumulator(&accumulator_arg)
@@ -96,7 +96,7 @@ private:
         debris
         = nullptr; /**< Reference to the Container object holding the
              Debris::Debris objects to integrate for*/
-    Acceleration::AccelerationAccumulator<Container>*
+    Acceleration::AccelerationAccumulator<Container, D>*
         accumulator
         = nullptr; /**< Reference to the Acceleration::AccelerationAccumulator
                    object to calculate acceleration for the current time
@@ -122,15 +122,15 @@ public:
      *
      * @return Value of #accumulator
      */
-    [[nodiscard]] const Acceleration::AccelerationAccumulator<Container>& getAccumulator() const;
-    Acceleration::AccelerationAccumulator<Container>& getAccumulator();
+    [[nodiscard]] const Acceleration::AccelerationAccumulator<Container, D>& getAccumulator() const;
+    Acceleration::AccelerationAccumulator<Container, D>& getAccumulator();
 
     /**
      * @brief Setter function for #accumulator
      *
      * @param accumulator New value of #accumulator
      */
-    void setAccumulator(Acceleration::AccelerationAccumulator<Container>& accumulator);
+    void setAccumulator(Acceleration::AccelerationAccumulator<Container, D>& accumulator);
 
     /**
      * @brief Getter function for #debris
@@ -148,14 +148,14 @@ public:
     void setDebris(Container& debris);
 };
 
-template <class Container>
-Integrator<Container>::Integrator() = default;
+template <class Container, class D>
+Integrator<Container, D>::Integrator() = default;
 
-template <class Container>
-Integrator<Container>::~Integrator() = default;
+template <class Container, class D>
+Integrator<Container, D>::~Integrator() = default;
 
-template <class Container>
-void Integrator<Container>::integrate(bool write_time_step) const
+template <class Container, class D>
+void Integrator<Container, D>::integrate(bool write_time_step) const
 {
     AccelerationUpdate::accelerationUpdate(debris);
     calculateAcceleration(write_time_step);
@@ -165,8 +165,8 @@ void Integrator<Container>::integrate(bool write_time_step) const
     accumulator->setT(accumulator->getT() + delta_t);
 }
 
-template <class Container>
-void Integrator<Container>::calculatePosition() const
+template <class Container, class D>
+void Integrator<Container, D>::calculatePosition() const
 {
     double factor = delta_t * delta_t * 0.5;
     std::array<double, 3> new_pos {};
@@ -179,8 +179,8 @@ void Integrator<Container>::calculatePosition() const
     }
 }
 
-template <class Container>
-void Integrator<Container>::calculateVelocity() const
+template <class Container, class D>
+void Integrator<Container, D>::calculateVelocity() const
 {
     const double factor = delta_t * 0.5;
     std::array<double, 3> new_velocity {};
@@ -193,8 +193,8 @@ void Integrator<Container>::calculateVelocity() const
     }
 }
 
-template <class Container>
-void Integrator<Container>::calculateAcceleration(bool write_time_step) const
+template <class Container, class D>
+void Integrator<Container, D>::calculateAcceleration(bool write_time_step) const
 {
     if (write_time_step) {
         accumulator->applyAmdWriteComponents();
@@ -203,50 +203,50 @@ void Integrator<Container>::calculateAcceleration(bool write_time_step) const
     }
 }
 
-template <class Container>
-double Integrator<Container>::getDeltaT() const
+template <class Container, class D>
+double Integrator<Container, D>::getDeltaT() const
 {
     return delta_t;
 }
 
-template <class Container>
-void Integrator<Container>::setDeltaT(double deltaT)
+template <class Container, class D>
+void Integrator<Container, D>::setDeltaT(double deltaT)
 {
     delta_t = deltaT;
 }
 
-template <class Container>
-const Container& Integrator<Container>::getDebris() const
+template <class Container, class D>
+const Container& Integrator<Container, D>::getDebris() const
 {
     return *debris;
 }
 
-template <class Container>
-Container& Integrator<Container>::getDebris()
+template <class Container, class D>
+Container& Integrator<Container, D>::getDebris()
 {
     return *debris;
 }
 
-template <class Container>
-void Integrator<Container>::setDebris(Container& debris)
+template <class Container, class D>
+void Integrator<Container, D>::setDebris(Container& debris)
 {
-    Integrator<Container>::debris = &debris;
+    Integrator<Container, D>::debris = &debris;
 }
 
-template <class Container>
-const Acceleration::AccelerationAccumulator<Container>& Integrator<Container>::getAccumulator() const
+template <class Container, class D>
+const Acceleration::AccelerationAccumulator<Container, D>& Integrator<Container, D>::getAccumulator() const
 {
     return *accumulator;
 }
 
-template <class Container>
-Acceleration::AccelerationAccumulator<Container>& Integrator<Container>::getAccumulator()
+template <class Container, class D>
+Acceleration::AccelerationAccumulator<Container, D>& Integrator<Container, D>::getAccumulator()
 {
     return *accumulator;
 }
 
-template <class Container>
-void Integrator<Container>::setAccumulator(Acceleration::AccelerationAccumulator<Container>& accumulator)
+template <class Container, class D>
+void Integrator<Container, D>::setAccumulator(Acceleration::AccelerationAccumulator<Container, D>& accumulator)
 {
-    Integrator<Container>::accumulator = &accumulator;
+    Integrator<Container, D>::accumulator = &accumulator;
 }
