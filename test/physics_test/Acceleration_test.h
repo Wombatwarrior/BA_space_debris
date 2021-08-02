@@ -6,9 +6,9 @@
 #include <chrono>
 #include <iostream>
 
-#include "../../src/debris/include.h"
-#include "../../src/io/include.h"
-#include "../../src/physics/include.h"
+#include "satellitePropagator/debris/include.h"
+#include "satellitePropagator/io/include.h"
+#include "satellitePropagator/physics/include.h"
 #include "gtest/gtest.h"
 
 class KepComponentTests : public ::testing::Test {
@@ -652,7 +652,7 @@ protected:
                 std::array<double, 3> pos { 0, 0, 0 };
                 pos[j] = (i + 2) * 3.5e3;
                 d.setPosition(pos);
-                d.setAom(i*j+0.1);
+                d.setAom(i * j + 0.1);
                 debris->addDebris(d);
             }
         }
@@ -670,7 +670,7 @@ protected:
 
     void calcSRP(Debris::Debris& d, double t, std::array<double, 3>& acc_srp)
     {
-        double p = 4.56e-6;
+        double p = 4.56e-3;
         double a = 1.49619e+8;
         double as = 149.619;
         double phis0 = 357.5256;
@@ -720,7 +720,7 @@ protected:
                 std::array<double, 3> pos { 0, 0, 0 };
                 pos[j] = (i + 2) * 3.5e3;
                 d.setPosition(pos);
-                d.setBcInv(i*j+0.1);
+                d.setBcInv(i * j + 0.1);
                 debris->addDebris(d);
             }
         }
@@ -730,7 +730,7 @@ protected:
             pos[(i + 1) % 3] = 4321;
             pos[(i + 2) % 3] = 3210;
             d.setPosition(pos);
-            d.setBcInv(i+0.1);
+            d.setBcInv(i + 0.1);
             debris->addDebris(d);
         }
     }

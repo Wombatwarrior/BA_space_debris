@@ -12,9 +12,9 @@
 // project imports
 #include <memory>
 
-#include "debris/include.h"
-#include "io/include.h"
-#include "physics/include.h"
+#include "satellitePropagator/debris/include.h"
+#include "satellitePropagator/io/include.h"
+#include "satellitePropagator/physics/include.h"
 
 log4cxx::LoggerPtr logger;
 
@@ -22,8 +22,8 @@ std::shared_ptr<Debris::DebrisContainer> debris;
 std::shared_ptr<CommandLineInput> command_line;
 std::shared_ptr<FileInput> file_input;
 std::shared_ptr<FileOutput> file_output;
-std::shared_ptr<Acceleration::AccelerationAccumulator> accumulator;
-std::shared_ptr<Integrator> integrator;
+std::shared_ptr<Acceleration::AccelerationAccumulator<Debris::DebrisContainer>> accumulator;
+std::shared_ptr<Integrator<Debris::DebrisContainer>> integrator;
 
 int main(int argc, char** argv);
 

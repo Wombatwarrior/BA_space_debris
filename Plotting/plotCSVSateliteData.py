@@ -2,7 +2,7 @@ import pandas as pd
 import plotly.express as px
 import matplotlib.pyplot as plt
 
-acc_df = pd.read_csv('../test_files/test_output.csv_acc.csv')
+acc_df = pd.read_csv('../test_files/test_output_acc.csv')
 acc_df1 = acc_df[acc_df.index % 3 == 0]
 acc_df2 = acc_df[acc_df.index % 3 == 1]
 acc_df3 = acc_df[acc_df.index % 3 == 2]
