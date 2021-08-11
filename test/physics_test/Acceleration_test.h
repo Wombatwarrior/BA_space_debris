@@ -13,19 +13,19 @@
 
 class KepComponentTests : public ::testing::Test {
 protected:
-    std::shared_ptr<Debris::DebrisContainer> debris;
+    std::shared_ptr<Debris::DebrisContainer<Debris::Debris>> container;
     std::array<std::array<double, 3>, 9> pre_calculated;
 
     virtual void SetUp()
     {
-        debris = std::make_shared<Debris::DebrisContainer>();
+        container = std::make_shared<Debris::DebrisContainer<Debris::Debris>>();
         Debris::Debris d;
         // only one axis
         for (int i = 0; i < 3; ++i) {
             std::array<double, 3> pos { 0, 0, 0 };
             pos[i] = 10000;
             d.setPosition(pos);
-            debris->addDebris(d);
+            container->addDebris(d);
         }
         // all axis
         for (int i = 0; i < 3; ++i) {
@@ -34,14 +34,14 @@ protected:
             pos[(i + 1) % 3] = 4321;
             pos[(i + 2) % 3] = 3210;
             d.setPosition(pos);
-            debris->addDebris(d);
+            container->addDebris(d);
         }
         // 10 to 10e+6 at one axis
         for (int i = 1; i < 7; ++i) {
             std::array<double, 3> pos { 0, 0, 0 };
             pos[0] = std::pow(10, i);
             d.setPosition(pos);
-            debris->addDebris(d);
+            container->addDebris(d);
         }
         // 10 to 10e+3
         for (int i = 1; i < 4; ++i) {
@@ -50,7 +50,7 @@ protected:
             pos[1] = std::pow(10, i);
             pos[2] = std::pow(10, i);
             d.setPosition(pos);
-            debris->addDebris(d);
+            container->addDebris(d);
         }
         pre_calculated[0] = { -0.01 * Physics::GM_EARTH, 0, 0 };
         pre_calculated[1] = { -0.0001 * Physics::GM_EARTH, 0, 0 };
@@ -69,8 +69,8 @@ protected:
             -(1 / (std::sqrt(3) * 3000000)) * Physics::GM_EARTH,
             -(1 / (std::sqrt(3) * 3000000)) * Physics::GM_EARTH };
     }
-
-    void calcKep(Debris::Debris& d, std::array<double, 3>& acc_kep)
+    template <class D>
+    void calcKep(D& d, std::array<double, 3>& acc_kep)
     {
         double gme = 3.986004407799724e+5;
         double x = d.getPosition()[0];
@@ -85,12 +85,12 @@ protected:
 
 class J2ComponentTests : public ::testing::Test {
 protected:
-    std::shared_ptr<Debris::DebrisContainer> debris;
+    std::shared_ptr<Debris::DebrisContainer<Debris::Debris>> container;
     std::array<std::array<double, 3>, 9> pre_calculated;
 
     virtual void SetUp()
     {
-        debris = std::make_shared<Debris::DebrisContainer>();
+        container = std::make_shared<Debris::DebrisContainer<Debris::Debris>>();
         Debris::Debris d;
 
         for (int i = 0; i < 3; ++i) {
@@ -98,7 +98,7 @@ protected:
                 std::array<double, 3> pos { 0, 0, 0 };
                 pos[j] = (i + 2) * 3.5e3;
                 d.setPosition(pos);
-                debris->addDebris(d);
+                container->addDebris(d);
             }
         }
         // calculated with wolfram alpha
@@ -134,7 +134,8 @@ protected:
         };
     }
 
-    void calcJ2(Debris::Debris& d, std::array<double, 3>& acc_j2)
+    template <class D>
+    void calcJ2(D& d, std::array<double, 3>& acc_j2)
     {
         double gme = 3.986004407799724e+5;
         double re = 6378.1363;
@@ -156,12 +157,12 @@ protected:
 
 class C22ComponentTests : public ::testing::Test {
 protected:
-    std::shared_ptr<Debris::DebrisContainer> debris;
+    std::shared_ptr<Debris::DebrisContainer<Debris::Debris>> container;
     std::array<std::array<double, 3>, 9> pre_calculated;
 
     virtual void SetUp()
     {
-        debris = std::make_shared<Debris::DebrisContainer>();
+        container = std::make_shared<Debris::DebrisContainer<Debris::Debris>>();
         Debris::Debris d;
 
         for (int i = 0; i < 3; ++i) {
@@ -169,7 +170,7 @@ protected:
                 std::array<double, 3> pos { 0, 0, 0 };
                 pos[j] = (i + 2) * 3.5e3;
                 d.setPosition(pos);
-                debris->addDebris(d);
+                container->addDebris(d);
             }
         }
         for (int i = 0; i < 3; ++i) {
@@ -178,7 +179,7 @@ protected:
             pos[(i + 1) % 3] = 4321;
             pos[(i + 2) % 3] = 3210;
             d.setPosition(pos);
-            debris->addDebris(d);
+            container->addDebris(d);
         }
 
         // calculated with wolfram alpha
@@ -194,7 +195,8 @@ protected:
         pre_calculated[8] = { 0, 0, 0 };
     }
 
-    void calcC22(Debris::Debris& d, double t, std::array<double, 3>& acc_c22)
+    template <class D>
+    void calcC22(D& d, double t, std::array<double, 3>& acc_c22)
     {
         double gme = 3.986004407799724e+5;
         double re = 6378.1363;
@@ -226,12 +228,12 @@ protected:
 
 class S22ComponentTests : public ::testing::Test {
 protected:
-    std::shared_ptr<Debris::DebrisContainer> debris;
+    std::shared_ptr<Debris::DebrisContainer<Debris::Debris>> container;
     std::array<std::array<double, 3>, 9> pre_calculated;
 
     virtual void SetUp()
     {
-        debris = std::make_shared<Debris::DebrisContainer>();
+        container = std::make_shared<Debris::DebrisContainer<Debris::Debris>>();
         Debris::Debris d;
 
         for (int i = 0; i < 3; ++i) {
@@ -239,7 +241,7 @@ protected:
                 std::array<double, 3> pos { 0, 0, 0 };
                 pos[j] = (i + 2) * 3.5e3;
                 d.setPosition(pos);
-                debris->addDebris(d);
+                container->addDebris(d);
             }
         }
         for (int i = 0; i < 3; ++i) {
@@ -248,7 +250,7 @@ protected:
             pos[(i + 1) % 3] = 4321;
             pos[(i + 2) % 3] = 3210;
             d.setPosition(pos);
-            debris->addDebris(d);
+            container->addDebris(d);
         }
         // calculated with wolfram alpha
         // TODO: calculate values
@@ -263,7 +265,8 @@ protected:
         pre_calculated[8] = { 0, 0, 0 };
     }
 
-    void calcS22(Debris::Debris& d, double t, std::array<double, 3>& acc_s22)
+    template <class D>
+    void calcS22(D& d, double t, std::array<double, 3>& acc_s22)
     {
         double pi = std::acos(-1);
         double gme = 3.986004407799724e+5;
@@ -296,12 +299,12 @@ protected:
 
 class C22S22ComponentTests : public ::testing::Test {
 protected:
-    std::shared_ptr<Debris::DebrisContainer> debris;
+    std::shared_ptr<Debris::DebrisContainer<Debris::Debris>> container;
     std::array<std::array<double, 3>, 9> pre_calculated;
 
     virtual void SetUp()
     {
-        debris = std::make_shared<Debris::DebrisContainer>();
+        container = std::make_shared<Debris::DebrisContainer<Debris::Debris>>();
         Debris::Debris d;
 
         for (int i = 0; i < 3; ++i) {
@@ -309,7 +312,7 @@ protected:
                 std::array<double, 3> pos { 0, 0, 0 };
                 pos[j] = (i + 2) * 3.5e3;
                 d.setPosition(pos);
-                debris->addDebris(d);
+                container->addDebris(d);
             }
         }
         for (int i = 0; i < 3; ++i) {
@@ -318,19 +321,19 @@ protected:
             pos[(i + 1) % 3] = 4321;
             pos[(i + 2) % 3] = 3210;
             d.setPosition(pos);
-            debris->addDebris(d);
+            container->addDebris(d);
         }
     }
 };
 
 class LunComponentTests : public ::testing::Test {
 protected:
-    std::shared_ptr<Debris::DebrisContainer> debris;
+    std::shared_ptr<Debris::DebrisContainer<Debris::Debris>> container;
     std::array<std::array<double, 3>, 9> pre_calculated;
 
     virtual void SetUp()
     {
-        debris = std::make_shared<Debris::DebrisContainer>();
+        container = std::make_shared<Debris::DebrisContainer<Debris::Debris>>();
         Debris::Debris d;
 
         for (int i = 0; i < 3; ++i) {
@@ -338,7 +341,7 @@ protected:
                 std::array<double, 3> pos { 0, 0, 0 };
                 pos[j] = (i + 2) * 3.5e3;
                 d.setPosition(pos);
-                debris->addDebris(d);
+                container->addDebris(d);
             }
         }
         // calculated with wolfram alpha
@@ -456,7 +459,8 @@ protected:
         return moon_params;
     }
 
-    void calcLun(Debris::Debris& d, double t, std::array<double, 3>& acc_lun)
+    template <class D>
+    void calcLun(D& d, double t, std::array<double, 3>& acc_lun)
     {
         double gmm = 4.9028e+3;
         double e = 23.4392911;
@@ -547,12 +551,12 @@ protected:
 
 class SolComponentTests : public ::testing::Test {
 protected:
-    std::shared_ptr<Debris::DebrisContainer> debris;
+    std::shared_ptr<Debris::DebrisContainer<Debris::Debris>> container;
     std::array<std::array<double, 3>, 9> pre_calculated;
 
     virtual void SetUp()
     {
-        debris = std::make_shared<Debris::DebrisContainer>();
+        container = std::make_shared<Debris::DebrisContainer<Debris::Debris>>();
         Debris::Debris d;
         double t = 0;
 
@@ -561,7 +565,7 @@ protected:
                 std::array<double, 3> pos { 0, 0, 0 };
                 pos[j] = (i + 2) * 3.5e3;
                 d.setPosition(pos);
-                debris->addDebris(d);
+                container->addDebris(d);
             }
         }
         // calculated with wolfram alpha
@@ -576,7 +580,8 @@ protected:
         pre_calculated[8] = { 0, 0, 0 };
     }
 
-    void calcSol(Debris::Debris& d, double t, std::array<double, 3>& acc_sol)
+    template <class D>
+    void calcSol(D& d, double t, std::array<double, 3>& acc_sol)
     {
         double gms = 1.32712440018e+11;
         double phis0 = 357.5256;
@@ -638,12 +643,12 @@ protected:
 
 class SRPComponentTests : public ::testing::Test {
 protected:
-    std::shared_ptr<Debris::DebrisContainer> debris;
+    std::shared_ptr<Debris::DebrisContainer<Debris::Debris>> container;
     std::array<std::array<double, 3>, 9> pre_calculated;
 
     virtual void SetUp()
     {
-        debris = std::make_shared<Debris::DebrisContainer>();
+        container = std::make_shared<Debris::DebrisContainer<Debris::Debris>>();
         Debris::Debris d;
         double t = 0;
 
@@ -653,7 +658,7 @@ protected:
                 pos[j] = (i + 2) * 3.5e3;
                 d.setPosition(pos);
                 d.setAom(i * j + 0.1);
-                debris->addDebris(d);
+                container->addDebris(d);
             }
         }
         // calculated with wolfram alpha
@@ -668,7 +673,8 @@ protected:
         pre_calculated[8] = { 0, 0, 0 };
     }
 
-    void calcSRP(Debris::Debris& d, double t, std::array<double, 3>& acc_srp)
+    template <class D>
+    void calcSRP(D& d, double t, std::array<double, 3>& acc_srp)
     {
         double p = 4.56e-3;
         double a = 1.49619e+8;
@@ -707,34 +713,39 @@ protected:
 
 class DragComponentTests : public ::testing::Test {
 protected:
-    std::shared_ptr<Debris::DebrisContainer> debris;
+    std::shared_ptr<Debris::DebrisContainer<Debris::Debris>> container;
     std::array<std::array<double, 3>, 9> pre_calculated;
 
     virtual void SetUp()
     {
-        debris = std::make_shared<Debris::DebrisContainer>();
+        container = std::make_shared<Debris::DebrisContainer<Debris::Debris>>();
         Debris::Debris d;
 
         for (int i = 0; i < 3; ++i) {
             for (int j = 0; j < 3; ++j) {
                 std::array<double, 3> pos { 0, 0, 0 };
-                pos[j] = (i + 2) * 3.5e3;
+                std::array<double, 3> vel { 4, 4, 4 };
+                pos[j] = Physics::R_EARTH + (i + 2) * 100;
                 d.setPosition(pos);
+                d.setVelocity(vel);
                 d.setBcInv(i * j + 0.1);
-                debris->addDebris(d);
+                container->addDebris(d);
             }
         }
         for (int i = 0; i < 3; ++i) {
             std::array<double, 3> pos { 0, 0, 0 };
+            std::array<double, 3> vel { 4, 4, 4 };
             pos[i] = 5000;
             pos[(i + 1) % 3] = 4321;
             pos[(i + 2) % 3] = 3210;
             d.setPosition(pos);
+            d.setVelocity(vel);
             d.setBcInv(i + 0.1);
-            debris->addDebris(d);
+            container->addDebris(d);
         }
     }
-    void calcDrag(Debris::Debris& d, std::array<double, 3>& acc_drag)
+    template <class D>
+    void calcDrag(D& d, std::array<double, 3>& acc_drag)
     {
         double re = 6378.1363;
         double p0 = 1.3;

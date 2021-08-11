@@ -22,7 +22,7 @@ public:
     Integrator();
 
     /**
-     * @brief Creates a Integrator object and sets the private #debris and
+     * @brief Creates a Integrator object and sets the private #container and
      * #delta_t member variables
      *
      * @param container Reference to the Container object holding
@@ -35,7 +35,7 @@ public:
     Integrator(Container& container,
         Acceleration::AccelerationAccumulator<Container>& accumulator_arg,
         double delta_t_arg)
-        : debris(&container)
+        : container(&container)
         , accumulator(&accumulator_arg)
         , delta_t(delta_t_arg) {};
 
@@ -52,7 +52,7 @@ public:
      * Integrator::calculateAcceleration() is called first.
      * Because the Integrator::calculatePosition() function needs the
      * Debris::Debris::velocity vector of the last time step of the
-     * Debris::Debris objects of the Container #debris it is called
+     * Debris::Debris objects of the Container #container it is called
      * before Integrator::calculateVelocity()
      *
      * @param write_time_step if true all calculated acceleration components are writen to a file
@@ -63,7 +63,7 @@ public:
      * @brief Calculates the new position
      *
      * Calculates the Debris::Debris::position vector for all Debris::Debris
-     * objects of the Container #debris Uses leapfrog integration
+     * objects of the Container #container Uses leapfrog integration
      * with Debris::Debris::velocity and Debris::Debris::acc_t0
      *
      */
@@ -73,7 +73,7 @@ public:
      * @brief Calculates the new velocities
      *
      * Calculates the Debris::Debris::velocity vector for all Debris::Debris
-     * objects of the Container #debris Uses leapfrog integration
+     * objects of the Container #container Uses leapfrog integration
      * with Debris::Debris::acc_t0 and Debris::Debris::acc_t1
      *
      */
@@ -85,7 +85,7 @@ public:
      * Calls the Acceleration::AccelerationAccumulator::applyComponents()
      * function of the Acceleration::AccelerationAccumulator object #accumulator
      * After this function is called the Debris::Debris objects of the
-     * Container #debris are ready for integrating
+     * Container #container are ready for integrating
      *
      * @param write_time_step if true all calculated acceleration components are writen to a file
      */
@@ -93,7 +93,7 @@ public:
 
 private:
     Container*
-        debris
+        container
         = nullptr; /**< Reference to the Container object holding the
              Debris::Debris objects to integrate for*/
     Acceleration::AccelerationAccumulator<Container>*
@@ -133,19 +133,19 @@ public:
     void setAccumulator(Acceleration::AccelerationAccumulator<Container>& accumulator);
 
     /**
-     * @brief Getter function for #debris
+     * @brief Getter function for #container
      *
-     * @return Value of #debris
+     * @return Value of #container
      */
-    [[nodiscard]] const Container& getDebris() const;
-    Container& getDebris();
+    [[nodiscard]] const Container& getContainer() const;
+    Container& getContainer();
 
     /**
      * @brief Setter function for #delta_t
      *
-     * @param debris New value of #delta_t
+     * @param container New value of #delta_t
      */
-    void setDebris(Container& debris);
+    void setContainer(Container& container);
 };
 
 template <class Container>
@@ -157,7 +157,7 @@ Integrator<Container>::~Integrator() = default;
 template <class Container>
 void Integrator<Container>::integrate(bool write_time_step) const
 {
-    AccelerationUpdate::accelerationUpdate(debris);
+    AccelerationUpdate::accelerationUpdate(container);
     calculateAcceleration(write_time_step);
     calculatePosition();
     calculateVelocity();
@@ -170,7 +170,7 @@ void Integrator<Container>::calculatePosition() const
 {
     double factor = delta_t * delta_t * 0.5;
     std::array<double, 3> new_pos {};
-    for (auto& d : *debris) {
+    for (auto& d : *container) {
         new_pos = d.getPosition();
         new_pos[0] = new_pos[0] + delta_t * d.getVelocity()[0] + factor * d.getAccT0()[0];
         new_pos[1] = new_pos[1] + delta_t * d.getVelocity()[1] + factor * d.getAccT0()[1];
@@ -184,7 +184,7 @@ void Integrator<Container>::calculateVelocity() const
 {
     const double factor = delta_t * 0.5;
     std::array<double, 3> new_velocity {};
-    for (auto& d : *debris) {
+    for (auto& d : *container) {
         new_velocity = d.getVelocity();
         new_velocity[0] = new_velocity[0] + factor * (d.getAccT0()[0] + d.getAccT1()[0]);
         new_velocity[1] = new_velocity[1] + factor * (d.getAccT0()[1] + d.getAccT1()[1]);
@@ -216,21 +216,21 @@ void Integrator<Container>::setDeltaT(double deltaT)
 }
 
 template <class Container>
-const Container& Integrator<Container>::getDebris() const
+const Container& Integrator<Container>::getContainer() const
 {
-    return *debris;
+    return *container;
 }
 
 template <class Container>
-Container& Integrator<Container>::getDebris()
+Container& Integrator<Container>::getContainer()
 {
-    return *debris;
+    return *container;
 }
 
 template <class Container>
-void Integrator<Container>::setDebris(Container& debris)
+void Integrator<Container>::setContainer(Container& container)
 {
-    Integrator<Container>::debris = &debris;
+    Integrator<Container>::container = &container;
 }
 
 template <class Container>

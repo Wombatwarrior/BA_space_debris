@@ -18,12 +18,12 @@
 
 log4cxx::LoggerPtr logger;
 
-std::shared_ptr<Debris::DebrisContainer> debris;
+std::shared_ptr<Debris::DebrisContainer<Debris::Debris>> container;
 std::shared_ptr<CommandLineInput> command_line;
-std::shared_ptr<FileInput> file_input;
-std::shared_ptr<FileOutput> file_output;
-std::shared_ptr<Acceleration::AccelerationAccumulator<Debris::DebrisContainer>> accumulator;
-std::shared_ptr<Integrator<Debris::DebrisContainer>> integrator;
+std::shared_ptr<FileInput<Debris::DebrisContainer<Debris::Debris>>> file_input;
+std::shared_ptr<FileOutput<Debris::DebrisContainer<Debris::Debris>>> file_output;
+std::shared_ptr<Acceleration::AccelerationAccumulator<Debris::DebrisContainer<Debris::Debris>>> accumulator;
+std::shared_ptr<Integrator<Debris::DebrisContainer<Debris::Debris>>> integrator;
 
 int main(int argc, char** argv);
 
