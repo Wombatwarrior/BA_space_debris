@@ -748,8 +748,8 @@ TEST_F(CompareWithHeyokaTests, compareTotalToSplit)
         for (double t = start_t; t <= end_t; t += delta_t) {
             std::array<double, 3> pos_i = i_total->getContainer().getDebrisVector()[0].getPosition();
             std::array<double, 3> pos_ta { ta_split->get_state()[0],
-                                           ta_split->get_state()[1],
-                                           ta_split->get_state()[2] };
+                ta_split->get_state()[1],
+                ta_split->get_state()[2] };
             if (MathUtils::euclideanNorm(pos_i) <= Physics::R_EARTH) {
                 if (!crash_i)
                     std::cout << "integrator hit the ground at t=" << t << std::endl;
@@ -773,16 +773,16 @@ TEST_F(CompareWithHeyokaTests, compareTotalToSplit)
             // integrate time step
             if (!crash_i)
                 i_total->getAccumulator().getFileOutput().writeDebrisData(t);
-                // write components during calculation
-                i_total->integrate(true);
+            // write components during calculation
+            i_total->integrate(true);
             if (!crash_ta)
                 writeSplitHeyokaState();
-                ta_split->propagate_for(delta_t);
+            ta_split->propagate_for(delta_t);
         }
         if (!(crash_i || crash_ta))
             // compare result
             // no compare function for integrator and ta_split
-        std::cout << "Particle done" << std::endl;
+            std::cout << "Particle done" << std::endl;
     }
 }
 

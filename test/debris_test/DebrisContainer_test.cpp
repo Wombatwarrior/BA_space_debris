@@ -4,7 +4,6 @@
 
 #include "DebrisContainer_test.h"
 
-
 TEST_F(GenericDebrisTests, RunSimulationWithDummyDebris)
 {
     double current_time = file_input->getStartT();
@@ -31,4 +30,3 @@ TEST_F(GenericDebrisTests, RunSimulationWithDummyDebris)
         std::cout << d.toString() << std::endl;
     }
 }
-

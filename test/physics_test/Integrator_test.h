@@ -57,7 +57,7 @@ protected:
     inline static std::ofstream* ta_total_out;
     inline static FileOutput<Debris::DebrisContainer<Debris::Debris>>* i_total_out;
     inline static std::ofstream* ta_split_out;
-    inline static std::array<int,8> ta_components_line{};
+    inline static std::array<int, 8> ta_components_line {};
     inline static int ta_total_line = 0;
     inline static int ta_split_line = 0;
 
@@ -559,35 +559,34 @@ protected:
         IOUtils::to_ostream(MathUtils::relativeError(vel_split, vel_ta), std::cout, ",", { "relative error[", "]\n" });
     }
 
-
-    void writeHeyokaState(Acceleration::AccelerationComponent type){
+    void writeHeyokaState(Acceleration::AccelerationComponent type)
+    {
         // one array that holds position and all velocity components in the order x,y,z,norm
         std::vector<double> output_vector;
-        for(int i = 0; i < ta_components[type]->get_state().size() % 3; ++i){
+        for (int i = 0; i < ta_components[type]->get_state().size() % 3; ++i) {
             // add x,y,z
             output_vector.push_back(ta_components[type]->get_state()[i]);
-            output_vector.push_back(ta_components[type]->get_state()[i+1]);
-            output_vector.push_back(ta_components[type]->get_state()[i+2]);
-            output_vector.push_back(MathUtils::euclideanNorm(std::array<double,3>{ta_components[type]->get_state()[i], ta_components[type]->get_state()[i + 1], ta_components[type]->get_state()[i + 2]}));
+            output_vector.push_back(ta_components[type]->get_state()[i + 1]);
+            output_vector.push_back(ta_components[type]->get_state()[i + 2]);
+            output_vector.push_back(MathUtils::euclideanNorm(std::array<double, 3> { ta_components[type]->get_state()[i], ta_components[type]->get_state()[i + 1], ta_components[type]->get_state()[i + 2] }));
         }
         // output
         *ta_components_out[type] << ta_components_line[type]++ << ',';
         *ta_components_out[type] << ta_components[type]->get_time() << ',';
         IOUtils::to_ostream(output_vector, *ta_components_out[type]);
         *ta_components_out[type] << std::endl;
-
     }
 
-
-    void writeSplitHeyokaState(){
+    void writeSplitHeyokaState()
+    {
         // one array that holds position and all velocity components in the order x,y,z,norm
         std::vector<double> output_vector;
-        for(int i = 0; i < ta_split->get_state().size() / 3; ++i){
+        for (int i = 0; i < ta_split->get_state().size() / 3; ++i) {
             // add x,y,z
-            output_vector.push_back(ta_split->get_state()[3*i]);
-            output_vector.push_back(ta_split->get_state()[3*i + 1]);
-            output_vector.push_back(ta_split->get_state()[3*i + 2]);
-            output_vector.push_back(MathUtils::euclideanNorm(std::array<double,3>{ta_split->get_state()[3*i], ta_split->get_state()[3*i + 1], ta_split->get_state()[3*i + 2]}));
+            output_vector.push_back(ta_split->get_state()[3 * i]);
+            output_vector.push_back(ta_split->get_state()[3 * i + 1]);
+            output_vector.push_back(ta_split->get_state()[3 * i + 2]);
+            output_vector.push_back(MathUtils::euclideanNorm(std::array<double, 3> { ta_split->get_state()[3 * i], ta_split->get_state()[3 * i + 1], ta_split->get_state()[3 * i + 2] }));
         }
         std::array<double, 3> vel_split {};
         // combine all components

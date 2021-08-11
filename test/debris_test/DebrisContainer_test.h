@@ -3,18 +3,15 @@
 //
 
 #pragma once
-#include "gtest/gtest.h"
 #include "satellitePropagator/debris/include.h"
 #include "satellitePropagator/io/include.h"
 #include "satellitePropagator/physics/include.h"
+#include "gtest/gtest.h"
 #include <memory>
-
-
-
 
 class GenericDebrisTests : public ::testing::Test {
 protected:
-    class DummyDebris{
+    class DummyDebris {
     private:
         std::array<double, 3> position {};
         std::array<double, 3> velocity {};
@@ -22,8 +19,9 @@ protected:
         std::array<double, 3> acc_t1 {};
         double bc_inv = 0;
         double aom = 0;
+
     public:
-        DummyDebris()=default;
+        DummyDebris() = default;
 
         DummyDebris(const DummyDebris& other)
         {
@@ -151,7 +149,6 @@ protected:
         {
             bc_inv = bcInv;
         }
-
     };
     std::shared_ptr<Debris::DebrisContainer<DummyDebris>> container;
     std::shared_ptr<CommandLineInput> command_line;
@@ -162,23 +159,22 @@ protected:
 
     virtual void SetUp()
     {
-        char *argv[] ={
-                (char*)"test",
-                (char*)"../test_files/dummy_debris_test_input.txt",
-                (char*)"-o",
-                (char*)"../test_files/dummy_debris_test_output.csv",
-                nullptr
+        char* argv[] = {
+            (char*)"test",
+            (char*)"../test_files/dummy_debris_test_input.txt",
+            (char*)"-o",
+            (char*)"../test_files/dummy_debris_test_output.csv",
+            nullptr
         };
         command_line = std::make_shared<CommandLineInput>(4, argv);
         container = std::make_shared<Debris::DebrisContainer<DummyDebris>>();
         file_input = std::make_shared<FileInput<Debris::DebrisContainer<DummyDebris>>>(*container, command_line->getInputFilePath(),
-                command_line->getInputFileType());
+            command_line->getInputFileType());
         file_output = std::make_shared<FileOutput<Debris::DebrisContainer<DummyDebris>>>(*container, command_line->getOutputFilePath(),
-                command_line->getOutputFileType(), file_input->getAccConfig());
+            command_line->getOutputFileType(), file_input->getAccConfig());
         accumulator = std::make_shared<Acceleration::AccelerationAccumulator<Debris::DebrisContainer<DummyDebris>>>(
-                file_input->getAccConfig(), *container, file_input->getStartT(), *file_output);
+            file_input->getAccConfig(), *container, file_input->getStartT(), *file_output);
         integrator = std::make_shared<Integrator<Debris::DebrisContainer<DummyDebris>>>(*container, *accumulator,
-                file_input->getDeltaT());
-
+            file_input->getDeltaT());
     }
 };

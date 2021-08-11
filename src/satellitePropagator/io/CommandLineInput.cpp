@@ -61,9 +61,9 @@ void CommandLineInput::parseCommandLine(int argc, char** argv)
             }
         } catch (std::logic_error& e) {
             std::string error_message = std::string(
-                    "Error while parsing command line. please check "
-                    "your input.\n")
-                                        + e.what();
+                                            "Error while parsing command line. please check "
+                                            "your input.\n")
+                + e.what();
             throw std::invalid_argument(error_message);
         }
     } else {
