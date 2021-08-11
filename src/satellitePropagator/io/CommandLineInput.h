@@ -43,8 +43,8 @@ private:
      */
     void parseCommandLine(int argc, char** argv);
 
-    FileInput::Type input_file_type = FileInput::TXT; /**< Holds the type of the input file*/
-    FileOutput::Type output_file_type = FileOutput::CSV; /**< Holds the type of the output file*/
+    InputFile::Type input_file_type = InputFile::TXT; /**< Holds the type of the input file*/
+    OutputFile::Type output_file_type = OutputFile::CSV; /**< Holds the type of the output file*/
     std::filesystem::path input_file_path {}; /**< Path to the input file */
     std::filesystem::path output_file_path {}; /**< Path to the main output file. USed to construct other output file paths */
 
@@ -54,28 +54,28 @@ public:
      *
      * @return Value of #input_file_type
      */
-    [[nodiscard]] FileInput::Type getInputFileType() const;
+    [[nodiscard]] InputFile::Type getInputFileType() const;
 
     /**
      * @brief Setter function for #input_file_type
      *
      * @param inputFileType New value of #input_file_type
      */
-    void setInputFileType(FileInput::Type inputFileType);
+    void setInputFileType(InputFile::Type inputFileType);
 
     /**
      * @brief Getter function for #output_file_type
      *
      * @return Value of #output_file_type
      */
-    [[nodiscard]] FileOutput::Type getOutputFileType() const;
+    [[nodiscard]] OutputFile::Type getOutputFileType() const;
 
     /**
      * @brief Setter function for #output_file_type
      *
      * @param outputFileType New value of #output_file_type
      */
-    void setOutputFileType(FileOutput::Type outputFileType);
+    void setOutputFileType(OutputFile::Type outputFileType);
 
     /**
      * @brief Getter function for #input_file_path

@@ -1,11 +1,11 @@
 # start time of the simulation
 start_t=0.0
 # time step
-delta_t=0.01
+delta_t=0.1
 # end time of the simulation
-end_t=500
+end_t=5
 # time interval to write output
-write_delta_t=0.1
+write_delta_t=5
 # test debris
 # position|velocity|acceleration_t0|acceleration_t1|aom|bc_inv
 # should be something similar to the ISS orbit in respect to orbit energy

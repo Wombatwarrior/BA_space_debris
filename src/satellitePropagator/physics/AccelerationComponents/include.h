@@ -3,6 +3,7 @@
 //
 
 #pragma once
+#include "AccelerationComponents.h"
 #include "C22Component.h"
 #include "C22S22Component.h"
 #include "DragComponent.h"

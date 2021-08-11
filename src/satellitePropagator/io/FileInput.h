@@ -11,40 +11,42 @@
 #include "satellitePropagator/debris/DebrisContainer.h"
 
 /**
+ * @enum Type
+ *
+ * @brief Enumerates the possible file types used for input
+ */
+namespace InputFile {
+enum Type {
+    TXT, /**< File with .txt extension. Lines are in the format
+        "<token>=<value>" and lines starting with "#" are ignored. Debris
+        data is represented in TLE format as block at the end of the file
+        after the line "TLE"*/
+};
+}
+/**
  * @class FileInput
  *
  * @brief Reads input data from a file
  */
+template <class Container>
 class FileInput {
 public:
-    /**
-     * @enum Type
-     *
-     * @brief Enumerates the possible file types used for input
-     */
-    enum Type {
-        TXT, /**< File with .txt extension. Lines are in the format
-        "<token>=<value>" and lines starting with "#" are ignored. Debris
-        data is represented in TLE format as block at the end of the file
-        after the line "TLE"*/
-    };
-
     /**
      * @brief Creates new FileInput object and reads in data
      *
      * Constructor reads in the data from the given input file of the given
-     * FileInput::Type and safes the result in the private member variables.
+     * InputFileType and safes the result in the private member variables.
      *
-     * @param debris_arg Reference to the Debris:DebrisContainer object to add
+     * @param container_arg Reference to the Debris:DebrisContainer object to add
      * Debris::Debris objects to
      * @param input_file_path_arg Complete name of the input file to read data
      * from
-     * @param input_file_type_arg FileInput::Type of the input file
+     * @param input_file_type_arg InputFileType of the input file
      */
-    FileInput(Debris::DebrisContainer& debris_arg,
+    FileInput(Container& container_arg,
         std::filesystem::path input_file_path_arg,
-        Type input_file_type_arg)
-        : debris(&debris_arg)
+        InputFile::Type input_file_type_arg)
+        : container(&container_arg)
         , input_file_path(std::move(input_file_path_arg))
         , input_file_type(input_file_type_arg)
     {
@@ -62,7 +64,7 @@ public:
      * @brief Reads data from a file
      *
      * Reads the data from the file with the #input_file_path
-     * by calling a specialized function depending on the FileInput::Type
+     * by calling a specialized function depending on the InputFileType
      * #input_file_type
      */
     void readDebrisData();
@@ -112,7 +114,7 @@ private:
      * @param line A string representing the state of a Debris::Debris object in
      * the format "position|velocity|acc_t0|acc_t1"
      */
-    static void setDebrisValues(Debris::Debris& d, const std::string& line);
+    static void setDebrisValues(typename Container::Particle_t& d, const std::string& line);
 
     /**
      * @brief Sets the configuration vector specifying the
@@ -148,13 +150,13 @@ private:
      */
     void readDebrisTXT();
 
-    Debris::DebrisContainer*
-        debris
+    Container*
+        container
         = nullptr; /**< Reference to a Debris::DebrisContainer object to add
              Debris::Debris objects read from the input file*/
     std::filesystem::path input_file_path {}; /**< Complete name of the input file containing
                                 the file extension*/
-    Type input_file_type = TXT; /**< InputFile::Type of the input file*/
+    InputFile::Type input_file_type = InputFile::TXT; /**< InputFile::InputFileType of the input file*/
     double delta_t = 0; /**< Time step to use in the simulation*/
     double start_t = 0; /**< Start time of the simulation*/
     double end_t = 0; /**< End time of the simulation*/
@@ -178,19 +180,19 @@ private:
 
 public:
     /**
-     * @brief Getter function for #debris
+     * @brief Getter function for #container
      *
-     * @return Value of #debris
+     * @return Value of #container
      */
-    [[nodiscard]] const Debris::DebrisContainer& getDebris() const;
-    Debris::DebrisContainer& getDebris();
+    [[nodiscard]] const Container& getContainer() const;
+    Container& getContainer();
 
     /**
-     * @brief Setter function for #debris
+     * @brief Setter function for #container
      *
-     * @param debris New value of #debris
+     * @param container New value of #container
      */
-    void setDebris(Debris::DebrisContainer& debris);
+    void setContainer(Container& container);
 
     /**
      * @brief Getter function for #input_file_path
@@ -212,14 +214,14 @@ public:
      *
      * @return Value of #input_file_type
      */
-    [[nodiscard]] Type getInputFileType() const;
+    [[nodiscard]] InputFile::Type getInputFileType() const;
 
     /**
      * @brief Setter function for #input_file_type
      *
      * @param inputFileType New value of #input_file_type
      */
-    void setInputFileType(Type inputFileType);
+    void setInputFileType(InputFile::Type inputFileType);
 
     /**
      * @brief Getter function for #delta_t
@@ -292,3 +294,252 @@ public:
      */
     void setAccConfig(const std::array<bool, 8>& accConfig);
 };
+
+template <class Container>
+FileInput<Container>::~FileInput() = default;
+
+template <class Container>
+void FileInput<Container>::readDebrisData()
+{
+    switch (input_file_type) {
+    case InputFile::TXT:
+        readDebrisTXT();
+        break;
+    }
+}
+
+template <class Container>
+struct FileInput<Container>::TxtLineContent FileInput<Container>::tokenizeLine(
+    const std::string& line) {
+    TxtLineContent l;
+    auto split_pos = line.find('=');
+    l.token = line.substr(0, split_pos);
+    l.value = line.substr(split_pos + 1);
+    return l;
+}
+
+template <class Container>
+void FileInput<Container>::setDebrisValues(typename Container::Particle_t& d, const std::string& line)
+{
+    // input line format: position|velocity|acc_t0|acc_t1|aom|bc_inc
+    // index after position
+    auto position_split_pos = line.find('|');
+    // index after velocity
+    auto velocity_split_pos = line.find('|', position_split_pos + 1);
+    // index after acc_t0
+    auto acc_split_pos = line.find('|', velocity_split_pos + 1);
+    // index after acc_t1
+    auto aom_split_pos = line.find('|', acc_split_pos + 1);
+    // index after aom
+    auto bc_inv_split_pos = line.find('|', aom_split_pos + 1);
+    // get substrings representing the single values
+    std::string position_str = line.substr(0, position_split_pos);
+    std::string velocity_str = line.substr(position_split_pos + 1, velocity_split_pos);
+    std::string acc_t0_str = line.substr(velocity_split_pos + 1, acc_split_pos);
+    std::string acc_t1_str = line.substr(acc_split_pos + 1, aom_split_pos);
+    std::string aom_str = line.substr(aom_split_pos + 1, bc_inv_split_pos);
+    std::string bc_inv_str = line.substr(bc_inv_split_pos + 1);
+    // used to parse vectors from the strings
+    std::array<double, 3> vec {};
+
+    // split position_str into x,y,z and set debris value
+    auto x_split_pos = position_str.find(',');
+    auto y_split_pos = position_str.find(',', x_split_pos + 1);
+    vec[0] = stod(position_str.substr(0, x_split_pos));
+    vec[1] = stod(position_str.substr(x_split_pos + 1, y_split_pos));
+    vec[2] = stod(position_str.substr(y_split_pos + 1));
+    d.setPosition(vec);
+
+    // split velocity_str into x,y,z and set debris value
+    x_split_pos = velocity_str.find(',');
+    y_split_pos = velocity_str.find(',', x_split_pos + 1);
+    vec[0] = stod(velocity_str.substr(0, x_split_pos));
+    vec[1] = stod(velocity_str.substr(x_split_pos + 1, y_split_pos));
+    vec[2] = stod(velocity_str.substr(y_split_pos + 1));
+    d.setVelocity(vec);
+
+    // split acc_t0_str into x,y,z and set debris value
+    x_split_pos = acc_t0_str.find(',');
+    y_split_pos = acc_t0_str.find(',', x_split_pos + 1);
+    vec[0] = stod(acc_t0_str.substr(0, x_split_pos));
+    vec[1] = stod(acc_t0_str.substr(x_split_pos + 1, y_split_pos));
+    vec[2] = stod(acc_t0_str.substr(y_split_pos + 1));
+    d.setAccT0(vec);
+
+    // split acc_t1_str into x,y,z and set debris value
+    x_split_pos = acc_t1_str.find(',');
+    y_split_pos = acc_t1_str.find(',', x_split_pos + 1);
+    vec[0] = stod(acc_t1_str.substr(0, x_split_pos));
+    vec[1] = stod(acc_t1_str.substr(x_split_pos + 1, y_split_pos));
+    vec[2] = stod(acc_t1_str.substr(y_split_pos + 1));
+    d.setAccT1(vec);
+
+    // parse aom value and set debris value
+    d.setAom(stod(aom_str));
+
+    // parse bc_inv value and set debris value
+    d.setBcInv(stod(bc_inv_str));
+}
+
+template <class Container>
+void FileInput<Container>::setConfigValues(const std::string& line)
+{
+    std::stringstream ss(line);
+    for (int i = 0; i < 8; ++i) {
+        ss >> acc_config[i];
+        if (ss.peek() == ',') {
+            ss.ignore();
+        }
+    }
+}
+
+template <class Container>
+void FileInput<Container>::readDebrisTXT()
+{
+    std::ifstream input_file(input_file_path);
+    std::string line;
+    struct TxtLineContent line_content;
+    typename Container::Particle_t d;
+    if (input_file.is_open()) {
+        while (std::getline(input_file, line)) {
+            if (line.empty() or line[0] == '#') {
+                continue;
+            }
+            line_content = tokenizeLine(line);
+            if (line_content.value.empty()) {
+                // no value
+                continue;
+            }
+            if (line_content.token == "delta_t") {
+                delta_t = stod(line_content.value);
+            } else if (line_content.token == "write_delta_t") {
+                write_delta_t = stod(line_content.value);
+            } else if (line_content.token == "start_t") {
+                start_t = stod(line_content.value);
+            } else if (line_content.token == "end_t") {
+                end_t = stod(line_content.value);
+            } else if (line_content.token == "acc_config") {
+                setConfigValues(line_content.value);
+            } else if (line_content.token == "debris") {
+                setDebrisValues(d, line_content.value);
+                container->addDebris(d);
+            } else {
+                // unknown token
+            }
+        }
+    }
+}
+
+template <class Container>
+const Container& FileInput<Container>::getContainer() const
+{
+    return *container;
+}
+
+template <class Container>
+Container& FileInput<Container>::getContainer()
+{
+    return *container;
+}
+
+template <class Container>
+void FileInput<Container>::setContainer(Container& container)
+{
+    FileInput<Container>::container = &container;
+}
+
+template <class Container>
+const std::filesystem::path& FileInput<Container>::getInputFilePath() const
+{
+    return input_file_path;
+}
+
+template <class Container>
+std::filesystem::path& FileInput<Container>::getInputFilePath()
+{
+    return input_file_path;
+}
+
+template <class Container>
+void FileInput<Container>::setInputFilePath(const std::filesystem::path& inputFilePath)
+{
+    input_file_path = inputFilePath;
+}
+
+template <class Container>
+InputFile::Type FileInput<Container>::getInputFileType() const
+{
+    return input_file_type;
+}
+
+template <class Container>
+void FileInput<Container>::setInputFileType(InputFile::Type inputFileType)
+{
+    input_file_type = inputFileType;
+}
+
+template <class Container>
+double FileInput<Container>::getDeltaT() const
+{
+    return delta_t;
+}
+
+template <class Container>
+void FileInput<Container>::setDeltaT(double deltaT)
+{
+    delta_t = deltaT;
+}
+
+template <class Container>
+double FileInput<Container>::getWriteDeltaT() const
+{
+    return write_delta_t;
+}
+
+template <class Container>
+void FileInput<Container>::setWriteDeltaT(double writeDeltaT)
+{
+    write_delta_t = writeDeltaT;
+}
+
+template <class Container>
+double FileInput<Container>::getStartT() const
+{
+    return start_t;
+}
+
+template <class Container>
+void FileInput<Container>::setStartT(double startT)
+{
+    start_t = startT;
+}
+
+template <class Container>
+double FileInput<Container>::getEndT() const
+{
+    return end_t;
+}
+
+template <class Container>
+void FileInput<Container>::setEndT(double endT)
+{
+    end_t = endT;
+}
+
+template <class Container>
+const std::array<bool, 8>& FileInput<Container>::getAccConfig() const
+{
+    return acc_config;
+}
+
+template <class Container>
+std::array<bool, 8>& FileInput<Container>::getAccConfig()
+{
+    return acc_config;
+}
+
+template <class Container>
+void FileInput<Container>::setAccConfig(const std::array<bool, 8>& accConfig)
+{
+    acc_config = accConfig;
+}
