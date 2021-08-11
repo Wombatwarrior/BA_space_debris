@@ -37,7 +37,7 @@ protected:
     // delta t
     inline static double delta_t = .1;
     inline static constexpr double start_t = 0.;
-    inline static constexpr double end_t = 10;
+    inline static constexpr double end_t = 1000;
 
     //heyoka variables
     inline static heyoka::taylor_adaptive<double>* ta_total;
@@ -157,7 +157,7 @@ protected:
         auto fMoonZ = -GMm * ((pos[2] - Zm) / (heyoka::pow(magRRm2, (3. / 2))) + Zm / (heyoka::pow(magRm2, (3. / 2))));
 
         //Sun's radiation pressure (AOM is a heyoka parameter hy.par[0]. We
-        //will be able to set it later without recompiling the integartor)
+        //will be able to set it later without recompiling the integrator)
         auto SRPterm = heyoka::par[0] * PSRP * (std::pow(alpha_o, 2)) / (heyoka::pow(magRRo2, (3. / 2)));
         auto fSRPX = SRPterm * (pos[0] - Xo);
         auto fSRPY = SRPterm * (pos[1] - Yo);
@@ -206,7 +206,7 @@ protected:
         // prepare output file
         ta_total_out = new std::ofstream(std::to_string(time_stamp) + "/heyoka_total.csv");
         *ta_total_out << std::setprecision(std::numeric_limits<double>::digits10 + 1);
-        *ta_total_out << "index,time,position x,position y,position z,position norm,velocity x, velocity y,velocityy z,velocity norm" << std::endl;
+        *ta_total_out << "index,time,position x,position y,position z,position norm,velocity x, velocity y,velocity z,velocity norm" << std::endl;
 
         // calculates components separately
 
@@ -508,7 +508,7 @@ protected:
         split.get_state_data()[3] = d.getVelocity()[0];
         split.get_state_data()[4] = d.getVelocity()[1];
         split.get_state_data()[5] = d.getVelocity()[2];
-        // we allways start with 0 velocity
+        // we always start with 0 velocity
         for (int i = 6; i < split.get_state().size(); ++i) {
             split.get_state_data()[i] = 0;
         }
@@ -559,8 +559,7 @@ protected:
         IOUtils::to_ostream(MathUtils::relativeError(vel_split, vel_ta), std::cout, ",", { "relative error[", "]\n" });
     }
 
-    void writeHeyokaState(heyoka::taylor_adaptive<double>& ta)
-    {
+
     void writeHeyokaState(Acceleration::AccelerationComponent type){
         // one array that holds position and all velocity components in the order x,y,z,norm
         std::vector<double> output_vector;
@@ -579,8 +578,7 @@ protected:
 
     }
 
-    void writeSplitHeyokaState()
-    {
+
     void writeSplitHeyokaState(){
         // one array that holds position and all velocity components in the order x,y,z,norm
         std::vector<double> output_vector;

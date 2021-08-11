@@ -746,7 +746,7 @@ TEST_F(CompareWithHeyokaTests, compareTotalToSplit)
         bool crash_ta = false;
         std::cout << "Particle start" << std::endl;
         for (double t = start_t; t <= end_t; t += delta_t) {
-            std::array<double, 3> pos_i = i_total->getDebris().getDebrisVector()[0].getPosition();
+            std::array<double, 3> pos_i = i_total->getContainer().getDebrisVector()[0].getPosition();
             std::array<double, 3> pos_ta { ta_split->get_state()[0],
                                            ta_split->get_state()[1],
                                            ta_split->get_state()[2] };
