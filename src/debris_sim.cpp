@@ -47,7 +47,7 @@ void runSimulation()
         iteration++;
         if (iteration % 3000 == 0) {
             for (auto& d : container->getDebrisVector()) {
-                std::cout << iteration << d.toString() << std::endl;
+                std::cout << iteration << " " << d.toString() << std::endl;
             }
         }
         time_till_write -= file_input->getDeltaT();
@@ -63,6 +63,6 @@ void runSimulation()
     // save end configuration
     file_output->writeDebrisData(file_input->getEndT());
     for (auto& d : container->getDebrisVector()) {
-        std::cout << d.toString() << std::endl;
+        std::cout << " "  << d.toString() << std::endl;
     }
 }
