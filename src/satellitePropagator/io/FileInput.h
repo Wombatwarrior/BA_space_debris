@@ -427,6 +427,9 @@ void FileInput<Container>::readDebrisTXT()
                 // unknown token
             }
         }
+    }else{
+        std::string error_message = "Input file " + input_file_path.string() + " could not be opened";
+        throw std::runtime_error(error_message);
     }
 }
 
