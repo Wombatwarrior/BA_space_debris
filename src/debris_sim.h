@@ -3,12 +3,7 @@
 //
 
 #pragma once
-// logging imports
-#include "log4cxx/consoleappender.h"
-#include "log4cxx/helpers/properties.h"
-#include "log4cxx/logger.h"
-#include "log4cxx/patternlayout.h"
-#include "log4cxx/propertyconfigurator.h"
+#include <iostream>
 // project imports
 #include <memory>
 
@@ -16,7 +11,6 @@
 #include "satellitePropagator/io/include.h"
 #include "satellitePropagator/physics/include.h"
 
-log4cxx::LoggerPtr logger;
 
 std::shared_ptr<Debris::DebrisContainer<Debris::Debris>> container;
 std::shared_ptr<CommandLineInput> command_line;
@@ -26,8 +20,6 @@ std::shared_ptr<Acceleration::AccelerationAccumulator<Debris::DebrisContainer<De
 std::shared_ptr<Integrator<Debris::DebrisContainer<Debris::Debris>>> integrator;
 
 int main(int argc, char** argv);
-
-void initLogger();
 
 void initSimulation(int argc, char** argv);
 

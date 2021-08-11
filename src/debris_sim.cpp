@@ -6,25 +6,11 @@
 
 int main(int argc, char** argv)
 {
-    initLogger();
     initSimulation(argc, argv);
     runSimulation();
     return 0;
 }
 
-void initLogger()
-{
-    log4cxx::helpers::Properties logging_properties;
-    logging_properties.setProperty("log4j.rootLogger", "INFO, A1");
-    logging_properties.setProperty("log4j.appender.A1",
-        "org.apache.log4j.ConsoleAppender");
-    logging_properties.setProperty("log4j.appender.A1.layout.ConversionPattern",
-        "%-5p %c - %m%n");
-    logging_properties.setProperty("log4j.appender.A1.layout",
-        "org.apache.log4j.PatternLayout");
-    log4cxx::PropertyConfigurator::configure(logging_properties);
-    logger = logger = log4cxx::Logger::getLogger("DebrisMainLogger");
-}
 
 void initSimulation(int argc, char** argv)
 {
@@ -42,7 +28,7 @@ void initSimulation(int argc, char** argv)
     }
     // if something went wrong with the command line parsing
     catch (std::invalid_argument& e) {
-        LOG4CXX_FATAL(logger, e.what());
+        std::cerr << e.what() << std::endl;
         exit(1);
     }
 }
@@ -51,7 +37,7 @@ void runSimulation()
 {
     double current_time = file_input->getStartT();
     for (auto& d : container->getDebrisVector()) {
-        LOG4CXX_INFO(logger, d.toString());
+        std::cout << d.toString() << std::endl;
     }
     int iteration = 0;
     double time_till_write = file_input->getWriteDeltaT();
@@ -61,7 +47,7 @@ void runSimulation()
         iteration++;
         if (iteration % 3000 == 0) {
             for (auto& d : container->getDebrisVector()) {
-                LOG4CXX_DEBUG(logger, iteration << d.toString());
+                std::cout << iteration << d.toString() << std::endl;
             }
         }
         time_till_write -= file_input->getDeltaT();
@@ -77,6 +63,6 @@ void runSimulation()
     // save end configuration
     file_output->writeDebrisData(file_input->getEndT());
     for (auto& d : container->getDebrisVector()) {
-        LOG4CXX_INFO(logger, d.toString());
+        std::cout << d.toString() << std::endl;
     }
 }
