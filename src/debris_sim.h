@@ -24,3 +24,5 @@ int main(int argc, char** argv);
 void initSimulation(int argc, char** argv);
 
 void runSimulation();
+
+void runThesisCalculations();
