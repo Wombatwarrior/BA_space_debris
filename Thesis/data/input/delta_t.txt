@@ -1,0 +1,6 @@
+start_t=0.0
+delta_t=1
+end_t=5676
+write_delta_t=1
+debris=6878.14,0,0|0,7.61,0|0,0,0|0,0,0|2e-5|0.05
+acc_config=1,1,1,1,1,1,1,1
