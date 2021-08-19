@@ -7,7 +7,11 @@
 int main(int argc, char** argv)
 {
     initSimulation(argc, argv);
-    runSimulation();
+    if (command_line->getRunThesisCalculations()){
+        runThesisCalculations();
+    }else{
+        runSimulation();
+    }
     return 0;
 }
 
@@ -63,6 +67,41 @@ void runSimulation()
     // save end configuration
     file_output->writeDebrisData(file_input->getEndT());
     for (auto& d : container->getDebrisVector()) {
-        std::cout << " "  << d.toString() << std::endl;
+        std::cout << d.toString() << std::endl;
     }
+}
+
+
+
+void runThesisCalculations(){
+    std::cout << "Starting thesis calculations" << std::endl;
+    std::cout << "Run delta t comparisons" << std::endl;
+    // read the delta t input file
+    file_input->setInputFilePath("input/delta_t.txt");
+    file_input->setInputFileType(InputFile::TXT);
+    file_input->readDebrisData();
+    // used to keep track of current delta t
+    double delta_t = file_input->getDeltaT();
+    // set accumulator values that won't change for the delta t simulations
+    accumulator->setConfig(file_input->getAccConfig());
+    for (int i = 1; delta_t > 0.000001; ++i){
+        std::cout << "Delta t: " << delta_t << std::endl << std::endl;
+        // for each delta t we need new output files
+        file_output = std::make_shared<FileOutput<Debris::DebrisContainer<Debris::Debris>>>(*container, "output/raw/delta_t" + std::to_string(i) + ".csv",
+                                                                                            OutputFile::CSV, file_input->getAccConfig());
+        // set values for this delta t simulation
+        container->cleanDebrisVector();
+        file_input->readDebrisData();
+        file_input->setDeltaT(delta_t);
+        accumulator->setFileOutput(*file_output);
+        accumulator->setT(file_input->getStartT());
+        integrator->setDeltaT(delta_t);
+        //run the simulation for the current delta t
+        runSimulation();
+        // update delta t to halt of it's value
+        file_input->setDeltaT(delta_t/2);
+        delta_t=file_input->getDeltaT();
+    }
+
+    std::cout << "Calculations done" << std::endl;
 }
