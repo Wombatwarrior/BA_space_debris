@@ -44,21 +44,13 @@ void runSimulation()
         std::cout << d.toString() << std::endl;
     }
     int iteration = 0;
-    double time_till_write = file_input->getWriteDeltaT();
-    // write starting conditions
-    file_output->writeDebrisData(file_input->getStartT());
+    double next_write_time = file_input->getStartT();
     while (current_time <= file_input->getEndT()) {
         iteration++;
-        if (iteration % 3000 == 0) {
-            for (auto& d : container->getDebrisVector()) {
-                std::cout << iteration << " " << d.toString() << std::endl;
-            }
-        }
-        time_till_write -= file_input->getDeltaT();
-        if (time_till_write <= 0) {
+        if (current_time >= next_write_time) {
             integrator->integrate(true);
             file_output->writeDebrisData(current_time);
-            time_till_write = file_input->getWriteDeltaT();
+            next_write_time += file_input->getWriteDeltaT();
         } else {
             integrator->integrate();
         }
