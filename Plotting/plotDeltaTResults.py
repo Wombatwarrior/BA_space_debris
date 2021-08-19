@@ -57,3 +57,37 @@ plt.title('Relative velocity error using different delta t')
 plt.legend()
 plt.show()
 
+vel_df['E kinetic']= 0.5 * vel_df['vel_total norm'] * vel_df['vel_total norm']
+vel_df['E potential']= 1/3.986004407799724e+5 * vel_df['position norm']
+vel_df["E total"]= vel_df['E kinetic'] + vel_df['E potential']
+
+delta_t = 1.
+denominator = 1
+for df in vel_delta_t_list:
+    df['E kinetic']= 0.5 * df['velocity norm'] * df['velocity norm']
+    df['E potential']= 1/3.986004407799724e+5 * df['position norm']
+    df["E total"]= df['E kinetic'] + df['E potential']
+    df['E total abs error'] = list(map(abs, vel_df['E total'] - df['E total']))
+    plt.plot(df['time'], df['E total abs error'], label='delta t: 1/' + str(denominator))
+    delta_t /= 2.
+    denominator *= 2
+
+plt.xlabel('t in s')
+plt.ylabel('Absolute error in %calculate%')
+plt.title('Absolute energy error using different delta t')
+plt.legend()
+plt.show()
+
+delta_t = 1.
+denominator = 1
+for df in vel_delta_t_list:
+    df['E total rel error']= df['E total abs error'] / df['E total']
+    plt.plot(df['time'], df['E total rel error'], label='delta t: 1/' + str(denominator))
+    delta_t /= 2.
+    denominator *= 2
+
+plt.xlabel('t in s')
+plt.ylabel('Relative error')
+plt.title('Relative energy error using different delta t')
+plt.legend()
+plt.show()
