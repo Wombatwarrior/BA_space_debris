@@ -602,7 +602,7 @@ TEST_F(CompareWithHeyokaTests, compareTotalRandom)
     }
 }
 // compare calculated values of all Components between the two complete heyoka integrators
-TEST_F(CompareWithHeyokaTests, compareComleteHeyokas)
+TEST_F(CompareWithHeyokaTests, compareCompleteHeyokas)
 {
     std::cout << "\nCompare heyokas" << std::endl;
     // set some test debris values
@@ -783,6 +783,31 @@ TEST_F(CompareWithHeyokaTests, compareTotalToSplit)
             // compare result
             // no compare function for integrator and ta_split
             std::cout << "Particle done" << std::endl;
+    }
+}
+
+// calculate accurate values of the delta t simulation
+TEST_F(CompareWithHeyokaTests, calculateDeltaTHeyoka) {
+    ta_split_out  = new std::ofstream (std::to_string(time_stamp) + "/heyoka_split_delta_t_sim.csv");
+    *ta_split_out << std::setprecision(std::numeric_limits<double>::digits10 + 1);
+    *ta_split_out << "index,time,position x,position y,position z,position norm,vel_init x,vel_init y,vel_init z,vel_init norm,vel_kep x,vel_kep y,vel_kep z,vel_kep norm,vel_j2 x,vel_j2 y,vel_j2 z,vel_j2 norm,vel_c22 x,vel_c22 y,vel_c22 z,vel_c22 norm,vel_s22 x,vel_s22 y,vel_s22 z,vel_s22 norm,vel_sol x,vel_sol y,vel_sol z,vel_sol norm,vel_lun x,vel_lun y,vel_lun z,vel_lun norm,vel_srp x,vel_srp y,vel_srp z,vel_srp norm,vel_drag x,vel_drag y,vel_drag z,vel_drag norm,vel_total x,vel_total y,vel_total z,vel_total norm" << std::endl;
+    ta_split_line = 0;
+
+    // set init state
+    Debris::Debris d;
+    d.setPosition({6878.14,0,0});
+    d.setVelocity({0,7.61,0});
+    d.setBcInv(0.05);
+    d.setAom(2e-5);
+    prepareRun(*ta_split, *ta_total, d);
+    ta_split->get_pars_data()[0] = d.getAom();
+    ta_split->get_pars_data()[1] = d.getBcInv();
+    start_t = 0;
+    delta_t = 1;
+    end_t = 5676;
+    for (double t = start_t; t <= end_t; t += delta_t) {
+        writeSplitHeyokaState();
+        ta_split->propagate_for(delta_t);
     }
 }
 

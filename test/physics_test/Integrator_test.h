@@ -36,8 +36,8 @@ protected:
 
     // delta t
     inline static double delta_t = .1;
-    inline static constexpr double start_t = 0.;
-    inline static constexpr double end_t = 1000;
+    inline static double start_t = 0.;
+    inline static double end_t = 1000;
 
     //heyoka variables
     inline static heyoka::taylor_adaptive<double>* ta_total;
@@ -60,11 +60,11 @@ protected:
     inline static std::array<int, 8> ta_components_line {};
     inline static int ta_total_line = 0;
     inline static int ta_split_line = 0;
+    inline static auto time_stamp = time(NULL);
 
     inline static void SetUpTestSuite()
     {
         //timestamp to create new data folder for each run
-        auto time_stamp = time(NULL);
         std::filesystem::create_directory(std::filesystem::path(std::to_string(time_stamp)));
         //create heyoka variables
         std::array<heyoka::expression, 3> pos = heyoka::make_vars("X", "Y", "Z");
