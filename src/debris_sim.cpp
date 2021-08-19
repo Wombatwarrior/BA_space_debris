@@ -56,8 +56,6 @@ void runSimulation()
         }
         current_time += file_input->getDeltaT();
     }
-    // save end configuration
-    file_output->writeDebrisData(file_input->getEndT());
     for (auto& d : container->getDebrisVector()) {
         std::cout << d.toString() << std::endl;
     }
