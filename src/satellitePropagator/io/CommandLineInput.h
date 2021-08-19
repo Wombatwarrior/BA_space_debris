@@ -47,7 +47,7 @@ private:
     OutputFile::Type output_file_type = OutputFile::CSV; /**< Holds the type of the output file*/
     std::filesystem::path input_file_path {}; /**< Path to the input file */
     std::filesystem::path output_file_path {}; /**< Path to the main output file. USed to construct other output file paths */
-
+    bool run_thesis_calculations=false; /**< if set to true, we want to run pre defined simulations **/
 public:
     /**
      * @brief Getter function for #input_file_type
@@ -82,6 +82,7 @@ public:
      *
      * @return Value of #input_file_path
      */
+    [[nodiscard]] const std::filesystem::path& getInputFilePath() const;
     std::filesystem::path& getInputFilePath();
 
     /**
@@ -105,4 +106,11 @@ public:
      * @param outputFilePath New value of #output_file_path
      */
     void setOutputFilePath(const std::filesystem::path& outputFilePath);
+
+    /**
+     * @brief Getter function for #run_thesis_calculations
+     *
+     * @return value of #run_thesis_calculations
+     */
+     [[nodiscard]] const bool& getRunThesisCalculations() const;
 };

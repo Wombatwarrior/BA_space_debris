@@ -47,16 +47,22 @@ void CommandLineInput::parseCommandLine(int argc, char** argv)
                                                                    "for output";
                             throw std::invalid_argument(error_message);
                         }
+                    } else if(option == "-c") {
+                        run_thesis_calculations=true;
                     } else {
                         // unknown option
                         std::string error_message = "unknown argument " + option;
                         throw std::invalid_argument(error_message);
                     }
-                    // flags could be legal at the end of the argument
+                // flags could be legal at the end of the argument
                 } else if (i == argc - 1) {
-                    // unknown option
-                    std::string error_message = "unknown or incomplete argument " + option;
-                    throw std::invalid_argument(error_message);
+                    if(option == "-c") {
+                        run_thesis_calculations=true;
+                    } else {
+                        // unknown option
+                        std::string error_message = "unknown or incomplete argument " + option;
+                        throw std::invalid_argument(error_message);
+                    }
                 }
             }
         } catch (std::logic_error& e) {
@@ -116,4 +122,12 @@ std::filesystem::path& CommandLineInput::getOutputFilePath()
 void CommandLineInput::setOutputFilePath(const std::filesystem::path& outputFilePath)
 {
     output_file_path = outputFilePath;
+}
+
+const std::filesystem::path &CommandLineInput::getInputFilePath() const {
+    return input_file_path;
+}
+
+const bool &CommandLineInput::getRunThesisCalculations() const {
+    return run_thesis_calculations;
 }
