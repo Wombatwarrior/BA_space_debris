@@ -149,7 +149,7 @@ for df in vel_delta_t_list:
 fig.update_yaxes(type="log", exponentformat='e', title_text='Average relative velocity component error in km/s')
 fig.update_xaxes(title_text='time in s')
 #fig.show(config=config)
-fig.write_image("../figures/abs_err_10.png")
+fig.write_image("../figures/rel_err_10.png")
 
 fig = go.Figure()
 delta_t = 1.
