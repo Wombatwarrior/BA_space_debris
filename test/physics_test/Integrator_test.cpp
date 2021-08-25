@@ -4,8 +4,8 @@
 
 #include "Integrator_test.h"
 #ifdef HEYOKA_IS_PRESENT
-#include <stdlib.h>
-#include <time.h>
+#include <cstdlib>
+#include <ctime>
 
 // setup taylor integrator and print it to check if the state etc. are correct
 TEST_F(CompareWithHeyokaTests, showTaylorIntegrator)
@@ -628,10 +628,10 @@ TEST_F(CompareWithHeyokaTests, compareCompleteHeyokas)
         bool crash_split = false;
         bool crash_total = false;
         for (double t = start_t; t <= end_t; t += delta_t) {
-            std::array<double, 3> pos_split { ta_split->get_state()[0],
+            std::array<long double, 3> pos_split { ta_split->get_state()[0],
                 ta_split->get_state()[1],
                 ta_split->get_state()[2] };
-            std::array<double, 3> pos_total { ta_total->get_state()[0],
+            std::array<long double, 3> pos_total { ta_total->get_state()[0],
                 ta_total->get_state()[1],
                 ta_total->get_state()[2] };
             if (MathUtils::euclideanNorm(pos_split) <= Physics::R_EARTH) {
@@ -788,26 +788,28 @@ TEST_F(CompareWithHeyokaTests, compareTotalToSplit)
 
 // calculate accurate values of the delta t simulation
 TEST_F(CompareWithHeyokaTests, calculateDeltaTHeyoka) {
-    ta_split_out  = new std::ofstream (std::to_string(time_stamp) + "/heyoka_split_delta_t_sim.csv");
-    *ta_split_out << std::setprecision(std::numeric_limits<double>::digits10 + 1);
-    *ta_split_out << "index,time,position x,position y,position z,position norm,vel_init x,vel_init y,vel_init z,vel_init norm,vel_kep x,vel_kep y,vel_kep z,vel_kep norm,vel_j2 x,vel_j2 y,vel_j2 z,vel_j2 norm,vel_c22 x,vel_c22 y,vel_c22 z,vel_c22 norm,vel_s22 x,vel_s22 y,vel_s22 z,vel_s22 norm,vel_sol x,vel_sol y,vel_sol z,vel_sol norm,vel_lun x,vel_lun y,vel_lun z,vel_lun norm,vel_srp x,vel_srp y,vel_srp z,vel_srp norm,vel_drag x,vel_drag y,vel_drag z,vel_drag norm,vel_total x,vel_total y,vel_total z,vel_total norm" << std::endl;
-    ta_split_line = 0;
+
+    std::cout << *ta_split_ld << std::endl;
+    ta_split_ld_out  = new std::ofstream (std::to_string(time_stamp) + "/heyoka_split_delta_t_ld_sim.csv");
+    *ta_split_ld_out << std::setprecision(std::numeric_limits<double>::digits10 + 1);
+    *ta_split_ld_out << "index,time,position x,position y,position z,position norm,vel_init x,vel_init y,vel_init z,vel_init norm,vel_kep x,vel_kep y,vel_kep z,vel_kep norm,vel_j2 x,vel_j2 y,vel_j2 z,vel_j2 norm,vel_c22 x,vel_c22 y,vel_c22 z,vel_c22 norm,vel_s22 x,vel_s22 y,vel_s22 z,vel_s22 norm,vel_sol x,vel_sol y,vel_sol z,vel_sol norm,vel_lun x,vel_lun y,vel_lun z,vel_lun norm,vel_srp x,vel_srp y,vel_srp z,vel_srp norm,vel_drag x,vel_drag y,vel_drag z,vel_drag norm,vel_total x,vel_total y,vel_total z,vel_total norm" << std::endl;
+    ta_split_ld_line = 0;
 
     // set init state
     Debris::Debris d;
-    d.setPosition({6878.14,0,0});
-    d.setVelocity({0,7.61,0});
+    d.setPosition({3971.1,3971.1,3971.1});
+    d.setVelocity({3.10677,-6.21354,3.10677});
     d.setBcInv(0.05);
     d.setAom(2e-5);
-    prepareRun(*ta_split, *ta_total, d);
-    ta_split->get_pars_data()[0] = d.getAom();
-    ta_split->get_pars_data()[1] = d.getBcInv();
+    prepareLDRun(*ta_split_ld, d);
+    ta_split_ld->get_pars_data()[0] = d.getAom();
+    ta_split_ld->get_pars_data()[1] = d.getBcInv();
     start_t = 0;
-    delta_t = 1;
+    delta_t = 0.0625;
     end_t = 5676;
     for (double t = start_t; t <= end_t; t += delta_t) {
-        writeSplitHeyokaState();
-        ta_split->propagate_for(delta_t);
+        writeSplitLDHeyokaState();
+        ta_split_ld->propagate_for(delta_t);
     }
 }
 

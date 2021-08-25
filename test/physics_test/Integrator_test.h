@@ -45,6 +45,7 @@ protected:
 
     //heyoka integrator to extract single components
     inline static heyoka::taylor_adaptive<double>* ta_split;
+    inline static heyoka::taylor_adaptive<long double>* ta_split_ld;
 
     // own integrators
     inline static Integrator<Debris::DebrisContainer<Debris::Debris>>* i_total;
@@ -57,9 +58,11 @@ protected:
     inline static std::ofstream* ta_total_out;
     inline static FileOutput<Debris::DebrisContainer<Debris::Debris>>* i_total_out;
     inline static std::ofstream* ta_split_out;
+    inline static std::ofstream* ta_split_ld_out;
     inline static std::array<int, 8> ta_components_line {};
     inline static int ta_total_line = 0;
     inline static int ta_split_line = 0;
+    inline static int ta_split_ld_line = 0;
     inline static auto time_stamp = time(NULL);
 
     inline static void SetUpTestSuite()
@@ -286,10 +289,37 @@ protected:
             heyoka::kw::tol = 1e-16,
             heyoka::kw::compact_mode = true
         };
+        ta_split_ld = new heyoka::taylor_adaptive<long double> {
+            { heyoka::prime(pos[0]) = dXXdt_split, heyoka::prime(pos[1]) = dXYdt_split, heyoka::prime(pos[2]) = dXZdt_split,
+                heyoka::prime(vel[0]) = heyoka::expression(0.), heyoka::prime(vel[1]) = heyoka::expression(0.), heyoka::prime(vel[2]) = heyoka::expression(0.),
+                heyoka::prime(vel_kep[0]) = fKepX, heyoka::prime(vel_kep[1]) = fKepY, heyoka::prime(vel_kep[2]) = fKepZ,
+                heyoka::prime(vel_j2[0]) = fJ2X, heyoka::prime(vel_j2[1]) = fJ2Y, heyoka::prime(vel_j2[2]) = fJ2Z,
+                heyoka::prime(vel_c22[0]) = fC22X, heyoka::prime(vel_c22[1]) = fC22Y, heyoka::prime(vel_c22[2]) = fC22Z,
+                heyoka::prime(vel_s22[0]) = fS22X, heyoka::prime(vel_s22[1]) = fS22Y, heyoka::prime(vel_s22[2]) = fS22Z,
+                heyoka::prime(vel_sun[0]) = fSunX, heyoka::prime(vel_sun[1]) = fSunY, heyoka::prime(vel_sun[2]) = fSunZ,
+                heyoka::prime(vel_lun[0]) = fMoonX, heyoka::prime(vel_lun[1]) = fMoonY, heyoka::prime(vel_lun[2]) = fMoonZ,
+                heyoka::prime(vel_srp[0]) = fSRPX, heyoka::prime(vel_srp[1]) = fSRPY, heyoka::prime(vel_srp[2]) = fSRPZ,
+                heyoka::prime(vel_drag[0]) = fDragX_split, heyoka::prime(vel_drag[1]) = fDragY_split, heyoka::prime(vel_drag[2]) = fDragZ_split },
+            { x0, y0, z0,
+                vx0, vy0, vz0,
+                vel_kep_x0, vel_kep_y0, vel_kep_z0,
+                vel_j2_x0, vel_j2_y0, vel_j2_z0,
+                vel_c22_x0, vel_c22_y0, vel_c22_z0,
+                vel_s22_x0, vel_s22_y0, vel_s22_z0,
+                vel_sun_x0, vel_sun_y0, vel_sun_z0,
+                vel_lun_x0, vel_lun_y0, vel_lun_z0,
+                vel_srp_x0, vel_srp_y0, vel_srp_z0,
+                vel_drag_x0, vel_drag_y0, vel_drag_z0 },
+            heyoka::kw::time = t0,
+            heyoka::kw::compact_mode = true
+        };
         // prepare output file
         ta_split_out = new std::ofstream(std::to_string(time_stamp) + "/heyoka_split.csv");
+        ta_split_ld_out = new std::ofstream(std::to_string(time_stamp) + "/heyoka_split_ld.csv");
         *ta_split_out << std::setprecision(std::numeric_limits<double>::digits10 + 1);
+        *ta_split_ld_out << std::setprecision(std::numeric_limits<long double>::digits10 + 1);
         *ta_split_out << "index,time,position x,position y,position z,position norm,vel_init x,vel_init y,vel_init z,vel_init norm,vel_kep x,vel_kep y,vel_kep z,vel_kep norm,vel_j2 x,vel_j2 y,vel_j2 z,vel_j2 norm,vel_c22 x,vel_c22 y,vel_c22 z,vel_c22 norm,vel_s22 x,vel_s22 y,vel_s22 z,vel_s22 norm,vel_sol x,vel_sol y,vel_sol z,vel_sol norm,vel_lun x,vel_lun y,vel_lun z,vel_lun norm,vel_srp x,vel_srp y,vel_srp z,vel_srp norm,vel_drag x,vel_drag y,vel_drag z,vel_drag norm,vel_total x,vel_total y,vel_total z,vel_total norm" << std::endl;
+        *ta_split_ld_out << "index,time,position x,position y,position z,position norm,vel_init x,vel_init y,vel_init z,vel_init norm,vel_kep x,vel_kep y,vel_kep z,vel_kep norm,vel_j2 x,vel_j2 y,vel_j2 z,vel_j2 norm,vel_c22 x,vel_c22 y,vel_c22 z,vel_c22 norm,vel_s22 x,vel_s22 y,vel_s22 z,vel_s22 norm,vel_sol x,vel_sol y,vel_sol z,vel_sol norm,vel_lun x,vel_lun y,vel_lun z,vel_lun norm,vel_srp x,vel_srp y,vel_srp z,vel_srp norm,vel_drag x,vel_drag y,vel_drag z,vel_drag norm,vel_total x,vel_total y,vel_total z,vel_total norm" << std::endl;
 
         ta_components[Acceleration::KEP] = new heyoka::taylor_adaptive<double> {
             { heyoka::prime(pos[0]) = dXdt, heyoka::prime(pos[1]) = dYdt, heyoka::prime(pos[2]) = dZdt, heyoka::prime(vel[0]) = fKepX, heyoka::prime(vel[1]) = fKepY, heyoka::prime(vel[2]) = fKepZ },
@@ -387,7 +417,6 @@ protected:
         *ta_components_out[Acceleration::DRAG] << std::setprecision(std::numeric_limits<double>::digits10 + 1);
         *ta_components_out[Acceleration::DRAG] << "index,time,position x,position y,position z,position norm,vel_drag x,vel_drag y,vel_drag z,vel_drag norm" << std::endl;
 
-        std::cout << std::to_string(time_stamp) + "/heyoka_drag.csv" << std::endl;
         // setup own integrator for all components
         auto* container = new Debris::DebrisContainer<Debris::Debris>;
         std::array<bool, 8> config { true, true, true, true, true, true, true, true };
@@ -523,6 +552,23 @@ protected:
         total.set_time(start_t);
     }
 
+    template <class D>
+    void prepareLDRun(heyoka::taylor_adaptive<long double>& split, D& d)
+    {
+        split.get_state_data()[0] = d.getPosition()[0];
+        split.get_state_data()[1] = d.getPosition()[1];
+        split.get_state_data()[2] = d.getPosition()[2];
+        split.get_state_data()[3] = d.getVelocity()[0];
+        split.get_state_data()[4] = d.getVelocity()[1];
+        split.get_state_data()[5] = d.getVelocity()[2];
+        // we always start with 0 velocity
+        for (int i = 6; i < split.get_state().size(); ++i) {
+            split.get_state_data()[i] = 0;
+        }
+        // reset time values
+        split.set_time(start_t);
+    }
+
     void showErrors(heyoka::taylor_adaptive<double>& split, heyoka::taylor_adaptive<double>& total)
     {
         std::array<double, 3> pos_split { split.get_state()[0],
@@ -605,6 +651,36 @@ protected:
         *ta_split_out << ta_split->get_time() << ',';
         IOUtils::to_ostream(output_vector, *ta_split_out);
         *ta_split_out << std::endl;
+    }
+
+    void writeSplitLDHeyokaState()
+    {
+        // one array that holds position and all velocity components in the order x,y,z,norm
+        std::vector<long double> output_vector;
+        for (int i = 0; i < ta_split_ld->get_state().size() / 3; ++i) {
+            // add x,y,z
+            output_vector.push_back(ta_split_ld->get_state()[3 * i]);
+            output_vector.push_back(ta_split_ld->get_state()[3 * i + 1]);
+            output_vector.push_back(ta_split_ld->get_state()[3 * i + 2]);
+            output_vector.push_back(MathUtils::euclideanNorm(std::array<long double, 3> { ta_split_ld->get_state()[3 * i], ta_split_ld->get_state()[3 * i + 1], ta_split_ld->get_state()[3 * i + 2] }));
+        }
+        std::array<double, 3> vel_split {};
+        // combine all components
+        for (int i = 3; i < ta_split_ld->get_state().size(); i += 3) {
+            vel_split[0] += ta_split_ld->get_state_data()[i];
+            vel_split[1] += ta_split_ld->get_state_data()[i + 1];
+            vel_split[2] += ta_split_ld->get_state_data()[i + 2];
+        }
+        output_vector.push_back(vel_split[0]);
+        output_vector.push_back(vel_split[1]);
+        output_vector.push_back(vel_split[2]);
+        output_vector.push_back(MathUtils::euclideanNorm(vel_split));
+
+        // output
+        *ta_split_ld_out << ta_split_ld_line++ << ',';
+        *ta_split_ld_out << ta_split_ld->get_time() << ',';
+        IOUtils::to_ostream(output_vector, *ta_split_ld_out);
+        *ta_split_ld_out << std::endl;
     }
 };
 #endif
