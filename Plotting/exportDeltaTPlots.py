@@ -124,7 +124,9 @@ vel_delta_t_list = [pd.read_csv('output/processed/delta_t_10_1.csv', engine='c',
                     pd.read_csv('output/processed/delta_t_10_3.csv', engine='c', float_precision='high'),
                     pd.read_csv('output/processed/delta_t_10_4.csv', engine='c', float_precision='high'),
                     pd.read_csv('output/processed/delta_t_10_5.csv', engine='c', float_precision='high'),
-                    pd.read_csv('output/processed/delta_t_10_6.csv', engine='c', float_precision='high')]
+                    pd.read_csv('output/processed/delta_t_10_6.csv', engine='c', float_precision='high'),
+                    pd.read_csv('output/processed/delta_t_10_7.csv', engine='c', float_precision='high'),
+                    pd.read_csv('output/processed/delta_t_10_8.csv', engine='c', float_precision='high')]
 fig = go.Figure()
 delta_t = 1.
 exponent = 0
