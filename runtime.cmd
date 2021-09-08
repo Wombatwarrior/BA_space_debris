@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH -J BA_runtime_analysis
 #SBATCH -o ./../../output/%x.%j.%N.out
-#SBATCH -D ./build
+#SBATCH -D ./../Thesis/data
 #SBATCH --clusters=serial
 #SBATCH --partition=serial_std
 #SBATCH --get-user-env
@@ -15,4 +15,4 @@ module load llvm/10.0.0
 module unload intel-mpi/2019-intel
 module unload intel
 module switch gcc/10.2.0
-./debris_sim ./../test_files/test_input.txt -o out.csv
+./../../debris_sim ./../../../test_files/test_input.txt -o out.csv
