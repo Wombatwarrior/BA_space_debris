@@ -392,19 +392,19 @@ TEST_F(LunComponentTests, CompareTrigonometricTerms)
     double d_m = phi_m_p + phi_m_a - phi_m + 297.85027;
 
     // only need this 13 function values
-    double c_2dm = std::cos(2 * d_m * M_PIf64 / 180);
-    double c_lm = std::cos(l_m * M_PIf64 / 180);
-    double c_2lm = std::cos(2 * l_m * M_PIf64 / 180);
-    double c_l1m = std::cos(l1_m * M_PIf64 / 180);
-    double c_fm = std::cos(f_m * M_PIf64 / 180);
-    double c_2fm = std::cos(2 * f_m * M_PIf64 / 180);
-    double s_dm = std::sin(d_m * M_PIf64 / 180);
-    double s_2dm = std::sin(2 * d_m * M_PIf64 / 180);
-    double s_lm = std::sin(l_m * M_PIf64 / 180);
-    double s_2lm = std::sin(2 * l_m * M_PIf64 / 180);
-    double s_l1m = std::sin(l1_m * M_PIf64 / 180);
-    double s_fm = std::sin(f_m * M_PIf64 / 180);
-    double s_2fm = std::sin(2 * f_m * M_PIf64 / 180);
+    double c_2dm = std::cos(2 * d_m * M_PIl / 180);
+    double c_lm = std::cos(l_m * M_PIl / 180);
+    double c_2lm = std::cos(2 * l_m * M_PIl / 180);
+    double c_l1m = std::cos(l1_m * M_PIl / 180);
+    double c_fm = std::cos(f_m * M_PIl / 180);
+    double c_2fm = std::cos(2 * f_m * M_PIl / 180);
+    double s_dm = std::sin(d_m * M_PIl / 180);
+    double s_2dm = std::sin(2 * d_m * M_PIl / 180);
+    double s_lm = std::sin(l_m * M_PIl / 180);
+    double s_2lm = std::sin(2 * l_m * M_PIl / 180);
+    double s_l1m = std::sin(l1_m * M_PIl / 180);
+    double s_fm = std::sin(f_m * M_PIl / 180);
+    double s_2fm = std::sin(2 * f_m * M_PIl / 180);
 
     // no calls
     double r1 = -152 * ((c_lm * c_l1m - s_lm * s_l1m) * c_2dm + (s_lm * c_l1m + c_lm * s_l1m) * s_2dm);
@@ -418,30 +418,30 @@ TEST_F(LunComponentTests, CompareTrigonometricTerms)
     r1 += 385000;
 
     // 8 calls
-    double r2 = -152 * std::cos((l_m + l1_m - 2 * d_m) * M_PIf64 / 180);
-    r2 -= 171 * std::cos((l_m + 2 * d_m) * M_PIf64 / 180);
-    r2 -= 205 * std::cos((l1_m - 2 * d_m) * M_PIf64 / 180);
-    r2 += 246 * std::cos((2 * l_m - 2 * d_m) * M_PIf64 / 180);
-    r2 -= 570 * std::cos((2 * l_m) * M_PIf64 / 180);
-    r2 -= 2956 * std::cos((2 * d_m) * M_PIf64 / 180);
-    r2 -= 3699 * std::cos((2 * d_m - l_m) * M_PIf64 / 180);
-    r2 -= 20905 * std::cos(l_m * M_PIf64 / 180);
+    double r2 = -152 * std::cos((l_m + l1_m - 2 * d_m) * M_PIl / 180);
+    r2 -= 171 * std::cos((l_m + 2 * d_m) * M_PIl / 180);
+    r2 -= 205 * std::cos((l1_m - 2 * d_m) * M_PIl / 180);
+    r2 += 246 * std::cos((2 * l_m - 2 * d_m) * M_PIl / 180);
+    r2 -= 570 * std::cos((2 * l_m) * M_PIl / 180);
+    r2 -= 2956 * std::cos((2 * d_m) * M_PIl / 180);
+    r2 -= 3699 * std::cos((2 * d_m - l_m) * M_PIl / 180);
+    r2 -= 20905 * std::cos(l_m * M_PIl / 180);
     r2 += 385000;
 
     double abs_err = 1.3e-15;
-    ASSERT_NEAR(c_lm, std::cos(l_m * M_PIf64 / 180), abs_err);
+    ASSERT_NEAR(c_lm, std::cos(l_m * M_PIl / 180), abs_err);
     ASSERT_NEAR(c_2dm * c_lm + s_2dm * s_lm,
-        std::cos((2 * d_m - l_m) * M_PIf64 / 180), abs_err);
-    ASSERT_NEAR(c_2dm, std::cos((2 * d_m) * M_PIf64 / 180), abs_err);
-    ASSERT_NEAR(c_2lm, std::cos((2 * l_m) * M_PIf64 / 180), abs_err);
+        std::cos((2 * d_m - l_m) * M_PIl / 180), abs_err);
+    ASSERT_NEAR(c_2dm, std::cos((2 * d_m) * M_PIl / 180), abs_err);
+    ASSERT_NEAR(c_2lm, std::cos((2 * l_m) * M_PIl / 180), abs_err);
     ASSERT_NEAR(c_2lm * c_2dm + s_2lm * s_2dm,
-        std::cos((2 * l_m - 2 * d_m) * M_PIf64 / 180), abs_err);
+        std::cos((2 * l_m - 2 * d_m) * M_PIl / 180), abs_err);
     ASSERT_NEAR(c_l1m * c_2dm + s_l1m * s_2dm,
-        std::cos((l1_m - 2 * d_m) * M_PIf64 / 180), abs_err);
+        std::cos((l1_m - 2 * d_m) * M_PIl / 180), abs_err);
     ASSERT_NEAR(c_lm * c_2dm - s_lm * s_2dm,
-        std::cos((l_m + 2 * d_m) * M_PIf64 / 180), abs_err);
+        std::cos((l_m + 2 * d_m) * M_PIl / 180), abs_err);
     ASSERT_NEAR((c_lm * c_l1m - s_lm * s_l1m) * c_2dm + (s_lm * c_l1m + c_lm * s_l1m) * s_2dm,
-        std::cos((l_m + l1_m - 2 * d_m) * M_PIf64 / 180), abs_err);
+        std::cos((l_m + l1_m - 2 * d_m) * M_PIl / 180), abs_err);
 
     ASSERT_NEAR(r1, r2, abs_err);
 
@@ -463,44 +463,44 @@ TEST_F(LunComponentTests, CompareTrigonometricTerms)
     lambda1 += l_0;
 
     // 14 calls
-    double lambda2 = -(55.0 / 3600) * std::sin((2 * f_m - 2 * d_m) * M_PIf64 / 180);
-    lambda2 -= (110.0 / 3600) * std::sin((l_m + l1_m) * M_PIf64 / 180);
-    lambda2 -= (125.0 / 3600) * std::sin((d_m)*M_PIf64 / 180);
-    lambda2 += (148.0 / 3600) * std::sin((l_m - l1_m) * M_PIf64 / 180);
-    lambda2 -= (165.0 / 3600) * std::sin((l1_m - 2 * d_m) * M_PIf64 / 180);
-    lambda2 += (192.0 / 3600) * std::sin((l_m + 2 * d_m) * M_PIf64 / 180);
-    lambda2 -= (206.0 / 3600) * std::sin((l_m + l1_m - 2 * d_m) * M_PIf64 / 180);
-    lambda2 -= (212.0 / 3600) * std::sin((2 * l_m - 2 * d_m) * M_PIf64 / 180);
-    lambda2 -= (412.0 / 3600) * std::sin((2 * f_m) * M_PIf64 / 180);
-    lambda2 -= (668.0 / 3600) * std::sin((l1_m)*M_PIf64 / 180);
-    lambda2 += (769.0 / 3600) * std::sin((2 * l_m) * M_PIf64 / 180);
-    lambda2 += (2370.0 / 3600) * std::sin((2 * d_m) * M_PIf64 / 180);
-    lambda2 -= (4856.0 / 3600) * std::sin((l_m - 2 * d_m) * M_PIf64 / 180);
-    lambda2 += (22640.0 / 3600) * std::sin((l_m)*M_PIf64 / 180);
+    double lambda2 = -(55.0 / 3600) * std::sin((2 * f_m - 2 * d_m) * M_PIl / 180);
+    lambda2 -= (110.0 / 3600) * std::sin((l_m + l1_m) * M_PIl / 180);
+    lambda2 -= (125.0 / 3600) * std::sin((d_m)*M_PIl / 180);
+    lambda2 += (148.0 / 3600) * std::sin((l_m - l1_m) * M_PIl / 180);
+    lambda2 -= (165.0 / 3600) * std::sin((l1_m - 2 * d_m) * M_PIl / 180);
+    lambda2 += (192.0 / 3600) * std::sin((l_m + 2 * d_m) * M_PIl / 180);
+    lambda2 -= (206.0 / 3600) * std::sin((l_m + l1_m - 2 * d_m) * M_PIl / 180);
+    lambda2 -= (212.0 / 3600) * std::sin((2 * l_m - 2 * d_m) * M_PIl / 180);
+    lambda2 -= (412.0 / 3600) * std::sin((2 * f_m) * M_PIl / 180);
+    lambda2 -= (668.0 / 3600) * std::sin((l1_m)*M_PIl / 180);
+    lambda2 += (769.0 / 3600) * std::sin((2 * l_m) * M_PIl / 180);
+    lambda2 += (2370.0 / 3600) * std::sin((2 * d_m) * M_PIl / 180);
+    lambda2 -= (4856.0 / 3600) * std::sin((l_m - 2 * d_m) * M_PIl / 180);
+    lambda2 += (22640.0 / 3600) * std::sin((l_m)*M_PIl / 180);
     lambda2 += l_0;
 
-    ASSERT_NEAR(s_lm, std::sin((l_m)*M_PIf64 / 180), abs_err);
-    ASSERT_NEAR(s_2lm, std::sin((2 * l_m) * M_PIf64 / 180), abs_err);
+    ASSERT_NEAR(s_lm, std::sin((l_m)*M_PIl / 180), abs_err);
+    ASSERT_NEAR(s_2lm, std::sin((2 * l_m) * M_PIl / 180), abs_err);
     ASSERT_NEAR(s_lm * c_2dm - c_lm * s_2dm,
-        std::sin((l_m - 2 * d_m) * M_PIf64 / 180), abs_err);
-    ASSERT_NEAR(s_2dm, std::sin((2 * d_m) * M_PIf64 / 180), abs_err);
-    ASSERT_NEAR(s_l1m, std::sin(l1_m * M_PIf64 / 180), abs_err);
-    ASSERT_NEAR(s_2fm, std::sin((2 * f_m) * M_PIf64 / 180), abs_err);
+        std::sin((l_m - 2 * d_m) * M_PIl / 180), abs_err);
+    ASSERT_NEAR(s_2dm, std::sin((2 * d_m) * M_PIl / 180), abs_err);
+    ASSERT_NEAR(s_l1m, std::sin(l1_m * M_PIl / 180), abs_err);
+    ASSERT_NEAR(s_2fm, std::sin((2 * f_m) * M_PIl / 180), abs_err);
     ASSERT_NEAR(s_2lm * c_2dm - c_2lm * s_2dm,
-        std::sin((2 * l_m - 2 * d_m) * M_PIf64 / 180), abs_err);
+        std::sin((2 * l_m - 2 * d_m) * M_PIl / 180), abs_err);
     ASSERT_NEAR((s_lm * c_l1m + c_lm * s_l1m) * c_2dm - (c_lm * c_l1m - s_lm * s_l1m) * s_2dm,
-        std::sin((l_m + l1_m - 2 * d_m) * M_PIf64 / 180), abs_err);
+        std::sin((l_m + l1_m - 2 * d_m) * M_PIl / 180), abs_err);
     ASSERT_NEAR(s_lm * c_2dm + c_lm * s_2dm,
-        std::sin((l_m + 2 * d_m) * M_PIf64 / 180), abs_err);
+        std::sin((l_m + 2 * d_m) * M_PIl / 180), abs_err);
     ASSERT_NEAR(s_l1m * c_2dm - c_l1m * s_2dm,
-        std::sin((l1_m - 2 * d_m) * M_PIf64 / 180), abs_err);
+        std::sin((l1_m - 2 * d_m) * M_PIl / 180), abs_err);
     ASSERT_NEAR(s_lm * c_l1m - c_lm * s_l1m,
-        std::sin((l_m - l1_m) * M_PIf64 / 180), abs_err);
-    ASSERT_NEAR(s_dm, std::sin((d_m)*M_PIf64 / 180), abs_err);
+        std::sin((l_m - l1_m) * M_PIl / 180), abs_err);
+    ASSERT_NEAR(s_dm, std::sin((d_m)*M_PIl / 180), abs_err);
     ASSERT_NEAR(s_lm * c_l1m + c_lm * s_l1m,
-        std::sin((l_m + l1_m) * M_PIf64 / 180), abs_err);
+        std::sin((l_m + l1_m) * M_PIl / 180), abs_err);
     ASSERT_NEAR(s_2fm * c_2dm - c_2fm * s_2dm,
-        std::sin((2 * f_m - 2 * d_m) * M_PIf64 / 180), abs_err);
+        std::sin((2 * f_m - 2 * d_m) * M_PIl / 180), abs_err);
 
     ASSERT_NEAR(lambda1, lambda2, abs_err);
 
@@ -512,38 +512,38 @@ TEST_F(LunComponentTests, CompareTrigonometricTerms)
     beta1 -= (31.0 / 3600) * ((s_fm * c_lm - c_fm * s_lm) * c_2dm - (c_fm * c_lm + s_fm * s_lm) * s_2dm);
     beta1 += (44.0 / 3600) * ((s_lm * c_fm + c_lm * s_fm) * c_2dm - (c_lm * c_fm - s_lm * s_fm) * s_2dm);
     beta1 -= (526.0 / 3600) * (s_fm * c_2dm - c_fm * s_2dm);
-    beta1 += (18520.0 / 3600) * std::sin((f_m + lambda1 - l_0 + (412.0 / 3600) * s_2fm + (541.0 / 3600) * s_l1m) * M_PIf64 / 180);
+    beta1 += (18520.0 / 3600) * std::sin((f_m + lambda1 - l_0 + (412.0 / 3600) * s_2fm + (541.0 / 3600) * s_l1m) * M_PIl / 180);
 
     // 10 calls
-    double beta2 = (11.0 / 3600) * std::sin((-l1_m + f_m - 2 * d_m) * M_PIf64 / 180);
-    beta2 += (21.0 / 3600) * std::sin((-l_m + f_m) * M_PIf64 / 180);
-    beta2 -= (23.0 / 3600) * std::sin((l1_m + f_m - 2 * d_m) * M_PIf64 / 180);
-    beta2 -= (25.0 / 3600) * std::sin((-2 * l_m + f_m) * M_PIf64 / 180);
-    beta2 -= (31.0 / 3600) * std::sin((-l_m + f_m - 2 * d_m) * M_PIf64 / 180);
-    beta2 += (44.0 / 3600) * std::sin((l_m + f_m - 2 * d_m) * M_PIf64 / 180);
-    beta2 -= (526.0 / 3600) * std::sin((f_m - 2 * d_m) * M_PIf64 / 180);
-    beta2 += (18520.0 / 3600) * std::sin((f_m + lambda2 - l_0 + (412.0 / 3600) * std::sin((2 * f_m) * M_PIf64 / 180) + (541.0 / 3600) * std::sin((l1_m)*M_PIf64 / 180)) * M_PIf64 / 180);
+    double beta2 = (11.0 / 3600) * std::sin((-l1_m + f_m - 2 * d_m) * M_PIl / 180);
+    beta2 += (21.0 / 3600) * std::sin((-l_m + f_m) * M_PIl / 180);
+    beta2 -= (23.0 / 3600) * std::sin((l1_m + f_m - 2 * d_m) * M_PIl / 180);
+    beta2 -= (25.0 / 3600) * std::sin((-2 * l_m + f_m) * M_PIl / 180);
+    beta2 -= (31.0 / 3600) * std::sin((-l_m + f_m - 2 * d_m) * M_PIl / 180);
+    beta2 += (44.0 / 3600) * std::sin((l_m + f_m - 2 * d_m) * M_PIl / 180);
+    beta2 -= (526.0 / 3600) * std::sin((f_m - 2 * d_m) * M_PIl / 180);
+    beta2 += (18520.0 / 3600) * std::sin((f_m + lambda2 - l_0 + (412.0 / 3600) * std::sin((2 * f_m) * M_PIl / 180) + (541.0 / 3600) * std::sin((l1_m)*M_PIl / 180)) * M_PIl / 180);
 
-    ASSERT_NEAR(std::sin((f_m + lambda1 - l_0 + (412.0 / 3600) * s_2fm + (541.0 / 3600) * s_l1m) * M_PIf64 / 180),
-        std::sin((f_m + lambda2 - l_0 + (412.0 / 3600) * std::sin((2 * f_m) * M_PIf64 / 180) + (541.0 / 3600) * std::sin((l1_m)*M_PIf64 / 180)) * M_PIf64 / 180),
+    ASSERT_NEAR(std::sin((f_m + lambda1 - l_0 + (412.0 / 3600) * s_2fm + (541.0 / 3600) * s_l1m) * M_PIl / 180),
+        std::sin((f_m + lambda2 - l_0 + (412.0 / 3600) * std::sin((2 * f_m) * M_PIl / 180) + (541.0 / 3600) * std::sin((l1_m)*M_PIl / 180)) * M_PIl / 180),
         abs_err);
 
     ASSERT_NEAR(s_fm * c_2dm - c_fm * s_2dm,
-        std::sin((f_m - 2 * d_m) * M_PIf64 / 180), abs_err);
+        std::sin((f_m - 2 * d_m) * M_PIl / 180), abs_err);
     ASSERT_NEAR(
         (s_lm * c_fm + c_lm * s_fm) * c_2dm - (c_lm * c_fm - s_lm * s_fm) * s_2dm,
-        std::sin((l_m + f_m - 2 * d_m) * M_PIf64 / 180), abs_err);
+        std::sin((l_m + f_m - 2 * d_m) * M_PIl / 180), abs_err);
     ASSERT_NEAR(
         (s_fm * c_lm - c_fm * s_lm) * c_2dm - (c_fm * c_lm + s_fm * s_lm) * s_2dm,
-        std::sin((-l_m + f_m - 2 * d_m) * M_PIf64 / 180), abs_err);
+        std::sin((-l_m + f_m - 2 * d_m) * M_PIl / 180), abs_err);
     ASSERT_NEAR(s_fm * c_2lm - c_fm * s_2lm,
-        std::sin((-2 * l_m + f_m) * M_PIf64 / 180), abs_err);
+        std::sin((-2 * l_m + f_m) * M_PIl / 180), abs_err);
     ASSERT_NEAR((s_l1m * c_fm + c_l1m * s_fm) * c_2dm - (c_l1m * c_fm - s_l1m * s_fm) * s_2dm,
-        std::sin((l1_m + f_m - 2 * d_m) * M_PIf64 / 180), abs_err);
-    ASSERT_NEAR(s_fm * c_lm - c_fm * s_lm, std::sin((-l_m + f_m) * M_PIf64 / 180),
+        std::sin((l1_m + f_m - 2 * d_m) * M_PIl / 180), abs_err);
+    ASSERT_NEAR(s_fm * c_lm - c_fm * s_lm, std::sin((-l_m + f_m) * M_PIl / 180),
         abs_err);
     ASSERT_NEAR((s_fm * c_l1m - c_fm * s_l1m) * c_2dm - (c_fm * c_l1m + s_fm * s_l1m) * s_2dm,
-        std::sin((-l1_m + f_m - 2 * d_m) * M_PIf64 / 180), abs_err);
+        std::sin((-l1_m + f_m - 2 * d_m) * M_PIl / 180), abs_err);
 
     ASSERT_NEAR(beta1, beta2, abs_err);
 }

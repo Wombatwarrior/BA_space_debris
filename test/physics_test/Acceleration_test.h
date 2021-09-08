@@ -378,19 +378,19 @@ protected:
         const double f_m = phi_m_p + phi_m_a + phi_m_s + 93.27283;
         const double d_m = phi_m_p + phi_m_a - phi_m + 297.85027;
 
-        const double c_2dm = std::cos(2 * d_m * M_PIf64 / 180);
-        const double c_lm = std::cos(l_m * M_PIf64 / 180);
-        const double c_2lm = std::cos(2 * l_m * M_PIf64 / 180);
-        const double c_l1m = std::cos(l1_m * M_PIf64 / 180);
-        const double c_fm = std::cos(f_m * M_PIf64 / 180);
-        const double c_2fm = std::cos(2 * f_m * M_PIf64 / 180);
-        const double s_dm = std::sin(d_m * M_PIf64 / 180);
-        const double s_2dm = std::sin(2 * d_m * M_PIf64 / 180);
-        const double s_lm = std::sin(l_m * M_PIf64 / 180);
-        const double s_2lm = std::sin(2 * l_m * M_PIf64 / 180);
-        const double s_l1m = std::sin(l1_m * M_PIf64 / 180);
-        const double s_fm = std::sin(f_m * M_PIf64 / 180);
-        const double s_2fm = std::sin(2 * f_m * M_PIf64 / 180);
+        const double c_2dm = std::cos(2 * d_m * M_PIl / 180);
+        const double c_lm = std::cos(l_m * M_PIl / 180);
+        const double c_2lm = std::cos(2 * l_m * M_PIl / 180);
+        const double c_l1m = std::cos(l1_m * M_PIl / 180);
+        const double c_fm = std::cos(f_m * M_PIl / 180);
+        const double c_2fm = std::cos(2 * f_m * M_PIl / 180);
+        const double s_dm = std::sin(d_m * M_PIl / 180);
+        const double s_2dm = std::sin(2 * d_m * M_PIl / 180);
+        const double s_lm = std::sin(l_m * M_PIl / 180);
+        const double s_2lm = std::sin(2 * l_m * M_PIl / 180);
+        const double s_l1m = std::sin(l1_m * M_PIl / 180);
+        const double s_fm = std::sin(f_m * M_PIl / 180);
+        const double s_2fm = std::sin(2 * f_m * M_PIl / 180);
 
         double r_m = -152 * ((c_lm * c_l1m - s_lm * s_l1m) * c_2dm + (s_lm * c_l1m + c_lm * s_l1m) * s_2dm);
         r_m -= 171 * (c_lm * c_2dm - s_lm * s_2dm);
@@ -425,20 +425,20 @@ protected:
         beta_m -= (31.0 / 3600) * ((s_fm * c_lm - c_fm * s_lm) * c_2dm - (c_fm * c_lm + s_fm * s_lm) * s_2dm);
         beta_m += (44.0 / 3600) * ((s_lm * c_fm + c_lm * s_fm) * c_2dm - (c_lm * c_fm - s_lm * s_fm) * s_2dm);
         beta_m -= (526.0 / 3600) * (s_fm * c_2dm - c_fm * s_2dm);
-        beta_m += (18520.0 / 3600) * std::sin((f_m + lambda_m - l_0 + (412.0 / 3600) * s_2fm + (541.0 / 3600) * s_l1m) * M_PIf64 / 180);
+        beta_m += (18520.0 / 3600) * std::sin((f_m + lambda_m - l_0 + (412.0 / 3600) * s_2fm + (541.0 / 3600) * s_l1m) * M_PIl / 180);
 
         std::array<double, 3> moon_pos;
-        double c_term = std::cos(lambda_m * M_PIf64 / 180);
-        double s_term = std::sin(lambda_m * M_PIf64 / 180);
+        double c_term = std::cos(lambda_m * M_PIl / 180);
+        double s_term = std::sin(lambda_m * M_PIl / 180);
         moon_pos[0] = c_term;
         moon_pos[1] = s_term;
-        c_term = std::cos(beta_m * M_PIf64 / 180);
-        s_term = std::sin(beta_m * M_PIf64 / 180);
+        c_term = std::cos(beta_m * M_PIl / 180);
+        s_term = std::sin(beta_m * M_PIl / 180);
         moon_pos[0] = moon_pos[0] * c_term;
         moon_pos[1] = moon_pos[1] * c_term;
         moon_pos[2] = s_term;
-        c_term = std::cos(e * M_PIf64 / 180);
-        s_term = std::sin(e * M_PIf64 / 180);
+        c_term = std::cos(e * M_PIl / 180);
+        s_term = std::sin(e * M_PIl / 180);
 
         std::array<double, 6> moon_params = {
             moon_pos[0],
@@ -485,47 +485,47 @@ protected:
         double f_m = phi_m_p + phi_m_a + phi_m_s + 93.27283;
         double d_m = phi_m_p + phi_m_a - phi_m + 297.85027;
 
-        double r_m = -152 * std::cos((l_m + l1_m - 2 * d_m) * M_PIf64 / 180);
-        r_m -= 171 * std::cos((l_m + 2 * d_m) * M_PIf64 / 180);
-        r_m -= 205 * std::cos((l1_m - 2 * d_m) * M_PIf64 / 180);
-        r_m += 246 * std::cos((2 * l_m - 2 * d_m) * M_PIf64 / 180);
-        r_m -= 570 * std::cos((2 * l_m) * M_PIf64 / 180);
-        r_m -= 2956 * std::cos((2 * d_m) * M_PIf64 / 180);
-        r_m -= 3699 * std::cos((2 * d_m - l_m) * M_PIf64 / 180);
-        r_m -= 20905 * std::cos(l_m * M_PIf64 / 180);
+        double r_m = -152 * std::cos((l_m + l1_m - 2 * d_m) * M_PIl / 180);
+        r_m -= 171 * std::cos((l_m + 2 * d_m) * M_PIl / 180);
+        r_m -= 205 * std::cos((l1_m - 2 * d_m) * M_PIl / 180);
+        r_m += 246 * std::cos((2 * l_m - 2 * d_m) * M_PIl / 180);
+        r_m -= 570 * std::cos((2 * l_m) * M_PIl / 180);
+        r_m -= 2956 * std::cos((2 * d_m) * M_PIl / 180);
+        r_m -= 3699 * std::cos((2 * d_m - l_m) * M_PIl / 180);
+        r_m -= 20905 * std::cos(l_m * M_PIl / 180);
         r_m += 385000;
 
-        double lambda_m = -(55.0 / 3600) * std::sin((2 * f_m - 2 * d_m) * M_PIf64 / 180);
-        lambda_m -= (110.0 / 3600) * std::sin((l_m + l1_m) * M_PIf64 / 180);
-        lambda_m -= (125.0 / 3600) * std::sin((d_m)*M_PIf64 / 180);
-        lambda_m += (148.0 / 3600) * std::sin((l_m - l1_m) * M_PIf64 / 180);
-        lambda_m -= (165.0 / 3600) * std::sin((l1_m - 2 * d_m) * M_PIf64 / 180);
-        lambda_m += (192.0 / 3600) * std::sin((l_m + 2 * d_m) * M_PIf64 / 180);
-        lambda_m -= (206.0 / 3600) * std::sin((l_m + l1_m - 2 * d_m) * M_PIf64 / 180);
-        lambda_m -= (212.0 / 3600) * std::sin((2 * l_m - 2 * d_m) * M_PIf64 / 180);
-        lambda_m -= (412.0 / 3600) * std::sin((2 * f_m) * M_PIf64 / 180);
-        lambda_m -= (668.0 / 3600) * std::sin((l1_m)*M_PIf64 / 180);
-        lambda_m += (769.0 / 3600) * std::sin((2 * l_m) * M_PIf64 / 180);
-        lambda_m += (2370.0 / 3600) * std::sin((2 * d_m) * M_PIf64 / 180);
-        lambda_m -= (4856.0 / 3600) * std::sin((l_m - 2 * d_m) * M_PIf64 / 180);
-        lambda_m += (22640.0 / 3600) * std::sin((l_m)*M_PIf64 / 180);
+        double lambda_m = -(55.0 / 3600) * std::sin((2 * f_m - 2 * d_m) * M_PIl / 180);
+        lambda_m -= (110.0 / 3600) * std::sin((l_m + l1_m) * M_PIl / 180);
+        lambda_m -= (125.0 / 3600) * std::sin((d_m)*M_PIl / 180);
+        lambda_m += (148.0 / 3600) * std::sin((l_m - l1_m) * M_PIl / 180);
+        lambda_m -= (165.0 / 3600) * std::sin((l1_m - 2 * d_m) * M_PIl / 180);
+        lambda_m += (192.0 / 3600) * std::sin((l_m + 2 * d_m) * M_PIl / 180);
+        lambda_m -= (206.0 / 3600) * std::sin((l_m + l1_m - 2 * d_m) * M_PIl / 180);
+        lambda_m -= (212.0 / 3600) * std::sin((2 * l_m - 2 * d_m) * M_PIl / 180);
+        lambda_m -= (412.0 / 3600) * std::sin((2 * f_m) * M_PIl / 180);
+        lambda_m -= (668.0 / 3600) * std::sin((l1_m)*M_PIl / 180);
+        lambda_m += (769.0 / 3600) * std::sin((2 * l_m) * M_PIl / 180);
+        lambda_m += (2370.0 / 3600) * std::sin((2 * d_m) * M_PIl / 180);
+        lambda_m -= (4856.0 / 3600) * std::sin((l_m - 2 * d_m) * M_PIl / 180);
+        lambda_m += (22640.0 / 3600) * std::sin((l_m)*M_PIl / 180);
         lambda_m += l_0;
 
-        double beta_m = (11.0 / 3600) * std::sin((-l1_m + f_m - 2 * d_m) * M_PIf64 / 180);
-        beta_m += (21.0 / 3600) * std::sin((-l_m + f_m) * M_PIf64 / 180);
-        beta_m -= (23.0 / 3600) * std::sin((l1_m + f_m - 2 * d_m) * M_PIf64 / 180);
-        beta_m -= (25.0 / 3600) * std::sin((-2 * l_m + f_m) * M_PIf64 / 180);
-        beta_m -= (31.0 / 3600) * std::sin((-l_m + f_m - 2 * d_m) * M_PIf64 / 180);
-        beta_m += (44.0 / 3600) * std::sin((l_m + f_m - 2 * d_m) * M_PIf64 / 180);
-        beta_m -= (526.0 / 3600) * std::sin((f_m - 2 * d_m) * M_PIf64 / 180);
-        beta_m += (18520.0 / 3600) * std::sin((f_m + lambda_m - l_0 + (412.0 / 3600) * std::sin((2 * f_m) * M_PIf64 / 180) + (541.0 / 3600) * std::sin((l1_m)*M_PIf64 / 180)) * M_PIf64 / 180);
+        double beta_m = (11.0 / 3600) * std::sin((-l1_m + f_m - 2 * d_m) * M_PIl / 180);
+        beta_m += (21.0 / 3600) * std::sin((-l_m + f_m) * M_PIl / 180);
+        beta_m -= (23.0 / 3600) * std::sin((l1_m + f_m - 2 * d_m) * M_PIl / 180);
+        beta_m -= (25.0 / 3600) * std::sin((-2 * l_m + f_m) * M_PIl / 180);
+        beta_m -= (31.0 / 3600) * std::sin((-l_m + f_m - 2 * d_m) * M_PIl / 180);
+        beta_m += (44.0 / 3600) * std::sin((l_m + f_m - 2 * d_m) * M_PIl / 180);
+        beta_m -= (526.0 / 3600) * std::sin((f_m - 2 * d_m) * M_PIl / 180);
+        beta_m += (18520.0 / 3600) * std::sin((f_m + lambda_m - l_0 + (412.0 / 3600) * std::sin((2 * f_m) * M_PIl / 180) + (541.0 / 3600) * std::sin((l1_m)*M_PIl / 180)) * M_PIl / 180);
 
-        double s_lambda = std::sin(lambda_m * M_PIf64 / 180);
-        double c_lambda = std::cos(lambda_m * M_PIf64 / 180);
-        double s_beta = std::sin(beta_m * M_PIf64 / 180);
-        double c_beta = std::cos(beta_m * M_PIf64 / 180);
-        double s_e = std::sin(e * M_PIf64 / 180);
-        double c_e = std::cos(e * M_PIf64 / 180);
+        double s_lambda = std::sin(lambda_m * M_PIl / 180);
+        double c_lambda = std::cos(lambda_m * M_PIl / 180);
+        double s_beta = std::sin(beta_m * M_PIl / 180);
+        double c_beta = std::cos(beta_m * M_PIl / 180);
+        double s_e = std::sin(e * M_PIl / 180);
+        double c_e = std::cos(e * M_PIl / 180);
 
         double xm = c_lambda * c_beta;
         double ym = c_e * s_lambda * c_beta - s_e * s_beta;
@@ -595,11 +595,11 @@ protected:
         ASSERT_EQ(e, Physics::EPSILON);
 
         double l = phis0 + nus * t;
-        double r = 149.619 - 2.499 * std::cos(l * M_PIf64 / 180) - 0.021 * std::cos(2 * l * M_PIf64 / 180);
-        double lambda = o + l + (6892.0 / 3600) * std::sin(l * M_PIf64 / 180) + (72.0 / 3600) * std::sin(2 * l * M_PIf64 / 180);
-        double xs = r * std::cos(lambda * M_PIf64 / 180);
-        double ys = r * std::sin(lambda * M_PIf64 / 180) * std::cos(e * M_PIf64 / 180);
-        double zs = r * std::sin(lambda * M_PIf64 / 180) * std::sin(e * M_PIf64 / 180);
+        double r = 149.619 - 2.499 * std::cos(l * M_PIl / 180) - 0.021 * std::cos(2 * l * M_PIl / 180);
+        double lambda = o + l + (6892.0 / 3600) * std::sin(l * M_PIl / 180) + (72.0 / 3600) * std::sin(2 * l * M_PIl / 180);
+        double xs = r * std::cos(lambda * M_PIl / 180);
+        double ys = r * std::sin(lambda * M_PIl / 180) * std::cos(e * M_PIl / 180);
+        double zs = r * std::sin(lambda * M_PIl / 180) * std::sin(e * M_PIl / 180);
         xs *= 1e+6;
         ys *= 1e+6;
         zs *= 1e+6;
@@ -624,11 +624,11 @@ protected:
         double e = 23.4392911;
 
         double l = phis0 + nus * t;
-        double r = 149.619 - 2.499 * std::cos(l * M_PIf64 / 180) - 0.021 * std::cos(2 * l * M_PIf64 / 180);
-        double lambda = o + l + (6892.0 / 3600) * std::sin(l * M_PIf64 / 180) + (72.0 / 3600) * std::sin(2 * l * M_PIf64 / 180);
-        sol_params[0] = r * std::cos(lambda * M_PIf64 / 180);
-        sol_params[1] = r * std::sin(lambda * M_PIf64 / 180) * std::cos(e * M_PIf64 / 180);
-        sol_params[2] = r * std::sin(lambda * M_PIf64 / 180) * std::sin(e * M_PIf64 / 180);
+        double r = 149.619 - 2.499 * std::cos(l * M_PIl / 180) - 0.021 * std::cos(2 * l * M_PIl / 180);
+        double lambda = o + l + (6892.0 / 3600) * std::sin(l * M_PIl / 180) + (72.0 / 3600) * std::sin(2 * l * M_PIl / 180);
+        sol_params[0] = r * std::cos(lambda * M_PIl / 180);
+        sol_params[1] = r * std::sin(lambda * M_PIl / 180) * std::cos(e * M_PIl / 180);
+        sol_params[2] = r * std::sin(lambda * M_PIl / 180) * std::sin(e * M_PIl / 180);
         sol_params[0] *= 1e+6;
         sol_params[1] *= 1e+6;
         sol_params[2] *= 1e+6;
@@ -692,11 +692,11 @@ protected:
         ASSERT_EQ(e, Physics::EPSILON);
 
         double l = phis0 + nus * t;
-        double r = as - 2.499 * std::cos(l * M_PIf64 / 180) - 0.021 * std::cos(2 * l * M_PIf64 / 180);
-        double lambda = o + l + (6892.0 / 3600) * std::sin(l * M_PIf64 / 180) + (72.0 / 3600) * std::sin(2 * l * M_PIf64 / 180);
-        double xs = r * std::cos(lambda * M_PIf64 / 180);
-        double ys = r * std::sin(lambda * M_PIf64 / 180) * std::cos(e * M_PIf64 / 180);
-        double zs = r * std::sin(lambda * M_PIf64 / 180) * std::sin(e * M_PIf64 / 180);
+        double r = as - 2.499 * std::cos(l * M_PIl / 180) - 0.021 * std::cos(2 * l * M_PIl / 180);
+        double lambda = o + l + (6892.0 / 3600) * std::sin(l * M_PIl / 180) + (72.0 / 3600) * std::sin(2 * l * M_PIl / 180);
+        double xs = r * std::cos(lambda * M_PIl / 180);
+        double ys = r * std::sin(lambda * M_PIl / 180) * std::cos(e * M_PIl / 180);
+        double zs = r * std::sin(lambda * M_PIl / 180) * std::sin(e * M_PIl / 180);
         xs *= 1e+6;
         ys *= 1e+6;
         zs *= 1e+6;
