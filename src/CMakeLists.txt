@@ -36,6 +36,5 @@ if(DebrisSim_Simulation)
             # stuff that is used in headers and source files
             PRIVATE
             ${BINARY}_lib
-            log4cxx
     )
 endif()
