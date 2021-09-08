@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH -J BA_profile
-#SBATCH -o ./../../output/%x.%j.%N.out
+#SBATCH -o ./output/%x.%j.%N.out
 #SBATCH -D ./../Thesis/data
 #SBATCH --clusters=serial
 #SBATCH --partition=serial_std
