@@ -15,4 +15,4 @@ module load llvm/10.0.0
 module unload intel-mpi/2019-intel
 module unload intel
 module switch gcc/10.2.0
-./../../build/debris_sim ./../../test_files/test_input.txt -o out.csv
+./../../build/debris_sim ./../../test_files/test_input.txt -o out.csv -c
