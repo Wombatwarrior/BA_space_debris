@@ -40,8 +40,10 @@ void initSimulation(int argc, char** argv)
 void runSimulation()
 {
     double current_time = file_input->getStartT();
-    for (auto& d : container->getDebrisVector()) {
-        std::cout << d.toString() << std::endl;
+    if(!command_line->getRunThesisCalculations()){
+        for (auto& d : container->getDebrisVector()) {
+            std::cout << d.toString() << std::endl;
+        }
     }
     int iteration = 0;
     double next_write_time = file_input->getStartT();
@@ -56,8 +58,10 @@ void runSimulation()
         }
         current_time += file_input->getDeltaT();
     }
-    for (auto& d : container->getDebrisVector()) {
-        std::cout << d.toString() << std::endl;
+    if(!command_line->getRunThesisCalculations()){
+        for (auto& d : container->getDebrisVector()) {
+            std::cout << d.toString() << std::endl;
+        }
     }
 }
 
@@ -357,23 +361,56 @@ void runThesisCalculations(){
 //    }
 //    std::cout << "Calculations done" << std::endl;
 
-    file_input->setInputFilePath("input/orbit_comparison.txt");
+//    file_input->setInputFilePath("input/orbit_comparison.txt");
+//    file_input->setInputFileType(InputFile::TXT);
+//    file_input->readDebrisData();
+//    for (int day = 0; day < 366; ++day){
+//        std::cout << "Delta t: " << delta_t << std::endl << std::endl;
+//        // for each delta t we need new output files
+//        file_output = std::make_shared<FileOutput<Debris::DebrisContainer<Debris::Debris>>>(*container, "output/raw/orbit_comparison" + std::to_string(day) + ".csv",
+//                                                                                            OutputFile::CSV, file_input->getAccConfig());
+//        // set values for this orbits simulation
+//        container->cleanDebrisVector();
+//        file_input->readDebrisData();
+//        file_input->setStartT(day*24*60*60);
+//        file_input->setEndT(file_input->getStartT() + file_input->getEndT());
+//        accumulator->setFileOutput(*file_output);
+//        accumulator->setT(file_input->getStartT());
+//        integrator->setDeltaT(file_input->getDeltaT());
+//        //run the simulation for the current delta t
+//        runSimulation();
+//    }
+
+    std::ofstream out("output/raw/n_particles_runtime_multiple.csv");
+    out << "n,runtime millis,millis per particle" << std::endl;
+    file_input->setInputFilePath("input/runtime.txt");
     file_input->setInputFileType(InputFile::TXT);
-    file_input->readDebrisData();
-    for (int day = 0; day < 366; ++day){
-        std::cout << "Delta t: " << delta_t << std::endl << std::endl;
-        // for each delta t we need new output files
-        file_output = std::make_shared<FileOutput<Debris::DebrisContainer<Debris::Debris>>>(*container, "output/raw/orbit_comparison" + std::to_string(day) + ".csv",
-                                                                                            OutputFile::CSV, file_input->getAccConfig());
-        // set values for this orbits simulation
+    for(int j = 0;j < 10;++j) {
         container->cleanDebrisVector();
         file_input->readDebrisData();
-        file_input->setStartT(day*24*60*60);
-        file_input->setEndT(file_input->getStartT() + file_input->getEndT());
-        accumulator->setFileOutput(*file_output);
-        accumulator->setT(file_input->getStartT());
-        integrator->setDeltaT(file_input->getDeltaT());
-        //run the simulation for the current delta t
-        runSimulation();
+        // run simulations with increasing number of particles
+        for (int i = 0; i < 20; ++i) {
+            accumulator->setT(file_input->getStartT());
+            integrator->setDeltaT(file_input->getDeltaT());
+            int n = container->getDebrisVector().size();
+            std::cout << "n: " << n << std::endl;
+            std::cout << "input start t: " << file_input->getStartT() << std::endl;
+            std::cout << "accumulator t: " << accumulator->getT() << std::endl;
+            std::cout << "input delta t: " << file_input->getDeltaT() << std::endl;
+            std::cout << "integrator delta t: " << integrator->getDeltaT() << std::endl;
+            std::cout << "input end t: " << file_input->getEndT() << std::endl;
+
+            auto t1 = std::chrono::high_resolution_clock::now();
+            runSimulation();
+            auto t2 = std::chrono::high_resolution_clock::now();
+            auto ms_int = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1);
+            std::cout << "Integrator runtime: " << ms_int.count() << " ms" << std::endl;
+            out << n << "," << ms_int.count() << "," << ms_int.count() / (n * 1.) << std::endl;
+
+            // double number of particles
+            for (int j = 0; j < n; ++j) {
+                container->addDebris(container->getDebrisVector()[j]);
+            }
+        }
     }
 }

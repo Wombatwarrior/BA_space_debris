@@ -236,35 +236,152 @@ fig.update_yaxes(type="log", exponentformat='e', title_text='Drag acceleration')
 fig.update_xaxes(title_text='|x|')
 fig.write_image("../figures/acc_drag.png")
 
-ave_df = {'index' : range((4824//24)),
-          'position norm' : [.0]*(4824//24),
-          'acc_kep norm' : [.0]*(4824//24),
-          'acc_j2 norm' : [.0]*(4824//24),
-          'acc_s22 norm' : [.0]*(4824//24),
-          'acc_c22 norm' : [.0]*(4824//24),
-          'acc_sol norm' : [.0]*(4824//24),
-          'acc_lun norm' : [.0]*(4824//24),
-          'acc_srp norm' : [.0]*(4824//24),
-          'acc_drag norm' : [.0]*(4824//24)}
-ave_df = pd.DataFrame.from_dict(ave_df)
-for i in range(366//7):
-    print(i*7)
-    orbit_df = pd.read_csv('output/raw/orbit_comparison' + str(i*7) + '.csv', engine='c', float_precision='high')
-    orbit_acc_df = pd.read_csv('output/raw/orbit_comparison' + str(i) + '_acc.csv', engine='c', float_precision='high')
-    df = orbit_df.merge(orbit_acc_df, left_index=True, right_index=True)
-    for j in df['index_x']:
-        ave_df['position norm'][j//24]+=df['position norm'][j]/(24*365//7)
-        ave_df['acc_kep norm'][j//24]+=df['acc_kep norm'][j]/(24*365//7)
-        ave_df['acc_j2 norm'][j//24]+=df['acc_j2 norm'][j]/(24*365//7)
-        ave_df['acc_s22 norm'][j//24]+=df['acc_s22 norm'][j]/(24*365//7)
-        ave_df['acc_c22 norm'][j//24]+=df['acc_c22 norm'][j]/(24*365//7)
-        ave_df['acc_sol norm'][j//24]+=df['acc_sol norm'][j]/(24*365//7)
-        ave_df['acc_lun norm'][j//24]+=df['acc_lun norm'][j]/(24*365//7)
-        ave_df['acc_srp norm'][j//24]+=df['acc_srp norm'][j]/(24*365//7)
-        ave_df['acc_drag norm'][j//24]+=df['acc_drag norm'][j]/(24*365//7)
+#ave_df = {'index' : range((4824//24)),
+#          'position norm' : [.0]*(4824//24),
+#          'acc_kep norm' : [.0]*(4824//24),
+#          'acc_j2 norm' : [.0]*(4824//24),
+#          'acc_s22 norm' : [.0]*(4824//24),
+#          'acc_c22 norm' : [.0]*(4824//24),
+#          'acc_sol norm' : [.0]*(4824//24),
+#          'acc_lun norm' : [.0]*(4824//24),
+#          'acc_srp norm' : [.0]*(4824//24),
+#          'acc_drag norm' : [.0]*(4824//24)}
+#ave_df = pd.DataFrame.from_dict(ave_df)
+#for i in range(366//7):
+#    print(i*7)
+#    orbit_df = pd.read_csv('output/raw/orbit_comparison' + str(i*7) + '.csv', engine='c', float_precision='high')
+#    orbit_acc_df = pd.read_csv('output/raw/orbit_comparison' + str(i) + '_acc.csv', engine='c', float_precision='high')
+#    df = orbit_df.merge(orbit_acc_df, left_index=True, right_index=True)
+#    for j in df['index_x']:
+#        ave_df['position norm'][j//24]+=df['position norm'][j]/(24*365//7)
+#        ave_df['acc_kep norm'][j//24]+=df['acc_kep norm'][j]/(24*365//7)
+#        ave_df['acc_j2 norm'][j//24]+=df['acc_j2 norm'][j]/(24*365//7)
+#        ave_df['acc_s22 norm'][j//24]+=df['acc_s22 norm'][j]/(24*365//7)
+#        ave_df['acc_c22 norm'][j//24]+=df['acc_c22 norm'][j]/(24*365//7)
+#        ave_df['acc_sol norm'][j//24]+=df['acc_sol norm'][j]/(24*365//7)
+#        ave_df['acc_lun norm'][j//24]+=df['acc_lun norm'][j]/(24*365//7)
+#        ave_df['acc_srp norm'][j//24]+=df['acc_srp norm'][j]/(24*365//7)
+#        ave_df['acc_drag norm'][j//24]+=df['acc_drag norm'][j]/(24*365//7)
+ave_df = pd.read_csv('output/processed/week_ave_orbit_comparison.csv', engine='c', float_precision='high')
+ave_df['sun acc norm'] = ave_df['acc_kep norm']\
+                        +ave_df['acc_j2 norm']\
+                        +ave_df['acc_s22 norm']\
+                        +ave_df['acc_c22 norm']\
+                        +ave_df['acc_sol norm']\
+                        +ave_df['acc_lun norm']\
+                        +ave_df['acc_srp norm']\
+                        +ave_df['acc_drag norm']
+ave_df['acc_kep percent'] = ave_df['acc_kep norm'] / ave_df['sun acc norm']
+ave_df['acc_j2 percent']  = ave_df['acc_j2 norm'] / ave_df['sun acc norm']
+ave_df['acc_s22 percent'] = ave_df['acc_s22 norm'] / ave_df['sun acc norm']
+ave_df['acc_c22 percent'] = ave_df['acc_c22 norm'] / ave_df['sun acc norm']
+ave_df['acc_sol percent'] = ave_df['acc_sol norm'] / ave_df['sun acc norm']
+ave_df['acc_lun percent'] = ave_df['acc_lun norm'] / ave_df['sun acc norm']
+ave_df['acc_srp percent'] = ave_df['acc_srp norm'] / ave_df['sun acc norm']
+ave_df['acc_drag percent'] = ave_df['acc_drag norm'] / ave_df['sun acc norm']
 
 print(ave_df)
 ave_df.to_csv('output/processed/week_ave_orbit_comparison.csv')
+
+fig = go.Figure()
+fig.add_trace(go.Scatter(x=ave_df['position norm'], y=ave_df['acc_kep percent'], name='Kep', line_shape='linear'))
+fig.add_trace(go.Scatter(x=ave_df['position norm'], y=ave_df['acc_j2 percent'], name='J2', line_shape='linear'))
+fig.add_trace(go.Scatter(x=ave_df['position norm'], y=ave_df['acc_c22 percent'], name='C22', line_shape='linear'))
+fig.add_trace(go.Scatter(x=ave_df['position norm'], y=ave_df['acc_s22 percent'], name='S22', line_shape='linear'))
+fig.add_trace(go.Scatter(x=ave_df['position norm'], y=ave_df['acc_lun percent'], name='Lun', line_shape='linear'))
+fig.add_trace(go.Scatter(x=ave_df['position norm'], y=ave_df['acc_sol percent'], name='Sol', line_shape='linear'))
+fig.add_trace(go.Scatter(x=ave_df['position norm'], y=ave_df['acc_srp percent'], name='SRP', line_shape='linear'))
+fig.add_trace(go.Scatter(x=ave_df['position norm'], y=ave_df['acc_drag percent'], name='Drag', line_shape='linear'))
+fig.update_yaxes(title_text='Accelerations relative to each other')
+fig.update_xaxes(title_text='|x|')
+fig.write_image("../figures/week_ave_acc_rel.png")
+
+fig = go.Figure()
+fig.add_trace(go.Scatter(x=ave_df['position norm'], y=ave_df['acc_kep percent'], name='Kep', line_shape='linear'))
+fig.add_trace(go.Scatter(x=ave_df['position norm'], y=ave_df['acc_j2 percent'], name='J2', line_shape='linear'))
+fig.add_trace(go.Scatter(x=ave_df['position norm'], y=ave_df['acc_c22 percent'], name='C22', line_shape='linear'))
+fig.add_trace(go.Scatter(x=ave_df['position norm'], y=ave_df['acc_s22 percent'], name='S22', line_shape='linear'))
+fig.add_trace(go.Scatter(x=ave_df['position norm'], y=ave_df['acc_lun percent'], name='Lun', line_shape='linear'))
+fig.add_trace(go.Scatter(x=ave_df['position norm'], y=ave_df['acc_sol percent'], name='Sol', line_shape='linear'))
+fig.add_trace(go.Scatter(x=ave_df['position norm'], y=ave_df['acc_srp percent'], name='SRP', line_shape='linear'))
+fig.add_trace(go.Scatter(x=ave_df['position norm'], y=ave_df['acc_drag percent'], name='Drag', line_shape='linear'))
+fig.update_yaxes(type="log", title_text='Accelerations relative to each other')
+fig.update_xaxes(title_text='|x|')
+fig.write_image("../figures/week_ave_acc_rel_log.png")
+
+fig = go.Figure()
+fig.add_trace(go.Scatter(x=ave_df['position norm'], y=ave_df['acc_kep percent'], name='Kep', line_shape='linear'))
+fig.add_trace(go.Scatter(x=ave_df['position norm'], y=ave_df['acc_j2 percent'], name='J2', line_shape='linear'))
+fig.add_trace(go.Scatter(x=ave_df['position norm'], y=ave_df['acc_c22 percent'], name='C22', line_shape='linear'))
+fig.add_trace(go.Scatter(x=ave_df['position norm'], y=ave_df['acc_s22 percent'], name='S22', line_shape='linear'))
+fig.add_trace(go.Scatter(x=ave_df['position norm'], y=ave_df['acc_lun percent'], name='Lun', line_shape='linear'))
+fig.add_trace(go.Scatter(x=ave_df['position norm'], y=ave_df['acc_sol percent'], name='Sol', line_shape='linear'))
+fig.add_trace(go.Scatter(x=ave_df['position norm'], y=ave_df['acc_srp percent'], name='SRP', line_shape='linear'))
+fig.add_trace(go.Scatter(x=ave_df['position norm'], y=ave_df['acc_drag percent'], name='Drag', line_shape='linear'))
+fig.update_yaxes(title_text='Accelerations relative to each other')
+fig.update_xaxes(type="log", title_text='|x|')
+fig.write_image("../figures/week_ave_acc_rel_log_pos.png")
+
+fig = go.Figure()
+fig.add_trace(go.Scatter(x=ave_df['position norm'], y=ave_df['acc_kep percent'], name='Kep', line_shape='linear'))
+fig.add_trace(go.Scatter(x=ave_df['position norm'], y=ave_df['acc_j2 percent'], name='J2', line_shape='linear'))
+fig.add_trace(go.Scatter(x=ave_df['position norm'], y=ave_df['acc_c22 percent'], name='C22', line_shape='linear'))
+fig.add_trace(go.Scatter(x=ave_df['position norm'], y=ave_df['acc_s22 percent'], name='S22', line_shape='linear'))
+fig.add_trace(go.Scatter(x=ave_df['position norm'], y=ave_df['acc_lun percent'], name='Lun', line_shape='linear'))
+fig.add_trace(go.Scatter(x=ave_df['position norm'], y=ave_df['acc_sol percent'], name='Sol', line_shape='linear'))
+fig.add_trace(go.Scatter(x=ave_df['position norm'], y=ave_df['acc_srp percent'], name='SRP', line_shape='linear'))
+fig.add_trace(go.Scatter(x=ave_df['position norm'], y=ave_df['acc_drag percent'], name='Drag', line_shape='linear'))
+fig.update_yaxes(type="log", title_text='Accelerations relative to each other')
+fig.update_xaxes(type="log", title_text='|x|')
+fig.write_image("../figures/week_ave_acc_rel_log_log_pos.png")
+
+fig = go.Figure()
+fig.add_trace(go.Scatter(x=ave_df['position norm'], y=ave_df['acc_j2 percent'], name='J2', line_shape='linear'))
+fig.add_trace(go.Scatter(x=ave_df['position norm'], y=ave_df['acc_c22 percent'], name='C22', line_shape='linear'))
+fig.add_trace(go.Scatter(x=ave_df['position norm'], y=ave_df['acc_s22 percent'], name='S22', line_shape='linear'))
+fig.add_trace(go.Scatter(x=ave_df['position norm'], y=ave_df['acc_lun percent'], name='Lun', line_shape='linear'))
+fig.add_trace(go.Scatter(x=ave_df['position norm'], y=ave_df['acc_sol percent'], name='Sol', line_shape='linear'))
+fig.add_trace(go.Scatter(x=ave_df['position norm'], y=ave_df['acc_srp percent'], name='SRP', line_shape='linear'))
+fig.add_trace(go.Scatter(x=ave_df['position norm'], y=ave_df['acc_drag percent'], name='Drag', line_shape='linear'))
+fig.update_yaxes(title_text='Accelerations relative to each other without Kepler')
+fig.update_xaxes(title_text='|x|')
+fig.write_image("../figures/week_ave_acc_rel_no_kep.png")
+
+fig = go.Figure()
+fig.add_trace(go.Scatter(x=ave_df['position norm'], y=ave_df['acc_j2 percent'], name='J2', line_shape='linear'))
+fig.add_trace(go.Scatter(x=ave_df['position norm'], y=ave_df['acc_c22 percent'], name='C22', line_shape='linear'))
+fig.add_trace(go.Scatter(x=ave_df['position norm'], y=ave_df['acc_s22 percent'], name='S22', line_shape='linear'))
+fig.add_trace(go.Scatter(x=ave_df['position norm'], y=ave_df['acc_lun percent'], name='Lun', line_shape='linear'))
+fig.add_trace(go.Scatter(x=ave_df['position norm'], y=ave_df['acc_sol percent'], name='Sol', line_shape='linear'))
+fig.add_trace(go.Scatter(x=ave_df['position norm'], y=ave_df['acc_srp percent'], name='SRP', line_shape='linear'))
+fig.add_trace(go.Scatter(x=ave_df['position norm'], y=ave_df['acc_drag percent'], name='Drag', line_shape='linear'))
+fig.update_yaxes(type="log", title_text='Accelerations relative to each other without Kepler')
+fig.update_xaxes(title_text='|x|')
+fig.write_image("../figures/week_ave_acc_rel_no_kep_log.png")
+
+fig = go.Figure()
+fig.add_trace(go.Scatter(x=ave_df['position norm'], y=ave_df['acc_j2 percent'], name='J2', line_shape='linear'))
+fig.add_trace(go.Scatter(x=ave_df['position norm'], y=ave_df['acc_c22 percent'], name='C22', line_shape='linear'))
+fig.add_trace(go.Scatter(x=ave_df['position norm'], y=ave_df['acc_s22 percent'], name='S22', line_shape='linear'))
+fig.add_trace(go.Scatter(x=ave_df['position norm'], y=ave_df['acc_lun percent'], name='Lun', line_shape='linear'))
+fig.add_trace(go.Scatter(x=ave_df['position norm'], y=ave_df['acc_sol percent'], name='Sol', line_shape='linear'))
+fig.add_trace(go.Scatter(x=ave_df['position norm'], y=ave_df['acc_srp percent'], name='SRP', line_shape='linear'))
+fig.add_trace(go.Scatter(x=ave_df['position norm'], y=ave_df['acc_drag percent'], name='Drag', line_shape='linear'))
+fig.update_yaxes(title_text='Accelerations relative to each other without Kepler')
+fig.update_xaxes(type="log", title_text='|x|')
+fig.write_image("../figures/week_ave_acc_rel_no_kep_log_pos.png")
+
+fig = go.Figure()
+fig.add_trace(go.Scatter(x=ave_df['position norm'], y=ave_df['acc_j2 percent'], name='J2', line_shape='linear'))
+fig.add_trace(go.Scatter(x=ave_df['position norm'], y=ave_df['acc_c22 percent'], name='C22', line_shape='linear'))
+fig.add_trace(go.Scatter(x=ave_df['position norm'], y=ave_df['acc_s22 percent'], name='S22', line_shape='linear'))
+fig.add_trace(go.Scatter(x=ave_df['position norm'], y=ave_df['acc_lun percent'], name='Lun', line_shape='linear'))
+fig.add_trace(go.Scatter(x=ave_df['position norm'], y=ave_df['acc_sol percent'], name='Sol', line_shape='linear'))
+fig.add_trace(go.Scatter(x=ave_df['position norm'], y=ave_df['acc_srp percent'], name='SRP', line_shape='linear'))
+fig.add_trace(go.Scatter(x=ave_df['position norm'], y=ave_df['acc_drag percent'], name='Drag', line_shape='linear'))
+fig.update_yaxes(type="log", title_text='Accelerations relative to each other without Kepler')
+fig.update_xaxes(type="log", title_text='|x|')
+fig.write_image("../figures/week_ave_acc_rel_no_kep_log_log_pos.png")
 
 fig = go.Figure()
 fig.add_trace(go.Scatter(x=ave_df['position norm'], y=ave_df['acc_kep norm'], line_shape='linear'))
