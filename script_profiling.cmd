@@ -19,4 +19,4 @@ module switch gcc/10.2.0
 source ${AMPLIFIER_XE_BASE}/apsvars.sh
 rm -rf ../../result
 mkdir ../../result
-amplxe-cl -collect hotspots -result-dir ./../result -quiet ./../../debris_sim ./../../../test_files/test_input.txt -o out.csv -c
+amplxe-cl -collect hotspots -result-dir ./../result -quiet ./../../build/debris_sim ./../../test_files/test_input.txt -o out.csv -c
