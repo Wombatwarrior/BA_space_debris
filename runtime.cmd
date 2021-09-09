@@ -9,7 +9,7 @@
 #SBATCH --cpus-per-task=1
 #SBATCH --mail-user=oliver.boesing@tum.de
 #SBATCH --export=NONE
-#SBATCH --time=02:00:00
+#SBATCH --time=23:59:59
 module load slurm_setup
 module load llvm/10.0.0
 module unload intel-mpi/2019-intel

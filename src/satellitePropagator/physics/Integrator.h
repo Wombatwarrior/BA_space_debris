@@ -159,10 +159,10 @@ void Integrator<Container>::integrate(bool write_time_step) const
 {
     AccelerationUpdate::accelerationUpdate(container);
     calculatePosition();
+    accumulator->setT(accumulator->getT() + delta_t);
     calculateAcceleration(write_time_step);
     calculateVelocity();
     // update time
-    accumulator->setT(accumulator->getT() + delta_t);
 }
 
 template <class Container>
