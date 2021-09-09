@@ -78,7 +78,7 @@ void runThesisCalculations(){
     double delta_t = file_input->getDeltaT();
     // set accumulator values that won't change for the delta t simulations
     accumulator->setConfig(file_input->getAccConfig());
-    for (int i = 1; delta_t >= std::pow(10,-8); ++i){
+    for (int i = 1; delta_t >= std::pow(10,-9); ++i){
         std::cout << "Delta t: " << delta_t << std::endl << std::endl;
         // for each delta t we need new output files
         file_output = std::make_shared<FileOutput<Debris::DebrisContainer<Debris::Debris>>>(*container, "output/raw/delta_t_2_short_" + std::to_string(i) + ".csv",
