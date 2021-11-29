@@ -85,7 +85,9 @@ public:
      * - Acceleration::SRPComponent::apply() if #config[Acceleration::SRP]
      * - Acceleration::DragComponent::apply() if #config[Acceleration::DRAG]
      *
+     * @tparam write If true triggers this class' file output writer.
      */
+    template <bool write>
     void applyComponents() const;
 
     /**
@@ -193,12 +195,13 @@ template <class Container>
 AccelerationAccumulator<Container>::~AccelerationAccumulator() = default;
 
 template <class Container>
+template <bool write>
 void AccelerationAccumulator<Container>::applyComponents() const
 {
     // will be modified by the apply functions
     std::array<double, 3> new_acc_total { 0, 0, 0 };
     std::array<double, 3> new_acc_component { 0, 0, 0 };
-    double d_srp = 0;
+    double d_srp { 0. };
     // are constant for this time step
     double c_term;
     double s_term;
@@ -220,6 +223,9 @@ void AccelerationAccumulator<Container>::applyComponents() const
     }
 
     for (auto& d : *container) {
+        if (write) {
+            file_output->writeAcc_start(t);
+        }
         new_acc_total[0] = 0;
         new_acc_total[1] = 0;
         new_acc_total[2] = 0;
@@ -227,12 +233,18 @@ void AccelerationAccumulator<Container>::applyComponents() const
         // Eq 1
         if (config[KEP]) {
             new_acc_component = KepComponent::apply(d);
+            if(write){
+                file_output->writeAcc_value(new_acc_component);
+            }
             new_acc_total[0] += new_acc_component[0];
             new_acc_total[1] += new_acc_component[1];
             new_acc_total[2] += new_acc_component[2];
         }
         if (config[J2]) {
             new_acc_component = J2Component::apply(d);
+            if(write){
+                file_output->writeAcc_value(new_acc_component);
+            }
             new_acc_total[0] += new_acc_component[0];
             new_acc_total[1] += new_acc_component[1];
             new_acc_total[2] += new_acc_component[2];
@@ -241,6 +253,10 @@ void AccelerationAccumulator<Container>::applyComponents() const
         // calculation steps
         if (config[C22] && config[S22]) {
             new_acc_component = C22S22Component::apply(d, c_term, s_term);
+            if(write){
+                file_output->writeAcc_value(new_acc_component);
+                file_output->writeAcc_value(new_acc_component);
+            }
             new_acc_total[0] += new_acc_component[0];
             new_acc_total[1] += new_acc_component[1];
             new_acc_total[2] += new_acc_component[2];
@@ -249,12 +265,18 @@ void AccelerationAccumulator<Container>::applyComponents() const
         else {
             if (config[C22]) {
                 new_acc_component = C22Component::apply(d, c_term, s_term);
+                if(write){
+                    file_output->writeAcc_value(new_acc_component);
+                }
                 new_acc_total[0] += new_acc_component[0];
                 new_acc_total[1] += new_acc_component[1];
                 new_acc_total[2] += new_acc_component[2];
             }
             if (config[S22]) {
                 new_acc_component = S22Component::apply(d, c_term, s_term);
+                if(write){
+                    file_output->writeAcc_value(new_acc_component);
+                }
                 new_acc_total[0] += new_acc_component[0];
                 new_acc_total[1] += new_acc_component[1];
                 new_acc_total[2] += new_acc_component[2];
@@ -262,124 +284,44 @@ void AccelerationAccumulator<Container>::applyComponents() const
         }
         if (config[SOL]) {
             new_acc_component = SolComponent::apply(d, d_srp, sun_params);
+            if(write){
+                file_output->writeAcc_value(new_acc_component);
+            }
             new_acc_total[0] += new_acc_component[0];
             new_acc_total[1] += new_acc_component[1];
             new_acc_total[2] += new_acc_component[2];
         }
         if (config[LUN]) {
             new_acc_component = LunComponent::apply(d, moon_params);
+            if(write){
+                file_output->writeAcc_value(new_acc_component);
+            }
             new_acc_total[0] += new_acc_component[0];
             new_acc_total[1] += new_acc_component[1];
             new_acc_total[2] += new_acc_component[2];
         }
         if (config[SRP]) {
             new_acc_component = SRPComponent::apply(d, d_srp, sun_params);
+            if(write){
+                file_output->writeAcc_value(new_acc_component);
+            }
             new_acc_total[0] += new_acc_component[0];
             new_acc_total[1] += new_acc_component[1];
             new_acc_total[2] += new_acc_component[2];
         }
         if (config[DRAG]) {
             new_acc_component = DragComponent::apply(d);
+            if(write){
+                file_output->writeAcc_value(new_acc_component);
+            }
             new_acc_total[0] += new_acc_component[0];
             new_acc_total[1] += new_acc_component[1];
             new_acc_total[2] += new_acc_component[2];
         }
         d.setAccT1(new_acc_total);
-    }
-}
-
-template <class Container>
-void AccelerationAccumulator<Container>::applyAmdWriteComponents() const
-{
-    // will be modified by the apply functions
-    std::array<double, 3> new_acc_total { 0, 0, 0 };
-    std::array<double, 3> new_acc_component { 0, 0, 0 };
-    double d_srp = 0;
-    // are constant for this time step
-    double c_term;
-    double s_term;
-    std::array<double, 6> sun_params {};
-    // setup only needed for SolComponent and SRPComponent
-    if (config[SOL] || config[SRP]) {
-        sun_params = SolComponent::setUp(t);
-    }
-    std::array<double, 6> moon_params {};
-    // setup only needed for LunComponent
-    if (config[LUN]) {
-        moon_params = LunComponent::setUp(t);
-    }
-    // setup only needed for C22Component and S22Component
-    if (config[C22] || config[S22]) {
-        // Eq 15
-        c_term = std::cos((Physics::THETA_G + Physics::NU_EARTH * t) * Physics::RAD_FACTOR);
-        s_term = std::sin((Physics::THETA_G + Physics::NU_EARTH * t) * Physics::RAD_FACTOR);
-    }
-
-    for (auto& d : *container) {
-        // start a new line o data for each particle
-        file_output->writeAcc_start(t);
-        new_acc_total[0] = 0;
-        new_acc_total[1] = 0;
-        new_acc_total[2] = 0;
-        // Eq 1
-        if (config[KEP]) {
-            new_acc_component = KepComponent::apply(d);
-            file_output->writeAcc_value(new_acc_component);
-            new_acc_total[0] += new_acc_component[0];
-            new_acc_total[1] += new_acc_component[1];
-            new_acc_total[2] += new_acc_component[2];
+        if(write){
+            file_output->writeAcc_end(new_acc_total);
         }
-        if (config[J2]) {
-            new_acc_component = J2Component::apply(d);
-            file_output->writeAcc_value(new_acc_component);
-            new_acc_total[0] += new_acc_component[0];
-            new_acc_total[1] += new_acc_component[1];
-            new_acc_total[2] += new_acc_component[2];
-        }
-        if (config[C22]) {
-            new_acc_component = C22Component::apply(d, c_term, s_term);
-            file_output->writeAcc_value(new_acc_component);
-            new_acc_total[0] += new_acc_component[0];
-            new_acc_total[1] += new_acc_component[1];
-            new_acc_total[2] += new_acc_component[2];
-        }
-        if (config[S22]) {
-            new_acc_component = S22Component::apply(d, c_term, s_term);
-            file_output->writeAcc_value(new_acc_component);
-            new_acc_total[0] += new_acc_component[0];
-            new_acc_total[1] += new_acc_component[1];
-            new_acc_total[2] += new_acc_component[2];
-        }
-        if (config[SOL]) {
-            new_acc_component = SolComponent::apply(d, d_srp, sun_params);
-            file_output->writeAcc_value(new_acc_component);
-            new_acc_total[0] += new_acc_component[0];
-            new_acc_total[1] += new_acc_component[1];
-            new_acc_total[2] += new_acc_component[2];
-        }
-        if (config[LUN]) {
-            new_acc_component = LunComponent::apply(d, moon_params);
-            file_output->writeAcc_value(new_acc_component);
-            new_acc_total[0] += new_acc_component[0];
-            new_acc_total[1] += new_acc_component[1];
-            new_acc_total[2] += new_acc_component[2];
-        }
-        if (config[SRP]) {
-            new_acc_component = SRPComponent::apply(d, d_srp, sun_params);
-            file_output->writeAcc_value(new_acc_component);
-            new_acc_total[0] += new_acc_component[0];
-            new_acc_total[1] += new_acc_component[1];
-            new_acc_total[2] += new_acc_component[2];
-        }
-        if (config[DRAG]) {
-            new_acc_component = DragComponent::apply(d);
-            file_output->writeAcc_value(new_acc_component);
-            new_acc_total[0] += new_acc_component[0];
-            new_acc_total[1] += new_acc_component[1];
-            new_acc_total[2] += new_acc_component[2];
-        }
-        d.setAccT1(new_acc_total);
-        file_output->writeAcc_end(new_acc_total);
     }
 }
 

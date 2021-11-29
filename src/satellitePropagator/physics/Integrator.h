@@ -197,9 +197,9 @@ template <class Container>
 void Integrator<Container>::calculateAcceleration(bool write_time_step) const
 {
     if (write_time_step) {
-        accumulator->applyAmdWriteComponents();
+        accumulator->template applyComponents<true>();
     } else {
-        accumulator->applyComponents();
+        accumulator->template applyComponents<false>();
     }
 }
 
