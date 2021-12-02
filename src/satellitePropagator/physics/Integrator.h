@@ -168,28 +168,40 @@ void Integrator<Container>::integrate(bool write_time_step) const
 template <class Container>
 void Integrator<Container>::calculatePosition() const
 {
-    double factor = delta_t * delta_t * 0.5;
-    std::array<double, 3> new_pos {};
-    for (auto& d : *container) {
-        new_pos = d.getPosition();
-        new_pos[0] = new_pos[0] + delta_t * d.getVelocity()[0] + factor * d.getAccT0()[0];
-        new_pos[1] = new_pos[1] + delta_t * d.getVelocity()[1] + factor * d.getAccT0()[1];
-        new_pos[2] = new_pos[2] + delta_t * d.getVelocity()[2] + factor * d.getAccT0()[2];
-        d.setPosition(new_pos);
+#ifdef AUTOPAS_OPENMP
+    // autopas works with parallel iterators which it controlls itself. No pragma omp for needed!
+#pragma omp parallel
+#endif
+    {
+        double factor = delta_t * delta_t * 0.5;
+        std::array<double, 3> new_pos {};
+        for (auto& d : *container) {
+            new_pos = d.getPosition();
+            new_pos[0] = new_pos[0] + delta_t * d.getVelocity()[0] + factor * d.getAccT0()[0];
+            new_pos[1] = new_pos[1] + delta_t * d.getVelocity()[1] + factor * d.getAccT0()[1];
+            new_pos[2] = new_pos[2] + delta_t * d.getVelocity()[2] + factor * d.getAccT0()[2];
+            d.setPosition(new_pos);
+        }
     }
 }
 
 template <class Container>
 void Integrator<Container>::calculateVelocity() const
 {
-    const double factor = delta_t * 0.5;
-    std::array<double, 3> new_velocity {};
-    for (auto& d : *container) {
-        new_velocity = d.getVelocity();
-        new_velocity[0] = new_velocity[0] + factor * (d.getAccT0()[0] + d.getAccT1()[0]);
-        new_velocity[1] = new_velocity[1] + factor * (d.getAccT0()[1] + d.getAccT1()[1]);
-        new_velocity[2] = new_velocity[2] + factor * (d.getAccT0()[2] + d.getAccT1()[2]);
-        d.setVelocity(new_velocity);
+#ifdef AUTOPAS_OPENMP
+    // autopas works with parallel iterators which it controlls itself. No pragma omp for needed!
+#pragma omp parallel
+#endif
+    {
+        const double factor = delta_t * 0.5;
+        std::array<double, 3> new_velocity {};
+        for (auto& d : *container) {
+            new_velocity = d.getVelocity();
+            new_velocity[0] = new_velocity[0] + factor * (d.getAccT0()[0] + d.getAccT1()[0]);
+            new_velocity[1] = new_velocity[1] + factor * (d.getAccT0()[1] + d.getAccT1()[1]);
+            new_velocity[2] = new_velocity[2] + factor * (d.getAccT0()[2] + d.getAccT1()[2]);
+            d.setVelocity(new_velocity);
+        }
     }
 }
 
