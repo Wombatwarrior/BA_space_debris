@@ -199,7 +199,7 @@ template <bool write>
 void AccelerationAccumulator<Container>::applyComponents() const
 {
 #ifdef AUTOPAS_OPENMP
-    // autopas works with parallel iterators which it controlls itself. No pragma omp for needed!
+    // autopas works with parallel iterators which it controls itself. No pragma omp for needed!
 #pragma omp parallel
 #endif
     {

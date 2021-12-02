@@ -169,7 +169,7 @@ template <class Container>
 void Integrator<Container>::calculatePosition() const
 {
 #ifdef AUTOPAS_OPENMP
-    // autopas works with parallel iterators which it controlls itself. No pragma omp for needed!
+    // autopas works with parallel iterators which it controls itself. No pragma omp for needed!
 #pragma omp parallel
 #endif
     {
@@ -189,7 +189,7 @@ template <class Container>
 void Integrator<Container>::calculateVelocity() const
 {
 #ifdef AUTOPAS_OPENMP
-    // autopas works with parallel iterators which it controlls itself. No pragma omp for needed!
+    // autopas works with parallel iterators which it controls itself. No pragma omp for needed!
 #pragma omp parallel
 #endif
     {
