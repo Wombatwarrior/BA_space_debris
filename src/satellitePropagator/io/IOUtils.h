@@ -34,12 +34,13 @@ void to_ostream(T&& a,
     const auto end = std::cend(a);
     if (it == end) {
         out << surround[0] + surround[1];
+    } else {
+        out << surround[0] << *it;
+        for (++it; it != end; ++it) {
+            out << delimiter << *it;
+        }
+        out << surround[1];
     }
-    out << surround[0] << *it;
-    for (++it; it != end; ++it) {
-        out << delimiter << *it;
-    }
-    out << surround[1];
 }
 
 /**

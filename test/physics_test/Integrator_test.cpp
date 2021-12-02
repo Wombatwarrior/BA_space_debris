@@ -4,8 +4,8 @@
 
 #include "Integrator_test.h"
 #ifdef HEYOKA_IS_PRESENT
-#include <stdlib.h>
-#include <time.h>
+#include <cstdlib>
+#include <ctime>
 
 // setup taylor integrator and print it to check if the state etc. are correct
 TEST_F(CompareWithHeyokaTests, showTaylorIntegrator)
@@ -39,7 +39,7 @@ TEST_F(CompareWithHeyokaTests, compareKep)
         bool crash_i = false;
         bool crash_ta = false;
         for (double t = start_t; t <= end_t; t += delta_t) {
-            std::array<double, 3> pos_i = i_components[Acceleration::KEP]->getDebris().getDebrisVector()[0].getPosition();
+            std::array<double, 3> pos_i = i_components[Acceleration::KEP]->getContainer().getDebrisVector()[0].getPosition();
             std::array<double, 3> pos_ta { ta_components[Acceleration::KEP]->get_state()[0],
                 ta_components[Acceleration::KEP]->get_state()[1],
                 ta_components[Acceleration::KEP]->get_state()[2] };
@@ -95,7 +95,7 @@ TEST_F(CompareWithHeyokaTests, compareJ2)
         bool crash_i = false;
         bool crash_ta = false;
         for (double t = start_t; t <= end_t; t += delta_t) {
-            std::array<double, 3> pos_i = i_components[Acceleration::J2]->getDebris().getDebrisVector()[0].getPosition();
+            std::array<double, 3> pos_i = i_components[Acceleration::J2]->getContainer().getDebrisVector()[0].getPosition();
             std::array<double, 3> pos_ta { ta_components[Acceleration::J2]->get_state()[0],
                 ta_components[Acceleration::J2]->get_state()[1],
                 ta_components[Acceleration::J2]->get_state()[2] };
@@ -151,7 +151,7 @@ TEST_F(CompareWithHeyokaTests, compareC22)
         bool crash_i = false;
         bool crash_ta = false;
         for (double t = start_t; t <= end_t; t += delta_t) {
-            std::array<double, 3> pos_i = i_components[Acceleration::C22]->getDebris().getDebrisVector()[0].getPosition();
+            std::array<double, 3> pos_i = i_components[Acceleration::C22]->getContainer().getDebrisVector()[0].getPosition();
             std::array<double, 3> pos_ta { ta_components[Acceleration::C22]->get_state()[0],
                 ta_components[Acceleration::C22]->get_state()[1],
                 ta_components[Acceleration::C22]->get_state()[2] };
@@ -207,7 +207,7 @@ TEST_F(CompareWithHeyokaTests, compareS22)
         bool crash_i = false;
         bool crash_ta = false;
         for (double t = start_t; t <= end_t; t += delta_t) {
-            std::array<double, 3> pos_i = i_components[Acceleration::S22]->getDebris().getDebrisVector()[0].getPosition();
+            std::array<double, 3> pos_i = i_components[Acceleration::S22]->getContainer().getDebrisVector()[0].getPosition();
             std::array<double, 3> pos_ta { ta_components[Acceleration::S22]->get_state()[0],
                 ta_components[Acceleration::S22]->get_state()[1],
                 ta_components[Acceleration::S22]->get_state()[2] };
@@ -263,7 +263,7 @@ TEST_F(CompareWithHeyokaTests, compareLun)
         bool crash_i = false;
         bool crash_ta = false;
         for (double t = start_t; t <= end_t; t += delta_t) {
-            std::array<double, 3> pos_i = i_components[Acceleration::LUN]->getDebris().getDebrisVector()[0].getPosition();
+            std::array<double, 3> pos_i = i_components[Acceleration::LUN]->getContainer().getDebrisVector()[0].getPosition();
             std::array<double, 3> pos_ta { ta_components[Acceleration::LUN]->get_state()[0],
                 ta_components[Acceleration::LUN]->get_state()[1],
                 ta_components[Acceleration::LUN]->get_state()[2] };
@@ -319,7 +319,7 @@ TEST_F(CompareWithHeyokaTests, compareSol)
         bool crash_i = false;
         bool crash_ta = false;
         for (double t = start_t; t <= end_t; t += delta_t) {
-            std::array<double, 3> pos_i = i_components[Acceleration::SOL]->getDebris().getDebrisVector()[0].getPosition();
+            std::array<double, 3> pos_i = i_components[Acceleration::SOL]->getContainer().getDebrisVector()[0].getPosition();
             std::array<double, 3> pos_ta { ta_components[Acceleration::SOL]->get_state()[0],
                 ta_components[Acceleration::SOL]->get_state()[1],
                 ta_components[Acceleration::SOL]->get_state()[2] };
@@ -378,7 +378,7 @@ TEST_F(CompareWithHeyokaTests, compareSRP)
         bool crash_i = false;
         bool crash_ta = false;
         for (double t = start_t; t <= end_t; t += delta_t) {
-            std::array<double, 3> pos_i = i_components[Acceleration::SRP]->getDebris().getDebrisVector()[0].getPosition();
+            std::array<double, 3> pos_i = i_components[Acceleration::SRP]->getContainer().getDebrisVector()[0].getPosition();
             std::array<double, 3> pos_ta { ta_components[Acceleration::SRP]->get_state()[0],
                 ta_components[Acceleration::SRP]->get_state()[1],
                 ta_components[Acceleration::SRP]->get_state()[2] };
@@ -437,7 +437,7 @@ TEST_F(CompareWithHeyokaTests, compareDrag)
         bool crash_i = false;
         bool crash_ta = false;
         for (double t = start_t; t <= end_t; t += delta_t) {
-            std::array<double, 3> pos_i = i_components[Acceleration::DRAG]->getDebris().getDebrisVector()[0].getPosition();
+            std::array<double, 3> pos_i = i_components[Acceleration::DRAG]->getContainer().getDebrisVector()[0].getPosition();
             std::array<double, 3> pos_ta { ta_components[Acceleration::DRAG]->get_state()[0],
                 ta_components[Acceleration::DRAG]->get_state()[1],
                 ta_components[Acceleration::DRAG]->get_state()[2] };
@@ -498,7 +498,7 @@ TEST_F(CompareWithHeyokaTests, compareTotal)
         bool crash_i = false;
         bool crash_ta = false;
         for (double t = start_t; t <= end_t; t += delta_t) {
-            std::array<double, 3> pos_i = i_total->getDebris().getDebrisVector()[0].getPosition();
+            std::array<double, 3> pos_i = i_total->getContainer().getDebrisVector()[0].getPosition();
             std::array<double, 3> pos_ta { ta_total->get_state()[0],
                 ta_total->get_state()[1],
                 ta_total->get_state()[2] };
@@ -565,7 +565,7 @@ TEST_F(CompareWithHeyokaTests, compareTotalRandom)
         bool crash_i = false;
         bool crash_ta = false;
         for (double t = start_t; t <= end_t; t += delta_t) {
-            std::array<double, 3> pos_i = i_total->getDebris().getDebrisVector()[0].getPosition();
+            std::array<double, 3> pos_i = i_total->getContainer().getDebrisVector()[0].getPosition();
             std::array<double, 3> pos_ta { ta_total->get_state()[0],
                 ta_total->get_state()[1],
                 ta_total->get_state()[2] };
@@ -602,7 +602,7 @@ TEST_F(CompareWithHeyokaTests, compareTotalRandom)
     }
 }
 // compare calculated values of all Components between the two complete heyoka integrators
-TEST_F(CompareWithHeyokaTests, compareComleteHeyokas)
+TEST_F(CompareWithHeyokaTests, compareCompleteHeyokas)
 {
     std::cout << "\nCompare heyokas" << std::endl;
     // set some test debris values
@@ -618,7 +618,7 @@ TEST_F(CompareWithHeyokaTests, compareComleteHeyokas)
     // loop over the debris data and compare calculations
     for (auto d : ds) {
         // setup integrators
-        prepareRun(*ta_split, *ta_total, d);
+        prepareRun<Debris::Debris>(*ta_split, *ta_total, d);
         // set heyoka parameters
         ta_total->get_pars_data()[0] = d.getAom();
         ta_total->get_pars_data()[1] = d.getBcInv();
@@ -628,10 +628,10 @@ TEST_F(CompareWithHeyokaTests, compareComleteHeyokas)
         bool crash_split = false;
         bool crash_total = false;
         for (double t = start_t; t <= end_t; t += delta_t) {
-            std::array<double, 3> pos_split { ta_split->get_state()[0],
+            std::array<long double, 3> pos_split { ta_split->get_state()[0],
                 ta_split->get_state()[1],
                 ta_split->get_state()[2] };
-            std::array<double, 3> pos_total { ta_total->get_state()[0],
+            std::array<long double, 3> pos_total { ta_total->get_state()[0],
                 ta_total->get_state()[1],
                 ta_total->get_state()[2] };
             if (MathUtils::euclideanNorm(pos_split) <= Physics::R_EARTH) {
@@ -667,7 +667,6 @@ TEST_F(CompareWithHeyokaTests, compareComleteHeyokas)
     }
 }
 
-
 // compare calculation time of all Components with random debris
 TEST_F(CompareWithHeyokaTests, compareTotalRuntimeRandom)
 {
@@ -675,7 +674,8 @@ TEST_F(CompareWithHeyokaTests, compareTotalRuntimeRandom)
     // random number generator
     auto seed = time(NULL);
     srand(seed);
-    std::cout << "Seed: " << seed << std::endl << std::endl;
+    std::cout << "Seed: " << seed << std::endl
+              << std::endl;
     // set some test debris values
     std::vector<Debris::Debris> ds;
     Debris::Debris d;
@@ -714,7 +714,103 @@ TEST_F(CompareWithHeyokaTests, compareTotalRuntimeRandom)
 
         std::cout << "Integrator runtime: " << i_ms_int.count() << " ms" << std::endl;
         std::cout << "Heyoka runtime: " << ta_ms_int.count() << " ms" << std::endl;
-        std::cout << "Time difference: " << i_ms_int.count() - ta_ms_int.count() << " ms\n" << std::endl;
+        std::cout << "Time difference: " << i_ms_int.count() - ta_ms_int.count() << " ms\n"
+                  << std::endl;
     }
 }
+// run calculations and write the states every time step
+TEST_F(CompareWithHeyokaTests, compareTotalToSplit)
+{
+    std::cout << "\nAll Components vs. Split" << std::endl;
+    // set some test debris values
+    std::vector<Debris::Debris> ds;
+    Debris::Debris d;
+    for (int i = 0; i < 3; ++i) {
+        d.setPosition({ 3500. * (i + 2), 0, 0 });
+        d.setVelocity({ 5., 5., 5. });
+        d.setAom(2e-5);
+        d.setBcInv(0.05);
+        ds.push_back(d);
+    }
+    // loop over the debris data and compare calculations
+    for (auto d : ds) {
+        // setup integrators
+        // ta_total is just used as dummy here
+        prepareRun(*i_total, *ta_total, d);
+        prepareRun(*ta_split, *ta_total, d);
+        // set heyoka parameters
+        ta_split->get_pars_data()[0] = d.getAom();
+        ta_split->get_pars_data()[1] = d.getBcInv();
+        // integrate over time
+        bool crash_i = false;
+        bool crash_ta = false;
+        std::cout << "Particle start" << std::endl;
+        for (double t = start_t; t <= end_t; t += delta_t) {
+            std::array<double, 3> pos_i = i_total->getContainer().getDebrisVector()[0].getPosition();
+            std::array<double, 3> pos_ta { ta_split->get_state()[0],
+                ta_split->get_state()[1],
+                ta_split->get_state()[2] };
+            if (MathUtils::euclideanNorm(pos_i) <= Physics::R_EARTH) {
+                if (!crash_i)
+                    std::cout << "integrator hit the ground at t=" << t << std::endl;
+                if (crash_ta == crash_i) {
+                    // no compare function for integrator and ta_split
+                }
+                crash_i = true;
+                if (crash_ta && crash_i)
+                    break;
+            }
+            if (MathUtils::euclideanNorm(pos_ta) <= Physics::R_EARTH) {
+                if (!crash_ta)
+                    std::cout << "heyoka hit the ground at t=" << t << std::endl;
+                if (crash_ta == crash_i) {
+                    // no compare function for integrator and ta_split
+                }
+                crash_ta = true;
+            }
+            if (crash_i && crash_ta)
+                break;
+            // integrate time step
+            if (!crash_i)
+                i_total->getAccumulator().getFileOutput().writeDebrisData(t);
+            // write components during calculation
+            i_total->integrate(true);
+            if (!crash_ta)
+                writeSplitHeyokaState();
+            ta_split->propagate_for(delta_t);
+        }
+        if (!(crash_i || crash_ta))
+            // compare result
+            // no compare function for integrator and ta_split
+            std::cout << "Particle done" << std::endl;
+    }
+}
+
+// calculate accurate values of the delta t simulation
+TEST_F(CompareWithHeyokaTests, calculateDeltaTHeyoka) {
+
+    std::cout << *ta_split_ld << std::endl;
+    ta_split_ld_out  = new std::ofstream (std::to_string(time_stamp) + "/heyoka_split_delta_t_ld_sim.csv");
+    *ta_split_ld_out << std::setprecision(std::numeric_limits<double>::digits10 + 1);
+    *ta_split_ld_out << "index,time,position x,position y,position z,position norm,vel_init x,vel_init y,vel_init z,vel_init norm,vel_kep x,vel_kep y,vel_kep z,vel_kep norm,vel_j2 x,vel_j2 y,vel_j2 z,vel_j2 norm,vel_c22 x,vel_c22 y,vel_c22 z,vel_c22 norm,vel_s22 x,vel_s22 y,vel_s22 z,vel_s22 norm,vel_sol x,vel_sol y,vel_sol z,vel_sol norm,vel_lun x,vel_lun y,vel_lun z,vel_lun norm,vel_srp x,vel_srp y,vel_srp z,vel_srp norm,vel_drag x,vel_drag y,vel_drag z,vel_drag norm,vel_total x,vel_total y,vel_total z,vel_total norm" << std::endl;
+    ta_split_ld_line = 0;
+
+    // set init state
+    Debris::Debris d;
+    d.setPosition({3971.1,3971.1,3971.1});
+    d.setVelocity({3.10677,-6.21354,3.10677});
+    d.setBcInv(0.05);
+    d.setAom(2e-5);
+    prepareLDRun(*ta_split_ld, d);
+    ta_split_ld->get_pars_data()[0] = d.getAom();
+    ta_split_ld->get_pars_data()[1] = d.getBcInv();
+    start_t = 0;
+    delta_t = 0.0625;
+    end_t = 5676;
+    for (double t = start_t; t <= end_t; t += delta_t) {
+        writeSplitLDHeyokaState();
+        ta_split_ld->propagate_for(delta_t);
+    }
+}
+
 #endif
