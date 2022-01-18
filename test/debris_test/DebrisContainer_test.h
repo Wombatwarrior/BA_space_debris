@@ -10,8 +10,16 @@
 #include <memory>
 
 class GenericDebrisTests : public ::testing::Test {
+
 protected:
     class DummyDebris {
+    public:
+        enum ActivityState : int {
+            passive,
+            evasive,
+            evasivePreserving,
+        };
+
     private:
         std::array<double, 3> position {};
         std::array<double, 3> velocity {};
@@ -19,6 +27,7 @@ protected:
         std::array<double, 3> acc_t1 {};
         double bc_inv = 0;
         double aom = 0;
+        ActivityState activityState { passive };
 
     public:
         DummyDebris() = default;
@@ -34,6 +43,15 @@ protected:
         }
 
         ~DummyDebris() = default;
+
+        ActivityState getActivityState() const
+        {
+            return activityState;
+        }
+        void setActivityState(ActivityState activityState)
+        {
+            DummyDebris::activityState = activityState;
+        }
 
         std::string toString() const
         {
@@ -173,7 +191,7 @@ protected:
         file_output = std::make_shared<FileOutput<Debris::DebrisContainer<DummyDebris>>>(*container, command_line->getOutputFilePath(),
             command_line->getOutputFileType(), file_input->getAccConfig());
         accumulator = std::make_shared<Acceleration::AccelerationAccumulator<Debris::DebrisContainer<DummyDebris>>>(
-            file_input->getAccConfig(), *container, file_input->getStartT(), *file_output);
+            file_input->getAccConfig(), *container, file_input->getStartT(), file_output.get());
         integrator = std::make_shared<Integrator<Debris::DebrisContainer<DummyDebris>>>(*container, *accumulator,
             file_input->getDeltaT());
     }
