@@ -5,18 +5,9 @@
 #include "Debris.h"
 namespace Debris {
 
-Debris::Debris()
-    = default;
+Debris::Debris() = default;
 
-Debris::Debris(const Debris& other)
-{
-    position = other.position;
-    velocity = other.velocity;
-    acc_t0 = other.acc_t0;
-    acc_t1 = other.acc_t1;
-    aom = other.aom;
-    bc_inv = other.bc_inv;
-}
+Debris::Debris(const Debris& other) = default;
 
 Debris::~Debris() = default;
 
@@ -134,6 +125,14 @@ double Debris::getBcInv() const
 void Debris::setBcInv(const double bcInv)
 {
     bc_inv = bcInv;
+}
+Debris::ActivityState Debris::getActivityState() const
+{
+    return activityState;
+}
+void Debris::setActivityState(Debris::ActivityState activityState)
+{
+    Debris::activityState = activityState;
 }
 
 } // namespace Debris

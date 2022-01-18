@@ -282,7 +282,7 @@ void FileOutput<Container>::writeDebrisCSV(double t)
 }
 
 template <class Container>
-void FileOutput<Container>::writeDebrisTXT(double t)
+void FileOutput<Container>::writeDebrisTXT(double)
 {
     // NOT IMPLEMENTED YET
 }
