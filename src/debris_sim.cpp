@@ -26,7 +26,7 @@ void initSimulation(int argc, char** argv)
         file_output = std::make_shared<FileOutput<Debris::DebrisContainer<Debris::Debris>>>(*container, command_line->getOutputFilePath(),
             command_line->getOutputFileType(), file_input->getAccConfig());
         accumulator = std::make_shared<Acceleration::AccelerationAccumulator<Debris::DebrisContainer<Debris::Debris>>>(
-            file_input->getAccConfig(), *container, file_input->getStartT(), *file_output);
+            file_input->getAccConfig(), *container, file_input->getStartT(), file_output.get());
         integrator = std::make_shared<Integrator<Debris::DebrisContainer<Debris::Debris>>>(*container, *accumulator,
             file_input->getDeltaT());
     }

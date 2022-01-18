@@ -53,11 +53,11 @@ public:
     AccelerationAccumulator(const std::array<bool, 8>& config_arg,
         Container& container,
         double t_arg,
-        FileOutput<Container>& file_output_arg)
+        FileOutput<Container>* file_output_arg)
         : config(config_arg)
         , container(&container)
         , t(t_arg)
-        , file_output(&file_output_arg) {};
+        , file_output(file_output_arg) {};
 
     /**
      * @brief Default destructor
