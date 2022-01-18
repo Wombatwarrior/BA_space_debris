@@ -51,7 +51,7 @@ public:
     /**
      * Describes how active a particle behaves. This is relevant for the propagator to determine which forces are applied.
      */
-    enum ActivityState : int {
+    enum class ActivityState : int {
         /**
          * Simply float around space and is subject to all external influences.
          */
@@ -118,7 +118,7 @@ private:
     double bc_inv = 0; /**< (C_cA)/m is the inverse of the ballistic coefficient. Used for Acceleration::DragComponent::apply()*/
     double aom = 0; /**< Area to mass ration*/
 
-    ActivityState activityState { passive };
+    ActivityState activityState { ActivityState::passive };
 
 public:
     ActivityState getActivityState() const;
