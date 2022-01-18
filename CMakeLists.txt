@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 
-project(BA_space_debris)
+project(OrbitPropagator)
 set(CMAKE_CXX_STANDARD 17)
 
 set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug;Release")
