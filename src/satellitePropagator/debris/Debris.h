@@ -49,6 +49,27 @@ public:
     virtual ~Debris();
 
     /**
+     * Describes how active a particle behaves. This is relevant for the propagator to determine which forces are applied.
+     */
+    enum ActivityState : int {
+        /**
+         * Simply float around space and is subject to all external influences.
+         */
+        passive,
+
+        /**
+         * Can actively change its trajectory to avoid collisions.
+         */
+        evasive,
+
+        /**
+         * Same as evasive but additionally can actively maneuver to preserve their orbit.
+         * This is modelled only only applying Keplerian forces.
+         */
+        evasivePreserving,
+    };
+
+    /**
      * @brief String representation
      *
      * Creates a std::string representation of the state of the debris
@@ -96,7 +117,13 @@ private:
                                  acceleration at the current time step*/
     double bc_inv = 0; /**< (C_cA)/m is the inverse of the ballistic coefficient. Used for Acceleration::DragComponent::apply()*/
     double aom = 0; /**< Area to mass ration*/
+
+    ActivityState activityState { passive };
+
 public:
+    ActivityState getActivityState() const;
+    void setActivityState(ActivityState activityState);
+
     /**
      * @brief Getter function for #position vector
      *
