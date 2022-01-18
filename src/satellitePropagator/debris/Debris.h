@@ -64,7 +64,7 @@ public:
 
         /**
          * Same as evasive but additionally can actively maneuver to preserve their orbit.
-         * This is modelled only only applying Keplerian forces.
+         * This is modelled by only applying Keplerian forces.
          */
         evasivePreserving,
     };
