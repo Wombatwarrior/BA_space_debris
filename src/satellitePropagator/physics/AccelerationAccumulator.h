@@ -24,26 +24,6 @@
  */
 namespace Acceleration {
 /**
- * @brief Enumerates the different components of the total acceleration
- */
-enum AccelerationComponent {
-    KEP, /**< Kepler: %Acceleration due to earth gravity. Assuming the earth as a
-        point mass <a href="Math.pdf#page=1"> math reference subsection 1.1</a>*/
-    J2, /**< J2: %Acceleration due to earth gravity. Taking in account the earth
-         is neither a point mass nor a homogenous spherical mass <a href="Math.pdf#page=2"> math reference subsection 1.2</a>*/
-    C22, /**< C22: %Acceleration due to earth gravity. Taking in account the
-        earth is neither a point mass nor not a homogenous spherical mass <a href="Math.pdf#page=3"> math reference subsection 1.3</a>*/
-    S22, /**< S22: %Acceleration due to earth gravity. Taking in account the
-        earth is neither a point mass nor not a homogenous spherical mass <a href="Math.pdf#page=3"> math reference subsection 1.3</a>*/
-    SOL, /**< Solar tide: %Acceleration due to tidal forces caused by the sun <a href="Math.pdf#page=4"> math reference subsection 1.4</a>*/
-    LUN, /**< Lunar tide: %Acceleration due to tidal forces caused by the moon <a href="Math.pdf#page=5"> math reference subsection 1.5</a>*/
-    SRP, /**< Solar radiation pressure: %Acceleration due to pressure of the suns
-        radiation <a href="Math.pdf#page=8"> math reference subsection 1.6</a>*/
-    DRAG /**< Drag: %Acceleration due to the friction between the object and the
-        earths atmosphere <a href="Math.pdf#page=8"> math reference subsection 1.7</a>*/
-};
-
-/**
  * @class AccelerationAccumulator
  *
  * @brief Accumulates all accelerations of the
@@ -73,9 +53,9 @@ public:
     AccelerationAccumulator(const std::array<bool, 8>& config_arg,
         Container& container,
         double t_arg,
-        FileOutput& file_output_arg)
+        FileOutput<Container>& file_output_arg)
         : config(config_arg)
-        , debris(&container)
+        , container(&container)
         , t(t_arg)
         , file_output(&file_output_arg) {};
 
@@ -90,7 +70,7 @@ public:
      * @brief Applies all Acceleration::AccelerationComponent specified by
      * #config
      *
-     * Loops over all Debris::Debris objects in #debris.
+     * Loops over all Debris::Debris objects in #container.
      * Checks if the corresponding flag in the #config vector is set to true and
      * calls the apply() functions. Sets the #Debris::Debris::acc_t1 value of
      * every Debris::Debris object.
@@ -105,7 +85,9 @@ public:
      * - Acceleration::SRPComponent::apply() if #config[Acceleration::SRP]
      * - Acceleration::DragComponent::apply() if #config[Acceleration::DRAG]
      *
+     * @tparam write If true triggers this class' file output writer.
      */
+    template <bool write>
     void applyComponents() const;
 
     /**
@@ -133,11 +115,11 @@ private:
      */
     std::array<bool, 8> config {};
     Container*
-        debris
+        container
         = nullptr; /**< Reference to the Container object holding the
              Debris::Debris objects to apply acceleration to*/
     double t = 0; /**< current time*/
-    FileOutput* file_output = nullptr; /**< used to write detailed output data during calculations */
+    FileOutput<Container>* file_output = nullptr; /**< used to write detailed output data during calculations */
 public:
     /**
      * @brief Getter function for #config
@@ -155,19 +137,19 @@ public:
     void setConfig(const std::array<bool, 8>& config);
 
     /**
-     * @brief Getter function for #debris
+     * @brief Getter function for #container
      *
-     * @return Value of #debris
+     * @return Value of #container
      */
-    [[nodiscard]] const Container& getDebris() const;
-    Container& getDebris();
+    [[nodiscard]] const Container& getContainer() const;
+    Container& getContainer();
 
     /**
-     * @brief Setter function for #debris
+     * @brief Setter function for #container
      *
-     * @param debris New value of #debris
+     * @param container New value of #container
      */
-    void setDebris(Container& debris);
+    void setContainer(Container& container);
 
     /**
      * @brief Getter function for #t
@@ -188,15 +170,15 @@ public:
      *
      * @return Value of #file_output
      */
-    [[nodiscard]] const FileOutput& getFileOutput() const;
-    FileOutput& getFileOutput();
+    [[nodiscard]] const FileOutput<Container>& getFileOutput() const;
+    FileOutput<Container>& getFileOutput();
 
     /**
      * @brief Setter function for #file_output
      *
      * @param fileOutput New value of #file_output
      */
-    void setFileOutput(FileOutput& fileOutput);
+    void setFileOutput(FileOutput<Container>& fileOutput);
 };
 } // namespace Acceleration
 
@@ -213,153 +195,139 @@ template <class Container>
 AccelerationAccumulator<Container>::~AccelerationAccumulator() = default;
 
 template <class Container>
+template <bool write>
 void AccelerationAccumulator<Container>::applyComponents() const
 {
-    // will be modified by the apply functions
-    std::array<double, 3> new_acc_total { 0, 0, 0 };
-    std::array<double, 3> new_acc_component { 0, 0, 0 };
-    double d_srp = 0;
-    // are constant for this time step
-    double c_term;
-    double s_term;
-    std::array<double, 6> sun_params {};
-    // setup only needed for SolComponent and SRPComponent
-    if (config[SOL] || config[SRP]) {
-        sun_params = SolComponent::setUp(t);
-    }
-    std::array<double, 6> moon_params {};
-    // setup only needed for LunComponent
-    if (config[LUN]) {
-        moon_params = LunComponent::setUp(t);
-    }
-    // setup only needed for C22Component and S22Component
-    if (config[C22] || config[S22]) {
-        // Eq 15
-        c_term = std::cos((Physics::THETA_G + Physics::NU_EARTH * t) * Physics::RAD_FACTOR);
-        s_term = std::sin((Physics::THETA_G + Physics::NU_EARTH * t) * Physics::RAD_FACTOR);
-    }
-
-    for (auto &d : *debris) {
-        new_acc_total[0] = 0;
-        new_acc_total[1] = 0;
-        new_acc_total[2] = 0;
-        new_acc_component[0] = 0;
-        new_acc_component[1] = 0;
-        new_acc_component[2] = 0;
-        d_srp = 0;
-        // Eq 1
-        if (config[KEP]) {
-            KepComponent::apply(d, new_acc_component, new_acc_total);
+#ifdef AUTOPAS_OPENMP
+    // autopas works with parallel iterators which it controls itself. No pragma omp for needed!
+#pragma omp parallel
+#endif
+    {
+        // will be modified by the apply functions
+        std::array<double, 3> new_acc_total { 0, 0, 0 };
+        std::array<double, 3> new_acc_component { 0, 0, 0 };
+        double d_srp { 0. };
+        // are constant for this time step
+        double c_term;
+        double s_term;
+        std::array<double, 6> sun_params {};
+        // setup only needed for SolComponent and SRPComponent
+        if (config[SOL] || config[SRP]) {
+            sun_params = SolComponent::setUp(t);
         }
-        if (config[J2]) {
-            J2Component::apply(d, new_acc_component, new_acc_total);
-        }
-        // if we want to calculate both C22 and S22 we can share many of the
-        // calculation steps
-        if (config[C22] && config[S22]) {
-            C22S22Component::apply(d, c_term, s_term, new_acc_component,
-                new_acc_total);
-        } // if only one of the two should be calculated we only calculate the
-        // needed one
-        else {
-            if (config[C22]) {
-                C22Component::apply(d, c_term, s_term, new_acc_component,
-                    new_acc_total);
-            }
-            if (config[S22]) {
-                S22Component::apply(d, c_term, s_term, new_acc_component,
-                    new_acc_total);
-            }
-        }
-        if (config[SOL]) {
-            SolComponent::apply(d, d_srp, sun_params, new_acc_component, new_acc_total);
-        }
+        std::array<double, 6> moon_params {};
+        // setup only needed for LunComponent
         if (config[LUN]) {
-            LunComponent::apply(d, moon_params, new_acc_component, new_acc_total);
+            moon_params = LunComponent::setUp(t);
         }
-        if (config[SRP]) {
-            SRPComponent::apply(d, d_srp, sun_params, new_acc_component, new_acc_total);
+        // setup only needed for C22Component and S22Component
+        if (config[C22] || config[S22]) {
+            // Eq 15
+            c_term = std::cos((Physics::THETA_G + Physics::NU_EARTH * t) * Physics::RAD_FACTOR);
+            s_term = std::sin((Physics::THETA_G + Physics::NU_EARTH * t) * Physics::RAD_FACTOR);
         }
-        if (config[DRAG]) {
-            DragComponent::apply(d, new_acc_component, new_acc_total);
-        }
-        d.setAccT1(new_acc_total);
-    }
-}
 
-template <class Container>
-void AccelerationAccumulator<Container>::applyAmdWriteComponents() const
-{
-    // will be modified by the apply functions
-    std::array<double, 3> new_acc_total { 0, 0, 0 };
-    std::array<double, 3> new_acc_component { 0, 0, 0 };
-    double d_srp = 0;
-    // are constant for this time step
-    double c_term;
-    double s_term;
-    std::array<double, 6> sun_params {};
-    // setup only needed for SolComponent and SRPComponent
-    if (config[SOL] || config[SRP]) {
-        sun_params = SolComponent::setUp(t);
-    }
-    std::array<double, 6> moon_params {};
-    // setup only needed for LunComponent
-    if (config[LUN]) {
-        moon_params = LunComponent::setUp(t);
-    }
-    // setup only needed for C22Component and S22Component
-    if (config[C22] || config[S22]) {
-        // Eq 15
-        c_term = std::cos((Physics::THETA_G + Physics::NU_EARTH * t) * Physics::RAD_FACTOR);
-        s_term = std::sin((Physics::THETA_G + Physics::NU_EARTH * t) * Physics::RAD_FACTOR);
-    }
-
-    for (auto &d : *debris) {
-        // start a new line o data for each particle
-        file_output->writeAcc_start(t);
-        new_acc_total[0] = 0;
-        new_acc_total[1] = 0;
-        new_acc_total[2] = 0;
-        new_acc_component[0] = 0;
-        new_acc_component[1] = 0;
-        new_acc_component[2] = 0;
-        // Eq 1
-        if (config[KEP]) {
-            KepComponent::apply(d, new_acc_component, new_acc_total);
-            file_output->writeAcc_value(new_acc_component);
+        for (auto& d : *container) {
+            if (write) {
+                file_output->writeAcc_start(t);
+            }
+            new_acc_total[0] = 0;
+            new_acc_total[1] = 0;
+            new_acc_total[2] = 0;
+            d_srp = 0;
+            // Eq 1
+            if (config[KEP]) {
+                new_acc_component = KepComponent::apply(d);
+                if (write) {
+                    file_output->writeAcc_value(new_acc_component);
+                }
+                new_acc_total[0] += new_acc_component[0];
+                new_acc_total[1] += new_acc_component[1];
+                new_acc_total[2] += new_acc_component[2];
+            }
+            if (config[J2]) {
+                new_acc_component = J2Component::apply(d);
+                if (write) {
+                    file_output->writeAcc_value(new_acc_component);
+                }
+                new_acc_total[0] += new_acc_component[0];
+                new_acc_total[1] += new_acc_component[1];
+                new_acc_total[2] += new_acc_component[2];
+            }
+            // if we want to calculate both C22 and S22 we can share many of the
+            // calculation steps
+            if (config[C22] && config[S22]) {
+                new_acc_component = C22S22Component::apply(d, c_term, s_term);
+                if (write) {
+                    file_output->writeAcc_value(new_acc_component);
+                    file_output->writeAcc_value(new_acc_component);
+                }
+                new_acc_total[0] += new_acc_component[0];
+                new_acc_total[1] += new_acc_component[1];
+                new_acc_total[2] += new_acc_component[2];
+            } // if only one of the two should be calculated we only calculate the
+            // needed one
+            else {
+                if (config[C22]) {
+                    new_acc_component = C22Component::apply(d, c_term, s_term);
+                    if (write) {
+                        file_output->writeAcc_value(new_acc_component);
+                    }
+                    new_acc_total[0] += new_acc_component[0];
+                    new_acc_total[1] += new_acc_component[1];
+                    new_acc_total[2] += new_acc_component[2];
+                }
+                if (config[S22]) {
+                    new_acc_component = S22Component::apply(d, c_term, s_term);
+                    if (write) {
+                        file_output->writeAcc_value(new_acc_component);
+                    }
+                    new_acc_total[0] += new_acc_component[0];
+                    new_acc_total[1] += new_acc_component[1];
+                    new_acc_total[2] += new_acc_component[2];
+                }
+            }
+            if (config[SOL]) {
+                new_acc_component = SolComponent::apply(d, d_srp, sun_params);
+                if (write) {
+                    file_output->writeAcc_value(new_acc_component);
+                }
+                new_acc_total[0] += new_acc_component[0];
+                new_acc_total[1] += new_acc_component[1];
+                new_acc_total[2] += new_acc_component[2];
+            }
+            if (config[LUN]) {
+                new_acc_component = LunComponent::apply(d, moon_params);
+                if (write) {
+                    file_output->writeAcc_value(new_acc_component);
+                }
+                new_acc_total[0] += new_acc_component[0];
+                new_acc_total[1] += new_acc_component[1];
+                new_acc_total[2] += new_acc_component[2];
+            }
+            if (config[SRP]) {
+                new_acc_component = SRPComponent::apply(d, d_srp, sun_params);
+                if (write) {
+                    file_output->writeAcc_value(new_acc_component);
+                }
+                new_acc_total[0] += new_acc_component[0];
+                new_acc_total[1] += new_acc_component[1];
+                new_acc_total[2] += new_acc_component[2];
+            }
+            if (config[DRAG]) {
+                new_acc_component = DragComponent::apply(d);
+                if (write) {
+                    file_output->writeAcc_value(new_acc_component);
+                }
+                new_acc_total[0] += new_acc_component[0];
+                new_acc_total[1] += new_acc_component[1];
+                new_acc_total[2] += new_acc_component[2];
+            }
+            d.setAccT1(new_acc_total);
+            if (write) {
+                file_output->writeAcc_end(new_acc_total);
+            }
         }
-        if (config[J2]) {
-            J2Component::apply(d, new_acc_component, new_acc_total);
-            file_output->writeAcc_value(new_acc_component);
-        }
-        if (config[C22]) {
-            C22Component::apply(d, c_term, s_term, new_acc_component,
-                new_acc_total);
-            file_output->writeAcc_value(new_acc_component);
-        }
-        if (config[S22]) {
-            S22Component::apply(d, c_term, s_term, new_acc_component,
-                new_acc_total);
-            file_output->writeAcc_value(new_acc_component);
-        }
-        if (config[SOL]) {
-            SolComponent::apply(d, d_srp, sun_params, new_acc_component, new_acc_total);
-            file_output->writeAcc_value(new_acc_component);
-        }
-        if (config[LUN]) {
-            LunComponent::apply(d, moon_params, new_acc_component, new_acc_total);
-            file_output->writeAcc_value(new_acc_component);
-        }
-        if (config[SRP]) {
-            SRPComponent::apply(d, d_srp, sun_params, new_acc_component, new_acc_total);
-            file_output->writeAcc_value(new_acc_component);
-        }
-        if (config[DRAG]) {
-            DragComponent::apply(d, new_acc_component, new_acc_total);
-            file_output->writeAcc_value(new_acc_component);
-        }
-        d.setAccT1(new_acc_total);
-        file_output->writeAcc_end(new_acc_total);
     }
 }
 
@@ -381,20 +349,20 @@ void AccelerationAccumulator<Container>::setConfig(const std::array<bool, 8>& co
 }
 
 template <class Container>
-const Container& AccelerationAccumulator<Container>::getDebris() const
+const Container& AccelerationAccumulator<Container>::getContainer() const
 {
-    return *debris;
+    return *container;
 }
 
 template <class Container>
-Container& AccelerationAccumulator<Container>::getDebris()
+Container& AccelerationAccumulator<Container>::getContainer()
 {
-    return *debris;
+    return *container;
 }
 template <class Container>
-void AccelerationAccumulator<Container>::setDebris(Container& debris)
+void AccelerationAccumulator<Container>::setContainer(Container& container)
 {
-    AccelerationAccumulator<Container>::debris = &debris;
+    AccelerationAccumulator<Container>::container = &container;
 }
 
 template <class Container>
@@ -410,19 +378,19 @@ void AccelerationAccumulator<Container>::setT(double t)
 }
 
 template <class Container>
-const FileOutput& AccelerationAccumulator<Container>::getFileOutput() const
+const FileOutput<Container>& AccelerationAccumulator<Container>::getFileOutput() const
 {
     return *file_output;
 }
 
 template <class Container>
-FileOutput& AccelerationAccumulator<Container>::getFileOutput()
+FileOutput<Container>& AccelerationAccumulator<Container>::getFileOutput()
 {
     return *file_output;
 }
 
 template <class Container>
-void AccelerationAccumulator<Container>::setFileOutput(FileOutput& fileOutput)
+void AccelerationAccumulator<Container>::setFileOutput(FileOutput<Container>& fileOutput)
 {
     file_output = &fileOutput;
 }

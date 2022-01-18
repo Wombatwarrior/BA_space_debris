@@ -36,8 +36,8 @@ protected:
 
     // delta t
     inline static double delta_t = .1;
-    inline static constexpr double start_t = 0.;
-    inline static constexpr double end_t = 1000;
+    inline static double start_t = 0.;
+    inline static double end_t = 1000;
 
     //heyoka variables
     inline static heyoka::taylor_adaptive<double>* ta_total;
@@ -45,23 +45,29 @@ protected:
 
     //heyoka integrator to extract single components
     inline static heyoka::taylor_adaptive<double>* ta_split;
+    inline static heyoka::taylor_adaptive<long double>* ta_split_ld;
 
     // own integrators
-    inline static Integrator<Debris::DebrisContainer>* i_total;
-    inline static Acceleration::AccelerationAccumulator<Debris::DebrisContainer>* aa_total;
-    inline static std::array<Integrator<Debris::DebrisContainer>*, 8> i_components;
-    inline static std::array<Acceleration::AccelerationAccumulator<Debris::DebrisContainer>*, 8> aa_components;
+    inline static Integrator<Debris::DebrisContainer<Debris::Debris>>* i_total;
+    inline static Acceleration::AccelerationAccumulator<Debris::DebrisContainer<Debris::Debris>>* aa_total;
+    inline static std::array<Integrator<Debris::DebrisContainer<Debris::Debris>>*, 8> i_components;
+    inline static std::array<Acceleration::AccelerationAccumulator<Debris::DebrisContainer<Debris::Debris>>*, 8> aa_components;
     // output files
-    inline static std::array<std::ofstream*,8> ta_components_out;
-    inline static std::array<FileOutput *,8> i_components_out;
+    inline static std::array<std::ofstream*, 8> ta_components_out;
+    inline static std::array<FileOutput<Debris::DebrisContainer<Debris::Debris>>*, 8> i_components_out;
     inline static std::ofstream* ta_total_out;
-    inline static FileOutput* i_total_out;
+    inline static FileOutput<Debris::DebrisContainer<Debris::Debris>>* i_total_out;
     inline static std::ofstream* ta_split_out;
+    inline static std::ofstream* ta_split_ld_out;
+    inline static std::array<int, 8> ta_components_line {};
+    inline static int ta_total_line = 0;
+    inline static int ta_split_line = 0;
+    inline static int ta_split_ld_line = 0;
+    inline static auto time_stamp = time(NULL);
 
     inline static void SetUpTestSuite()
     {
         //timestamp to create new data folder for each run
-        auto time_stamp = time(NULL);
         std::filesystem::create_directory(std::filesystem::path(std::to_string(time_stamp)));
         //create heyoka variables
         std::array<heyoka::expression, 3> pos = heyoka::make_vars("X", "Y", "Z");
@@ -154,7 +160,7 @@ protected:
         auto fMoonZ = -GMm * ((pos[2] - Zm) / (heyoka::pow(magRRm2, (3. / 2))) + Zm / (heyoka::pow(magRm2, (3. / 2))));
 
         //Sun's radiation pressure (AOM is a heyoka parameter hy.par[0]. We
-        //will be able to set it later without recompiling the integartor)
+        //will be able to set it later without recompiling the integrator)
         auto SRPterm = heyoka::par[0] * PSRP * (std::pow(alpha_o, 2)) / (heyoka::pow(magRRo2, (3. / 2)));
         auto fSRPX = SRPterm * (pos[0] - Xo);
         auto fSRPY = SRPterm * (pos[1] - Yo);
@@ -203,7 +209,7 @@ protected:
         // prepare output file
         ta_total_out = new std::ofstream(std::to_string(time_stamp) + "/heyoka_total.csv");
         *ta_total_out << std::setprecision(std::numeric_limits<double>::digits10 + 1);
-        *ta_total_out << "index,time,position x,position y,position z,position norm,velocity x, velocity y,velocityy z,velocity norm" << std::endl;
+        *ta_total_out << "index,time,position x,position y,position z,position norm,velocity x, velocity y,velocity z,velocity norm" << std::endl;
 
         // calculates components separately
 
@@ -283,10 +289,37 @@ protected:
             heyoka::kw::tol = 1e-16,
             heyoka::kw::compact_mode = true
         };
+        ta_split_ld = new heyoka::taylor_adaptive<long double> {
+            { heyoka::prime(pos[0]) = dXXdt_split, heyoka::prime(pos[1]) = dXYdt_split, heyoka::prime(pos[2]) = dXZdt_split,
+                heyoka::prime(vel[0]) = heyoka::expression(0.), heyoka::prime(vel[1]) = heyoka::expression(0.), heyoka::prime(vel[2]) = heyoka::expression(0.),
+                heyoka::prime(vel_kep[0]) = fKepX, heyoka::prime(vel_kep[1]) = fKepY, heyoka::prime(vel_kep[2]) = fKepZ,
+                heyoka::prime(vel_j2[0]) = fJ2X, heyoka::prime(vel_j2[1]) = fJ2Y, heyoka::prime(vel_j2[2]) = fJ2Z,
+                heyoka::prime(vel_c22[0]) = fC22X, heyoka::prime(vel_c22[1]) = fC22Y, heyoka::prime(vel_c22[2]) = fC22Z,
+                heyoka::prime(vel_s22[0]) = fS22X, heyoka::prime(vel_s22[1]) = fS22Y, heyoka::prime(vel_s22[2]) = fS22Z,
+                heyoka::prime(vel_sun[0]) = fSunX, heyoka::prime(vel_sun[1]) = fSunY, heyoka::prime(vel_sun[2]) = fSunZ,
+                heyoka::prime(vel_lun[0]) = fMoonX, heyoka::prime(vel_lun[1]) = fMoonY, heyoka::prime(vel_lun[2]) = fMoonZ,
+                heyoka::prime(vel_srp[0]) = fSRPX, heyoka::prime(vel_srp[1]) = fSRPY, heyoka::prime(vel_srp[2]) = fSRPZ,
+                heyoka::prime(vel_drag[0]) = fDragX_split, heyoka::prime(vel_drag[1]) = fDragY_split, heyoka::prime(vel_drag[2]) = fDragZ_split },
+            { x0, y0, z0,
+                vx0, vy0, vz0,
+                vel_kep_x0, vel_kep_y0, vel_kep_z0,
+                vel_j2_x0, vel_j2_y0, vel_j2_z0,
+                vel_c22_x0, vel_c22_y0, vel_c22_z0,
+                vel_s22_x0, vel_s22_y0, vel_s22_z0,
+                vel_sun_x0, vel_sun_y0, vel_sun_z0,
+                vel_lun_x0, vel_lun_y0, vel_lun_z0,
+                vel_srp_x0, vel_srp_y0, vel_srp_z0,
+                vel_drag_x0, vel_drag_y0, vel_drag_z0 },
+            heyoka::kw::time = t0,
+            heyoka::kw::compact_mode = true
+        };
         // prepare output file
         ta_split_out = new std::ofstream(std::to_string(time_stamp) + "/heyoka_split.csv");
+        ta_split_ld_out = new std::ofstream(std::to_string(time_stamp) + "/heyoka_split_ld.csv");
         *ta_split_out << std::setprecision(std::numeric_limits<double>::digits10 + 1);
-        *ta_split_out << "index,time,position x,position y,position z,position norm,vel_kep x,vel_kep y,vel_kep z,vel_kep norm,vel_j2 x,vel_j2 y,vel_j2 z,vel_j2 norm,vel_c22 x,vel_c22 y,vel_c22 z,vel_c22 norm,vel_s22 x,vel_s22 y,vel_s22 z,vel_s22 norm,vel_sol x,vel_sol y,vel_sol z,vel_sol norm,vel_lun x,vel_lun y,vel_lun z,vel_lun norm,vel_srp x,vel_srp y,vel_srp z,vel_srp norm,vel_drag x,vel_drag y,vel_drag z,vel_drag norm,vel_total x,vel_total y,vel_total z,vel_total norm" << std::endl;
+        *ta_split_ld_out << std::setprecision(std::numeric_limits<long double>::digits10 + 1);
+        *ta_split_out << "index,time,position x,position y,position z,position norm,vel_init x,vel_init y,vel_init z,vel_init norm,vel_kep x,vel_kep y,vel_kep z,vel_kep norm,vel_j2 x,vel_j2 y,vel_j2 z,vel_j2 norm,vel_c22 x,vel_c22 y,vel_c22 z,vel_c22 norm,vel_s22 x,vel_s22 y,vel_s22 z,vel_s22 norm,vel_sol x,vel_sol y,vel_sol z,vel_sol norm,vel_lun x,vel_lun y,vel_lun z,vel_lun norm,vel_srp x,vel_srp y,vel_srp z,vel_srp norm,vel_drag x,vel_drag y,vel_drag z,vel_drag norm,vel_total x,vel_total y,vel_total z,vel_total norm" << std::endl;
+        *ta_split_ld_out << "index,time,position x,position y,position z,position norm,vel_init x,vel_init y,vel_init z,vel_init norm,vel_kep x,vel_kep y,vel_kep z,vel_kep norm,vel_j2 x,vel_j2 y,vel_j2 z,vel_j2 norm,vel_c22 x,vel_c22 y,vel_c22 z,vel_c22 norm,vel_s22 x,vel_s22 y,vel_s22 z,vel_s22 norm,vel_sol x,vel_sol y,vel_sol z,vel_sol norm,vel_lun x,vel_lun y,vel_lun z,vel_lun norm,vel_srp x,vel_srp y,vel_srp z,vel_srp norm,vel_drag x,vel_drag y,vel_drag z,vel_drag norm,vel_total x,vel_total y,vel_total z,vel_total norm" << std::endl;
 
         ta_components[Acceleration::KEP] = new heyoka::taylor_adaptive<double> {
             { heyoka::prime(pos[0]) = dXdt, heyoka::prime(pos[1]) = dYdt, heyoka::prime(pos[2]) = dZdt, heyoka::prime(vel[0]) = fKepX, heyoka::prime(vel[1]) = fKepY, heyoka::prime(vel[2]) = fKepZ },
@@ -346,7 +379,7 @@ protected:
         // prepare output file
         ta_components_out[Acceleration::SOL] = new std::ofstream(std::to_string(time_stamp) + "/heyoka_sol.csv");
         *ta_components_out[Acceleration::SOL] << std::setprecision(std::numeric_limits<double>::digits10 + 1);
-        *ta_components_out[Acceleration::SOL]<< "index,time,position x,position y,position z,position norm,vel_sol x,vel_sol y,vel_sol z,vel_sol norm" << std::endl;
+        *ta_components_out[Acceleration::SOL] << "index,time,position x,position y,position z,position norm,vel_sol x,vel_sol y,vel_sol z,vel_sol norm" << std::endl;
 
         ta_components[Acceleration::LUN] = new heyoka::taylor_adaptive<double> {
             { heyoka::prime(pos[0]) = dXdt, heyoka::prime(pos[1]) = dYdt, heyoka::prime(pos[2]) = dZdt, heyoka::prime(vel[0]) = fMoonX, heyoka::prime(vel[1]) = fMoonY, heyoka::prime(vel[2]) = fMoonZ },
@@ -384,77 +417,77 @@ protected:
         *ta_components_out[Acceleration::DRAG] << std::setprecision(std::numeric_limits<double>::digits10 + 1);
         *ta_components_out[Acceleration::DRAG] << "index,time,position x,position y,position z,position norm,vel_drag x,vel_drag y,vel_drag z,vel_drag norm" << std::endl;
 
-        std::cout << std::to_string(time_stamp) + "/heyoka_drag.csv" << std::endl;
         // setup own integrator for all components
-        auto* debris = new Debris::DebrisContainer;
+        auto* container = new Debris::DebrisContainer<Debris::Debris>;
         std::array<bool, 8> config { true, true, true, true, true, true, true, true };
 
-        i_total_out = new FileOutput(*debris, std::filesystem::path(std::to_string(time_stamp) + "/integrator_total.csv"), FileOutput::CSV, config);
-        aa_total = new Acceleration::AccelerationAccumulator(config, *debris, start_t, *i_total_out);
-        i_total = new Integrator<Debris::DebrisContainer>(*debris, *aa_total, delta_t);
+        i_total_out = new FileOutput<Debris::DebrisContainer<Debris::Debris>>(*container, std::filesystem::path(std::to_string(time_stamp) + "/integrator_total.csv"), OutputFile::Type::CSV, config);
+        aa_total = new Acceleration::AccelerationAccumulator<Debris::DebrisContainer<Debris::Debris>>(config, *container, start_t, *i_total_out);
+        i_total = new Integrator<Debris::DebrisContainer<Debris::Debris>>(*container, *aa_total, delta_t);
 
-        debris = new Debris::DebrisContainer;
+        container = new Debris::DebrisContainer<Debris::Debris>;
         config = { false, false, false, false, false, false, false, false };
         config[Acceleration::KEP] = true;
-        i_components_out[Acceleration::KEP] = new FileOutput(*debris, std::filesystem::path(std::to_string(time_stamp) + "/integrator_kep.csv"), FileOutput::CSV, config);
-        aa_components[Acceleration::KEP] = new Acceleration::AccelerationAccumulator(config, *debris, start_t, *i_components_out[Acceleration::KEP]);
-        i_components[Acceleration::KEP] = new Integrator<Debris::DebrisContainer>(*debris, *aa_components[Acceleration::KEP], delta_t);
+        i_components_out[Acceleration::KEP] = new FileOutput<Debris::DebrisContainer<Debris::Debris>>(*container, std::filesystem::path(std::to_string(time_stamp) + "/integrator_kep.csv"), OutputFile::Type::CSV, config);
+        aa_components[Acceleration::KEP] = new Acceleration::AccelerationAccumulator<Debris::DebrisContainer<Debris::Debris>>(config, *container, start_t, *i_components_out[Acceleration::KEP]);
+        i_components[Acceleration::KEP] = new Integrator<Debris::DebrisContainer<Debris::Debris>>(*container, *aa_components[Acceleration::KEP], delta_t);
         config[Acceleration::KEP] = false;
 
-        debris = new Debris::DebrisContainer;
+        container = new Debris::DebrisContainer<Debris::Debris>;
         config[Acceleration::J2] = true;
-        i_components_out[Acceleration::J2] = new FileOutput(*debris, std::filesystem::path(std::to_string(time_stamp) + "/integrator_j2.csv"), FileOutput::CSV, config);
-        aa_components[Acceleration::J2] = new Acceleration::AccelerationAccumulator(config, *debris, start_t, *i_components_out[Acceleration::J2]);
-        i_components[Acceleration::J2] = new Integrator<Debris::DebrisContainer>(*debris, *aa_components[Acceleration::J2], delta_t);
+        i_components_out[Acceleration::J2] = new FileOutput<Debris::DebrisContainer<Debris::Debris>>(*container, std::filesystem::path(std::to_string(time_stamp) + "/integrator_j2.csv"), OutputFile::Type::CSV, config);
+        aa_components[Acceleration::J2] = new Acceleration::AccelerationAccumulator<Debris::DebrisContainer<Debris::Debris>>(config, *container, start_t, *i_components_out[Acceleration::J2]);
+        i_components[Acceleration::J2] = new Integrator<Debris::DebrisContainer<Debris::Debris>>(*container, *aa_components[Acceleration::J2], delta_t);
         config[Acceleration::J2] = false;
 
-        debris = new Debris::DebrisContainer;
+        container = new Debris::DebrisContainer<Debris::Debris>;
         config[Acceleration::C22] = true;
-        i_components_out[Acceleration::C22] = new FileOutput(*debris, std::filesystem::path(std::to_string(time_stamp) + "/integrator_c22.csv"), FileOutput::CSV, config);
-        aa_components[Acceleration::C22] = new Acceleration::AccelerationAccumulator(config, *debris, start_t, *i_components_out[Acceleration::C22]);
-        i_components[Acceleration::C22] = new Integrator<Debris::DebrisContainer>(*debris, *aa_components[Acceleration::C22], delta_t);
+        i_components_out[Acceleration::C22] = new FileOutput<Debris::DebrisContainer<Debris::Debris>>(*container, std::filesystem::path(std::to_string(time_stamp) + "/integrator_c22.csv"), OutputFile::Type::CSV, config);
+        aa_components[Acceleration::C22] = new Acceleration::AccelerationAccumulator<Debris::DebrisContainer<Debris::Debris>>(config, *container, start_t, *i_components_out[Acceleration::C22]);
+        i_components[Acceleration::C22] = new Integrator<Debris::DebrisContainer<Debris::Debris>>(*container, *aa_components[Acceleration::C22], delta_t);
         config[Acceleration::C22] = false;
 
-        debris = new Debris::DebrisContainer;
+        container = new Debris::DebrisContainer<Debris::Debris>;
         config[Acceleration::S22] = true;
-        i_components_out[Acceleration::S22] = new FileOutput(*debris, std::filesystem::path(std::to_string(time_stamp) + "/integrator_s22.csv"), FileOutput::CSV, config);
-        aa_components[Acceleration::S22] = new Acceleration::AccelerationAccumulator(config, *debris, start_t, *i_components_out[Acceleration::S22]);
-        i_components[Acceleration::S22] = new Integrator<Debris::DebrisContainer>(*debris, *aa_components[Acceleration::S22], delta_t);
+        i_components_out[Acceleration::S22] = new FileOutput<Debris::DebrisContainer<Debris::Debris>>(*container, std::filesystem::path(std::to_string(time_stamp) + "/integrator_s22.csv"), OutputFile::Type::CSV, config);
+        aa_components[Acceleration::S22] = new Acceleration::AccelerationAccumulator<Debris::DebrisContainer<Debris::Debris>>(config, *container, start_t, *i_components_out[Acceleration::S22]);
+        i_components[Acceleration::S22] = new Integrator<Debris::DebrisContainer<Debris::Debris>>(*container, *aa_components[Acceleration::S22], delta_t);
         config[Acceleration::S22] = false;
 
-        debris = new Debris::DebrisContainer;
+        container = new Debris::DebrisContainer<Debris::Debris>;
         config[Acceleration::LUN] = true;
-        i_components_out[Acceleration::LUN] = new FileOutput(*debris, std::filesystem::path(std::to_string(time_stamp) + "/integrator_lun.csv"), FileOutput::CSV, config);
-        aa_components[Acceleration::LUN] = new Acceleration::AccelerationAccumulator(config, *debris, start_t, *i_components_out[Acceleration::LUN]);
-        i_components[Acceleration::LUN] = new Integrator<Debris::DebrisContainer>(*debris, *aa_components[Acceleration::LUN], delta_t);
+        i_components_out[Acceleration::LUN] = new FileOutput<Debris::DebrisContainer<Debris::Debris>>(*container, std::filesystem::path(std::to_string(time_stamp) + "/integrator_lun.csv"), OutputFile::Type::CSV, config);
+        aa_components[Acceleration::LUN] = new Acceleration::AccelerationAccumulator<Debris::DebrisContainer<Debris::Debris>>(config, *container, start_t, *i_components_out[Acceleration::LUN]);
+        i_components[Acceleration::LUN] = new Integrator<Debris::DebrisContainer<Debris::Debris>>(*container, *aa_components[Acceleration::LUN], delta_t);
         config[Acceleration::LUN] = false;
 
-        debris = new Debris::DebrisContainer;
+        container = new Debris::DebrisContainer<Debris::Debris>;
         config[Acceleration::SOL] = true;
-        i_components_out[Acceleration::SOL] = new FileOutput(*debris, std::filesystem::path(std::to_string(time_stamp) + "/integrator_sol.csv"), FileOutput::CSV, config);
-        aa_components[Acceleration::SOL] = new Acceleration::AccelerationAccumulator(config, *debris, start_t, *i_components_out[Acceleration::SOL]);
-        i_components[Acceleration::SOL] = new Integrator<Debris::DebrisContainer>(*debris, *aa_components[Acceleration::SOL], delta_t);
+        i_components_out[Acceleration::SOL] = new FileOutput<Debris::DebrisContainer<Debris::Debris>>(*container, std::filesystem::path(std::to_string(time_stamp) + "/integrator_sol.csv"), OutputFile::Type::CSV, config);
+        aa_components[Acceleration::SOL] = new Acceleration::AccelerationAccumulator<Debris::DebrisContainer<Debris::Debris>>(config, *container, start_t, *i_components_out[Acceleration::SOL]);
+        i_components[Acceleration::SOL] = new Integrator<Debris::DebrisContainer<Debris::Debris>>(*container, *aa_components[Acceleration::SOL], delta_t);
         config[Acceleration::SOL] = false;
 
-        debris = new Debris::DebrisContainer;
+        container = new Debris::DebrisContainer<Debris::Debris>;
         config[Acceleration::SRP] = true;
-        i_components_out[Acceleration::SRP] = new FileOutput(*debris, std::filesystem::path(std::to_string(time_stamp) + "/integrator_srp.csv"), FileOutput::CSV, config);
-        aa_components[Acceleration::SRP] = new Acceleration::AccelerationAccumulator(config, *debris, start_t, *i_components_out[Acceleration::SRP]);
-        i_components[Acceleration::SRP] = new Integrator<Debris::DebrisContainer>(*debris, *aa_components[Acceleration::SRP], delta_t);
+        i_components_out[Acceleration::SRP] = new FileOutput<Debris::DebrisContainer<Debris::Debris>>(*container, std::filesystem::path(std::to_string(time_stamp) + "/integrator_srp.csv"), OutputFile::Type::CSV, config);
+        aa_components[Acceleration::SRP] = new Acceleration::AccelerationAccumulator<Debris::DebrisContainer<Debris::Debris>>(config, *container, start_t, *i_components_out[Acceleration::SRP]);
+        i_components[Acceleration::SRP] = new Integrator<Debris::DebrisContainer<Debris::Debris>>(*container, *aa_components[Acceleration::SRP], delta_t);
         config[Acceleration::SRP] = false;
 
-        debris = new Debris::DebrisContainer;
+        container = new Debris::DebrisContainer<Debris::Debris>;
         config[Acceleration::DRAG] = true;
-        i_components_out[Acceleration::DRAG] = new FileOutput(*debris, std::filesystem::path(std::to_string(time_stamp) + "/integrator_drag.csv"), FileOutput::CSV, config);
-        aa_components[Acceleration::DRAG] = new Acceleration::AccelerationAccumulator(config, *debris, start_t, *i_components_out[Acceleration::DRAG]);
-        i_components[Acceleration::DRAG] = new Integrator<Debris::DebrisContainer>(*debris, *aa_components[Acceleration::DRAG], delta_t);
+        i_components_out[Acceleration::DRAG] = new FileOutput<Debris::DebrisContainer<Debris::Debris>>(*container, std::filesystem::path(std::to_string(time_stamp) + "/integrator_drag.csv"), OutputFile::Type::CSV, config);
+        aa_components[Acceleration::DRAG] = new Acceleration::AccelerationAccumulator<Debris::DebrisContainer<Debris::Debris>>(config, *container, start_t, *i_components_out[Acceleration::DRAG]);
+        i_components[Acceleration::DRAG] = new Integrator<Debris::DebrisContainer<Debris::Debris>>(*container, *aa_components[Acceleration::DRAG], delta_t);
         config[Acceleration::DRAG] = false;
     }
 
-    void prepareRun(Integrator<Debris::DebrisContainer>& i, heyoka::taylor_adaptive<double>& ta, Debris::Debris& d)
+    template <class Container>
+    void prepareRun(Integrator<Container>& i, heyoka::taylor_adaptive<double>& ta, typename Container::Particle_t& d)
     {
-        i.getDebris().cleanDebrisVector();
-        i.getDebris().addDebris(d);
+        i.getContainer().cleanDebrisVector();
+        i.getContainer().addDebris(d);
         ta.get_state_data()[0] = d.getPosition()[0];
         ta.get_state_data()[1] = d.getPosition()[1];
         ta.get_state_data()[2] = d.getPosition()[2];
@@ -467,10 +500,10 @@ protected:
         ta.set_time(start_t);
     }
 
-    void showErrors(Integrator<Debris::DebrisContainer>& i, heyoka::taylor_adaptive<double>& ta)
+    void showErrors(Integrator<Debris::DebrisContainer<Debris::Debris>>& i, heyoka::taylor_adaptive<double>& ta)
     {
-        std::array<double, 3> pos_i = i.getDebris().getDebrisVector()[0].getPosition();
-        std::array<double, 3> vel_i = i.getDebris().getDebrisVector()[0].getVelocity();
+        std::array<double, 3> pos_i = i.getContainer().getDebrisVector()[0].getPosition();
+        std::array<double, 3> vel_i = i.getContainer().getDebrisVector()[0].getVelocity();
         std::array<double, 3> pos_ta { ta.get_state()[0],
             ta.get_state()[1],
             ta.get_state()[2] };
@@ -495,7 +528,8 @@ protected:
         IOUtils::to_ostream(MathUtils::relativeError(vel_i, vel_ta), std::cout, ",", { "relative error[", "]\n" });
     }
 
-    void prepareRun(heyoka::taylor_adaptive<double>& split, heyoka::taylor_adaptive<double>& total, Debris::Debris& d)
+    template <class D>
+    void prepareRun(heyoka::taylor_adaptive<double>& split, heyoka::taylor_adaptive<double>& total, D& d)
     {
         split.get_state_data()[0] = d.getPosition()[0];
         split.get_state_data()[1] = d.getPosition()[1];
@@ -503,7 +537,7 @@ protected:
         split.get_state_data()[3] = d.getVelocity()[0];
         split.get_state_data()[4] = d.getVelocity()[1];
         split.get_state_data()[5] = d.getVelocity()[2];
-        // we allways start with 0 velocity
+        // we always start with 0 velocity
         for (int i = 6; i < split.get_state().size(); ++i) {
             split.get_state_data()[i] = 0;
         }
@@ -516,6 +550,23 @@ protected:
         // reset time values
         split.set_time(start_t);
         total.set_time(start_t);
+    }
+
+    template <class D>
+    void prepareLDRun(heyoka::taylor_adaptive<long double>& split, D& d)
+    {
+        split.get_state_data()[0] = d.getPosition()[0];
+        split.get_state_data()[1] = d.getPosition()[1];
+        split.get_state_data()[2] = d.getPosition()[2];
+        split.get_state_data()[3] = d.getVelocity()[0];
+        split.get_state_data()[4] = d.getVelocity()[1];
+        split.get_state_data()[5] = d.getVelocity()[2];
+        // we always start with 0 velocity
+        for (int i = 6; i < split.get_state().size(); ++i) {
+            split.get_state_data()[i] = 0;
+        }
+        // reset time values
+        split.set_time(start_t);
     }
 
     void showErrors(heyoka::taylor_adaptive<double>& split, heyoka::taylor_adaptive<double>& total)
@@ -554,12 +605,82 @@ protected:
         IOUtils::to_ostream(MathUtils::relativeError(vel_split, vel_ta), std::cout, ",", { "relative error[", "]\n" });
     }
 
-    void writeHeyokaState(heyoka::taylor_adaptive<double>& ta){
-
+    void writeHeyokaState(Acceleration::AccelerationComponent type)
+    {
+        // one array that holds position and all velocity components in the order x,y,z,norm
+        std::vector<double> output_vector;
+        for (int i = 0; i < ta_components[type]->get_state().size() % 3; ++i) {
+            // add x,y,z
+            output_vector.push_back(ta_components[type]->get_state()[i]);
+            output_vector.push_back(ta_components[type]->get_state()[i + 1]);
+            output_vector.push_back(ta_components[type]->get_state()[i + 2]);
+            output_vector.push_back(MathUtils::euclideanNorm(std::array<double, 3> { ta_components[type]->get_state()[i], ta_components[type]->get_state()[i + 1], ta_components[type]->get_state()[i + 2] }));
+        }
+        // output
+        *ta_components_out[type] << ta_components_line[type]++ << ',';
+        *ta_components_out[type] << ta_components[type]->get_time() << ',';
+        IOUtils::to_ostream(output_vector, *ta_components_out[type]);
+        *ta_components_out[type] << std::endl;
     }
 
-    void writeSplitHeyokaState(){
+    void writeSplitHeyokaState()
+    {
+        // one array that holds position and all velocity components in the order x,y,z,norm
+        std::vector<double> output_vector;
+        for (int i = 0; i < ta_split->get_state().size() / 3; ++i) {
+            // add x,y,z
+            output_vector.push_back(ta_split->get_state()[3 * i]);
+            output_vector.push_back(ta_split->get_state()[3 * i + 1]);
+            output_vector.push_back(ta_split->get_state()[3 * i + 2]);
+            output_vector.push_back(MathUtils::euclideanNorm(std::array<double, 3> { ta_split->get_state()[3 * i], ta_split->get_state()[3 * i + 1], ta_split->get_state()[3 * i + 2] }));
+        }
+        std::array<double, 3> vel_split {};
+        // combine all components
+        for (int i = 3; i < ta_split->get_state().size(); i += 3) {
+            vel_split[0] += ta_split->get_state_data()[i];
+            vel_split[1] += ta_split->get_state_data()[i + 1];
+            vel_split[2] += ta_split->get_state_data()[i + 2];
+        }
+        output_vector.push_back(vel_split[0]);
+        output_vector.push_back(vel_split[1]);
+        output_vector.push_back(vel_split[2]);
+        output_vector.push_back(MathUtils::euclideanNorm(vel_split));
 
+        // output
+        *ta_split_out << ta_split_line++ << ',';
+        *ta_split_out << ta_split->get_time() << ',';
+        IOUtils::to_ostream(output_vector, *ta_split_out);
+        *ta_split_out << std::endl;
+    }
+
+    void writeSplitLDHeyokaState()
+    {
+        // one array that holds position and all velocity components in the order x,y,z,norm
+        std::vector<long double> output_vector;
+        for (int i = 0; i < ta_split_ld->get_state().size() / 3; ++i) {
+            // add x,y,z
+            output_vector.push_back(ta_split_ld->get_state()[3 * i]);
+            output_vector.push_back(ta_split_ld->get_state()[3 * i + 1]);
+            output_vector.push_back(ta_split_ld->get_state()[3 * i + 2]);
+            output_vector.push_back(MathUtils::euclideanNorm(std::array<long double, 3> { ta_split_ld->get_state()[3 * i], ta_split_ld->get_state()[3 * i + 1], ta_split_ld->get_state()[3 * i + 2] }));
+        }
+        std::array<double, 3> vel_split {};
+        // combine all components
+        for (int i = 3; i < ta_split_ld->get_state().size(); i += 3) {
+            vel_split[0] += ta_split_ld->get_state_data()[i];
+            vel_split[1] += ta_split_ld->get_state_data()[i + 1];
+            vel_split[2] += ta_split_ld->get_state_data()[i + 2];
+        }
+        output_vector.push_back(vel_split[0]);
+        output_vector.push_back(vel_split[1]);
+        output_vector.push_back(vel_split[2]);
+        output_vector.push_back(MathUtils::euclideanNorm(vel_split));
+
+        // output
+        *ta_split_ld_out << ta_split_ld_line++ << ',';
+        *ta_split_ld_out << ta_split_ld->get_time() << ',';
+        IOUtils::to_ostream(output_vector, *ta_split_ld_out);
+        *ta_split_ld_out << std::endl;
     }
 };
 #endif

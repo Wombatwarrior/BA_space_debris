@@ -24,14 +24,15 @@ std::string Debris::toString() const
 {
     std::stringstream stream;
     stream << "Debris: X:" << IOUtils::to_string(position)
-           << " ||X||: " << getHeight()
-           << " v:" << IOUtils::to_string(velocity)
-           << " ||v||: " << getSpeed()
-           << " a0:" << IOUtils::to_string(acc_t0)
-           << " ||a0||: " << getAccT0Norm()
-           << " a1:" << IOUtils::to_string(acc_t1)
-           << " ||X||: " << getHeight()
-           << " ||v||: " << getSpeed();
+           << ", ||X||: " << getHeight()
+           << ", v:" << IOUtils::to_string(velocity)
+           << ", ||v||: " << getSpeed()
+           << ", a0:" << IOUtils::to_string(acc_t0)
+           << ", ||a0||: " << getAccT0Norm()
+           << ", a1:" << IOUtils::to_string(acc_t1)
+           << ", ||a!||: " << getAccT1Norm()
+           << ", aom: " << aom
+           << ", bc_inv: " << bc_inv;
     return stream.str();
 }
 

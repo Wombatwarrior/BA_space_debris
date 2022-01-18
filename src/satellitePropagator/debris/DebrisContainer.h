@@ -11,12 +11,14 @@ namespace Debris {
  * @class DebrisContainer
  * @brief Holds a vector of Debris objects
  */
+template <class D>
 class DebrisContainer {
 public:
+    using Particle_t = D; /**< Type D of the Particles **/
     /**
      * @brief Default constructor
      *
-     * Creates a nwe DebrisContainer object and initializes the #debris_vector
+     * Creates a new DebrisContainer object and initializes the #debris_vector
      * empty
      */
     DebrisContainer();
@@ -28,22 +30,25 @@ public:
      */
     virtual ~DebrisContainer();
 
-    auto begin(){
+    auto begin()
+    {
         return debris_vector.begin();
     }
 
-    auto end(){
+    auto end()
+    {
         return debris_vector.end();
     }
 
-    const auto cbegin() const {
+    const auto cbegin() const
+    {
         return debris_vector.cbegin();
     }
 
-    const auto cend() const {
+    const auto cend() const
+    {
         return debris_vector.cend();
     }
-
 
     /**
      * @brief Adds a Debris object to the #debris_vector
@@ -52,7 +57,7 @@ public:
      *
      * @param debris Reference to the Debris object to add
      */
-    void addDebris(const Debris& debris);
+    void addDebris(const D& debris);
 
     /**
      * @brief Clear the #debris_vector
@@ -64,7 +69,7 @@ public:
     void cleanDebrisVector();
 
 private:
-    std::vector<Debris> debris_vector; /**< std::vector holding the Debris objects
+    std::vector<D> debris_vector; /**< std::vector holding the Debris objects
                                       this DebrisContainer objects holds */
 public:
     /**
@@ -72,14 +77,49 @@ public:
      *
      * @return Value of #debris_vector
      */
-    [[nodiscard]] const std::vector<Debris>& getDebrisVector() const;
-    std::vector<Debris>& getDebrisVector();
+    [[nodiscard]] const std::vector<D>& getDebrisVector() const;
+    std::vector<D>& getDebrisVector();
 
     /**
      * @brief Setter function for #debris_vector
      *
      * @param debrisVector New value of #debris_vector
      */
-    void setDebrisVector(std::vector<Debris>& debrisVector);
+    void setDebrisVector(std::vector<D>& debrisVector);
 };
+template <class D>
+DebrisContainer<D>::DebrisContainer() = default;
+
+template <class D>
+DebrisContainer<D>::~DebrisContainer() = default;
+
+template <class D>
+void DebrisContainer<D>::addDebris(const D& debris)
+{
+    debris_vector.push_back(debris);
+}
+
+template <class D>
+void DebrisContainer<D>::cleanDebrisVector()
+{
+    debris_vector.clear();
+}
+
+template <class D>
+const std::vector<D>& DebrisContainer<D>::getDebrisVector() const
+{
+    return debris_vector;
+}
+
+template <class D>
+std::vector<D>& DebrisContainer<D>::getDebrisVector()
+{
+    return debris_vector;
+}
+
+template <class D>
+void DebrisContainer<D>::setDebrisVector(std::vector<D>& debrisVector)
+{
+    debris_vector = debrisVector;
+}
 } // namespace Debris
