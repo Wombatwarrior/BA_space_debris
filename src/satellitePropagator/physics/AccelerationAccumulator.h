@@ -53,11 +53,11 @@ public:
     AccelerationAccumulator(const std::array<bool, 8>& config_arg,
         Container& container,
         double t_arg,
-        FileOutput<Container>& file_output_arg)
+        FileOutput<Container>* file_output_arg)
         : config(config_arg)
         , container(&container)
         , t(t_arg)
-        , file_output(&file_output_arg) {};
+        , file_output(file_output_arg) {};
 
     /**
      * @brief Default destructor
@@ -245,31 +245,10 @@ void AccelerationAccumulator<Container>::applyComponents() const
                 new_acc_total[1] += new_acc_component[1];
                 new_acc_total[2] += new_acc_component[2];
             }
-            if (config[J2]) {
-                new_acc_component = J2Component::apply(d);
-                if (write) {
-                    file_output->writeAcc_value(new_acc_component);
-                }
-                new_acc_total[0] += new_acc_component[0];
-                new_acc_total[1] += new_acc_component[1];
-                new_acc_total[2] += new_acc_component[2];
-            }
-            // if we want to calculate both C22 and S22 we can share many of the
-            // calculation steps
-            if (config[C22] && config[S22]) {
-                new_acc_component = C22S22Component::apply(d, c_term, s_term);
-                if (write) {
-                    file_output->writeAcc_value(new_acc_component);
-                    file_output->writeAcc_value(new_acc_component);
-                }
-                new_acc_total[0] += new_acc_component[0];
-                new_acc_total[1] += new_acc_component[1];
-                new_acc_total[2] += new_acc_component[2];
-            } // if only one of the two should be calculated we only calculate the
-            // needed one
-            else {
-                if (config[C22]) {
-                    new_acc_component = C22Component::apply(d, c_term, s_term);
+            // Managed particles compensate for all pertubations and stay on the keplerian orbit. We simulate this by not applying any pertubations on them.
+            if(d.getActivityState() != Container::Particle_t::ActivityState::evasivePreserving) {
+                if (config[J2]) {
+                    new_acc_component = J2Component::apply(d);
                     if (write) {
                         file_output->writeAcc_value(new_acc_component);
                     }
@@ -277,8 +256,41 @@ void AccelerationAccumulator<Container>::applyComponents() const
                     new_acc_total[1] += new_acc_component[1];
                     new_acc_total[2] += new_acc_component[2];
                 }
-                if (config[S22]) {
-                    new_acc_component = S22Component::apply(d, c_term, s_term);
+                // if we want to calculate both C22 and S22 we can share many of the
+                // calculation steps
+                if (config[C22] && config[S22]) {
+                    new_acc_component = C22S22Component::apply(d, c_term, s_term);
+                    if (write) {
+                        file_output->writeAcc_value(new_acc_component);
+                        file_output->writeAcc_value(new_acc_component);
+                    }
+                    new_acc_total[0] += new_acc_component[0];
+                    new_acc_total[1] += new_acc_component[1];
+                    new_acc_total[2] += new_acc_component[2];
+                } // if only one of the two should be calculated we only calculate the
+                // needed one
+                else {
+                    if (config[C22]) {
+                        new_acc_component = C22Component::apply(d, c_term, s_term);
+                        if (write) {
+                            file_output->writeAcc_value(new_acc_component);
+                        }
+                        new_acc_total[0] += new_acc_component[0];
+                        new_acc_total[1] += new_acc_component[1];
+                        new_acc_total[2] += new_acc_component[2];
+                    }
+                    if (config[S22]) {
+                        new_acc_component = S22Component::apply(d, c_term, s_term);
+                        if (write) {
+                            file_output->writeAcc_value(new_acc_component);
+                        }
+                        new_acc_total[0] += new_acc_component[0];
+                        new_acc_total[1] += new_acc_component[1];
+                        new_acc_total[2] += new_acc_component[2];
+                    }
+                }
+                if (config[SOL]) {
+                    new_acc_component = SolComponent::apply(d, d_srp, sun_params);
                     if (write) {
                         file_output->writeAcc_value(new_acc_component);
                     }
@@ -286,42 +298,33 @@ void AccelerationAccumulator<Container>::applyComponents() const
                     new_acc_total[1] += new_acc_component[1];
                     new_acc_total[2] += new_acc_component[2];
                 }
-            }
-            if (config[SOL]) {
-                new_acc_component = SolComponent::apply(d, d_srp, sun_params);
-                if (write) {
-                    file_output->writeAcc_value(new_acc_component);
+                if (config[LUN]) {
+                    new_acc_component = LunComponent::apply(d, moon_params);
+                    if (write) {
+                        file_output->writeAcc_value(new_acc_component);
+                    }
+                    new_acc_total[0] += new_acc_component[0];
+                    new_acc_total[1] += new_acc_component[1];
+                    new_acc_total[2] += new_acc_component[2];
                 }
-                new_acc_total[0] += new_acc_component[0];
-                new_acc_total[1] += new_acc_component[1];
-                new_acc_total[2] += new_acc_component[2];
-            }
-            if (config[LUN]) {
-                new_acc_component = LunComponent::apply(d, moon_params);
-                if (write) {
-                    file_output->writeAcc_value(new_acc_component);
+                if (config[SRP]) {
+                    new_acc_component = SRPComponent::apply(d, d_srp, sun_params);
+                    if (write) {
+                        file_output->writeAcc_value(new_acc_component);
+                    }
+                    new_acc_total[0] += new_acc_component[0];
+                    new_acc_total[1] += new_acc_component[1];
+                    new_acc_total[2] += new_acc_component[2];
                 }
-                new_acc_total[0] += new_acc_component[0];
-                new_acc_total[1] += new_acc_component[1];
-                new_acc_total[2] += new_acc_component[2];
-            }
-            if (config[SRP]) {
-                new_acc_component = SRPComponent::apply(d, d_srp, sun_params);
-                if (write) {
-                    file_output->writeAcc_value(new_acc_component);
+                if (config[DRAG]) {
+                    new_acc_component = DragComponent::apply(d);
+                    if (write) {
+                        file_output->writeAcc_value(new_acc_component);
+                    }
+                    new_acc_total[0] += new_acc_component[0];
+                    new_acc_total[1] += new_acc_component[1];
+                    new_acc_total[2] += new_acc_component[2];
                 }
-                new_acc_total[0] += new_acc_component[0];
-                new_acc_total[1] += new_acc_component[1];
-                new_acc_total[2] += new_acc_component[2];
-            }
-            if (config[DRAG]) {
-                new_acc_component = DragComponent::apply(d);
-                if (write) {
-                    file_output->writeAcc_value(new_acc_component);
-                }
-                new_acc_total[0] += new_acc_component[0];
-                new_acc_total[1] += new_acc_component[1];
-                new_acc_total[2] += new_acc_component[2];
             }
             d.setAccT1(new_acc_total);
             if (write) {

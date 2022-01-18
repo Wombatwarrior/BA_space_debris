@@ -4,3 +4,7 @@
 
 #pragma once
 #include "gtest/gtest.h"
+
+class DebrisTests : public ::testing::Test {
+
+};
