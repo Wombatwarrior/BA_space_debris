@@ -174,10 +174,10 @@ inline constexpr double H_ATMOSPHERE = 8.5;
  */
 inline constexpr double ROT_ATMOSPHERE = 7.292115e-5;
 /**
- * @brief Atmospheric density at ground level
+ * @brief Atmospheric density at ground level [kg/km^3]
  *
  * Used in:
  * - Acceleration::DragComponent
  */
-inline constexpr double P_GROUND = 1.3;
+inline constexpr double P_GROUND = 1.3e9;
 } // namespace Physics
