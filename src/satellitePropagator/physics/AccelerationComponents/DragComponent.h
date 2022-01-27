@@ -13,6 +13,8 @@ namespace {
      * @brief Calculates acceleration due to the friction between the object and
      * the earths atmosphere
      *
+     * @note Model source: https://farside.ph.utexas.edu/teaching/celestial/Celestial/node94.html
+     *
      * @param d Reference to the Debris::Debris object to apply the acceleration to
      * @param acc_drag Reference to an 3D vector to write the result for this
      * Acceleration::AccelerationComponent.
