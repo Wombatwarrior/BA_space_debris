@@ -818,23 +818,35 @@ TEST_F(DragComponentTests, CheckQuadraticToVelocity)
     std::array<std::array<double, 3>, num_debris> v1_accelerations {};
     std::array<std::array<double, 3>, num_debris> v2_accelerations {};
     std::array<std::array<double, 3>, num_debris> v4_accelerations {};
-    std::array<double, 3> acc_total_dummy {};
+    std::array<std::array<double, 3>, num_debris> v8_accelerations {};
 
     // calculate the acceleration for all particles using two different functions
     for (int i = 0; i < num_debris; ++i) {
         Debris::Debris d = Debris::Debris(container->getDebrisVector()[i]);
         v1_accelerations[i] = Acceleration::DragComponent::apply(d);
-        d.setVelocity({ d.getVelocity()[0] * 2, d.getVelocity()[1] * 2, d.getVelocity()[2] * 2 });
+        d.setVelocity({ d.getVelocity()[0] * 2., d.getVelocity()[1] * 2., d.getVelocity()[2] * 2. });
         v2_accelerations[i] = Acceleration::DragComponent::apply(d);
-        d.setVelocity({ d.getVelocity()[0] * 2, d.getVelocity()[1] * 2, d.getVelocity()[2] * 2 });
+        d.setVelocity({ d.getVelocity()[0] * 2., d.getVelocity()[1] * 2., d.getVelocity()[2] * 2. });
         v4_accelerations[i] = Acceleration::DragComponent::apply(d);
+        d.setVelocity({ d.getVelocity()[0] * 2., d.getVelocity()[1] * 2., d.getVelocity()[2] * 2. });
+        v8_accelerations[i] = Acceleration::DragComponent::apply(d);
     }
 
-    // e-11 fails, but e-10 passes
-    double abs_err = 1e-10;
+
+    auto relError = [](auto actual, auto expected) {
+        return std::abs((actual - expected) / expected);
+    };
+
+    // expect drag to rise roughly quadratically w.r.t. velocity (drag(2*v) == 4*drag(v))
     for (int i = 0; i < num_debris; ++i) {
-        EXPECT_NEAR(MathUtils::euclideanNorm(v4_accelerations[i]), MathUtils::euclideanNorm(v2_accelerations[i]) * 4, abs_err);
-        EXPECT_NEAR(MathUtils::euclideanNorm(v2_accelerations[i]), MathUtils::euclideanNorm(v1_accelerations[i]) * 4, abs_err);
+        const auto v1norm = MathUtils::euclideanNorm(v1_accelerations[i]);
+        const auto v2norm = MathUtils::euclideanNorm(v2_accelerations[i]);
+        const auto v4norm = MathUtils::euclideanNorm(v4_accelerations[i]);
+        const auto v8norm = MathUtils::euclideanNorm(v8_accelerations[i]);
+
+        EXPECT_LE(relError(v1norm * 4, v2norm), 0.05) << "Failed for debris " << i;
+        EXPECT_LE(relError(v2norm * 4, v4norm), 0.05) << "Failed for debris " << i;
+        EXPECT_LE(relError(v4norm * 4, v8norm), 0.05) << "Failed for debris " << i;
     }
 }
 
