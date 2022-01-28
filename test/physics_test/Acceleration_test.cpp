@@ -845,6 +845,9 @@ TEST_F(DragComponentTests, CheckQuadraticToVelocity)
  */
 TEST_F(DragComponentTests, EquilavelnceWIthPreCalculatedTest)
 {
+
+    GTEST_SKIP() << "Pre calculated values missing!";
+
     const int num_debris = 9;
     std::array<std::array<double, 3>, num_debris> accelerations {};
     std::array<double, 3> acc_total_dummy {};
@@ -854,8 +857,7 @@ TEST_F(DragComponentTests, EquilavelnceWIthPreCalculatedTest)
         accelerations[i] = Acceleration::DragComponent::apply(container->getDebrisVector()[i]);
     }
 
-    // e-21 fails, but e-20 passes
-    double abs_err = 1;
+    double abs_err = 1e-20;
     for (int i = 0; i < num_debris; ++i) {
         EXPECT_NEAR(accelerations[i][0], pre_calculated[i][0], abs_err);
         EXPECT_NEAR(accelerations[i][1], pre_calculated[i][1], abs_err);
