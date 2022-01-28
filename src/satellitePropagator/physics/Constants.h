@@ -163,7 +163,7 @@ inline constexpr double OMEGA = 282.94;
  * @brief Atmospheric scale height [km].
  *
  * Used in:
- * - Acceleration::SolComponent
+ * - Acceleration::DragComponent
  */
 inline constexpr double H_ATMOSPHERE = 8.5;
 /**
