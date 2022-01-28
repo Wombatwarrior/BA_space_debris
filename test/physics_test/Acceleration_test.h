@@ -748,7 +748,7 @@ protected:
     void calcDrag(D& d, std::array<double, 3>& acc_drag)
     {
         double re = 6378.1363;
-        double p0 = 1.3;
+        double p0 = 1.3e9;
         double h = 8.500;
         double oe = 7.292115e-5;
         ASSERT_EQ(re, Physics::R_EARTH);
@@ -765,9 +765,10 @@ protected:
         double v_rel_x = d.getVelocity()[0] + oe * y;
         double v_rel_y = d.getVelocity()[0] - oe * x;
         double v_rel_z = d.getVelocity()[0];
+        double v_rel_norm = MathUtils::euclideanNorm<std::array<double, 3>>({ v_rel_x, v_rel_y, v_rel_z });
 
-        acc_drag[0] = -(p * v_rel_x * v_rel_x * d.getBcInv()) / 2;
-        acc_drag[1] = -(p * v_rel_y * v_rel_y * d.getBcInv()) / 2;
-        acc_drag[2] = -(p * v_rel_z * v_rel_z * d.getBcInv()) / 2;
+        acc_drag[0] = -(p * v_rel_x * v_rel_norm * d.getBcInv()) / 2;
+        acc_drag[1] = -(p * v_rel_y * v_rel_norm * d.getBcInv()) / 2;
+        acc_drag[2] = -(p * v_rel_z * v_rel_norm * d.getBcInv()) / 2;
     }
 };

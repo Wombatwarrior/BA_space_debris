@@ -767,22 +767,22 @@ TEST_F(SRPComponentTests, EquilavelnceWIthPreCalculatedTest)
 TEST_F(DragComponentTests, CalculationEquivalenceTest)
 {
     const int num_debris = 12;
-    std::array<std::array<double, 3>, num_debris> accelerations_1 {};
-    std::array<std::array<double, 3>, num_debris> accelerations_2 {};
+    std::array<std::array<double, 3>, num_debris> dragComponentAcc {};
+    std::array<std::array<double, 3>, num_debris> expectedAcc {};
     std::array<double, 3> acc_total_dummy {};
 
     // calculate the acceleration for all particles using two different functions
     for (int i = 0; i < num_debris; ++i) {
-        accelerations_1[i] = Acceleration::DragComponent::apply(container->getDebrisVector()[i]);
-        calcDrag(container->getDebrisVector()[i], accelerations_2[i]);
+        dragComponentAcc[i] = Acceleration::DragComponent::apply(container->getDebrisVector()[i]);
+        calcDrag(container->getDebrisVector()[i], expectedAcc[i]);
     }
 
-    // no error
-    double abs_err = 1e-25;
+    // only error due to floating point arithmetic
+    double abs_err = 1e-16;
     for (int i = 0; i < num_debris; ++i) {
-        EXPECT_NEAR(accelerations_1[i][0], accelerations_2[i][0], abs_err);
-        EXPECT_NEAR(accelerations_1[i][1], accelerations_2[i][1], abs_err);
-        EXPECT_NEAR(accelerations_1[i][2], accelerations_2[i][2], abs_err);
+        EXPECT_NEAR(dragComponentAcc[i][0], expectedAcc[i][0], abs_err);
+        EXPECT_NEAR(dragComponentAcc[i][1], expectedAcc[i][1], abs_err);
+        EXPECT_NEAR(dragComponentAcc[i][2], expectedAcc[i][2], abs_err);
     }
 }
 
