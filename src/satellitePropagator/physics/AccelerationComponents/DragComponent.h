@@ -29,18 +29,26 @@ namespace {
 template <class D>
 auto apply(const D& d)
 {
+    // aliases
+    const auto &vObj = d.getVelocity();
+    const auto &pObj = d.getPosition();
 
-    // calculate atmospheric density
+    // Thesis Equation 2.31
+    const std::array<double, 3> vRel{
+        vObj[0] + Physics::ROT_ATMOSPHERE * pObj[1],
+        vObj[1] - Physics::ROT_ATMOSPHERE * pObj[0],
+        vObj[2],
+    };
+
+    const auto vNorm = MathUtils::euclideanNorm(vRel);
+    // calculate atmospheric density. Equation 10.131 / Thesis Equation 2.33
     const double p = Physics::P_GROUND * std::exp(-(d.getHeight() - Physics::R_EARTH) / Physics::H_ATMOSPHERE);
-    const double f = -0.5 * p * d.getBcInv();
-    // calculate velocity relative to atmosphere
-    auto acc_drag = d.getVelocity();
-    acc_drag[0] += Physics::ROT_ATMOSPHERE * d.getPosition()[1];
-    acc_drag[1] -= Physics::ROT_ATMOSPHERE * d.getPosition()[0];
-    // actual drag
-    acc_drag[0] = f * acc_drag[0] * acc_drag[0];
-    acc_drag[1] = f * acc_drag[1] * acc_drag[1];
-    acc_drag[2] = f * acc_drag[2] * acc_drag[2];
-    return acc_drag;
+    // Equation 10.130 / Thesis Equation 2.30
+    const auto factor = -0.5 * p * d.getBcInv() * vNorm;
+    return std::array<double, 3>{
+        vRel[0] * factor,
+        vRel[1] * factor,
+        vRel[2] * factor,
+    };
 }
 } // namespace Acceleration
