@@ -787,24 +787,36 @@ TEST_F(DragComponentTests, CalculationEquivalenceTest)
 }
 
 /**
- * Tests if the acceleration calculated using
- * Acceleration::DragComponent::apply() is in opposite direction of the velocity vector
+ * Tests if the acceleration calculated using Acceleration::DragComponent::apply() is
+ * in opposite direction of the velocity vector and within a reasonable magnitude.
  */
-TEST_F(DragComponentTests, CheckDirection)
+TEST_F(DragComponentTests, CheckDirectionAndMagnitude)
 {
     const int num_debris = 9;
     std::array<std::array<double, 3>, num_debris> accelerations {};
-    std::array<double, 3> acc_total_dummy {};
 
     // calculate the acceleration for all particles using two different functions
     for (int i = 0; i < num_debris; ++i) {
         accelerations[i] = Acceleration::DragComponent::apply(container->getDebrisVector()[i]);
     }
 
-    // e-3 fails, but e-2 passes
-    double abs_err = 1e-2;
     for (int i = 0; i < num_debris; ++i) {
-        EXPECT_NEAR(MathUtils::cosSimilarity(accelerations[i], container->getDebrisVector()[i].getVelocity()), -1, abs_err);
+        // Check direction
+        // aliases for readability
+        const auto& initialVelocity = container->getDebrisVector()[i].getVelocity();
+        const auto& calculatedDrag = accelerations[i];
+        // expect cos to be near -1 => vectors point in almost opposite direction
+        // drag doesn't push in exact opposing direction
+        double abs_err = 0.002;
+        EXPECT_NEAR(MathUtils::cosSimilarity(calculatedDrag, initialVelocity), -1., abs_err) << "Direction check failed for debris " << i;
+
+        // Check magnitude
+        const auto dragMagnitude = MathUtils::euclideanNorm(calculatedDrag);
+        const auto velocityMagnitude = MathUtils::euclideanNorm(initialVelocity);
+        EXPECT_GT(dragMagnitude, 0.) << "Drag is zero for debris " << i;
+        // we expect drag to be significantly less than velocity
+        // if input changes drastically this might be violated
+        EXPECT_LE(dragMagnitude, velocityMagnitude * .03) << "Magnitude check failed for debris " << i;
     }
 }
 
@@ -831,7 +843,6 @@ TEST_F(DragComponentTests, CheckQuadraticToVelocity)
         d.setVelocity({ d.getVelocity()[0] * 2., d.getVelocity()[1] * 2., d.getVelocity()[2] * 2. });
         v8_accelerations[i] = Acceleration::DragComponent::apply(d);
     }
-
 
     auto relError = [](auto actual, auto expected) {
         return std::abs((actual - expected) / expected);
