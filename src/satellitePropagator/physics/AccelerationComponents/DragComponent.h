@@ -42,7 +42,8 @@ auto apply(const D& d)
 
     const auto vNorm = MathUtils::euclideanNorm(vRel);
     // calculate atmospheric density. Equation 10.131 / Thesis Equation 2.33
-    const double p = Physics::P_GROUND * std::exp(-(d.getHeight() - Physics::R_EARTH) / Physics::H_ATMOSPHERE);
+    constexpr auto H_ATMOSPHERE_inv = 1. / Physics::H_ATMOSPHERE;
+    const double p = Physics::P_GROUND * std::exp(-(d.getHeight() - Physics::R_EARTH) * H_ATMOSPHERE_inv);
     // Equation 10.130 / Thesis Equation 2.30
     const auto factor = -0.5 * p * d.getBcInv() * vNorm;
     return std::array<double, 3>{
