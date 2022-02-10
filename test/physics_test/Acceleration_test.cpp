@@ -3,6 +3,7 @@
 //
 
 #include "Acceleration_test.h"
+#include <gmock/gmock-matchers.h>
 
 /**
  * Tests if the acceleration calculated using
@@ -859,6 +860,31 @@ TEST_F(DragComponentTests, CheckQuadraticToVelocity)
         EXPECT_LE(relError(v2norm * 4, v4norm), 0.05) << "Failed for debris " << i;
         EXPECT_LE(relError(v4norm * 4, v8norm), 0.05) << "Failed for debris " << i;
     }
+}
+
+TEST_F(DragComponentTests, AtmosphericDesityTest)
+{
+    // assert the table is properly constructed
+    auto prevAlt = 0.;
+    for (const auto [alt, dens] : Acceleration::DragComponent::atmosphericDensityMap) {
+        // altitude is strictly rising
+        EXPECT_GT(alt, prevAlt);
+        prevAlt = alt;
+        // do not expect density to be falling monotonously
+
+        // make sure that estimates match tables that are actually in the table
+        const auto estimatedDensity = Acceleration::DragComponent::interpolateDensity(alt);
+        EXPECT_NEAR(dens, estimatedDensity, 1e-15);
+    }
+
+    // Check that the linear interpolation produces values between interpolation points
+    // Choose two points A and B, interpolate directly in the middle of it and compare to the midpoint
+    const auto [altA, densA] = *std::next(Acceleration::DragComponent::atmosphericDensityMap.begin(), 2);
+    const auto [altB, densB] = *std::next(Acceleration::DragComponent::atmosphericDensityMap.begin(), 3);
+    const auto altMid = (altA + altB) / 2;
+    const auto densMid = (densA + densB) / 2;
+    const auto estimate = Acceleration::DragComponent::interpolateDensity(altMid);
+    EXPECT_NEAR(estimate, densMid, 1e-15);
 }
 
 /**
