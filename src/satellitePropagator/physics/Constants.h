@@ -18,7 +18,7 @@ namespace Physics {
  */
 inline constexpr double RAD_FACTOR = M_PIl / 180;
 /**
- * @brief Gravitational constant * earth mass
+ * @brief Gravitational constant * earth mass [km^3/s^2]
  *
  * Used in:
  * - Acceleration::KepComponent
@@ -28,21 +28,21 @@ inline constexpr double RAD_FACTOR = M_PIl / 180;
  */
 inline constexpr double GM_EARTH = 3.986004407799724e+5;
 /**
- * @brief Gravitational constant * sun mass
+ * @brief Gravitational constant * sun mass [km^3/s^2]
  *
  * Used in:
  * - Acceleration::SolComponent
  */
 inline constexpr double GM_SUN = 1.32712440018e+11;
 /**
- * @brief Gravitational constant * moon mass
+ * @brief Gravitational constant * moon mass [km^3/s^2]
  *
  * Used in:
  * - Acceleration::LunComponent
  */
 inline constexpr double GM_MOON = 4.9028e+3;
 /**
- * @brief Radius of earth
+ * @brief Radius of earth [km]
  *
  * Used in:
  * - Acceleration::J2Component
@@ -160,24 +160,24 @@ inline constexpr double P_SRP = 4.56e-3;
  */
 inline constexpr double OMEGA = 282.94;
 /**
- * @brief Atmospheric scale height.
+ * @brief Atmospheric scale height [km].
  *
  * Used in:
- * - Acceleration::SolComponent
+ * - Acceleration::DragComponent
  */
 inline constexpr double H_ATMOSPHERE = 8.5;
 /**
- * @brief Rotation speed of earth around it's axis
+ * @brief Rotation speed of earth around it's axis [rad/s]
  *
  * Used in:
  * - Acceleration::DragComponent
  */
 inline constexpr double ROT_ATMOSPHERE = 7.292115e-5;
 /**
- * @brief Atmospheric density at ground level
+ * @brief Atmospheric density at ground level [kg/km^3]
  *
  * Used in:
  * - Acceleration::DragComponent
  */
-inline constexpr double P_GROUND = 1.3;
+inline constexpr double P_GROUND = 1.3e9;
 } // namespace Physics
