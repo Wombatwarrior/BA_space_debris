@@ -10,7 +10,8 @@
 namespace Acceleration::DragComponent {
 /**
  * Table with values for density in different altitudes.
- * Units: altitude[km],  density[km/m^3]
+ * Obtained via https://en.wikipedia.org/wiki/NRLMSISE-00
+ * Units: altitude[km],  density[kg/m^3]
  */
 const std::map<double, double> atmosphericDensityMap {
     // We only care for altitudes > 150km
