@@ -22,7 +22,6 @@ auto initSystem(Debris::Debris& satellite, double altitude, const std::array<boo
     const double orbitRadius = Physics::R_EARTH + altitude; // [km]
     const double keplerianOrbitSpeed = std::sqrt(Physics::GM_EARTH / orbitRadius); // [km/s]
     const double keplerianOrbitLength = 2. * M_PI * orbitRadius; // [km]
-    const double orbitRadius3 = orbitRadius * orbitRadius * orbitRadius;
     const double keplerianOrbitAngularSpeed = keplerianOrbitSpeed / orbitRadius; // [1/s]
     const double keplerianOrbitPeriod = 2. * M_PI / keplerianOrbitAngularSpeed; // [s]
     // only move by at most one kilometer per discretization step

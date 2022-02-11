@@ -760,7 +760,11 @@ protected:
         double y = d.getPosition()[1];
         double z = d.getPosition()[2];
 
-        double p = p0 * std::exp(-(std::sqrt(x * x + y * y + z * z) - re) / h);
+        double pHeightOverGround = std::sqrt(x * x + y * y + z * z) - re;
+        // old atmospheric model
+        // double p = p0 * std::exp(-pHeightOverGround / h);
+        // new table based atmospheric model
+        double p = Acceleration::DragComponent::interpolateDensity(pHeightOverGround);
 
         double v_rel_x = d.getVelocity()[0] + oe * y;
         double v_rel_y = d.getVelocity()[0] - oe * x;
